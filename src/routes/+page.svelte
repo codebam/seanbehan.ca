@@ -1,19 +1,24 @@
 <script lang="ts">
-  export let data: {posts: {path: string, meta: {title: string, date: string}}[]};
+	import { beforeUpdate } from 'svelte';
+	export let data: {posts: {path: string, meta: {title: string, date: string}}[]};
+	let response: string = "I’m a full stack developer. I code in TypeScript, Rust, C#, and Python. I have a passion for open source and Linux.";
+	beforeUpdate(async () => {
+		const json = await fetch("https://cloudflare-ai-api.codebam.workers.dev/api/question/custom", { method: "POST", body: JSON.stringify({system: ["your job is to explain who Sean Behan is", `use seed ${crypto.randomUUID()}`, "Sean Behan is a programmer who codes in TypeScript, Rust, C#, Python", "Sean Behan has a passion for open source and Linux"], user: ["tell me about Sean Behan"]})}).then((resp) => resp.json());
+		response = json.response;
+	});
 </script>
 
 <style>
-  ul {
-    list-style-type: none;
-    padding-left: 0;
-  }
+	ul {
+		list-style-type: none;
+		padding-left: 0;
+	}
 </style>
 
 <svelte:head>
 	<title>Sean Behan</title>
 </svelte:head>
-<p>I’m a full stack developer. I code in TypeScript, Rust, C#, and Python.</p>
-<p>I have a passion for open source and Linux.</p>
+<code>{response}</code>
 
 <ul>
 	{#each data.posts as post}
