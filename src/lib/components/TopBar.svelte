@@ -1,13 +1,13 @@
 <style>
-  div {
+  header {
     display: flex;
     justify-content: space-around;
   }
 </style>
 
-<div>
+<header>
   <h1>Sean Behan</h1>
   <a href="/"><h2>Home</h2></a>
   <a href="/posts"><h2>Posts</h2></a>
-  <a href="/resume"><h2>Resume</h2></a>
-</div>
+  <a href="https://github.com/codebam"><h2>Portfolio</h2></a>
+</header>

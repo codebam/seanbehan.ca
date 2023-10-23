@@ -1,16 +1,20 @@
-<script lang="ts">
-  import TopBar from "$lib/components/TopBar.svelte";
-  import Content from "$lib/components/Content.svelte";
+<script>
+  export let data;
 </script>
 
-<style>
-  div {
-    display: grid;
-    grid-auto-flow: row;
-  }
-</style>
+<p>I’m a full stack developer. I code in TypeScript, Rust, C#, and Python.</p>
+<p>I have a passion for open source and Linux.</p>
 
-<div id="website">
-  <TopBar />
-  <Content />
-</div>
+<h2>Posts</h2>
+<ul>
+	{#each data.posts as post}
+		<li>
+			<h3>
+				<a href={post.path}>
+					{post.meta.title}
+				</a>
+			</h3>
+			Published {post.meta.date}
+		</li>
+	{/each}
+</ul>
