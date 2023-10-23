@@ -6,7 +6,19 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		%sveltekit.head%
 	</head>
+	<style>
+	@media (prefers-color-scheme: dark) {
+		body {
+			background: #000;
+			color: #fff;
+		}
+		footer {
+			text-align: center;
+		}
+	}
+	</style>
 	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents">%sveltekit.body%</div>
 	</body>
+	<footer><a href="https://github.com/codebam">source code</a></footer>
 </html>

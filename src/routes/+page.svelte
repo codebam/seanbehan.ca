@@ -1,18 +1,16 @@
+<script lang="ts">
+  import TopBar from "$lib/components/TopBar.svelte";
+  import Content from "$lib/components/Content.svelte";
+</script>
+
 <style>
-  .message {
-    border-radius: 8px;
-    border: 1px solid black;
-    width: 30%;
-  }
-  #messages {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+  div {
+    display: grid;
+    grid-auto-flow: row;
   }
 </style>
 
-<div id="messages">
-  <div class="message">example message</div>
-  <div class="message">example message 2</div>
+<div id="website">
+  <TopBar />
+  <Content />
 </div>
-<input type="text"><button>send</button>
