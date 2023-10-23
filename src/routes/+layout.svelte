@@ -3,7 +3,7 @@
 </script>
 
 <style>
-  main {
+  main, footer {
     text-align: center;
   }
 </style>

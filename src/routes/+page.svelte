@@ -1,5 +1,5 @@
-<script>
-  export let data;
+<script lang="ts">
+  export let data: {posts: {path: string, meta: {title: string, date: string}}[]};
 </script>
 
 <p>I’m a full stack developer. I code in TypeScript, Rust, C#, and Python.</p>
