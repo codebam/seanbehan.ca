@@ -1,7 +1,13 @@
 <style>
   header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-items: center;
     text-align: center;
-    justify-content: space-around;
+  }
+  h1, h2 {
+    margin: 1em;
   }
 </style>
 
