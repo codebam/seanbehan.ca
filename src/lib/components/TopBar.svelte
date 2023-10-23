@@ -6,8 +6,8 @@
     justify-items: center;
     text-align: center;
   }
-  h1, h2 {
-    margin: 1em;
+  h2 {
+    margin: 0.5em;
   }
 </style>
 
@@ -18,4 +18,7 @@
   <a href="/playlists"><h2>Playlists</h2></a>
   <a href="https://github.com/codebam"><h2>GitHub</h2></a>
   <a href="/contact"><h2>Contact</h2></a>
+  <a href="/resume"><h2>Resume</h2></a>
+  <a href="https://p.seanbehan.ca"><h2>Pastebin</h2></a>
+  <a href="https://term.seanbehan.ca"><h2>Terminal</h2></a>
 </header>
