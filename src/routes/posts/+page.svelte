@@ -2,6 +2,12 @@
   export let data;
 </script>
 
+<style>
+	ul {
+		list-style-type: none;
+	}
+</style>
+
 <h1>Posts</h1>
 
 <ul>
