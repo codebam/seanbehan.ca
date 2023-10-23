@@ -9,8 +9,11 @@
 	}
 </style>
 
-<h1>Posts</h1>
 
+<svelte:head>
+	<title>Posts</title>
+</svelte:head>
+<h1>Posts</h1>
 <ul>
 	{#each data.posts as post}
 		<li>
