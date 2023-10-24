@@ -3,6 +3,8 @@ title: "Contact"
 date: 2022-6-1
 ---
 
+![profile picture](https://avatars.githubusercontent.com/u/6035884?v=4)
+
 - [Email](mailto:contact@seanbehan.ca)
 - [LinkedIn](https://www.linkedin.com/in/sean-behan)
 - [Matrix](https://matrix.to/#/@codebam:matrix.org)
