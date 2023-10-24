@@ -35,3 +35,5 @@
 		</li>
 	{/each}
 </ul>
+
+<a rel="me" href="https://mstdn.ca/@codebam">mstdn.ca/@codebam</a>
