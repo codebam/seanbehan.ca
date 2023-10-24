@@ -1,8 +1,9 @@
 import getPosts from '$lib/getPosts';
 
+export const prerender = true;
+
 export const GET = async () => {
 	const posts = await getPosts();
-	console.log(posts);
 	const body = render(posts);
 	const headers = { 'Content-Type': 'application/xml' };
 	return new Response(body, { headers });
