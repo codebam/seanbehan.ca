@@ -9,6 +9,10 @@ img {
 }
 </style>
 
+<svelte:head>
+    <title>Resume</title>
+</svelte:head>
+
 
 [Download my resumé](https://github.com/codebam/resume/releases/latest/download/resume.pdf)
 

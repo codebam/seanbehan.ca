@@ -3,6 +3,10 @@ title: "Contact"
 date: 2022-6-1
 ---
 
+<svelte:head>
+    <title>Contact</title>
+</svelte:head>
+
 ![profile picture](https://avatars.githubusercontent.com/u/6035884?v=4)
 
 - [Email](mailto:contact@seanbehan.ca)
