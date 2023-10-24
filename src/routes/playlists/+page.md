@@ -3,6 +3,10 @@ title: "Shared Playlists"
 draft: false
 ---
 
+<svelte:head>
+    <title>Shared Playlists</title>
+</svelte:head>
+
 - <https://open.spotify.com/playlist/0KiMOTNwFbu60bm3p9I5ro?si=d68df618f50042a4/>
 - <https://open.spotify.com/playlist/07SaEglbsU8X1KgUtyKK0J?si=b0a1cc90a197427e/>
 - <https://open.spotify.com/playlist/6QIxKHLCk6edbgzmT6MH7l?si=dc665e03ec154137/>
