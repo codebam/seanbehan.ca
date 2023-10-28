@@ -3,12 +3,11 @@
 </script>
 
 <h1>Posts</h1>
-<ul>
+<ul class="format dark:format-invert">
   {#if posts}
     {#each posts as post}
       <li>
-        <h3 class="text-primary dark:text-dark-primary
-          hover:text-secondary dark:hover:text-dark-secondary">
+        <h3 class="text-primary dark:text-dark-primary hover:text-secondary dark:hover:text-dark-secondary">
           <a href={post.path}>
             {post.meta.title}
           </a>
