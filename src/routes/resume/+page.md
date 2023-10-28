@@ -3,12 +3,6 @@ title: "Resumé"
 date: 2022-6-1
 ---
 
-<style>
-img {
-    max-width: 100vw;
-}
-</style>
-
 <svelte:head>
     <title>Resume</title>
 </svelte:head>
