@@ -7,7 +7,7 @@ date: 2022-6-1
     <title>Contact</title>
 </svelte:head>
 
-![profile picture](https://avatars.githubusercontent.com/u/6035884?v=4)
+![profile](https://avatars.githubusercontent.com/u/6035884?v=4)
 
 - [Email](mailto:contact@seanbehan.ca)
 - [LinkedIn](https://www.linkedin.com/in/sean-behan)
