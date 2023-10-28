@@ -4,7 +4,7 @@
 
 <Navbar class="bg-background dark:bg-background-dark">
   <NavBrand href="/">
-    <Avatar src="https://avatars.githubusercontent.com/u/6035884?v=4"
+    <Avatar src="/profile.png"
       class="mr-3" rounded alt="profile" />
     <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Sean Behan</span>
   </NavBrand>
