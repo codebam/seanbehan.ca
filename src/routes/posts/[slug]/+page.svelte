@@ -8,7 +8,7 @@ let blog = {
 	author: {
 		name: 'Sean Behan',
 		title: '',
-		profilePicture: '/profile.png'
+		profilePicture: '/profile.webp'
 	},
 	content: data.html
 };

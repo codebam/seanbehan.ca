@@ -7,7 +7,7 @@ date: 2022-6-1
     <title>Contact</title>
 </svelte:head>
 
-![profile](/profile.png)
+![profile](/profile.webp)
 
 - [Email](mailto:contact@seanbehan.ca)
 - [LinkedIn](https://www.linkedin.com/in/sean-behan)
