@@ -4,7 +4,8 @@
 
 <Navbar class="bg-background dark:bg-background-dark">
   <NavBrand href="/">
-    <img src="https://avatars.githubusercontent.com/u/6035884?v=4" class="mr-3 h-6 sm:h-9" alt="profile" />
+    <img src="https://avatars.githubusercontent.com/u/6035884?v=4" class="mr-3
+      h-6 sm:h-9 rounded-lg" alt="profile" />
     <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Sean Behan</span>
   </NavBrand>
   <NavUl>
