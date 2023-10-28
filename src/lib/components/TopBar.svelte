@@ -2,7 +2,7 @@
   import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, DarkMode } from 'flowbite-svelte';
 </script>
 
-<Navbar >
+<Navbar class="dark:bg-black">
   <NavBrand href="/">
     <img src="https://avatars.githubusercontent.com/u/6035884?v=4" class="mr-3 h-6 sm:h-9" alt="profile" />
     <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Sean Behan</span>
