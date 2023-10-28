@@ -17,6 +17,7 @@
 <code>{response}</code>
 
 <ul>
+	<h1>Posts</h1>
 	{#each data.posts as post}
 		<li>
 			<h3 class="text-primary dark:text-dark-primary">

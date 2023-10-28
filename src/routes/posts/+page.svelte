@@ -17,12 +17,14 @@
 <ul>
 	{#each data.posts as post}
 		<li>
-			<h2>
+			<h3 class="text-primary dark:text-dark-primary">
 				<a href={post.path}>
 					{post.meta.title}
 				</a>
-			</h2>
-			Published {post.meta.date}
+			</h3>
+			<p class="text-secondary dark:text-dark-secondary">
+				{new Date(post.meta.date).toDateString()}
+			</p>
 		</li>
 	{/each}
 </ul>
