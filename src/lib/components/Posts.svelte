@@ -3,7 +3,7 @@
 </script>
 
 <h1>Posts</h1>
-<ul class="format dark:format-invert">
+<ul>
   {#if posts}
     {#each posts as post}
       <li>
