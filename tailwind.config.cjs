@@ -8,6 +8,10 @@ const config = {
 	darkMode: 'class',
 	theme: {
 		colors: {
+			foreground: '#000',
+			background: '#fff',
+			'background-dark': '#000',
+			'foreground-dark': '#fff',
 			primary: '#1B6052',
 			secondary: '#264653',
 			'dark-primary': '#2DA99B',
