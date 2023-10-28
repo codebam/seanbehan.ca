@@ -12,7 +12,7 @@ and how you too can make your own chatbot using Cloudflare AI.
 First you'll want to add the AI section to your wrangler.toml.
 
 ```toml
-[ai]
+\[ai\]
 binding = "AI"
 ```
 
