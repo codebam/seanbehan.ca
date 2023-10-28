@@ -10,6 +10,7 @@
 
 <svelte:head>
 	<title>{data.title}</title>
+	<link rel='stylesheet' href='/prism.css'>
 </svelte:head>
 <article>
 	<h1>{data.title}</h1>
