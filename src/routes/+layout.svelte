@@ -1,9 +1,10 @@
 <script>
-  import TopBar from "$lib/components/TopBar.svelte";
+	import '../app.postcss';
+	import TopBar from '$lib/components/TopBar.svelte';
 </script>
 
 <TopBar />
 <main>
-  <slot />
+	<slot />
 </main>
-<footer><a href="https://github.com/codebam">source code</a></footer>
+<footer><a href="https://github.com/codebam/seanbehan.ca">source code</a></footer>

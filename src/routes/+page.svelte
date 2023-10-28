@@ -8,32 +8,27 @@
 	});
 </script>
 
-<style>
-	ul {
-		list-style-type: none;
-		padding-left: 0;
-	}
-	code {
-		font-size: 1.5em;
-	}
-</style>
-
 <svelte:head>
 	<title>Sean Behan</title>
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3287237463323384"
+     crossorigin="anonymous"></script>
 </svelte:head>
+
 <code>{response}</code>
 
 <ul>
 	{#each data.posts as post}
 		<li>
-			<h2>
+			<h3 class="text-primary dark:text-dark-primary">
 				<a href={post.path}>
 					{post.meta.title}
 				</a>
-			</h2>
-			{post.meta.date}
+			</h3>
+			<p class="text-secondary dark:text-dark-secondary">
+				{new Date(post.meta.date).toDateString()}
+			</p>
 		</li>
 	{/each}
 </ul>
 
-<a rel="me" href="https://mstdn.ca/@codebam">mstdn.ca/@codebam</a>
+<a rel="me" style="display: none;" href="https://mstdn.ca/@codebam">mstdn.ca/@codebam</a>

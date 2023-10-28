@@ -7,18 +7,7 @@
 		<meta name="description" content="Sean Behan's Website" />
 		%sveltekit.head%
 	</head>
-	<style>
-	body {
-		font-family: sans-serif;
-	}
-	@media (prefers-color-scheme: dark) {
-		body {
-			background: #000;
-			color: #fff;
-		}
-	}
-	</style>
-	<body data-sveltekit-preload-data="hover">
+	<body data-sveltekit-preload-data="hover" class="bg-white dark:bg-black dark:text-white" class="">
 		<div style="display: contents">%sveltekit.body%</div>
 	</body>
 </html>

@@ -1,24 +1,22 @@
-<style>
-  header {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-items: center;
-    text-align: center;
-  }
-  h2 {
-    margin: 0.5em;
-  }
-</style>
+<script>
+  import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, DarkMode } from 'flowbite-svelte';
+</script>
 
-<header>
-  <h1>Sean Behan</h1>
-  <a href="/"><h2>Home</h2></a>
-  <a href="/posts"><h2>Posts</h2></a>
-  <a href="/playlists"><h2>Playlists</h2></a>
-  <a href="https://github.com/codebam"><h2>GitHub</h2></a>
-  <a href="/contact"><h2>Contact</h2></a>
-  <a href="/resume"><h2>Resume</h2></a>
-  <a href="https://p.seanbehan.ca"><h2>Pastebin</h2></a>
-  <a href="https://term.seanbehan.ca"><h2>Terminal</h2></a>
-</header>
+<Navbar >
+  <NavBrand href="/">
+    <img src="https://avatars.githubusercontent.com/u/6035884?v=4" class="mr-3 h-6 sm:h-9" alt="profile" />
+    <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Sean Behan</span>
+  </NavBrand>
+  <NavUl >
+    <NavLi href="/">Home</NavLi>
+    <NavLi href="/posts">Posts</NavLi>
+    <NavLi href="/playlists">Playlists</NavLi>
+    <NavLi href="https://github.com/codebam">GitHub</NavLi>
+    <NavLi href="/contact">Contact</NavLi>
+    <NavLi href="/resume">Resume</NavLi>
+    <NavLi href="https://p.seanbehan.ca">Pastebin</NavLi>
+    <NavLi href="https://term.seanbehan.ca">Terminal</NavLi>
+  </NavUl>
+  <DarkMode />
+  <NavHamburger />
+</Navbar>
