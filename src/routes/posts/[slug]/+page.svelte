@@ -1,5 +1,5 @@
 <script>
-	import { Section, BlogTemplate } from 'flowbite-svelte-blocks';
+	import { BlogTemplate } from 'flowbite-svelte-blocks';
 	export let data;
 let blog = {
 	...data,
@@ -19,7 +19,5 @@ let blog = {
 	<link rel='stylesheet' href='/prism.css'>
 </svelte:head>
 <article>
-	<Section>
 		<BlogTemplate {blog} />
-	</Section>
 </article>
