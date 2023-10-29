@@ -8,4 +8,4 @@
 <main>
 	<slot />
 </main>
-<footer class="m-4"><a href="https://github.com/codebam/seanbehan.ca">source code</a></footer>
+<footer class="m-4 underline"><a href="https://github.com/codebam/seanbehan.ca">source code</a></footer>
