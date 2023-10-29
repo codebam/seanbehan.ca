@@ -9,7 +9,7 @@ export let data: {posts: {path: string, meta: {title: string, date: string}}[]};
      crossorigin="anonymous"></script>
 </svelte:head>
 
-<p>Hello and welcome to my website! I'm Sean Behan, a full stack developer with extensive experience who is passionate about building scalable and original applications. I am prepared to take on any project that comes my way because I have a solid background in computer science and a wide range of expertise in a variety of programming languages, such as TypeScript, Rust, C#, and Python. Along with my technical proficiency, I have a strong passion for Linux and open source, and I have previously contributed to a number of open-source projects. I firmly think that cooperation and information sharing are beneficial, and I'm always excited to collaborate with and pick up tips from other developers.</p>
+<p class="dark:text-dark-secondary">Hello and welcome to my website! I'm Sean Behan, a full stack developer with extensive experience who is passionate about building scalable and original applications. I am prepared to take on any project that comes my way because I have a solid background in computer science and a wide range of expertise in a variety of programming languages, such as TypeScript, Rust, C#, and Python. Along with my technical proficiency, I have a strong passion for Linux and open source, and I have previously contributed to a number of open-source projects. I firmly think that cooperation and information sharing are beneficial, and I'm always excited to collaborate with and pick up tips from other developers.</p>
 
 <Posts posts={data.posts} />
 
