@@ -9,18 +9,7 @@ export let data: {posts: {path: string, meta: {title: string, date: string}}[]};
      crossorigin="anonymous"></script>
 </svelte:head>
 
-<p>Welcome to my website! My name is Sean Behan, and I am a highly skilled full
-stack developer with a passion for creating innovative and scalable software
-solutions. With a strong background in computer science and a wealth of
-experience in various programming languages, including TypeScript, Rust, C#, and
-Python, I am well-equipped to tackle any project that comes my way.  In addition
-to my technical expertise, I am also deeply committed to open source and Linux,
-and I have contributed to several open-source projects in the past. I
-believe in the power of collaboration and sharing knowledge, and I am always
-eager to work with other developers and learn from them.  Whether you're looking
-for a skilled developer to join your team or need help with a specific project,
-I am here to help. Please feel free to explore my website and learn more
-about my skills and experience. I look forward to hearing from you!</p>
+<p>Hello and welcome to my website! I'm Sean Behan, a full stack developer with extensive experience who is passionate about building scalable and original applications. I am prepared to take on any project that comes my way because I have a solid background in computer science and a wide range of expertise in a variety of programming languages, such as TypeScript, Rust, C#, and Python. Along with my technical proficiency, I have a strong passion for Linux and open source, and I have previously contributed to a number of open-source projects. I firmly think that cooperation and information sharing are beneficial, and I'm always excited to collaborate with and pick up tips from other developers.</p>
 
 <Posts posts={data.posts} />
 
