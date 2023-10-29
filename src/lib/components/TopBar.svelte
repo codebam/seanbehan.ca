@@ -3,7 +3,7 @@
 </script>
 
 <Navbar class="bg-background dark:bg-background-dark">
-  <NavBrand href="/">
+  <NavBrand class="mr-8" href="/">
     <Avatar src="/profile.webp"
       class="mr-3" rounded alt="profile" />
     <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Sean Behan</span>
