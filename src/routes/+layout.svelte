@@ -1,4 +1,5 @@
 <script>
+	import '@fontsource-variable/inter';
 	import '../app.postcss';
 	import TopBar from '$lib/components/TopBar.svelte';
 </script>
