@@ -1,5 +1,5 @@
 <script>
-  import { Avatar, Navbar, NavBrand, NavLi, NavUl, NavHamburger, DarkMode } from 'flowbite-svelte';
+  import { Avatar, Navbar, NavBrand, NavLi, NavUl, NavHamburger } from 'flowbite-svelte';
 </script>
 
 <Navbar class="bg-background dark:bg-background-dark">
@@ -18,6 +18,5 @@
     <NavLi href="https://p.seanbehan.ca">Pastebin</NavLi>
     <NavLi href="https://term.seanbehan.ca">Terminal</NavLi>
   </NavUl>
-  <DarkMode />
   <NavHamburger />
 </Navbar>

@@ -6,6 +6,7 @@ const config = {
 		'./node_modules/flowbite-svelte-blocks/**/*.{html,js,svelte,ts}'
 	],
 	plugins: [require('flowbite/plugin'), require('flowbite-typography')],
+	darkMode: 'media',
 	theme: {
 		colors: {
 			foreground: '#000',
