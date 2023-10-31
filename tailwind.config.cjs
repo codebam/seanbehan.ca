@@ -20,7 +20,7 @@ const config = {
 			'dark-primary': '#A38AD0',
 			'dark-secondary': '#779FA1',
 			'dark-tertiary': '#FF6542',
-			'dark-quaternary': '#E0CBA8'
+			'dark-quaternary': '#e26d5a'
 		}
 	}
 };
