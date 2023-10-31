@@ -11,16 +11,16 @@ const config = {
 		colors: {
 			foreground: '#000',
 			background: '#fff',
+			primary: '#583C96',
+			secondary: '#252627',
+			tertiary: '#FF6542',
+			quaternary: '#EF798A',
 			'background-dark': '#000',
 			'foreground-dark': '#fff',
-			primary: '#1B6052',
-			secondary: '#264653',
-			tertiary: '#00c49a',
-			quaternary: '#fb8f67',
-			'dark-primary': '#2DA99B',
-			'dark-secondary': '#639DB6',
-			'dark-tertiary': '#ef767a',
-			'dark-quaternary': '#eeb868'
+			'dark-primary': '#7353BA',
+			'dark-secondary': '#779FA1',
+			'dark-tertiary': '#FF6542',
+			'dark-quaternary': '#E0CBA8'
 		}
 	}
 };
