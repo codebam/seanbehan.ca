@@ -17,7 +17,7 @@ const config = {
 			quaternary: '#EF798A',
 			'background-dark': '#000',
 			'foreground-dark': '#fff',
-			'dark-primary': '#7353BA',
+			'dark-primary': '#A38AD0',
 			'dark-secondary': '#779FA1',
 			'dark-tertiary': '#FF6542',
 			'dark-quaternary': '#E0CBA8'
