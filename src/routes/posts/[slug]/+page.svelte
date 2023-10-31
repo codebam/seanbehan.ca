@@ -15,12 +15,12 @@
 		<P class="my-4 text-secondary dark:text-dark-secondary">{@html data.html}</P>
 		<div id="comment-section"></div>
 		<script>
-			initComments({
+			setTimeout(() => initComments({
 				node: document.getElementById("comment-section"),
 				defaultHomeserverUrl: "https://matrix.cactus.chat:8448",
 				serverName: "cactus.chat",
 				siteName: "seanbehan.ca",
 				commentSectionId: "main"
-			})
+			}), 10000)
 		</script>
 </article>
