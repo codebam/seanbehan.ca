@@ -8,6 +8,10 @@ export let data: {posts: {path: string, meta: {title: string, date: string}}[]};
 	<title>Sean Behan</title>
 </svelte:head>
 
+<div class="bg-background-secondary dark:bg-dark-background-secondary m-2 p-4
+	drop-shadow border-2 border-background-tertiary
+	dark:border-dark-background-tertiary rounded-3xl hover:border-quaternary
+	hover:dark:border-dark-quaternary">
 <P class="mx-4 text-secondary dark:text-dark-secondary my-2">
 Welcome to my website! My name is Sean Behan, and I'm a passionate full stack
 developer with a penchant for creating robust, scalable, and maintainable
@@ -26,6 +30,7 @@ and teamwork.</P>
 As you explore my website, you'll discover more about my background, skills, and
 projects. Feel free to reach out if you have any questions or would like to
 discuss potential collaborations. Let's create something amazing together!</P>
+</div>
 
 <Posts posts={data.posts} />
 
