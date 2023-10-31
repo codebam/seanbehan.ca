@@ -2,7 +2,7 @@
   import { Avatar, Navbar, NavBrand, NavLi, NavUl, NavHamburger } from 'flowbite-svelte';
 </script>
 
-<Navbar class="bg-background dark:bg-background-dark">
+<Navbar class="bg-background dark:bg-dark-background">
   <NavBrand class="mr-8" href="/">
     <Avatar src="/profile.webp"
       class="mr-3" rounded alt="profile" />
