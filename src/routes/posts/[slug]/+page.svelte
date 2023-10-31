@@ -21,6 +21,6 @@
 				serverName: "cactus.chat",
 				siteName: "seanbehan.ca",
 				commentSectionId: "main"
-			}), 10000)
+			}), 1000)
 		</script>
 </article>
