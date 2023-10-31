@@ -7,7 +7,9 @@
 <ul>
   {#if posts}
     {#each posts as post}
-      <li class="bg-background-secondary dark:bg-dark-background-secondary m-2 py-4 drop-shadow border-2 border-secondary dark:border-dark-secondary rounded-xl hover:border-quaternary hover:dark:border-dark-quaternary">
+      <li class="bg-background-secondary dark:bg-dark-background-secondary m-2
+        py-4 drop-shadow border-2 border-background-tertiary dark:border-dark-background-tertiary
+        rounded-full hover:border-quaternary hover:dark:border-dark-quaternary">
         <Heading tag="h5" class="underline text-primary dark:text-dark-primary mx-8">
           <A class="hover:text-tertiary dark:hover:text-dark-tertiary" href={post.path}>
             {post.meta.title}
