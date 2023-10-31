@@ -7,7 +7,7 @@ let blog = {
 	title: data.title,
 	author: {
 		name: 'Sean Behan',
-		title: '',
+		title: 'Sean Behan',
 		profilePicture: '/profile.webp'
 	},
 	content: data.html
