@@ -1,13 +1,6 @@
 <script>
 	import { Heading, P  } from 'flowbite-svelte';
 	export let data;
-	setTimeout(() => initComments({
-		node: document.getElementById("comment-section"),
-		defaultHomeserverUrl: "https://matrix.cactus.chat:8448",
-		serverName: "cactus.chat",
-		siteName: "seanbehan.ca",
-		commentSectionId: data.title.split(" ").join("-")
-	}), 1000)
 </script>
 
 <svelte:head>
@@ -21,4 +14,13 @@
 		<Heading class="text-secondary dark:text-dark-secondary" tag="h5">{data.date}</Heading>
 		<P class="my-4 text-secondary dark:text-dark-secondary">{@html data.html}</P>
 		<div id="comment-section"></div>
+		<script>
+			setTimeout(() => initComments({
+				node: document.getElementById("comment-section"),
+				defaultHomeserverUrl: "https://matrix.cactus.chat:8448",
+				serverName: "cactus.chat",
+				siteName: "seanbehan.ca",
+				commentSectionId: "main"
+			}), 1000)
+		</script>
 </article>
