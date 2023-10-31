@@ -20,7 +20,7 @@ const config = {
 			'dark-background-secondary': '#212529',
 			'dark-foreground': '#fff',
 			'dark-primary': '#539EE9',
-			'dark-secondary': '#75F4F4',
+			'dark-secondary': '#B2E6D4',
 			'dark-tertiary': '#EA9E8D',
 			'dark-quaternary': '#FA824C'
 		}
