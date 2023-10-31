@@ -1,17 +1,6 @@
 <script>
-	import { BlogTemplate } from 'flowbite-svelte-blocks';
+	import { Heading, P  } from 'flowbite-svelte';
 	export let data;
-let blog = {
-	...data,
-	id: '',
-	title: data.title,
-	author: {
-		name: 'Sean Behan',
-		title: 'Sean Behan',
-		profilePicture: '/profile.webp'
-	},
-	content: data.html
-};
 </script>
 
 <svelte:head>
@@ -19,5 +8,6 @@ let blog = {
 	<link rel='stylesheet' href='/prism.css'>
 </svelte:head>
 <article>
-		<BlogTemplate {blog} />
+		<Heading class="text-secondary dark:text-dark-secondary" tag="h2">{data.title}</Heading>
+		<P class="my-4 text-secondary dark:text-dark-secondary">{@html data.html}</P>
 </article>
