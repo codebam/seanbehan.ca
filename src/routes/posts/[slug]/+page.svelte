@@ -9,5 +9,6 @@
 </svelte:head>
 <article>
 		<Heading class="text-secondary dark:text-dark-secondary" tag="h2">{data.title}</Heading>
+		<Heading class="text-secondary dark:text-dark-secondary" tag="h5">{data.date}</Heading>
 		<P class="my-4 text-secondary dark:text-dark-secondary">{@html data.html}</P>
 </article>
