@@ -5,8 +5,6 @@ export let data: {posts: {path: string, meta: {title: string, date: string}}[]};
 
 <svelte:head>
 	<title>Sean Behan</title>
-	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3287237463323384"
-     crossorigin="anonymous"></script>
 </svelte:head>
 
 <p class="mx-4 text-secondary dark:text-dark-secondary my-2">
