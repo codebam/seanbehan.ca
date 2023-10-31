@@ -15,8 +15,12 @@ const config = {
 			'foreground-dark': '#fff',
 			primary: '#1B6052',
 			secondary: '#264653',
+			tertiary: '#00c49a',
+			quaternary: '#fb8f67',
 			'dark-primary': '#2DA99B',
-			'dark-secondary': '#639DB6'
+			'dark-secondary': '#639DB6',
+			'dark-tertiary': '#ef767a',
+			'dark-quaternary': '#eeb868'
 		}
 	}
 };
