@@ -1,7 +1,13 @@
 <script>
-	import { Heading, P  } from 'flowbite-svelte';
+	import { Heading } from 'flowbite-svelte';
 	export let data;
 </script>
+
+<style>
+#blogpost :global(a) {
+	text-decoration: underline;
+}
+</style>
 
 <svelte:head>
 	<title>{data.title}</title>
@@ -12,7 +18,7 @@
 <article>
 		<Heading class="text-secondary dark:text-dark-secondary" tag="h2">{data.title}</Heading>
 		<Heading class="text-secondary dark:text-dark-secondary" tag="h5">{data.date}</Heading>
-		<P class="my-4 text-secondary dark:text-dark-secondary">{@html data.html}</P>
+		<p id="blogpost" class="my-4 text-secondary dark:text-dark-secondary">{@html data.html}</p>
 		<div id="comment-section"></div>
 		<script>
 			setTimeout(() => initComments({
