@@ -1,6 +1,14 @@
 <script>
+	import { onMount } from 'svelte';
 	import { Heading } from 'flowbite-svelte';
 	export let data;
+	onMount(() => initComments({
+				node: document.getElementById("comment-section"),
+				defaultHomeserverUrl: "https://matrix.cactus.chat:8448",
+				serverName: "cactus.chat",
+				siteName: "seanbehan.ca",
+				commentSectionId: data.title.split(" ").join("-")
+	}));
 </script>
 
 <style>
@@ -20,13 +28,4 @@
 		<Heading class="text-secondary dark:text-dark-secondary" tag="h5">{data.date}</Heading>
 		<p id="blogpost" class="my-4 text-secondary dark:text-dark-secondary">{@html data.html}</p>
 		<div id="comment-section"></div>
-		<script>
-			setTimeout(() => initComments({
-				node: document.getElementById("comment-section"),
-				defaultHomeserverUrl: "https://matrix.cactus.chat:8448",
-				serverName: "cactus.chat",
-				siteName: "seanbehan.ca",
-				commentSectionId: "main"
-			}), 1000)
-		</script>
 </article>
