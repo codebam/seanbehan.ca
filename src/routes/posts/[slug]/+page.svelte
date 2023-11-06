@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { Heading } from 'flowbite-svelte';
 	import { initComments } from "$lib/cactus.js";
-	export let data;
+
 	onMount(() => initComments({
 				node: document.getElementById("comment-section"),
 				defaultHomeserverUrl: "https://matrix.cactus.chat:8448",
@@ -10,6 +10,8 @@
 				siteName: "seanbehan.ca",
 				commentSectionId: data.title.split(" ").join("-")
 	}));
+
+	export let data;
 </script>
 
 <style>

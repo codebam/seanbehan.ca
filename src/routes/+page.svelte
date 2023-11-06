@@ -1,11 +1,23 @@
 <script lang="ts">
-import Posts from '$lib/components/Posts.svelte';
-import { P } from 'flowbite-svelte';
-export let data: {posts: {path: string, meta: {title: string, date: string}}[]};
+	import { onMount } from 'svelte';
+	import Posts from '$lib/components/Posts.svelte';
+	import { P } from 'flowbite-svelte';
+	import { initComments } from "$lib/cactus.js";
+
+	onMount(() => initComments({
+				node: document.getElementById("comment-section"),
+				defaultHomeserverUrl: "https://matrix.cactus.chat:8448",
+				serverName: "cactus.chat",
+				siteName: "seanbehan.ca",
+				commentSectionId: "main",
+	}));
+
+	export let data: {posts: {path: string, meta: {title: string, date: string}}[]};
 </script>
 
 <svelte:head>
 	<title>Sean Behan</title>
+	<link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
 </svelte:head>
 
 <div class="bg-background-secondary dark:bg-dark-background-secondary m-2 p-4
@@ -33,5 +45,7 @@ discuss potential collaborations. Let's create something amazing together!</P>
 </div>
 
 <Posts posts={data.posts} />
+
+<div id="comment-section"></div>
 
 <a rel="me" style="display: none;" href="https://mstdn.ca/@codebam">mstdn.ca/@codebam</a>
