@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { Heading } from 'flowbite-svelte';
+	import { initComments } from "$lib/cactus.js";
 	export let data;
 	onMount(() => initComments({
 				node: document.getElementById("comment-section"),
@@ -20,7 +21,6 @@
 <svelte:head>
 	<title>{data.title}</title>
 	<link rel='stylesheet' href='/prism.css'>
-	<script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
 	<link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
 </svelte:head>
 <article>
