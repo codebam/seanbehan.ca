@@ -23,7 +23,7 @@
 		"flowbite": "^2.0.0",
 		"flowbite-svelte": "^0.44.19",
 		"flowbite-svelte-blocks": "^0.5.1",
-		"flowbite-svelte-icons": "^0.4.4",
+		"flowbite-svelte-icons": "^0.4.5",
 		"flowbite-typography": "^1.0.3",
 		"mdsvex": "^0.11.0",
 		"postcss": "^8.4.31",
