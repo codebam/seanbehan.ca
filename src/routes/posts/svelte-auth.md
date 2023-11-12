@@ -32,12 +32,25 @@ Then you can copy it into your
 so your local dev works with it. To run with support for D1 you can use this
 oneliner.
 
+```sh
+npm run build && wrangler pages dev .svelte-kit/cloudflare
+```
+
 My final schema looks like this. Yours might be a bit different, but mine
 allows for adding songs to a playlist which will be the purpose of my
 [website](https://music.seanbehan.ca).
 
+```sql
+CREATE TABLE IF NOT EXISTS Users (id TEXT PRIMARY KEY, password TEXT);
+CREATE TABLE IF NOT EXISTS Playlist (id TEXT PRIMARY KEY, email TEXT, url TEXT, date TEXT);
+```
+
+You'll want to create these tables using wrangler both locally (on your dev
+server) and remotely.
+
 ```sh
-npm run build && wrangler pages dev .svelte-kit/cloudflare
+wrangler d1 execute svelte-auth --local --file=./schema.sql
+wrangler d1 execute svelte-auth --file=./schema.sql
 ```
 
 Now you can add it to your
