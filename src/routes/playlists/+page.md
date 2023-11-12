@@ -1,10 +1,11 @@
 ---
-title: "Shared Playlists"
+title: 'Shared Playlists'
 draft: false
 ---
 
 <svelte:head>
-    <title>Shared Playlists</title>
+
+<title>Shared Playlists</title>
 </svelte:head>
 
 - <https://open.spotify.com/playlist/0KiMOTNwFbu60bm3p9I5ro?si=d68df618f50042a4/>

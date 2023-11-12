@@ -1,10 +1,10 @@
 ---
-title: "Podman crun and cgroups v2"
+title: 'Podman crun and cgroups v2'
 date: 2021-09-18T23:09:02-04:00
 tags:
-    - linux
-    - docker
-    - podman
+  - linux
+  - docker
+  - podman
 draft: false
 ---
 

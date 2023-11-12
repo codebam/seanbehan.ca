@@ -1,9 +1,9 @@
 ---
-title: "2FA Everything"
+title: '2FA Everything'
 date: 2020-12-03T20:38:10-05:00
 tags:
-    - security
-    - linux
+  - security
+  - linux
 draft: false
 ---
 
@@ -20,9 +20,9 @@ at a time. If I were to lose the key I would get permanently locked out.
 
 Features I want in my password manager:
 
-* 2FA for password manager decryption
-* Mobile and desktop apps
-* Secure encryption
+- 2FA for password manager decryption
+- Mobile and desktop apps
+- Secure encryption
 
 What I settled on was this. I bought myself a [Yubikey 5C
 NFC](https://www.yubico.com/ca/product/yubikey-5c-nfc/) to go alongside my

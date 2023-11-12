@@ -1,10 +1,11 @@
 ---
-title: "Contact"
+title: 'Contact'
 date: 2022-6-1
 ---
 
 <svelte:head>
-    <title>Contact</title>
+
+<title>Contact</title>
 </svelte:head>
 
 ![profile](/profile.webp)

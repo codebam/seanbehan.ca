@@ -1,10 +1,10 @@
 ---
-title: "WebSockets in Rust"
+title: 'WebSockets in Rust'
 date: 2019-11-26T21:56:22-05:00
 tags:
-    - rust
-    - websocket
-    - programming
+  - rust
+  - websocket
+  - programming
 draft: false
 ---
 

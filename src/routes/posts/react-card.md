@@ -1,11 +1,11 @@
 ---
-title: "React.js Card"
+title: 'React.js Card'
 date: 2021-02-17T19:27:04-05:00
 tags:
-    - programming
-    - javascript
-    - css
-    - react
+  - programming
+  - javascript
+  - css
+  - react
 draft: false
 ---
 
@@ -28,12 +28,12 @@ return the JSX Card object.
 import './Card.css';
 
 function Card(props) {
-  return (
-    <div className="Card">
-      <h2 className="CardTitle">{props.cardTitle}</h2>
-      <p className="CardContent">{props.children}</p>
-    </div>
-  );
+	return (
+		<div className="Card">
+			<h2 className="CardTitle">{props.cardTitle}</h2>
+			<p className="CardContent">{props.children}</p>
+		</div>
+	);
 }
 
 export default Card;
@@ -46,26 +46,26 @@ My styles are fairly simple, they just create a nice looking card.
 
 ```css
 .Card {
-  text-align: center;
-  background-color: lightgrey;
-  border: 1px solid grey;
-  border-radius: 0.5em;
-  margin: 1em;
-  height: 20em;
-  overflow: hidden;
+	text-align: center;
+	background-color: lightgrey;
+	border: 1px solid grey;
+	border-radius: 0.5em;
+	margin: 1em;
+	height: 20em;
+	overflow: hidden;
 }
 
 .CardTitle {
-  font-size: 1em;
+	font-size: 1em;
 }
 
 .CardContent {
-  background-color: white;
-  height: 100%;
-  border-radius: 0.5em;
-  border-top-left-radius: 0em;
-  border-top-right-radius: 0em;
-  padding: 1em;
+	background-color: white;
+	height: 100%;
+	border-radius: 0.5em;
+	border-top-left-radius: 0em;
+	border-top-right-radius: 0em;
+	padding: 1em;
 }
 ```
 
@@ -74,9 +74,7 @@ created a component and imported it all I have to do in App.js to create a card
 is this.
 
 ```jsx
-<Card cardTitle="Example Card Title">
-    Hello World
-</Card>
+<Card cardTitle="Example Card Title">Hello World</Card>
 ```
 
 Finally we can see that this builds a card.

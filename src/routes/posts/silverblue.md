@@ -1,8 +1,8 @@
 ---
-title: "Fedora Silverblue"
+title: 'Fedora Silverblue'
 date: 2021-02-13T15:21:43-05:00
 tags:
-    - linux
+  - linux
 draft: false
 ---
 

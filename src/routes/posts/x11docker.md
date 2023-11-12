@@ -1,10 +1,10 @@
 ---
-title: "Using X11Docker for secure GUI applications"
+title: 'Using X11Docker for secure GUI applications'
 date: 2021-10-07T16:51:51-04:00
 tags:
-    - docker
-    - podman
-    - graphics
+  - docker
+  - podman
+  - graphics
 draft: false
 ---
 

@@ -1,10 +1,10 @@
 ---
-title: "Podman Auto Updating Systemd Services"
+title: 'Podman Auto Updating Systemd Services'
 date: 2021-09-23T10:34:43-04:00
 tags:
-    - linux
-    - docker
-    - podman
+  - linux
+  - docker
+  - podman
 draft: false
 ---
 

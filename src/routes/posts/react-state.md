@@ -1,10 +1,10 @@
 ---
-title: "Managing State in React"
+title: 'Managing State in React'
 date: 2021-09-04T16:31:25-04:00
 tags:
-    - programming
-    - javascript
-    - react
+  - programming
+  - javascript
+  - react
 draft: false
 ---
 

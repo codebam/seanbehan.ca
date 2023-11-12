@@ -1,10 +1,10 @@
 ---
-title: "BTRFS RAID1 and how to fix it"
+title: 'BTRFS RAID1 and how to fix it'
 date: 2023-05-23T14:39:58Z
 tags:
-    - linux
-    - backup
-    - raid
+  - linux
+  - backup
+  - raid
 draft: false
 ---
 
@@ -21,7 +21,7 @@ permanently.
 
 Okay so the commands are easy, you just have to make sure you're using the
 right ones as not to lose your data. Don't run these commands without
-understanding what they do. Replace _ with your drive letter. A lot of these
+understanding what they do. Replace \_ with your drive letter. A lot of these
 commands need to be run with root, make sure to either elevate to root (`sudo -s`)
 or prepend the commands with `sudo`.
 
@@ -47,7 +47,7 @@ drives will be all ready to be used.
 
 Now if you need to swap out a drive, add another, or you unplug one when it's
 writing you can simply balance again and btrfs should be able to balance back
-onto the drive. 
+onto the drive.
 
 ```sh
 btrfs balance start -dconvert=raid1 -mconvert=raid1 /mnt

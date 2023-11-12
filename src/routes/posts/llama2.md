@@ -1,5 +1,5 @@
 ---
-title: "Using Llama2 on Cloudflare Workers"
+title: 'Using Llama2 on Cloudflare Workers'
 date: 2023-10-12T14:21:27-04:00
 draft: false
 ---
@@ -19,7 +19,7 @@ binding = "AI"
 Then you can simply import
 
 ```javascript
-import { Ai } from "@cloudflare/ai";
+import { Ai } from '@cloudflare/ai';
 ```
 
 And you can use it like this
@@ -27,8 +27,8 @@ And you can use it like this
 ```javascript
 const ai = new Ai(env.AI);
 prompt = 'hello world';
-const result = await ai.run("@cf/meta/llama-2-7b-chat-int8", {
-    prompt,
+const result = await ai.run('@cf/meta/llama-2-7b-chat-int8', {
+	prompt
 });
 ```
 

@@ -1,10 +1,10 @@
 ---
-title: "Using Ostree for file snapshots"
+title: 'Using Ostree for file snapshots'
 date: 2023-05-27T11:47:26Z
 tags:
-    - linux
-    - backup
-    - ostree
+  - linux
+  - backup
+  - ostree
 draft: false
 ---
 
