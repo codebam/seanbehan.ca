@@ -1,11 +1,11 @@
 <script>
-  import { Avatar, Navbar, NavBrand, NavLi, NavUl, NavHamburger } from 'flowbite-svelte';
+  import { Navbar, NavBrand, NavLi, NavUl, NavHamburger } from 'flowbite-svelte';
 </script>
 
 <Navbar class="bg-background dark:bg-dark-background">
   <NavBrand class="mr-8" href="/">
-    <Avatar src="/profile.webp"
-      class="mr-3" rounded alt="profile" />
+    <enhanced:img src="/static/profile.webp"
+      class="mr-3 rounded h-12 w-12" alt="profile" />
     <span class="self-center whitespace-nowrap text-xl font-semibold text-primary dark:text-dark-primary hover:text-tertiary hover:dark:text-dark-tertiary">Sean Behan</span>
   </NavBrand>
   <NavUl>
