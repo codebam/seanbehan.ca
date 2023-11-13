@@ -24,24 +24,38 @@
 	drop-shadow border-2 border-background-tertiary
 	dark:border-dark-background-tertiary rounded-3xl hover:border-quaternary
 	hover:dark:border-dark-quaternary">
-<P class="mx-4 text-secondary dark:text-dark-secondary my-2">
-Welcome to my website! My name is Sean Behan, and I'm a passionate full stack
-developer with a penchant for creating robust, scalable, and maintainable
-software solutions. With proficiency in multiple programming languages,
-including TypeScript, Rust, C#, and Python, I've honed my skills in crafting
-efficient, well-structured code that meets the needs of diverse projects.</P>
+	<P class="mx-4 text-secondary dark:text-dark-secondary my-2">
+		Hi there! My name is Sean Behan, and I'm a full stack developer with a passion for
+		Linux and open source software. With a quick learning mindset and a penchant for
+		problem-solving, I thrive in an environment where I can constantly learn new things and
+		contribute to the greater good of the tech community.
+	</P>
+</div>
 
-<P class="mx-4 text-secondary dark:text-dark-secondary my-2">
-In addition to my technical expertise, I'm an avid advocate for open source and
-Linux, believing in the power of community-driven development and the importance
-of accessible, transparent technology. My experience has taught me the value of
-collaboration, and I thrive in environments that foster creative problem-solving
-and teamwork.</P>
+<div class="bg-background-secondary dark:bg-dark-background-secondary m-2 p-4
+	drop-shadow border-2 border-background-tertiary
+	dark:border-dark-background-tertiary rounded-3xl hover:border-quaternary
+	hover:dark:border-dark-quaternary">
+	<P class="mx-4 text-secondary dark:text-dark-secondary my-2">
+		When I'm not tinkering with the latest gadgets or experimenting with new programming 
+		languages, you can find me writing software and contributing to open source projects. I
+		love the challenge of working on a variety of projects and collaborating with other 
+		developers to create something truly amazing.
+	</P>
+</div>
 
-<P class="mx-4 text-secondary dark:text-dark-secondary my-2">
-As you explore my website, you'll discover more about my background, skills, and
-projects. Feel free to reach out if you have any questions or would like to
-discuss potential collaborations. Let's create something amazing together!</P>
+<div class="bg-background-secondary dark:bg-dark-background-secondary m-2 p-4
+	drop-shadow border-2 border-background-tertiary
+	dark:border-dark-background-tertiary rounded-3xl hover:border-quaternary
+	hover:dark:border-dark-quaternary">
+	<P class="mx-4 text-secondary dark:text-dark-secondary my-2">
+		With my background in full stack development and my experience with Linux, I'm 
+		confident in my ability to tackle any project that comes my way. Whether it's building 
+		a new web application or diving deep into the inner workings of a complex system, I'm 
+		always up for the challenge. So if you need someone who is quick on their feet and 
+		knows their way around a terminal, look no further! I'm here to help and ready to take 
+		on whatever comes next.
+	</P>
 </div>
 
 <Posts posts={data.posts} />
