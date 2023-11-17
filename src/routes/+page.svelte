@@ -25,14 +25,10 @@
 	dark:border-dark-background-tertiary rounded-3xl hover:border-quaternary
 	hover:dark:border-dark-quaternary">
 	<P class="mx-4 text-secondary dark:text-dark-secondary my-2">
-		As a full stack developer, I am passionate about creating innovative
-		solutions for real-world problems. When I'm not working on client projects,
-		you can find me most of the time on Linux, writing software and
-		contributing to open source projects. With a strong work ethic and a quick
-		learning mindset, I enjoy tackling new challenges and continually improving
-		my skills.  Whether it's learning a new language, exploring new
-		technologies or working on my own personal projects, I am always eager to
-		learn and grow as a developer.
+		I am a passionate full-stack developer with a strong affinity for Linux, where I have spent countless hours writing
+software and contributing to open-source projects. With a natural ability for swift learning, I constantly seek out new
+challenges and opportunities to expand my knowledge base. This hunger for growth has not only made me an efficient
+problem solver but also allowed me to collaborate effectively with diverse teams on various exciting projects
 	</P>
 </div>
 
