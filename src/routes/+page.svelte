@@ -47,6 +47,9 @@
 		technologies to enhance my skills. This passion for continuous growth enables me to create
 		innovative, efficient, and cutting-edge solutions for a wide range of projects.
 	</P>
+	<P class="mx-4 flex justify-end text-secondary dark:text-dark-secondary"
+		><a href="https://ai.cloudflare.com/">@cf/mistral/mistral-7b-instruct-v0.1</a></P
+	>
 </div>
 
 <Posts posts={data.posts} />
