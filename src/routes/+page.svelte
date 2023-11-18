@@ -14,8 +14,12 @@
 		});
 		const source = new EventSource('https://broad-pine-6ec0.codebam.workers.dev/');
 		const el = document.getElementById('bio');
-		el.innerHTML = '';
+		let start = true;
 		source.onmessage = (event) => {
+			if (start) {
+				el.innerHTML = '';
+				start = false;
+			}
 			if (event.data === '[DONE]') {
 				source.close();
 				return;
