@@ -25,10 +25,11 @@
 	dark:border-dark-background-tertiary rounded-3xl hover:border-quaternary
 	hover:dark:border-dark-quaternary">
 	<P class="mx-4 text-secondary dark:text-dark-secondary my-2">
-		I am a passionate full-stack developer with a strong affinity for Linux, where I have spent countless hours writing
-software and contributing to open-source projects. With a natural ability for swift learning, I constantly seek out new
-challenges and opportunities to expand my knowledge base. This hunger for growth has not only made me an efficient
-problem solver but also allowed me to collaborate effectively with diverse teams on various exciting projects
+		As a full-stack developer, I specialize in creating and managing web applications using various programming languages
+		and technologies. My primary focus lies within the Linux operating system, where I spend most of my time writing
+		software and contributing to open-source projects. With my aptitude for quick learning, I am always eager to expand my
+		knowledge base and explore new technologies to enhance my skills. This passion for continuous growth enables me to
+		create innovative, efficient, and cutting-edge solutions for a wide range of projects.
 	</P>
 </div>
 
