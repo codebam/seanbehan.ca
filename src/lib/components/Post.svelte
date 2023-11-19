@@ -1,29 +1,6 @@
 <script lang="ts">
 	import { Heading, P, A } from 'flowbite-svelte';
-	import { onMount } from 'svelte';
 	export let post: { path: string; meta: { title: string; date: string } };
-
-	const summary_id = crypto.randomUUID();
-
-	onMount(() => {
-		const url = new URL('https://broad-pine-2.codebam.workers.dev/');
-		url.searchParams.set('q', post.meta.title);
-		const source = new EventSource(url);
-		const el = document.getElementById(summary_id);
-		let start = true;
-		source.onmessage = (event) => {
-			if (start) {
-				el.innerHTML = '';
-				start = false;
-			}
-			if (event.data === '[DONE]') {
-				source.close();
-				return;
-			}
-			const data = JSON.parse(event.data);
-			el.innerHTML += data.response;
-		};
-	});
 </script>
 
 <ul>
@@ -40,6 +17,5 @@
 		<P class="ml-8 text-secondary dark:text-dark-secondary w-auto">
 			{new Date(post.meta.date).toDateString()}
 		</P>
-		<P class="ml-8 text-secondary dark:text-dark-secondary w-auto" id={summary_id}></P>
 	</li>
 </ul>
