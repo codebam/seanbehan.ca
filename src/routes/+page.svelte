@@ -52,7 +52,9 @@
 		innovative, efficient, and cutting-edge solutions for a wide range of projects.
 	</P>
 	<P class="mx-4 flex justify-end text-secondary dark:text-dark-secondary"
-		><a href="https://ai.cloudflare.com/">@cf/mistral/mistral-7b-instruct-v0.1</a></P
+		><a href="https://r2.seanbehan.ca/397a4c9c-ae2e-4fb1-acd9-5362af7e5c55"
+			>@cf/mistral/mistral-7b-instruct-v0.1</a
+		></P
 	>
 </div>
 
