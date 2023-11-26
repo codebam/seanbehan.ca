@@ -52,7 +52,7 @@
 		innovative, efficient, and cutting-edge solutions for a wide range of projects.
 	</P>
 	<P class="mx-4 flex justify-end text-secondary dark:text-dark-secondary"
-		><a href="https://ai.cloudflare.com">@cf/meta/llama-2-7b-chat-fp16</a></P
+		><a href="https://ai.cloudflare.com">@hf/thebloke/llama-2-13b-chat-awq</a></P
 	>
 </div>
 
