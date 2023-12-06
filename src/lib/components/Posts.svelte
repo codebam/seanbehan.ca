@@ -1,12 +1,30 @@
 <script lang="ts">
 	import { Heading } from 'flowbite-svelte';
 	import Post from '$lib/components/Post.svelte';
+	import Fuse from 'fuse.js';
+	import { afterUpdate } from 'svelte';
 	export let posts: { path: string; meta: { title: string; date: string } }[];
+	let query = '*';
+	let results = posts;
+	const options = { keys: ['meta.title'] };
+	const fuse = new Fuse(posts, options);
+	afterUpdate(() => {
+		let results_ = fuse.search(query);
+		results = results_.map((result) => ({ path: result.item.path, meta: result.item.meta }));
+	});
 </script>
 
-<Heading tag="h4" class="ml-8 my-4 text-secondary dark:text-dark-secondary w-auto">Posts</Heading>
+<Heading
+	tag="h4"
+	style="display: inline"
+	class="ml-8 my-4 text-secondary dark:text-dark-secondary w-auto">Posts</Heading
+>
+<input class="text-secondary" bind:value={query} />
 <ul>
-	{#if posts}
+	{#each results as post}
+		<Post {post} />
+	{/each}
+	{#if results.length === 0}
 		{#each posts as post}
 			<Post {post} />
 		{/each}
