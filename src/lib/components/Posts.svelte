@@ -4,7 +4,7 @@
 	import Fuse from 'fuse.js';
 	import { afterUpdate } from 'svelte';
 	export let posts: { path: string; meta: { title: string; date: string } }[];
-	let query = '*';
+	let query = '';
 	let results = posts;
 	const options = { keys: ['meta.title'] };
 	const fuse = new Fuse(posts, options);
@@ -19,7 +19,10 @@
 	style="display: inline"
 	class="ml-8 my-4 text-secondary dark:text-dark-secondary w-auto">Posts</Heading
 >
-<input class="text-secondary" bind:value={query} />
+<input
+	class="text-secondary bg-background dark:bg-dark-background-secondary dark:text-dark-secondary"
+	bind:value={query}
+/>
 <ul>
 	{#each results as post}
 		<Post {post} />
