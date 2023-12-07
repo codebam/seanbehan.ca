@@ -14,15 +14,18 @@
 	});
 </script>
 
-<Heading
-	tag="h4"
-	style="display: inline"
-	class="ml-8 my-4 text-secondary dark:text-dark-secondary w-auto">Posts</Heading
->
-<input
-	class="text-secondary bg-background dark:bg-dark-background-secondary dark:text-dark-secondary"
-	bind:value={query}
-/>
+<div class="flex flex-wrap justify-between">
+	<Heading
+		tag="h4"
+		style="display: inline"
+		class="ml-8 my-4 text-secondary dark:text-dark-secondary w-auto">Posts</Heading
+	>
+	<input
+		class="p-2 m-2 rounded text-secondary bg-background dark:bg-dark-background-secondary dark:text-dark-secondary"
+		bind:value={query}
+		placeholder="search"
+	/>
+</div>
 <ul>
 	{#each results as post}
 		<Post {post} />
