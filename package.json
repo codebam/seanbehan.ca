@@ -12,7 +12,7 @@
 		"format": "prettier --write ."
 	},
 	"devDependencies": {
-		"@cloudflare/ai": "^1.0.41",
+		"@cloudflare/ai": "^1.0.47",
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/enhanced-img": "^0.1.6",
 		"@sveltejs/kit": "^2.0.3",
