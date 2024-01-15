@@ -25,7 +25,7 @@
 		"eslint-plugin-svelte": "^2.35.1",
 		"flowbite": "^2.2.1",
 		"flowbite-svelte": "^0.44.21",
-		"flowbite-svelte-blocks": "^0.5.1",
+		"flowbite-svelte-blocks": "^1.1.0",
 		"flowbite-svelte-icons": "^0.4.5",
 		"flowbite-typography": "^1.0.3",
 		"mdsvex": "^0.11.0",
