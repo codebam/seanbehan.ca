@@ -15,7 +15,7 @@
 		"@cloudflare/ai": "^1.0.50",
 		"@sveltejs/adapter-auto": "^3.1.1",
 		"@sveltejs/enhanced-img": "^0.1.8",
-		"@sveltejs/kit": "^2.5.0",
+		"@sveltejs/kit": "^2.5.1",
 		"@sveltejs/vite-plugin-svelte": "^3.0.2",
 		"@typescript-eslint/eslint-plugin": "^7.0.0",
 		"@typescript-eslint/parser": "^7.0.1",
