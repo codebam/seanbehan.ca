@@ -10,7 +10,6 @@
   </NavBrand>
   <NavUl>
     <NavLi class="text-primary dark:text-dark-primary hover:text-tertiary hover:dark:text-dark-tertiary" href="/">Home</NavLi>
-    <NavLi class="text-primary dark:text-dark-primary hover:text-tertiary hover:dark:text-dark-tertiary" href="/posts">Posts</NavLi>
     <NavLi class="text-primary dark:text-dark-primary hover:text-tertiary hover:dark:text-dark-tertiary" href="/playlists">Playlists</NavLi>
     <NavLi class="text-primary dark:text-dark-primary hover:text-tertiary hover:dark:text-dark-tertiary" href="https://github.com/codebam">GitHub</NavLi>
     <NavLi class="text-primary dark:text-dark-primary hover:text-tertiary hover:dark:text-dark-tertiary" href="/contact">Contact</NavLi>
