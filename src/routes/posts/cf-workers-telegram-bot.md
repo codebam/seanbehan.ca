@@ -84,3 +84,7 @@ You can set your webhook by going to the URL you've been given plus your token a
 Like this. `https://telegram-bot.username.workers.dev/YOURTOKENHERE?command=set`
 
 Now when you send your bot a message on Telegram it should respond with `Hello from Cloudflare workers`.
+
+If you've got this far and you don't want to code it all by yourself, you can
+fork my repository [here](https://github.com/codebam/cwtb-consumer) to get
+started with a working copy.
