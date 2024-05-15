@@ -58,7 +58,7 @@ Then you can simply write your bot like this.
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const bot = new TelegramBot(env.TOKEN);
-    bot.on('start', async function (context: TelegramExecutionContext) {
+    await bot.on('start', async function (context: TelegramExecutionContext) {
       switch (context.update_type) {
 	case 'message':
 	  await context.reply('Hello from Cloudflare workers');
