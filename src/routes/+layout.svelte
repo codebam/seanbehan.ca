@@ -4,6 +4,11 @@
 	import TopBar from '$lib/components/TopBar.svelte';
 </script>
 
+<svelte:head>
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3287237463323384"
+     crossorigin="anonymous"></script>
+</svelte:head>
+
 <TopBar />
 <main>
 	<slot />
