@@ -247,10 +247,10 @@ function n(n) {
 			return 'number' != typeof r
 				? rp('an INT', r)
 				: r > -2147483647 && 2147483647 > r && (0 | r) === r
-				? nB(r)
-				: !isFinite(r) || r % 1
-				? rp('an INT', r)
-				: nB(r);
+					? nB(r)
+					: !isFinite(r) || r % 1
+						? rp('an INT', r)
+						: nB(r);
 		}),
 		Y = Q(function (r) {
 			return 'boolean' == typeof r ? nB(r) : rp('a BOOL', r);
@@ -596,7 +596,7 @@ function n(n) {
 						n.n,
 						((e = th((t = n.o))),
 						{ $: t.$, a: e ? f(tp, 3 > e ? r8 : r4, tg(r), t.a) : o(tv, r, t.a) })
-				  )
+					)
 				: n;
 		}),
 		r8 = t(function (r, n) {
@@ -645,70 +645,70 @@ function n(n) {
 				? (function (r, n) {
 						var t = r.style;
 						for (var e in n) t[e] = n[e];
-				  })(r, u)
+					})(r, u)
 				: 'a0' === e
-				? (function (r, n, t) {
-						var e = r.elmFs || (r.elmFs = {});
-						for (var u in t) {
-							var a = t[u],
-								c = e[u];
-							if (a) {
-								if (c) {
-									if (c.q.$ === a.$) {
-										c.q = a;
-										continue;
-									}
-									r.removeEventListener(u, c);
-								}
-								(c = (function (r, n) {
-									function t(n) {
-										var e = t.q,
-											u = rl(e.a, n);
-										if (td(u)) {
-											for (
-												var a,
-													c = th(e),
-													i = u.a,
-													o = c ? (3 > c ? i.a : i.aF) : i,
-													f = 1 == c ? i.b : 3 == c && i.bk,
-													s =
-														(f && n.stopPropagation(),
-														(2 == c ? i.b : 3 == c && i.ba) && n.preventDefault(),
-														r);
-												(a = s.j);
-
-											) {
-												if ('function' == typeof a) o = a(o);
-												else for (var l = a.length; l--; ) o = a[l](o);
-												s = s.p;
-											}
-											s(o, f);
+					? (function (r, n, t) {
+							var e = r.elmFs || (r.elmFs = {});
+							for (var u in t) {
+								var a = t[u],
+									c = e[u];
+								if (a) {
+									if (c) {
+										if (c.q.$ === a.$) {
+											c.q = a;
+											continue;
 										}
+										r.removeEventListener(u, c);
 									}
-									return (t.q = n), t;
-								})(n, a)),
-									r.addEventListener(u, c, r3 && { passive: 2 > th(a) }),
-									(e[u] = c);
-							} else r.removeEventListener(u, c), (e[u] = void 0);
-						}
-				  })(r, n, u)
-				: 'a3' === e
-				? (function (r, n) {
-						for (var t in n) {
-							var e = n[t];
-							void 0 !== e ? r.setAttribute(t, e) : r.removeAttribute(t);
-						}
-				  })(r, u)
-				: 'a4' === e
-				? (function (r, n) {
-						for (var t in n) {
-							var e = n[t],
-								u = e.f,
-								a = e.o;
-							void 0 !== a ? r.setAttributeNS(u, t, a) : r.removeAttributeNS(u, t);
-						}
-				  })(r, u)
-				: (('value' !== e && 'checked' !== e) || r[e] !== u) && (r[e] = u);
+									(c = (function (r, n) {
+										function t(n) {
+											var e = t.q,
+												u = rl(e.a, n);
+											if (td(u)) {
+												for (
+													var a,
+														c = th(e),
+														i = u.a,
+														o = c ? (3 > c ? i.a : i.aF) : i,
+														f = 1 == c ? i.b : 3 == c && i.bk,
+														s =
+															(f && n.stopPropagation(),
+															(2 == c ? i.b : 3 == c && i.ba) && n.preventDefault(),
+															r);
+													(a = s.j);
+
+												) {
+													if ('function' == typeof a) o = a(o);
+													else for (var l = a.length; l--; ) o = a[l](o);
+													s = s.p;
+												}
+												s(o, f);
+											}
+										}
+										return (t.q = n), t;
+									})(n, a)),
+										r.addEventListener(u, c, r3 && { passive: 2 > th(a) }),
+										(e[u] = c);
+								} else r.removeEventListener(u, c), (e[u] = void 0);
+							}
+						})(r, n, u)
+					: 'a3' === e
+						? (function (r, n) {
+								for (var t in n) {
+									var e = n[t];
+									void 0 !== e ? r.setAttribute(t, e) : r.removeAttribute(t);
+								}
+							})(r, u)
+						: 'a4' === e
+							? (function (r, n) {
+									for (var t in n) {
+										var e = n[t],
+											u = e.f,
+											a = e.o;
+										void 0 !== a ? r.setAttributeNS(u, t, a) : r.removeAttributeNS(u, t);
+									}
+								})(r, u)
+							: (('value' !== e && 'checked' !== e) || r[e] !== u) && (r[e] = u);
 		}
 	}
 	try {
@@ -757,9 +757,9 @@ function n(n) {
 								? (function (r, n) {
 										for (var t = 0; r.length > t; t++) if (r[t] !== n[t]) return !1;
 										return !0;
-								  })(l, b)
+									})(l, b)
 								: l === b) || nn(t, 2, e, b),
-						  void nt(v, p, t, e + 1));
+							void nt(v, p, t, e + 1));
 				case 0:
 					return void (r.a !== n.a && nn(t, 3, e, n.a));
 				case 1:
@@ -796,11 +796,11 @@ function n(n) {
 						? 'a1' === t
 							? ''
 							: 'a0' === t || 'a3' === t
-							? void 0
-							: { f: r[u].f, o: void 0 }
+								? void 0
+								: { f: r[u].f, o: void 0 }
 						: 'string' == typeof r[u]
-						? ''
-						: null;
+							? ''
+							: null;
 			} else {
 				var i = nu(r[u], n[u] || {}, u);
 				i && ((e = e || {})[u] = i);
@@ -936,8 +936,8 @@ function n(n) {
 														return 0 === r.$
 															? f(u, t, i, n)
 															: a && c
-															? s(e, t, i.i, i.j, n)
-															: f(e, t, a ? i.i : i.j, n);
+																? s(e, t, i.i, i.j, n)
+																: f(e, t, a ? i.i : i.j, n);
 													}
 												});
 											},
@@ -1025,8 +1025,8 @@ function n(n) {
 											}
 											return a;
 										})(n, t, e, 0, 0, t.b, u);
-								  })(e, i, f, n),
-								  (function r(n, t) {
+									})(e, i, f, n),
+									(function r(n, t) {
 										for (var e = 0; t.length > e; e++) {
 											var u = t[e],
 												a = u.t,
@@ -1108,7 +1108,7 @@ function n(n) {
 											a === n && (n = c);
 										}
 										return n;
-								  })(e, f))),
+									})(e, f))),
 						(c = o);
 				});
 			});
@@ -1119,7 +1119,7 @@ function n(n) {
 				? requestAnimationFrame
 				: function (r) {
 						return setTimeout(r, 1e3 / 60);
-				  });
+					});
 	'undefined' != typeof document && document, 'undefined' != typeof window && window;
 	var nb = e(function (r, n, t) {
 			return rw(function (e) {
@@ -1218,10 +1218,10 @@ function n(n) {
 						? n + 2
 						: -1
 					: r(t[n])
-					? '\n' === t[n]
-						? -2
-						: n + 1
-					: -1
+						? '\n' === t[n]
+							? -2
+							: n + 1
+						: -1
 				: -1;
 		}),
 		nh = e(function (r, n, t) {
@@ -1768,7 +1768,7 @@ function n(n) {
 							return o(ry, tX(r), r);
 						},
 						rT(n.a)
-				  )
+					)
 				: tY(o(tK, n.a, n.b));
 		}),
 		tW = t(function (r, n) {
@@ -2201,8 +2201,8 @@ function n(n) {
 				return v(e, -1)
 					? o(eV, !1, o(eQ, t, n))
 					: v(e, -2)
-					? f(eF, !0, 0, { by: 1, d: t.d, e: t.e, b: t.b + 1, dO: t.dO + 1, cv: t.cv })
-					: f(eF, !0, 0, { by: t.by + 1, d: t.d, e: t.e, b: e, dO: t.dO, cv: t.cv });
+						? f(eF, !0, 0, { by: 1, d: t.d, e: t.e, b: t.b + 1, dO: t.dO + 1, cv: t.cv })
+						: f(eF, !0, 0, { by: t.by + 1, d: t.d, e: t.e, b: e, dO: t.dO, cv: t.cv });
 			};
 		}),
 		eX = function (r) {
@@ -4626,8 +4626,8 @@ function n(n) {
 			return 0 > r || r > 1114111
 				? '�'
 				: r > 65535
-				? String.fromCharCode(Math.floor((r -= 65536) / 1024) + 55296, (r % 1024) + 56320)
-				: String.fromCharCode(r);
+					? String.fromCharCode(Math.floor((r -= 65536) / 1024) + 55296, (r % 1024) + 56320)
+					: String.fromCharCode(r);
 		},
 		uj = e(function (r, n, t) {
 			for (;;) {
@@ -4781,10 +4781,10 @@ function n(n) {
 							return f(nh, 120, n, r.cv)
 								? l(uK, t.df, t.bP, e, o(n$, e, r.cv), r)
 								: f(nh, 111, n, r.cv)
-								? l(uK, t.df, t.b5, e, f(nD, 8, e, r.cv), r)
-								: f(nh, 98, n, r.cv)
-								? l(uK, t.df, t.bu, e, f(nD, 2, e, r.cv), r)
-								: b(uX, t.df, t.bJ, t.bU, t.bK, D(n, 0), r);
+									? l(uK, t.df, t.b5, e, f(nD, 8, e, r.cv), r)
+									: f(nh, 98, n, r.cv)
+										? l(uK, t.df, t.bu, e, f(nD, 2, e, r.cv), r)
+										: b(uX, t.df, t.bJ, t.bU, t.bK, D(n, 0), r);
 						}
 						return b(uX, t.df, t.bJ, t.bU, t.bK, f(nD, 10, r.b, r.cv), r);
 					}
@@ -5987,23 +5987,23 @@ function n(n) {
 			return a.$
 				? nR('Unable to parse previous line as a table header')
 				: v(nM((e = a.a)), nM(u))
-				? nB(
-						f(
-							C,
-							t(function (r, n) {
-								return { at: n, Y: r };
-							}),
-							e,
-							u
+					? nB(
+							f(
+								C,
+								t(function (r, n) {
+									return { at: n, Y: r };
+								}),
+								e,
+								u
+							)
 						)
-				  )
-				: nR(
-						'Tables must have the same number of header columns (' +
-							nV(nM(e)) +
-							') as delimiter columns (' +
-							nV(nM(u)) +
-							')'
-				  );
+					: nR(
+							'Tables must have the same number of header columns (' +
+								nV(nM(e)) +
+								') as delimiter columns (' +
+								nV(nM(u)) +
+								')'
+						);
 		}),
 		iS = t(function (r, n) {
 			return {
@@ -6172,8 +6172,8 @@ function n(n) {
 							var n = o(J, '#x', r)
 								? o(uV, e7, o(u_, uI, uz(o(t$, 2, r))))
 								: o(J, '#', r)
-								? o(iI, e7('Invalid escaped character: ' + r), o(tQ, uI, ty(o(t$, 1, r))))
-								: o(iI, e7('No entity named "&' + r + ';" found.'), o(er, r, iB));
+									? o(iI, e7('Invalid escaped character: ' + r), o(tQ, uI, ty(o(t$, 1, r))))
+									: o(iI, e7('No entity named "&' + r + ';" found.'), o(er, r, iB));
 							return n.$ ? ur(n.a) : ut(n.a);
 						},
 						e4(o(e3, o(eY, n, uo('an entity character')), e1(n)))
@@ -6392,10 +6392,10 @@ function n(n) {
 																return uq(n2(n));
 															}),
 															iK(r)
-													  )
+														)
 													: ut(function (r) {
 															return uS(o(A, { $: 1, a: n }, r));
-													  });
+														});
 											},
 											i4
 										),
@@ -6515,7 +6515,7 @@ function n(n) {
 						e7(
 							'Lists inside a paragraph or after a paragraph without a blank line must start with 1'
 						)
-				  );
+					);
 		},
 		oy = function (r) {
 			return o(
@@ -6616,8 +6616,8 @@ function n(n) {
 				1 > h(e.bH, u.dS)
 					? ((r = a), (n = u), (t = o(A, oR(e), t)))
 					: 0 > h(e.dS, u.dS) && h(e.bH, u.bH) > 0
-					? ((r = a), (n = o(oT, e, u)))
-					: ((r = a), (n = e));
+						? ((r = a), (n = o(oT, e, u)))
+						: ((r = a), (n = e));
 			}
 		}),
 		oH = { $: 0 },
@@ -6951,7 +6951,7 @@ function n(n) {
 							0,
 							ue(n)
 						))
-				  )
+					)
 				: r.ah;
 		}),
 		oW = function (r) {
@@ -6969,8 +6969,8 @@ function n(n) {
 					? v(n.bH, u.dS)
 						? o(A, e, t)
 						: 0 > h(n.bH, u.dS)
-						? o(A, e, o(A, o1(f(P, n.bH, u.dS, r)), t))
-						: t
+							? o(A, e, o(A, o1(f(P, n.bH, u.dS, r)), t))
+							: t
 					: o(A, e, t);
 			}
 			var a = o(t$, n.bH, r);
@@ -7702,7 +7702,7 @@ function n(n) {
 					return A.$
 						? nj(l)
 						: ((x = A.a),
-						  nj(
+							nj(
 								$(
 									o(sn, S, n),
 									x,
@@ -7714,7 +7714,7 @@ function n(n) {
 										s
 									)
 								)
-						  ));
+							));
 				default:
 					return n_;
 			}
@@ -8001,7 +8001,7 @@ function n(n) {
 										? o(tj, e9, ii)
 										: function (r) {
 												return '`' !== r && !ii(r);
-										  }
+											}
 								)
 							)),
 							il
@@ -8214,12 +8214,12 @@ function n(n) {
 					return u3(t)
 						? ur(uo('Must have at least one column in delimiter row.'))
 						: 1 !== nM(t) || (o(J, '|', n) && o(Z, '|', n))
-						? ut(r)
-						: ur(
-								e7(
-									'Tables with a single column must have pipes at the start and end of the delimiter row to avoid ambiguity.'
-								)
-						  );
+							? ut(r)
+							: ur(
+									e7(
+										'Tables with a single column must have pipes at the start and end of the delimiter row to avoid ambiguity.'
+									)
+								);
 				},
 				o(
 					e8,
@@ -8555,7 +8555,7 @@ function n(n) {
 							},
 							t.a
 						)
-				  );
+					);
 		},
 		lk = function (r) {
 			return f(lE, r, r.H, q);
@@ -9725,7 +9725,7 @@ function n(n) {
 								ef: t
 							}))
 						)
-				  )
+					)
 				: o(dc, de, da({ bQ: e.a, b6: r.am, cH: di(n) }));
 		}),
 		ds = t(function (r, n) {
@@ -9850,7 +9850,7 @@ function n(n) {
 																return y;
 															},
 															o(b6, l, '' === ($ = e.K).ai ? 'Anonymous' : $.ai)
-													  )
+														)
 											),
 											b7(q)
 										])
@@ -10042,23 +10042,23 @@ function n(n) {
 							dx,
 							k([dD('cactus-editor-name')]),
 							k([s(dP, 'Name', q, rZ('Name'), o(dH, r.ai, k([dY('Name'), dK(o(eS, dk, g))])))])
-					  )
+						)
 					: rZ(''),
 				x = v
 					? ((e = (t = { bZ: h, b_: m, bc: b }).bZ),
-					  (u = t.b_),
-					  (a = t.bc),
-					  (c = o(
+						(u = t.b_),
+						(a = t.bc),
+						(c = o(
 							dh,
 							k([dD('cactus-button'), dD('cactus-logout-button'), dS(u)]),
 							k([rZ('Log out')])
-					  )),
-					  (i = o(
+						)),
+						(i = o(
 							dh,
 							k([dD('cactus-button'), dD('cactus-login-button'), dS(e)]),
 							k([rZ('Log in')])
-					  )),
-					  a.$ ? i : dB(a.a) ? c : i)
+						)),
+						a.$ ? i : dB(a.a) ? c : i)
 					: o(dC, k([dT(dG(d))]), k([o(dh, k([dD('cactus-button')]), k([rZ('Log in')]))])),
 				y = function (n) {
 					return s(
@@ -10089,14 +10089,14 @@ function n(n) {
 							? [y(!0), o(dx, k([dD('cactus-editor-below')]), k([w, S]))]
 							: [y(o(eg, !1, o(tQ, dB, b))), o(dx, k([dD('cactus-editor-below')]), k([S]))]
 						: l.b
-						? [y(!0), o(dx, k([dD('cactus-editor-below')]), k([w, S]))]
-						: [
-								o(
-									dC,
-									k([dT(dG(d)), dD('cactus-button'), dD('cactus-matrixdotto-only')]),
-									k([rZ('Comment using a Matrix client')])
-								)
-						  ]
+							? [y(!0), o(dx, k([dD('cactus-editor-below')]), k([w, S]))]
+							: [
+									o(
+										dC,
+										k([dT(dG(d)), dD('cactus-button'), dD('cactus-matrixdotto-only')]),
+										k([rZ('Comment using a Matrix client')])
+									)
+								]
 				)
 			);
 		}),
@@ -10308,7 +10308,7 @@ function n(n) {
 						d$,
 						k([dD('cactus-login-form-wrapper'), o(dq, 'click', vf)]),
 						k([o(dx, k([dD('cactus-login-form')]), k([vo, u, v, l]))])
-				  );
+					);
 		}),
 		v$ = e(function (r, n, e) {
 			return o(
@@ -11340,7 +11340,7 @@ function n(n) {
 														k([
 															o(dh, k([dD('cactus-button'), dS(o(dg, e, t))]), k([rZ('View more')]))
 														])
-												  )
+													)
 										])
 									);
 								})()
@@ -11355,7 +11355,7 @@ function n(n) {
 		r.Elm
 			? (function r(n, t) {
 					for (var e in t) e in n ? ('init' == e ? R(6) : r(n[e], t[e])) : (n[e] = t[e]);
-			  })(r.Elm, lJ)
+				})(r.Elm, lJ)
 			: (r.Elm = lJ);
 })(r);
 export { n as initComments }; //# sourceMappingURL=cactus.js.map
