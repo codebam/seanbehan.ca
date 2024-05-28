@@ -12,7 +12,13 @@
 			siteName: 'seanbehan.ca',
 			commentSectionId: 'main'
 		});
-		const source = new EventSource('https://broad-pine-6ec0.codebam.workers.dev/');
+		const url = new URL('https://damp-recipe-a17d.codebam.workers.dev/');
+		url.searchParams.set('system', 'pretend you are Sean Behan.');
+		url.searchParams.set(
+			'content',
+			"Generate me a 1 paragraph website intro for the following. My name is Sean Behan. My email address is contact@seanbehan.ca. My GitHub is codebam. I am a full stack developer. I spend most of my time on Linux writing software and contributing to open source. I'm a quick learner and enjoy learning new things. I am currently looking for work."
+		);
+		const source = new EventSource(url.toString());
 		const el = document.getElementById('bio');
 		let start = true;
 		source.onmessage = (event) => {
@@ -52,7 +58,7 @@
 		innovative, efficient, and cutting-edge solutions for a wide range of projects.
 	</P>
 	<P class="mx-4 flex justify-end text-secondary dark:text-dark-secondary"
-		><a href="https://ai.cloudflare.com">@hf/thebloke/llama-2-13b-chat-awq</a></P
+		><a href="https://ai.cloudflare.com">@cf/meta/llama-3-8b-instruct</a></P
 	>
 </div>
 
