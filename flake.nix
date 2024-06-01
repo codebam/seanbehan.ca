@@ -9,7 +9,12 @@
     {
       devShell = pkgs.mkShell {
         buildInputs = with pkgs; [
+          efm-langserver
+          nil
           nodePackages_latest.nodejs
+          nodePackages_latest.typescript-language-server
+          nodePackages_latest.prettier
+          vscode-langservers-extracted
         ];
       };
     }
