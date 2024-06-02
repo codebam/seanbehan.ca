@@ -1,5 +1,5 @@
 ---
-title: 'NixOS Flakes devShell'
+title: 'NixOS Flakes'
 date: 2024-06-01T22:38:41Z
 tags:
   - nixos
@@ -7,7 +7,7 @@ draft: false
 ---
 
 Flakes in NixOS allow you to write Nix code that has custom inputs and outputs.
-For example this is the simplest example of a Flake. You can get a copy for
+For example this is a simple example of a Flake. You can get a copy for
 yourself by running `nix flake init`.
 
 ```nix
