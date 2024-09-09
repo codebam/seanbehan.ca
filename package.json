@@ -40,7 +40,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@fontsource-variable/inter": "^5.0.20",
+		"@fontsource-variable/inter": "^5.0.21",
 		"@sveltejs/adapter-cloudflare": "^4.7.1",
 		"fuse.js": "^7.0.0"
 	}
