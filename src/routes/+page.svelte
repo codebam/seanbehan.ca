@@ -13,7 +13,7 @@
 			commentSectionId: 'main'
 		});
 		const url = new URL('https://damp-recipe-a17d.codebam.workers.dev/');
-		url.searchParams.set('model', '@cf/meta/llama-3-8b-instruct');
+		url.searchParams.set('model', '@cf/meta/llama-3.1-8b-instruct');
 		url.searchParams.set('system', 'pretend you are Sean Behan.');
 		url.searchParams.set(
 			'content',
@@ -59,7 +59,7 @@
 		innovative, efficient, and cutting-edge solutions for a wide range of projects.
 	</P>
 	<P class="mx-4 flex justify-end text-secondary dark:text-dark-secondary"
-		><a href="https://ai.cloudflare.com">@cf/meta/llama-3-8b-instruct</a></P
+		><a href="https://ai.cloudflare.com">@cf/meta/llama-3.1-8b-instruct</a></P
 	>
 </div>
 
