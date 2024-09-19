@@ -29,7 +29,7 @@
 		>
 		<NavLi
 			class="text-primary dark:text-dark-primary hover:text-tertiary hover:dark:text-dark-tertiary"
-			href="/resume">Resume</NavLi
+			href="https://pub-b1fc9705d9cd4b50885284c3ede52d27.r2.dev/resume.pdf">Resume</NavLi
 		>
 		<NavLi
 			class="text-primary dark:text-dark-primary hover:text-tertiary hover:dark:text-dark-tertiary"
