@@ -19,7 +19,7 @@
 <svelte:head>
 	<title>{data.title}</title>
 	<link rel="stylesheet" href="/prism.css" />
-	<link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css" />
+	<link rel="stylesheet" href="https://gateway.pinata.cloud/ipfs/QmSiWN27KZZ1XE32jKwifBnS3nWTUcFGNArKzur2nmDgoL/v0.13.0/style.css" type="text/css" />
 </svelte:head>
 <article>
 	<Heading class="text-secondary dark:text-dark-secondary" tag="h2">{data.title}</Heading>
