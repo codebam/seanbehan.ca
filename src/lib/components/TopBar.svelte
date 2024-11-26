@@ -1,5 +1,11 @@
 <script>
+	import { page } from '$app/stores';
 	import { Navbar, NavBrand, NavLi, NavUl, NavHamburger } from 'flowbite-svelte';
+	$: activeUrl = $page.url.pathname;
+	const activeClass =
+		'text-tertiary dark:text-dark-tertiary hover:text-primary hover:dark:text-dark-primary';
+	const nonActiveClass =
+		'text-primary dark:text-dark-primary hover:text-tertiary hover:dark:text-dark-tertiary';
 </script>
 
 <Navbar class="bg-background dark:bg-dark-background">
@@ -10,35 +16,14 @@
 			>Sean Behan</span
 		>
 	</NavBrand>
-	<NavUl>
-		<NavLi
-			class="text-primary dark:text-dark-primary hover:text-tertiary hover:dark:text-dark-tertiary"
-			href="/">Home</NavLi
-		>
-		<NavLi
-			class="text-primary dark:text-dark-primary hover:text-tertiary hover:dark:text-dark-tertiary"
-			href="/playlists">Playlists</NavLi
-		>
-		<NavLi
-			class="text-primary dark:text-dark-primary hover:text-tertiary hover:dark:text-dark-tertiary"
-			href="https://github.com/codebam">GitHub</NavLi
-		>
-		<NavLi
-			class="text-primary dark:text-dark-primary hover:text-tertiary hover:dark:text-dark-tertiary"
-			href="/contact">Contact</NavLi
-		>
-		<NavLi
-			class="text-primary dark:text-dark-primary hover:text-tertiary hover:dark:text-dark-tertiary"
-			href="https://pub-b1fc9705d9cd4b50885284c3ede52d27.r2.dev/resume.pdf">Resume</NavLi
-		>
-		<NavLi
-			class="text-primary dark:text-dark-primary hover:text-tertiary hover:dark:text-dark-tertiary"
-			href="https://p.seanbehan.ca">Pastebin</NavLi
-		>
-		<NavLi
-			class="text-primary dark:text-dark-primary hover:text-tertiary hover:dark:text-dark-tertiary"
-			href="https://term.seanbehan.ca">Terminal</NavLi
-		>
+	<NavUl {activeUrl} {activeClass} {nonActiveClass}>
+		<NavLi href="/">Home</NavLi>
+		<NavLi href="/playlists">Playlists</NavLi>
+		<NavLi href="https://github.com/codebam">GitHub</NavLi>
+		<NavLi href="/contact">Contact</NavLi>
+		<NavLi href="https://pub-b1fc9705d9cd4b50885284c3ede52d27.r2.dev/resume.pdf">Resume</NavLi>
+		<NavLi href="https://p.seanbehan.ca">Pastebin</NavLi>
+		<NavLi href="https://term.seanbehan.ca">Terminal</NavLi>
 	</NavUl>
 	<NavHamburger />
 </Navbar>
