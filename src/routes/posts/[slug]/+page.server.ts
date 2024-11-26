@@ -1,7 +1,9 @@
+import { render } from 'svelte/server';
+
 export async function load({ params }) {
 	const post = await import(`../${params.slug}.md`);
 	const { title, date } = post.metadata;
-	const { html } = post.default.render();
+	const { html } = render(post.default);
 	return {
 		html,
 		title,
