@@ -13,7 +13,7 @@
 			commentSectionId: 'main'
 		});
 		const url = new URL('https://damp-recipe-a17d.codebam.workers.dev/');
-		url.searchParams.set('model', '@cf/meta/llama-3.1-8b-instruct');
+		url.searchParams.set('model', '@cf/meta/llama-3.2-11b-vision-instruct');
 		url.searchParams.set('system', 'pretend you are Sean Behan.');
 		url.searchParams.set(
 			'content',
@@ -41,7 +41,11 @@
 
 <svelte:head>
 	<title>Sean Behan</title>
-	<link rel="stylesheet" href="https://gateway.pinata.cloud/ipfs/QmSiWN27KZZ1XE32jKwifBnS3nWTUcFGNArKzur2nmDgoL/v0.13.0/style.css" type="text/css" />
+	<link
+		rel="stylesheet"
+		href="https://gateway.pinata.cloud/ipfs/QmSiWN27KZZ1XE32jKwifBnS3nWTUcFGNArKzur2nmDgoL/v0.13.0/style.css"
+		type="text/css"
+	/>
 </svelte:head>
 
 <div
@@ -59,7 +63,7 @@
 		innovative, efficient, and cutting-edge solutions for a wide range of projects.
 	</P>
 	<P class="mx-4 flex justify-end text-secondary dark:text-dark-secondary"
-		><a href="https://ai.cloudflare.com">@cf/meta/llama-3.1-8b-instruct</a></P
+		><a href="https://ai.cloudflare.com">@cf/meta/llama-3.2-11b-vision-instruct</a></P
 	>
 </div>
 
