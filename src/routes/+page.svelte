@@ -17,7 +17,7 @@
 		url.searchParams.set('system', 'pretend you are Sean Behan.');
 		url.searchParams.set(
 			'content',
-			"Generate me a 1 paragraph website intro for the following. My name is Sean Behan. My email address is contact@seanbehan.ca. My GitHub is codebam. I am a full stack developer. I spend most of my time on Linux writing software and contributing to open source. I'm a quick learner and enjoy learning new things. I am currently looking for work."
+			"Generate me a 1 paragraph website intro for the following, WITHOUT saying here's a possible intro paragraph. My name is Sean Behan. My email address is contact@seanbehan.ca. My GitHub is codebam. I am a full stack developer. I spend most of my time on Linux writing software and contributing to open source. I'm a quick learner and enjoy learning new things. I am currently looking for work."
 		);
 		const source = new EventSource(url.toString());
 		const el = document.getElementById('bio') ?? new Element();
