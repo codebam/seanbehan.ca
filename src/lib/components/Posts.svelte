@@ -2,14 +2,13 @@
 	import { Heading } from 'flowbite-svelte';
 	import Post from '$lib/components/Post.svelte';
 	import Fuse from 'fuse.js';
-	import { afterUpdate } from 'svelte';
-	export let posts: { path: string; meta: { title: string; date: string } }[];
-	let query = '';
-	let results = posts;
+	const { posts } = $props<{ posts: { path: string; meta: { title: string; date: string } }[] }>();
+	let query = $state('');
+	let results = $state(posts);
 	const options = { keys: ['meta.title'] };
 	const fuse = new Fuse(posts, options);
-	afterUpdate(() => {
-		let results_ = fuse.search(query);
+	$effect(() => {
+		let results_ = fuse.search<{ path: string; meta: { title: string; date: string } }>(query);
 		results = results_.map((result) => ({ path: result.item.path, meta: result.item.meta }));
 	});
 </script>
