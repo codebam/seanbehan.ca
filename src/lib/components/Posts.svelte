@@ -4,13 +4,9 @@
 	import Fuse from 'fuse.js';
 	const { posts } = $props<{ posts: { path: string; meta: { title: string; date: string } }[] }>();
 	let query = $state('');
-	let results = $state(posts);
 	const options = { keys: ['meta.title'] };
 	const fuse = new Fuse(posts, options);
-	$effect(() => {
-		let results_ = fuse.search<{ path: string; meta: { title: string; date: string } }>(query);
-		results = results_.map((result) => ({ path: result.item.path, meta: result.item.meta }));
-	});
+	let results = $state(posts);
 </script>
 
 <div class="flex flex-wrap justify-between">
@@ -23,6 +19,10 @@
 		class="p-2 m-2 rounded text-secondary bg-background dark:bg-dark-background-secondary dark:text-dark-secondary"
 		bind:value={query}
 		placeholder="search"
+		onkeypress={() =>
+			(results = fuse
+				.search<{ path: string; meta: { title: string; date: string } }>(query)
+				.map((result) => ({ path: result.item.path, meta: result.item.meta })))}
 	/>
 </div>
 <ul>
