@@ -29,9 +29,4 @@
 	{#each results as post}
 		<Post {post} />
 	{/each}
-	{#if results.length === 0}
-		{#each posts as post}
-			<Post {post} />
-		{/each}
-	{/if}
 </ul>
