@@ -1,0 +1,9 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+html {
+	max-width: 60em;
+	margin: auto;
+	font-family: 'Inter Variable', sans-serif;
+}

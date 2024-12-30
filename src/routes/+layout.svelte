@@ -1,6 +1,6 @@
 <script>
+	import '../app.css';
 	import '@fontsource-variable/inter';
-	import '../app.postcss';
 	import TopBar from '$lib/components/TopBar.svelte';
 </script>
 
@@ -12,9 +12,9 @@
 	></script>
 </svelte:head>
 
-<TopBar />
+<TopBar></TopBar>
 <main>
-	<slot />
+	<slot></slot>
 </main>
 <footer class="m-4 underline">
 	<a href="https://github.com/codebam/seanbehan.ca">source code</a>

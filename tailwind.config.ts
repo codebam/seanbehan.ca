@@ -1,8 +1,9 @@
-/** @type {import('tailwindcss').Config}*/
-const config = {
+import type { Config } from 'tailwindcss';
+import typography from '@tailwindcss/typography';
+
+export default {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
-	plugins: [],
-	darkMode: 'media',
+
 	theme: {
 		colors: {
 			foreground: '#000',
@@ -21,8 +22,9 @@ const config = {
 			'dark-secondary': '#B2E6D4',
 			'dark-tertiary': '#EA9E8D',
 			'dark-quaternary': '#FA824C'
-		}
-	}
-};
+		},
+		extend: {}
+	},
 
-module.exports = config;
+	plugins: [typography()]
+} as Config;
