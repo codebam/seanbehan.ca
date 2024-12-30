@@ -24,12 +24,12 @@
 		type="text/css"
 	/>
 </svelte:head>
-<article class="mx-2">
+<article>
 	<h2 class="text-secondary dark:text-dark-secondary">{data.title}</h2>
 	<h5 class="text-secondary dark:text-dark-secondary">{data.date}</h5>
 	<p id="blogpost" class="text-secondary dark:text-dark-secondary my-4">{@html data.html}</p>
 </article>
-<div class="mx-2">
+<div>
 	<div id="comment-section"></div>
 </div>
 

@@ -48,7 +48,7 @@
 </svelte:head>
 
 <div>
-	<p id="bio" class="mx-2 my-2">
+	<p id="bio" class="my-2">
 		As a full-stack developer, I specialize in creating and managing web applications using various
 		programming languages and technologies. My primary focus lies within the Linux operating system,
 		where I spend most of my time writing software and contributing to open-source projects. With my
@@ -56,14 +56,14 @@
 		technologies to enhance my skills. This passion for continuous growth enables me to create
 		innovative, efficient, and cutting-edge solutions for a wide range of projects.
 	</p>
-	<p class="mx-4 flex justify-end">
+	<p class="flex justify-end">
 		<a href="https://ai.cloudflare.com">@cf/meta/llama-3.2-11b-vision-instruct</a>
 	</p>
 </div>
 
 <Posts posts={data.posts} />
 
-<div class="mx-2">
+<div>
 	<div id="comment-section"></div>
 </div>
 

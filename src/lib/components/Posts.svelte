@@ -10,7 +10,7 @@
 
 <div class="flex flex-wrap justify-between">
 	<input
-		class="m-2 p-2 text-black"
+		class="mt-2 p-2 text-black"
 		bind:value={query}
 		placeholder="search"
 		onkeypress={() =>
@@ -19,7 +19,7 @@
 				.map((result) => ({ path: result.item.path, meta: result.item.meta })))}
 	/>
 </div>
-<ul class="mx-2">
+<ul>
 	{#each results as post}
 		<Post {post} />
 	{/each}

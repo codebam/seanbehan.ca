@@ -15,9 +15,9 @@
 </svelte:head>
 
 <TopBar></TopBar>
-<main>
+<main class="mx-2">
 	<slot></slot>
 </main>
-<footer class="m-4 underline">
+<footer class="mx-2">
 	<a href="https://github.com/codebam/seanbehan.ca">source code</a>
 </footer>
