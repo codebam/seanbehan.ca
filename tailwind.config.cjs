@@ -1,11 +1,7 @@
 /** @type {import('tailwindcss').Config}*/
 const config = {
-	content: [
-		'./src/**/*.{html,js,svelte,ts}',
-		'./node_modules/flowbite-svelte/**/*.{html,js,svelte,ts}',
-		'./node_modules/flowbite-svelte-blocks/**/*.{html,js,svelte,ts}'
-	],
-	plugins: [require('flowbite/plugin'), require('flowbite-typography')],
+	content: ['./src/**/*.{html,js,svelte,ts}'],
+	plugins: [],
 	darkMode: 'media',
 	theme: {
 		colors: {

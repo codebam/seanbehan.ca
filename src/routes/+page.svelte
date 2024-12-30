@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import Posts from '$lib/components/Posts.svelte';
-	import { P } from 'flowbite-svelte';
 	import { initComments } from '$lib/cactus.js';
 
 	onMount(() => {
@@ -54,17 +53,17 @@
 	dark:border-dark-background-tertiary rounded-3xl hover:border-quaternary
 	hover:dark:border-dark-quaternary"
 >
-	<P id="bio" class="mx-4 text-secondary dark:text-dark-secondary my-2">
+	<p id="bio" class="mx-4 text-secondary dark:text-dark-secondary my-2">
 		As a full-stack developer, I specialize in creating and managing web applications using various
 		programming languages and technologies. My primary focus lies within the Linux operating system,
 		where I spend most of my time writing software and contributing to open-source projects. With my
 		aptitude for quick learning, I am always eager to expand my knowledge base and explore new
 		technologies to enhance my skills. This passion for continuous growth enables me to create
 		innovative, efficient, and cutting-edge solutions for a wide range of projects.
-	</P>
-	<P class="mx-4 flex justify-end text-secondary dark:text-dark-secondary"
-		><a href="https://ai.cloudflare.com">@cf/meta/llama-3.2-11b-vision-instruct</a></P
-	>
+	</p>
+	<p class="mx-4 flex justify-end text-secondary dark:text-dark-secondary">
+		<a href="https://ai.cloudflare.com">@cf/meta/llama-3.2-11b-vision-instruct</a>
+	</p>
 </div>
 
 <Posts posts={data.posts} />

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { Heading } from 'flowbite-svelte';
 	import Post from '$lib/components/Post.svelte';
 	import Fuse from 'fuse.js';
 	const { posts } = $props<{ posts: { path: string; meta: { title: string; date: string } }[] }>();
@@ -10,11 +9,9 @@
 </script>
 
 <div class="flex flex-wrap justify-between">
-	<Heading
-		tag="h4"
-		style="display: inline"
-		class="ml-8 my-4 text-secondary dark:text-dark-secondary w-auto">Posts</Heading
-	>
+	<h4 style="display: inline" class="ml-8 my-4 text-secondary dark:text-dark-secondary w-auto">
+		Posts
+	</h4>
 	<input
 		class="p-2 m-2 rounded text-secondary bg-background dark:bg-dark-background-secondary dark:text-dark-secondary"
 		bind:value={query}
