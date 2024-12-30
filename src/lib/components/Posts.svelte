@@ -9,11 +9,8 @@
 </script>
 
 <div class="flex flex-wrap justify-between">
-	<h4 style="display: inline" class="ml-8 my-4 text-secondary dark:text-dark-secondary w-auto">
-		Posts
-	</h4>
 	<input
-		class="p-2 m-2 rounded text-secondary bg-background dark:bg-dark-background-secondary dark:text-dark-secondary"
+		class="m-2 p-2 text-black"
 		bind:value={query}
 		placeholder="search"
 		onkeypress={() =>
@@ -22,7 +19,7 @@
 				.map((result) => ({ path: result.item.path, meta: result.item.meta })))}
 	/>
 </div>
-<ul>
+<ul class="mx-2">
 	{#each results as post}
 		<Post {post} />
 	{/each}

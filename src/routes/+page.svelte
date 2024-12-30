@@ -47,13 +47,8 @@
 	/>
 </svelte:head>
 
-<div
-	class="bg-background-secondary dark:bg-dark-background-secondary m-2 p-4
-	drop-shadow border-2 border-background-tertiary
-	dark:border-dark-background-tertiary rounded-3xl hover:border-quaternary
-	hover:dark:border-dark-quaternary"
->
-	<p id="bio" class="mx-4 text-secondary dark:text-dark-secondary my-2">
+<div>
+	<p id="bio" class="mx-2 my-2">
 		As a full-stack developer, I specialize in creating and managing web applications using various
 		programming languages and technologies. My primary focus lies within the Linux operating system,
 		where I spend most of my time writing software and contributing to open-source projects. With my
@@ -61,13 +56,15 @@
 		technologies to enhance my skills. This passion for continuous growth enables me to create
 		innovative, efficient, and cutting-edge solutions for a wide range of projects.
 	</p>
-	<p class="mx-4 flex justify-end text-secondary dark:text-dark-secondary">
+	<p class="mx-4 flex justify-end">
 		<a href="https://ai.cloudflare.com">@cf/meta/llama-3.2-11b-vision-instruct</a>
 	</p>
 </div>
 
 <Posts posts={data.posts} />
 
-<div id="comment-section"></div>
+<div class="mx-2">
+	<div id="comment-section"></div>
+</div>
 
 <a rel="me" style="display: none;" href="https://mstdn.ca/@codebam">mstdn.ca/@codebam</a>

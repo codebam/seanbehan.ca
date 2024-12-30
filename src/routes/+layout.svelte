@@ -1,6 +1,7 @@
 <script>
 	import '../app.css';
 	import '@fontsource-variable/inter';
+	import { autoModeWatcher } from '@skeletonlabs/skeleton';
 	import TopBar from '$lib/components/TopBar.svelte';
 </script>
 
@@ -10,6 +11,7 @@
 		src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3287237463323384"
 		crossorigin="anonymous"
 	></script>
+	{@html '<script>(' + autoModeWatcher.toString() + ')();</script>'}
 </svelte:head>
 
 <TopBar></TopBar>
