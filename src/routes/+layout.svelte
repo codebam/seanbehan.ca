@@ -3,6 +3,7 @@
 	import '@fontsource-variable/inter';
 	import { autoModeWatcher } from '@skeletonlabs/skeleton';
 	import TopBar from '$lib/components/TopBar.svelte';
+	let { children } = $props();
 </script>
 
 <svelte:head>
@@ -16,7 +17,7 @@
 
 <TopBar></TopBar>
 <main class="mx-2">
-	<slot></slot>
+	{@render children?.()}
 </main>
 <footer class="mx-2">
 	<a href="https://github.com/codebam/seanbehan.ca">source code</a>
