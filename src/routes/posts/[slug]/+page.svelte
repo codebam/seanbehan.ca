@@ -32,9 +32,3 @@
 <div>
 	<div id="comment-section"></div>
 </div>
-
-<style>
-	#blogpost :global(a) {
-		text-decoration: underline;
-	}
-</style>
