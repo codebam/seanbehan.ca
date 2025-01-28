@@ -1,12 +1,12 @@
 <script>
-	import { Avatar } from '@skeletonlabs/skeleton';
+    import { Avatar } from '@skeletonlabs/skeleton-svelte';
 </script>
 
 <svelte:head>
 	<title>Contact</title>
 </svelte:head>
 
-<Avatar src="/profile.webp" />
+<Avatar src="/profile.webp" name="Sean Behan profile photo" />
 <ul>
 	<li><a href="mailto:contact@seanbehan.ca">Email</a></li>
 	<li><a href="https://github.com/codebam">GitHub</a></li>
