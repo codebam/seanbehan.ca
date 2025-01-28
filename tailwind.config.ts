@@ -1,36 +1,15 @@
 import type { Config } from 'tailwindcss';
 import typography from '@tailwindcss/typography';
-import { join } from 'path';
-import { skeleton } from '@skeletonlabs/tw-plugin';
+import { skeleton, contentPath } from '@skeletonlabs/skeleton/plugin';
+import * as themes from '@skeletonlabs/skeleton/themes';
 
 export default {
-	darkMode: 'media',
-	content: [
-		'./src/**/*.{html,js,svelte,ts}',
-		join(require.resolve('@skeletonlabs/skeleton'), '../**/*.{html,js,svelte,ts}')
-	],
+  darkMode: 'media',
+  content: ['./src/**/*.{html,js,svelte,ts}', contentPath(import.meta.url, 'svelte')],
 
-	theme: {
-		// colors: {
-		// 	foreground: '#000',
-		// 	background: '#fff',
-		// 	'background-secondary': '#eee',
-		// 	'background-tertiary': '#e0e0e0',
-		// 	primary: '#145799',
-		// 	secondary: '#191308',
-		// 	tertiary: '#CF5C36',
-		// 	quaternary: '#FBB02D',
-		// 	'dark-background': '#000',
-		// 	'dark-background-secondary': '#111111',
-		// 	'dark-background-tertiary': '#1f1f1f',
-		// 	'dark-foreground': '#fff',
-		// 	'dark-primary': '#539EE9',
-		// 	'dark-secondary': '#B2E6D4',
-		// 	'dark-tertiary': '#EA9E8D',
-		// 	'dark-quaternary': '#FA824C'
-		// },
-		extend: {}
-	},
+  theme: {
+    extend: {}
+  },
 
-	plugins: [typography, skeleton({ themes: { preset: ['skeleton'] } })]
+  plugins: [typography, skeleton({ themes: [themes.cerberus, themes.rose] })]
 } as Config;
