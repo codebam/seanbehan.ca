@@ -17,7 +17,7 @@
 
 <svelte:head>
 	<title>{data.title}</title>
-	<link rel="stylesheet" href="/prism.css" />
+	<link rel="stylesheet" href="https://prismjs.catppuccin.com/mocha.css" />
 	<link
 		rel="stylesheet"
 		href="https://gateway.pinata.cloud/ipfs/QmSiWN27KZZ1XE32jKwifBnS3nWTUcFGNArKzur2nmDgoL/v0.13.0/style.css"
