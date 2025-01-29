@@ -11,5 +11,5 @@ export default {
     extend: {}
   },
 
-  plugins: [typography, skeleton({ themes: [themes.cerberus, themes.rose] })]
+  plugins: [typography, skeleton({ themes: [themes.catppuccin] })]
 } as Config;
