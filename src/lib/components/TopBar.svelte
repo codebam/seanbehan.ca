@@ -1,13 +1,18 @@
 <script>
-	import { page } from '$app/stores';
-	import { Tabs } from '@skeletonlabs/skeleton-svelte';
-	let group = $state($page.url.pathname);
+	import { AppBar } from '@skeletonlabs/skeleton-svelte';
 </script>
 
-<Tabs bind:value={group}>
-	{#snippet list()}
-		<Tabs.Control value="/"><a href="/">Home</a></Tabs.Control>
-		<Tabs.Control value="/posts"><a href="/posts">Posts</a></Tabs.Control>
-		<Tabs.Control value="/contact"><a href="/contact">Contact</a></Tabs.Control>
+<AppBar>
+	{#snippet lead()}
+		<a href="/">Home</a>
+		<a href="/posts">Posts</a>
+		<a href="/contact">Contact</a>
 	{/snippet}
-</Tabs>
+	{#snippet trail()}
+		<a href="https://github.com/codebam">GitHub</a>
+		<a href="https://mstdn.ca/@codebam">Mastodon</a>
+	{/snippet}
+	{#snippet headline()}
+		<a class="text-xl font-bold" href="/">Sean Behan</a>
+	{/snippet}
+</AppBar>
