@@ -8,11 +8,4 @@ date: 2022-6-1
 <title>Resume</title>
 </svelte:head>
 
-[Download my resumé](https://github.com/codebam/resume/releases/latest/download/resume.pdf)
-
-<!--![resume page 1](https://github.com/codebam/resume/releases/latest/download/resume-white.png)-->
-
-![resume page 1](https://github.com/codebam/resume/releases/latest/download/resume-white-0.png)
-![resume page 2](https://github.com/codebam/resume/releases/latest/download/resume-white-1.png)
-
-<!--![resume page 3](https://github.com/codebam/resume/releases/latest/download/resume-white-2.png)-->
+<embed src="https://pub-b1fc9705d9cd4b50885284c3ede52d27.r2.dev/resume.pdf" width="1080" height="1920" type="application/pdf">
