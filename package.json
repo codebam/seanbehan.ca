@@ -14,7 +14,7 @@
 		"cf-typegen": "wrangler types && mv worker-configuration.d.ts src/"
 	},
 	"devDependencies": {
-		"@eslint/js": "^9.20.0",
+		"@eslint/js": "^9.21.0",
 		"@skeletonlabs/skeleton": "^3.0.0-next.10",
 		"@skeletonlabs/skeleton-svelte": "^1.0.0-next.18",
 		"@sveltejs/adapter-auto": "^4.0.0",
