@@ -4071,7 +4071,7 @@ function n(n) {
 				D('RightUpVector', '↾'),
 				D('RightVectorBar', '⥓'),
 				D('RightVector', '⇀'),
-				D('ring', '˚'),
+				D('ring-3', '˚'),
 				D('risingdotseq', '≓'),
 				D('rlarr', '⇄'),
 				D('rlhar', '⇌'),
