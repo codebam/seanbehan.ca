@@ -4,7 +4,7 @@
 
 @custom-variant dark (@media (prefers-color-scheme: dark));
 
-@source '../node_modules/@skeletonlabs/skeleton-{framework}';
+@source '../node_modules/@skeletonlabs/skeleton-svelte';
 
 @import '@skeletonlabs/skeleton';
 @import '@skeletonlabs/skeleton/optional/presets';
