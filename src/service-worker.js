@@ -3,7 +3,7 @@ import { build, files, version } from '$service-worker';
 
 const CACHE = `cache-${version}`;
 const ASSETS = [...build, ...files];
-const TIMEOUT_MS = 3000;
+const TIMEOUT_MS = 10000;
 
 // Configuration
 const CONFIG = {
@@ -107,7 +107,14 @@ self.addEventListener('fetch', (event) => {
                 }
             }
 
-            // Network-first strategy
+            // Try cache first for all requests
+            const cachedResponse = await cache.match(event.request);
+            if (cachedResponse) {
+                logger.log(`Serving from cache: ${url.pathname}`);
+                return cachedResponse;
+            }
+
+            // Network request
             try {
                 const response = await networkUtils.fetchWithTimeout(event.request);
                 if (response.ok) {
@@ -117,10 +124,9 @@ self.addEventListener('fetch', (event) => {
                 }
                 throw new Error(`Network response failed: ${response.status}`);
             } catch (error) {
-                logger.log(`Network error, falling back to cache: ${url.pathname}`, error);
-                const cachedResponse = await cache.match(event.request);
-                if (cachedResponse) return cachedResponse;
-                throw error;
+                logger.log(`Network error: ${url.pathname}`, error);
+                // If we have no cached response, return a basic error
+                return new Response('Network error', { status: 503, statusText: 'Service Unavailable' });
             }
         })()
     );
