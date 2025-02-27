@@ -1,53 +1,39 @@
 /// <reference types="@sveltejs/kit" />
 import { build, files, version } from '$service-worker';
 
-const CACHE = `cache-${version}`;
-const ASSETS = [...build, ...files];
-const TIMEOUT_MS = 10000;
-
-// Configuration
-const CONFIG = {
-    debug: process.env.NODE_ENV === 'development',
-    cacheVersion: CACHE,
-    networkTimeout: TIMEOUT_MS,
-    cacheableRequests: ['GET', 'HEAD']
+const CACHE_CONFIG = {
+    version: version,
+    timeout: 10000,
+    methods: ['GET', 'HEAD'],
+    debug: process.env.NODE_ENV === 'development'
 };
 
-// Logger utility
-const logger = {
-    log: (...args) => CONFIG.debug && console.log('[Service Worker]', ...args),
-    error: (...args) => console.error('[Service Worker]', ...args)
-};
-
-// Cache management
-const cacheManager = {
-    async add(cache, assets) {
-        logger.log(`Caching ${assets.length} files`);
+// Simplified cache management
+class CacheManager {
+    static async addAssets(assets) {
+        const cache = await caches.open(`cache-${CACHE_CONFIG.version}`);
         await cache.addAll(assets);
-        logger.log('Cache operation complete');
-    },
-
-    async cleanup() {
-        const keys = await caches.keys();
-        const deletions = keys
-            .filter((key) => key !== CONFIG.cacheVersion)
-            .map((key) => {
-                logger.log(`Removing old cache: ${key}`);
-                return caches.delete(key);
-            });
-        await Promise.all(deletions);
     }
-};
+
+    static async cleanup() {
+        const keys = await caches.keys();
+        await Promise.all(
+            keys
+                .filter(key => !key.includes(CACHE_CONFIG.version))
+                .map(key => caches.delete(key))
+        );
+    }
+}
 
 // Network utilities
 const networkUtils = {
     isValidRequest(request) {
-        return CONFIG.cacheableRequests.includes(request.method);
+        return CACHE_CONFIG.methods.includes(request.method);
     },
 
     async fetchWithTimeout(request) {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), CONFIG.networkTimeout);
+        const timeoutId = setTimeout(() => controller.abort(), CACHE_CONFIG.timeout);
 
         try {
             const response = await fetch(request, { signal: controller.signal });
@@ -65,11 +51,11 @@ self.addEventListener('install', (event) => {
     event.waitUntil(
         (async () => {
             try {
-                const cache = await caches.open(CONFIG.cacheVersion);
-                await cacheManager.add(cache, ASSETS);
+                const cache = await caches.open(`cache-${CACHE_CONFIG.version}`);
+                await CacheManager.addAssets([...build, ...files]);
                 await self.skipWaiting();
             } catch (error) {
-                logger.error('Installation failed:', error);
+                console.error('[Service Worker] Installation failed:', error);
                 throw error;
             }
         })()
@@ -80,10 +66,10 @@ self.addEventListener('activate', (event) => {
     event.waitUntil(
         (async () => {
             try {
-                await cacheManager.cleanup();
+                await CacheManager.cleanup();
                 await self.clients.claim();
             } catch (error) {
-                logger.error('Activation failed:', error);
+                console.error('[Service Worker] Activation failed:', error);
                 throw error;
             }
         })()
@@ -95,14 +81,14 @@ self.addEventListener('fetch', (event) => {
 
     event.respondWith(
         (async () => {
-            const cache = await caches.open(CONFIG.cacheVersion);
+            const cache = await caches.open(`cache-${CACHE_CONFIG.version}`);
             const url = new URL(event.request.url);
 
             // Static asset handling
-            if (ASSETS.includes(url.pathname)) {
+            if ([...build, ...files].includes(url.pathname)) {
                 const cachedResponse = await cache.match(url.pathname);
                 if (cachedResponse) {
-                    logger.log(`Serving from cache: ${url.pathname}`);
+                    if (CACHE_CONFIG.debug) console.log(`[Service Worker] Serving from cache: ${url.pathname}`);
                     return cachedResponse;
                 }
             }
@@ -110,7 +96,7 @@ self.addEventListener('fetch', (event) => {
             // Try cache first for all requests
             const cachedResponse = await cache.match(event.request);
             if (cachedResponse) {
-                logger.log(`Serving from cache: ${url.pathname}`);
+                if (CACHE_CONFIG.debug) console.log(`[Service Worker] Serving from cache: ${url.pathname}`);
                 return cachedResponse;
             }
 
@@ -118,13 +104,13 @@ self.addEventListener('fetch', (event) => {
             try {
                 const response = await networkUtils.fetchWithTimeout(event.request);
                 if (response.ok) {
-                    logger.log(`Network response: ${url.pathname}`);
+                    if (CACHE_CONFIG.debug) console.log(`[Service Worker] Network response: ${url.pathname}`);
                     await cache.put(event.request, response.clone());
                     return response;
                 }
                 throw new Error(`Network response failed: ${response.status}`);
             } catch (error) {
-                logger.log(`Network error: ${url.pathname}`, error);
+                if (CACHE_CONFIG.debug) console.log(`[Service Worker] Network error: ${url.pathname}`, error);
                 // If we have no cached response, return a basic error
                 return new Response('Network error', { status: 503, statusText: 'Service Unavailable' });
             }
