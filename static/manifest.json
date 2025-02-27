@@ -1,8 +1,8 @@
 {
 	"version": "0.1",
 	"manifest_version": 2,
-	"short_name": "sean-behan",
-	"name": "sean-behan-pwa",
+	"short_name": "seanbehan.ca",
+	"name": "seanbehan",
 	"start_url": "/",
 	"icons": [
 		{
