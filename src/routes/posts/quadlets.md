@@ -80,7 +80,13 @@ Okay so now lets run something useful :)
 
 How about an nginx container and a certbot container to get a certificate for it?
 
-First we need to create a quadlet for our nginx container.
+First lets create a directory to hold our files.
+
+```sh
+mkdir -p ~/.config/containers/systemd/www
+```
+
+Next we create a quadlet for our nginx container.
 
 ```systemd
 [Container]
@@ -88,6 +94,7 @@ Image=docker.io/nginx:latest
 PublishPort=80:80
 PublishPort=443:443
 AutoUpdate=registry
+Volume=./www:/usr/share/nginx/html
 ```
 
 This will run a web server for us. If you aren't root, you'll need to enable unprivleged ports.
@@ -105,9 +112,10 @@ Now we need to get a certificate for it. We can use certbot for this.
 ```systemd
 [Container]
 Image=docker.io/certbot/certbot:latest
-Exec=certonly --standalone --agree-tos --email your@email.com -d your.domain.com
-AutoUpdate=registry
 Volume=letsencrypt:/etc/letsencrypt
+Volume=./www:/mnt
+Exec=certonly --webroot --webroot-path /mnt --agree-tos --email your@email.com -d your.domain.com
+AutoUpdate=registry
 ```
 
 Make sure to replace your@email.com and your.domain.com with your own email and domain.
