@@ -18,7 +18,7 @@ format for systemd units that allow you to manage containers using systemd.
 
 Here's an example of a container quadlet.
 
-```toml
+```systemd
 [Container]
 Image=docker.io/library/alpine:latest
 Exec=sleep infinity
@@ -34,7 +34,7 @@ this throughout the blog post.
 
 You can also use quadlets to manage pods. Here's an example of a pod quadlet.
 
-```toml
+```systemd
 [Pod]
 ```
 
@@ -44,7 +44,7 @@ start it with `systemctl --user start mypod-pod` and it will start a new pod.
 But the best part is this. If you want to add a container to a pod all you have
 to do is this.
 
-```toml
+```systemd
 [Container]
 Image=docker.io/library/alpine:latest
 Exec=sleep infinity
@@ -56,7 +56,7 @@ Now when you start `mypod-pod` it will start the container as well.
 
 You can add dependencies.
 
-```toml
+```systemd
 [Unit]
 After=alpine.service
 
@@ -82,7 +82,7 @@ How about an nginx container and a certbot container to get a certificate for it
 
 First we need to create a quadlet for our nginx container.
 
-```toml
+```systemd
 [Container]
 Image=docker.io/nginx:latest
 PublishPort=80:80
@@ -102,7 +102,7 @@ If you browse to `http://localhost` you should see the nginx welcome page.
 
 Now we need to get a certificate for it. We can use certbot for this.
 
-```toml
+```systemd
 [Container]
 Image=docker.io/certbot/certbot:latest
 Exec=certonly --standalone --agree-tos --email your@email.com -d your.domain.com
@@ -116,7 +116,7 @@ Then start the container with `systemctl --user start certbot` and it will get a
 
 Now you can use the certificate in your nginx container.
 
-```toml
+```systemd
 [Container]
 Image=docker.io/nginx:latest
 PublishPort=80:80
@@ -129,7 +129,7 @@ That's great, but now we need to configure nginx to use the certificate. We can
 do this by adding a volume for the configuration file.
 
 
-```toml
+```systemd
 [Container]
 Image=docker.io/nginx:latest
 PublishPort=80:80
@@ -164,7 +164,7 @@ Now you have a web server with HTTPS.
 
 If you want to renew your certificate automatically it's as simple as this.
 
-```toml
+```systemd
 [Container]
 Image=docker.io/certbot/certbot:latest
 Exec=renew
@@ -174,7 +174,7 @@ Volume=letsencrypt:/etc/letsencrypt
 
 Now you can create a timer for it in `~/.config/systemd/user/certbot.timer`.
 
-```toml
+```systemd
 [Unit]
 Description=Renew Certbot certificates
 
