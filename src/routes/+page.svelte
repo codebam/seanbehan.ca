@@ -40,11 +40,7 @@
 
 <svelte:head>
 	<title>Sean Behan</title>
-	<link
-		rel="stylesheet"
-		href="https://gateway.pinata.cloud/ipfs/QmSiWN27KZZ1XE32jKwifBnS3nWTUcFGNArKzur2nmDgoL/v0.13.0/style.css"
-		type="text/css"
-	/>
+	<link rel="stylesheet" href="/cactus.css" type="text/css" />
 </svelte:head>
 
 <div>
