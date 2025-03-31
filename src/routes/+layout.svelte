@@ -1,7 +1,11 @@
-<script>
+<script lang="ts">
+	import type { Snippet } from 'svelte';
 	import '../app.css';
 	import '@fontsource-variable/inter';
 	import TopBar from '$lib/components/TopBar.svelte';
+	let { children } = $props<{
+		children: Snippet;
+	}>();
 </script>
 
 <svelte:head>
@@ -14,7 +18,7 @@
 
 <TopBar></TopBar>
 <main class="mx-2">
-	<slot></slot>
+	{@render children()}
 </main>
 <footer class="mx-2">
 	<a href="https://github.com/codebam/seanbehan.ca">source code</a>

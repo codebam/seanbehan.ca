@@ -1,10 +1,12 @@
 <script lang="ts">
-	const { data } = $props<{
+	import type { Snippet } from 'svelte';
+	let { data, children } = $props<{
 		data: {
 			title: string;
 			date: string;
 			html: string;
 		};
+		children: Snippet;
 	}>();
 </script>
 
@@ -19,5 +21,4 @@
 	<link rel="stylesheet" href="/cactus.css" type="text/css" />
 </svelte:head>
 
-<slot />
-
+{@render children()}
