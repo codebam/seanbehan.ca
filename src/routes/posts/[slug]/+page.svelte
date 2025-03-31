@@ -7,14 +7,14 @@
 			title: string;
 			date: string;
 			html: string;
-		}
+		};
 	}>();
 
 	let mounted = $state(false);
 
 	$effect(() => {
 		if (!mounted) return;
-		
+
 		initComments({
 			node: document.getElementById('comment-section'),
 			defaultHomeserverUrl: 'https://matrix.cactus.chat:8448',
@@ -40,5 +40,5 @@
 	<p id="blogpost" class="text-secondary dark:text-dark-secondary my-4">{@html data.html}</p>
 </article>
 <div>
-	<div id="comment-section" />
+	<div id="comment-section"></div>
 </div>
