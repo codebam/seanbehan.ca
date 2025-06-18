@@ -28,11 +28,12 @@
 			}
 			if (event.data === '[DONE]') {
 				source.close();
-				el.innerHTML.replace(/undefined$/, '');
 				return;
 			}
 			const data = JSON.parse(event.data);
-			el.innerHTML += data.response;
+			if (data.response) {
+				el.innerHTML += data.response;
+			}
 		};
 	});
 
