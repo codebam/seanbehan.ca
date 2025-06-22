@@ -146,6 +146,8 @@ Volume=letsencrypt:/etc/nginx/certs
 Volume=./nginx.conf:/etc/nginx/conf.d
 ```
 
+Along with a configuration file for nginx.
+
 ```nginx
 server {
     listen 443 ssl;
