@@ -7,6 +7,9 @@
 	"name": "seanbehan-ca",
 	"main": ".svelte-kit/cloudflare/_worker.js",
 	"compatibility_date": "2025-02-24",
+	"compatibility_flags": [
+    "nodejs_compat"
+  ],
 	"assets": {
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare"
@@ -15,7 +18,7 @@
 		"enabled": true
 	},
 	"vars": {
-		"NODE_VERSION": "23.8.0"
+		"NODE_VERSION": "24.2.0"
 	}
 	/**
 	 * Smart Placement
