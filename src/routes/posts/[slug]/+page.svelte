@@ -1,27 +1,30 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { initComments } from '$lib/cactus.js';
+	import { safeGetElementById } from '$lib/utils';
+	import type { PostPageData } from '$lib/types';
 
-	const { data } = $props<{
-		data: {
-			title: string;
-			date: string;
-			html: string;
-		};
-	}>();
+	const { data }: { data: { post: PostPageData['post'] } } = $props();
 
 	let mounted = $state(false);
 
 	$effect(() => {
 		if (!mounted) return;
 
-		initComments({
-			node: document.getElementById('comment-section'),
-			defaultHomeserverUrl: 'https://matrix.cactus.chat:8448',
-			serverName: 'cactus.chat',
-			siteName: 'seanbehan.ca',
-			commentSectionId: data.title.split(' ').join('-')
-		});
+		try {
+			const commentNode = safeGetElementById('comment-section');
+			if (commentNode) {
+				initComments({
+					node: commentNode,
+					defaultHomeserverUrl: 'https://matrix.cactus.chat:8448',
+					serverName: 'cactus.chat',
+					siteName: 'seanbehan.ca',
+					commentSectionId: data.post.meta.title.split(' ').join('-')
+				});
+			}
+		} catch (error) {
+			console.error('Failed to initialize comments:', error);
+		}
 	});
 
 	onMount(() => {
@@ -30,14 +33,16 @@
 </script>
 
 <svelte:head>
-	<title>{data.title}</title>
+	<title>{data.post.meta.title}</title>
 	<link rel="stylesheet" href="https://prismjs.catppuccin.com/mocha.css" />
 	<link rel="stylesheet" href="/cactus.css" type="text/css" />
 </svelte:head>
 <article>
-	<h2 class="text-secondary dark:text-dark-secondary">{data.title}</h2>
-	<h5 class="text-secondary dark:text-dark-secondary">{data.date}</h5>
-	<p id="blogpost" class="text-secondary dark:text-dark-secondary my-4">{@html data.html}</p>
+	<h2 class="text-secondary dark:text-dark-secondary">{data.post.meta.title}</h2>
+	<h5 class="text-secondary dark:text-dark-secondary">{data.post.meta.date}</h5>
+	<!-- Note: {@html} is safe here as content is processed by mdsvex from trusted markdown files -->
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+	<p id="blogpost" class="text-secondary dark:text-dark-secondary my-4">{@html data.post.html}</p>
 </article>
 <div>
 	<div id="comment-section"></div>

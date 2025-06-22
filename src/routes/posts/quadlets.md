@@ -136,7 +136,6 @@ Volume=letsencrypt:/etc/letsencrypt
 That's great, but now we need to configure nginx to use the certificate. We can
 do this by adding a volume for the configuration file.
 
-
 ```systemd
 [Container]
 Image=docker.io/nginx:latest

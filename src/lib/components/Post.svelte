@@ -1,5 +1,7 @@
 <script lang="ts">
-	export let post: { path: string; meta: { title: string; date: string } };
+	import type { PostProps } from '$lib/types';
+
+	const { post }: PostProps = $props();
 </script>
 
 <li class="my-2 flex justify-between">

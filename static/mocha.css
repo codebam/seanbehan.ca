@@ -1,10 +1,10 @@
-code[class*="language-"],
-pre[class*="language-"] {
+code[class*='language-'],
+pre[class*='language-'] {
 	color: #cdd6f4;
 }
 
-:not(pre) > code[class*="language-"],
-pre[class*="language-"] {
+:not(pre) > code[class*='language-'],
+pre[class*='language-'] {
 	background: #181825;
 }
 
@@ -120,7 +120,7 @@ pre[class*="language-"] {
 }
 
 .token.inserted {
-	color: #a6e3a1
+	color: #a6e3a1;
 }
 
 /* Other */
@@ -132,4 +132,3 @@ pre[class*="language-"] {
 .token.italic {
 	font-style: italic;
 }
-

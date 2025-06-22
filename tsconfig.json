@@ -10,10 +10,9 @@
 		"sourceMap": true,
 		"strict": true,
 		"moduleResolution": "bundler",
-		"types": [
-			"@cloudflare/workers-types/2023-07-01"
-		]
-	}
+		"types": ["@cloudflare/workers-types/2023-07-01"]
+	},
+	"exclude": ["src/lib/cactus.js", "src/service-worker.js"]
 	// Path aliases are handled by https://svelte.dev/docs/kit/configuration#alias
 	// except $lib which is handled by https://svelte.dev/docs/kit/configuration#files
 	//

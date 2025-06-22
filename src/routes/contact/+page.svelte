@@ -1,5 +1,5 @@
 <script>
-    import { Avatar } from '@skeletonlabs/skeleton-svelte';
+	import { Avatar } from '@skeletonlabs/skeleton-svelte';
 </script>
 
 <svelte:head>

@@ -1,4 +1,5 @@
 import getPosts from '$lib/getPosts';
+import type { Post } from '$lib/types';
 
 export const prerender = true;
 
@@ -9,7 +10,7 @@ export const GET = async () => {
 	return new Response(body, { headers });
 };
 
-const render = (posts) => `<?xml version="1.0" encoding="UTF-8"?>
+const render = (posts: Post[]) => `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>https://seanbehan.ca</loc>

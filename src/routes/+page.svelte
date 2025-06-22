@@ -2,42 +2,45 @@
 	import { onMount } from 'svelte';
 	import Posts from '$lib/components/Posts.svelte';
 	import { initComments } from '$lib/cactus.js';
+	import { initAIBio, safeGetElementById } from '$lib/utils';
+	import type { PostsPageData } from '$lib/types';
 
+	const { data }: { data: PostsPageData } = $props();
+
+	/**
+	 * Initialize comments system and AI-generated bio
+	 */
 	onMount(() => {
-		initComments({
-			node: document.getElementById('comment-section'),
-			defaultHomeserverUrl: 'https://matrix.cactus.chat:8448',
-			serverName: 'cactus.chat',
-			siteName: 'seanbehan.ca',
-			commentSectionId: 'main'
-		});
-		const url = new URL('https://damp-recipe-a17d.codebam.workers.dev/');
-		url.searchParams.set('model', '@cf/meta/llama-3.2-11b-vision-instruct');
-		url.searchParams.set('system', 'pretend you are Sean Behan.');
-		url.searchParams.set(
-			'content',
-			"Generate me a 1 paragraph website intro for the following, WITHOUT saying here's a possible intro paragraph. My name is Sean Behan. My email address is contact@seanbehan.ca. My GitHub is codebam. I am a full stack developer. I spend most of my time on Linux writing software and contributing to open source. I'm a quick learner and enjoy learning new things. I am currently looking for work."
-		);
-		const source = new EventSource(url.toString());
-		const el = document.getElementById('bio') || { innerHTML: '' };
-		let start = true;
-		source.onmessage = (event) => {
-			if (start) {
-				el.innerHTML = '';
-				start = false;
+		let cleanupAIBio: (() => void) | undefined;
+
+		// Initialize comments system
+		try {
+			const commentNode = safeGetElementById('comment-section');
+			if (commentNode) {
+				initComments({
+					node: commentNode,
+					defaultHomeserverUrl: 'https://matrix.cactus.chat:8448',
+					serverName: 'cactus.chat',
+					siteName: 'seanbehan.ca',
+					commentSectionId: 'main'
+				});
 			}
-			if (event.data === '[DONE]') {
-				source.close();
-				return;
-			}
-			const data = JSON.parse(event.data);
-			if (data.response) {
-				el.innerHTML += data.response;
-			}
+		} catch (error) {
+			console.error('Failed to initialize comments:', error);
+		}
+
+		// Initialize AI-generated bio
+		try {
+			cleanupAIBio = initAIBio('bio');
+		} catch (error) {
+			console.error('Failed to initialize AI bio:', error);
+		}
+
+		// Cleanup function
+		return () => {
+			cleanupAIBio?.();
 		};
 	});
-
-	export let data: { posts: { path: string; meta: { title: string; date: string } }[] };
 </script>
 
 <svelte:head>

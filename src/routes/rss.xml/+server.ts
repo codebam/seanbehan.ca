@@ -28,7 +28,7 @@ function generateRSSFeed(posts: Post[]): string {
 		<description>${SITE_DESCRIPTION}</description>
 		<language>en-US</language>
 		<lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-		${posts.map(post => generateRSSItem(post)).join('\n')}
+		${posts.map((post) => generateRSSItem(post)).join('\n')}
 	</channel>
 </rss>`;
 }

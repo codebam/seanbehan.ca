@@ -19,7 +19,7 @@ export default {
 		const content = await new Response(message.raw).text();
 		const messages = [
 			{ role: 'system', content: 'you are an email responder, reply to the given message' },
-			{ role: 'user', content },
+			{ role: 'user', content }
 		];
 		// @ts-expect-error broken bindings
 		const { response } = await env.AI.run('@cf/meta/llama-3.2-11b-vision-instruct', { messages });
@@ -30,14 +30,14 @@ export default {
 		msg.setSubject('RE');
 		msg.addMessage({
 			contentType: 'text/plain',
-			data: `${response}\n\nThis was an automated message. If this is urgent, message Sean on Telegram https://t.me/codebam`,
+			data: `${response}\n\nThis was an automated message. If this is urgent, message Sean on Telegram https://t.me/codebam`
 		});
 
 		const replyMessage = new EmailMessage('contact@seanbehan.ca', message.from, msg.asRaw());
 
 		await message.reply(replyMessage);
 		await message.forward('codebam@riseup.net');
-	},
+	}
 } satisfies ExportedHandler<Env>;
 ```
 

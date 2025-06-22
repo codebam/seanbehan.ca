@@ -29,4 +29,5 @@ You can also generate a Kubernetes YAML configurations using `podman generate
 kube`. This can then be loaded in Kubernetes to run your containers.
 
 [^1]: https://podman.io
+
 [^2]: https://fedoramagazine.org/auto-updating-podman-containers-with-systemd/

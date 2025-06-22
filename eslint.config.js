@@ -24,11 +24,13 @@ export default ts.config(
 	},
 	{
 		files: ['**/*.svelte'],
-
 		languageOptions: {
 			parserOptions: {
 				parser: ts.parser
 			}
 		}
+	},
+	{
+		ignores: ['src/lib/cactus.js', 'src/lib/cactus.js.map', 'src/service-worker.js']
 	}
 );
