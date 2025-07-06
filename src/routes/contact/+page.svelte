@@ -83,7 +83,7 @@
 		</a>
 
 		<a
-			href="https://matrix.to/#/@codebam:fedora.im"
+			href="https://matrix.to/#/@codebam:envs.net"
 			class="bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 group flex items-center rounded-lg p-4 transition-colors"
 		>
 			<div
@@ -102,7 +102,7 @@
 			</div>
 			<div>
 				<h3 class="text-lg font-semibold">Matrix</h3>
-				<p class="text-surface-600 dark:text-surface-400">@codebam:fedora.im</p>
+				<p class="text-surface-600 dark:text-surface-400">@codebam:envs.net</p>
 			</div>
 		</a>
 	</div>
