@@ -5,7 +5,7 @@
 	const tags = post.meta.tags ?? [];
 </script>
 
-<li class="bg-surface-100-900 m-2 my-2 flex justify-between rounded-md p-1">
+<li class="bg-surface-100-900 m-2 my-2 flex flex-col justify-between rounded-md p-1">
 	<div>
 		<a href={post.path}>
 			<h2 class="text-2xl font-bold">
@@ -16,7 +16,7 @@
 			{new Date(post.meta.date).toDateString()}
 		</p>
 	</div>
-	<ul>
+	<ul class="flex">
 		{#each tags as tag}
 			<div class="bg-primary-900 m-2 rounded-md p-1 text-primary-50">
 				{tag}
