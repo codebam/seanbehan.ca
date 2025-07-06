@@ -38,7 +38,7 @@
 	<link rel="stylesheet" href="/cactus.css" type="text/css" />
 </svelte:head>
 <article>
-	<h2 class="text-secondary dark:text-dark-secondary">{data.post.meta.title}</h2>
+	<h2 class="text-secondary dark:text-dark-secondary text-xl font-bold">{data.post.meta.title}</h2>
 	<h5 class="text-secondary dark:text-dark-secondary">{data.post.meta.date}</h5>
 	<!-- Note: {@html} is safe here as content is processed by mdsvex from trusted markdown files -->
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
