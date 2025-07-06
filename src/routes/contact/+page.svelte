@@ -90,7 +90,8 @@
 				class="mr-4 flex h-12 w-12 items-center justify-center rounded-lg bg-green-600 transition-transform group-hover:scale-110"
 			>
 				<svg
-					class="h-5 w-5"
+					class="h-5 w-5 text-white"
+					fill="currentColor"
 					viewBox="0 0 520 520"
 				>
 					<path d="M13.7,11.9v496.2h35.7V520H0V0h49.4v11.9H13.7z" />
