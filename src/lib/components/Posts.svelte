@@ -37,7 +37,7 @@
 	});
 </script>
 
-<div class="flex flex-wrap justify-between">
+<div class="m-2 flex flex-wrap justify-between">
 	<input
 		type="search"
 		class="mt-2 rounded-md p-2 text-black"
@@ -50,7 +50,7 @@
 {#if results.length === 0}
 	<p class="text-secondary dark:text-dark-secondary mt-4">No posts found</p>
 {:else}
-	<ul>
+	<ul class="grid md:grid-cols-2 lg:grid-cols-3">
 		{#each results as post (post.path)}
 			<Post {post} />
 		{/each}
