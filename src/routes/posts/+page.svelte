@@ -7,4 +7,4 @@
 	<title>Posts</title>
 </svelte:head>
 
-<Posts posts={data.posts} />
+<Posts posts={data.posts} useAccordion={true} />

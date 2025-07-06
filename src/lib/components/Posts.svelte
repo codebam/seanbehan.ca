@@ -1,10 +1,11 @@
 <script lang="ts">
 	import Post from '$lib/components/Post.svelte';
+	import LazyPostAccordion from '$lib/components/LazyPostAccordion.svelte';
 	import Fuse from 'fuse.js';
 	import { debounce } from '$lib/utils';
 	import type { PostsProps, Post as PostType } from '$lib/types';
 
-	const { posts }: PostsProps = $props();
+	const { posts, useAccordion = false }: PostsProps & { useAccordion?: boolean } = $props();
 	let query = $state('');
 	let results = $state<PostType[]>(posts);
 
@@ -49,6 +50,12 @@
 
 {#if results.length === 0}
 	<p class="text-secondary dark:text-dark-secondary mt-4">No posts found</p>
+{:else if useAccordion}
+	<div class="space-y-2">
+		{#each results as post (post.path)}
+			<LazyPostAccordion {post} />
+		{/each}
+	</div>
 {:else}
 	<ul class="grid md:grid-cols-2 lg:grid-cols-3">
 		{#each results as post (post.path)}
