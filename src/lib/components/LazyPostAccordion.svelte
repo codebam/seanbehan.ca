@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Accordion } from '@skeletonlabs/skeleton-svelte';
-	import type { Post } from '$lib/types';
+	import type { Post, PostMeta } from '$lib/types';
 
 	interface Props {
 		post: Post;
@@ -26,7 +26,7 @@
 				throw new Error(`Failed to load content: ${response.status}`);
 			}
 
-			const data = (await response.json()) as { html: string; meta: any };
+			const data = (await response.json()) as { html: string; meta: PostMeta };
 			content = data.html;
 		} catch (err) {
 			error = err instanceof Error ? err.message : 'Failed to load content';
@@ -59,7 +59,7 @@
 					</p>
 				</div>
 				<div class="ml-4 flex flex-wrap gap-1">
-					{#each tags as tag}
+					{#each tags as tag (tag)}
 						<span class="badge variant-filled-primary text-xs">
 							{tag}
 						</span>

@@ -44,7 +44,7 @@
 	</h5>
 	<!-- Note: {@html} is safe here as content is processed by mdsvex from trusted markdown files -->
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-	<div id="blogpost" class="prose text-secondary dark:text-dark-secondary my-4">
+	<div id="blogpost" class="prose dark:prose-invert my-4">
 		{@html data.post.html}
 	</div>
 </article>

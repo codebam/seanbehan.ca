@@ -11,3 +11,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+	:root {
+		--tw-prose-body: oklch(50.06% 0.03 280.09deg); /* --color-surface-700 */
+		--tw-prose-invert-body: oklch(90.6% 0.01 264.54deg); /* --color-surface-50 */
+	}
+}
+
+.dark .prose {
+	color: var(--tw-prose-invert-body);
+}
