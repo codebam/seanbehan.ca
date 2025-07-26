@@ -37,7 +37,7 @@
 	<link rel="stylesheet" href="https://prismjs.catppuccin.com/mocha.css" />
 	<link rel="stylesheet" href="/cactus.css" type="text/css" />
 </svelte:head>
-<article>
+<article class="md:max-w-2/3 mx-auto">
 	<h2 class="text-secondary dark:text-dark-secondary text-xl font-bold">{data.post.meta.title}</h2>
 	<h5 class="text-secondary dark:text-dark-secondary">{data.post.meta.date}</h5>
 	<!-- Note: {@html} is safe here as content is processed by mdsvex from trusted markdown files -->
