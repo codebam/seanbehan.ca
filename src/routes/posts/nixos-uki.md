@@ -133,6 +133,8 @@ Now the config that you can use to build an image.
 )
 ```
 
+### Building
+
 ```sh
 nix build
 ```
