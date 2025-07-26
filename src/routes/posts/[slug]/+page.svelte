@@ -39,7 +39,7 @@
 </svelte:head>
 <article class="md:max-w-2/3 mx-auto">
 	<h2 class="text-secondary dark:text-dark-secondary text-xl font-bold">{data.post.meta.title}</h2>
-	<h5 class="text-secondary dark:text-dark-secondary">{data.post.meta.date}</h5>
+	<h5 class="text-secondary dark:text-dark-secondary">{new Date(data.post.meta.date).toDateString()}</h5>
 	<!-- Note: {@html} is safe here as content is processed by mdsvex from trusted markdown files -->
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 	<p id="blogpost" class="text-secondary dark:text-dark-secondary my-4">{@html data.post.html}</p>
