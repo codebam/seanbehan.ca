@@ -21,4 +21,8 @@
 	<link rel="stylesheet" href="/cactus.css" type="text/css" />
 </svelte:head>
 
-{@render children()}
+<main class="flex justify-center">
+	<div class="w-full max-w-2xl">
+		{@render children()}
+	</div>
+</main>
