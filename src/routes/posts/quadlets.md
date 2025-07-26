@@ -10,11 +10,15 @@ tags:
 draft: false
 ---
 
+### What are Quadlets?
+
 In this post I'll show you what a quadlet is and how you can use it to manage
 your containers.
 
 Quadlets are a new way to manage containers using systemd. They are a new
 format for systemd units that allow you to manage containers using systemd.
+
+### Container Quadlets
 
 Here's an example of a container quadlet.
 
@@ -31,6 +35,8 @@ it with `systemctl --user start alpine` and it will start a new container.
 Just make sure to `systemctl --user daemon-reload` to reload the systemd daemon
 after you create the quadlet. You have to do this every time, I won't repeat
 this throughout the blog post.
+
+### Pod Quadlets
 
 You can also use quadlets to manage pods. Here's an example of a pod quadlet.
 
@@ -54,6 +60,8 @@ Pod=mypod.pod
 
 Now when you start `mypod-pod` it will start the container as well.
 
+### Dependencies
+
 You can add dependencies.
 
 ```systemd
@@ -76,9 +84,13 @@ for more info!
 
 ---
 
+### Example: Nginx and Certbot
+
 Okay so now lets run something useful :)
 
 How about an nginx container and a certbot container to get a certificate for it?
+
+### Nginx Container
 
 First lets create a directory to hold our files.
 
@@ -107,6 +119,8 @@ Now we can start it with `systemctl --user start nginx` and it will start a new 
 
 If you browse to `http://localhost` you should see the nginx welcome page.
 
+### Certbot Container
+
 Now we need to get a certificate for it. We can use certbot for this.
 
 ```systemd
@@ -121,6 +135,8 @@ AutoUpdate=registry
 Make sure to replace your@email.com and your.domain.com with your own email and domain.
 
 Then start the container with `systemctl --user start certbot` and it will get a certificate for you.
+
+### Nginx with SSL
 
 Now you can use the certificate in your nginx container.
 
@@ -170,6 +186,8 @@ start a new container with the certificate. You can verify this by going to
 `https://your.domain.com`.
 
 Now you have a web server with HTTPS.
+
+### Automatic Certificate Renewal
 
 If you want to renew your certificate automatically it's as simple as this.
 

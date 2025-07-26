@@ -11,13 +11,19 @@ tags:
 draft: false
 ---
 
+### Introduction
+
 Recently I implemented HTTP Basic Auth using a session cookie in SvelteKit on
 Cloudflare Pages using Cloudflare D1 as a database backend. Here I'll show some
 code snippets so you can do the same.
 
+### Project Setup
+
 First you would want to set up your project according to
 [this](https://developers.cloudflare.com/pages/framework-guides/deploy-a-svelte-site).
 So you can have a basic project set up.
+
+### Database Setup
 
 Next you'll want to add the database to your project. It's easy to create using
 wrangler. Just remember to link it to your project in your cloudflare dash
@@ -75,6 +81,8 @@ declare global {
 export {};
 ```
 
+### Authentication Implementation
+
 Now you're ready to set up authentication. It's probably easier to just show
 you how I did it. I imported `sha256` which is just a simple function I wrote
 to call web crypto to get the sha256sum of a string.
@@ -115,6 +123,8 @@ export const actions = {
 	}
 };
 ```
+
+### Checking Authentication Status
 
 Now this is enough to save a cookie with the user auth, but to re-auth on a
 page we need to check if their cookie is valid. So how I do this is I wrote
@@ -159,6 +169,8 @@ is as simple as this one line.
 export let data: {auth: boolean, song: {id: string, url: string}};
 ```
 
+### Playlist Management
+
 Now I wrote more form actions for adding and removing songs from the playlist
 [here](https://github.com/codebam/svelte-auth/blob/master/src/routes/playlist/%2Bpage.server.ts).
 
@@ -189,6 +201,8 @@ export const actions = {
 	}
 };
 ```
+
+### User Interface
 
 Now this allows us to add songs, we just need the interface for it. So I wrote
 the [main page](https://github.com/codebam/svelte-auth/blob/master/src/routes/%2Bpage.svelte)
@@ -227,6 +241,8 @@ to allow logged in users to submit songs.
 	<p><a href="/logout">Log out</a></p>
 {/if}
 ```
+
+### Conclusion
 
 If you have any problems or you want to see the entire repo. The code is
 [here](https://github.com/codebam/svelte-auth) and the live demo is

@@ -8,11 +8,15 @@ tags:
 draft: false
 ---
 
+### Introduction
+
 Today I'll show you how you can write incredibly fast code in Rust. This is
 part one of a tutorial series.
 
 This is an intermediate tutorial, if you are unfamiliar with Rust basics I
 would suggest reading the Rust book for free at [https://doc.rust-lang.org/stable/book/].
+
+### Project Setup
 
 Lets dive right in.
 
@@ -39,6 +43,8 @@ edition = "2018"
 ws = "*"
 ```
 
+### Building the WebSocket Server
+
 Import our libraries.
 
 ```rust
@@ -57,6 +63,8 @@ fn main() {
 }
 ```
 
+### Handling Messages
+
 We'll respond to recieved messages and just echo them back for now.
 
 Of course you could easily pass this data into any function and use it to
@@ -67,6 +75,8 @@ to be text.
 out.send(format!("recieved message: {}", msg.into_text().unwrap())).unwrap();
 out.close(ws::CloseCode::Normal)
 ```
+
+### Testing the Server
 
 If we connect to this now using websocat, which can be installed with `cargo
 install websocat`, we can see the server echos back messages that we send to
@@ -80,6 +90,8 @@ recieved message: hello world
 
 This isn't that interesting. It's cool that we can do all this in just 8 lines
 of Rust though!
+
+### Next Steps
 
 In the next part of this series I'll show you how to use use
 [`tokio`](https://docs.rs/tokio/) to create an asyncronous server so we can

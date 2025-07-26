@@ -8,9 +8,13 @@ tags:
 draft: false
 ---
 
+### Introduction
+
 Ostree is the software that allows rpm-ostree in Fedora Silverblue to keep snapshots of previous deployments and do incremental updates, but did you know it can also be used to keep snapshots of your own files? It's actually quite easy once it's all set up.
 
 For this I would strongly suggest you use root for your ostree. Although you can use it without, you will be able to use files that regular users can't use such as hardlinks if you're root, which will speed up incremental snapshots very much.
+
+### Initializing the Ostree Repository
 
 First you'll want to create your inital ostree. Do this in a new folder, on a drive with lots of free space for the files you want to snapshot. You'll need as much free space as all the files you want to snapshot.
 
@@ -18,6 +22,8 @@ First you'll want to create your inital ostree. Do this in a new folder, on a dr
 mkdir tree
 sudo ostree init --repo=tree
 ```
+
+### Committing and Restoring Files
 
 Next you can start committing files to your new tree. Be sure to check the man pages for `ostree-commit` and `ostree-init`.
 
@@ -36,6 +42,8 @@ This will show you a list of all your commits. Now choose the one you want to re
 ```sh
 ostree checkout --repo=tree --union your-commit-sha dir
 ```
+
+### Important Considerations
 
 Make sure you check `ostree -h` for a list of ostree commands and read each of their man pages if you want to use them fully.
 

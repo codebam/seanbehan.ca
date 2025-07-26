@@ -8,11 +8,15 @@ tags:
 draft: false
 ---
 
+### Introduction
+
 Podman[^1] has a nice feature called `generate` that lets you generate
 different kinds of configuration files for starting pods. One that I use often
 is `podman generate systemd` which generates a new user service that can be
 started with `systemctl --user start container-yourcontainer.service` or
 enabled.
+
+### Auto-Updating Containers
 
 If you want your container to auto update you can simply pass it the flag
 `--label "io.containers.autoupdate=registry"` when you're creating it. The
@@ -24,6 +28,8 @@ If you want to update your images on a schedule you can enable the
 `podman-auto-update.timer` using `systemctl --user enable --now
 podman-auto-update.timer` which will auto update your containers every Monday
 morning.[^2]
+
+### Kubernetes YAML Generation
 
 You can also generate a Kubernetes YAML configurations using `podman generate
 kube`. This can then be loaded in Kubernetes to run your containers.

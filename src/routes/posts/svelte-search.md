@@ -11,8 +11,12 @@ tags:
 draft: false
 ---
 
+### Introduction
+
 In this post I'm going to show you how I made the search bar on the posts page
 and main page of my website.
+
+### Implementing the Search Bar
 
 I used a library called `fuse.js` for fuzzy searching for titles, here's how it
 works.
@@ -51,6 +55,8 @@ works.
 	{/if}
 </ul>
 ```
+
+### How it Works
 
 You can see I initialize the query to `'*'`. All this really does is sets the
 search field to `*` instead of being empty. Then in the input element I bind to

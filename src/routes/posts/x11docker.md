@@ -8,11 +8,15 @@ tags:
 draft: false
 ---
 
+### Introduction
+
 X11Docker is a nice command line tool that allows you to run graphical
 applications inside podman or docker by passing them to xpra or your wayland
 socket. To do this you first need a `Containerfile` or `Dockerfile` to build an
 image with the application you want to run. In this example I'm going to run
 `telegram-desktop`.
+
+### Building a Container Image
 
 ```
 FROM ubuntu:latest
@@ -23,9 +27,13 @@ RUN apt-get install -y telegram-desktop
 CMD ["telegram-desktop"]
 ```
 
+### Running the Application with X11Docker
+
 We build this image with `podman build . -t telegram` and wait for it to
 install our packages. When it's done we can simply run it with `x11docker
 localhost/telegram` and it starts Telegram in Xpra.
+
+### Running with Wayland
 
 If we wanted to start it under Wayland instead, we could run `x11docker
 --wayland localhost/telegram` however the package for Telegram on Ubuntu

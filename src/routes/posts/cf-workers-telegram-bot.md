@@ -12,6 +12,8 @@ This past week I spent rewriting
 Here I'm going to show you the newly updated API that anyone can use to run a
 Telegram Bot on Cloudflare Workers or any other serverless platform.
 
+### Project Setup
+
 First you need to set up a new Cloudflare Workers project using wrangler.
 
 ```shell
@@ -27,6 +29,8 @@ should choose a "Hello World" Worker.
 After that you'll be asked a few more questions, like if you want to use
 TypeScript, and Git (optional, but recommended). You don't need to deploy just
 yet.
+
+### Adding Your Bot Token
 
 Next you can add the token you get from `@BotFather` on Telegram as a secret so
 you don't have to keep it in the code.
@@ -44,6 +48,8 @@ npm i @codebam/cf-workers-telegram-bot
 ```
 
 This will give you access to my `TelegramBot` class for creating a Telegram Bot.
+
+### Writing the Bot
 
 To get started you can open `src/index.ts` in your favorite editor such as
 vscode or vim. Then you can import like this.
@@ -73,6 +79,8 @@ export default {
 };
 ```
 
+### Deployment and Webhook
+
 Now you're ready to deploy.
 
 ```shell
@@ -84,6 +92,8 @@ You can set your webhook by going to the URL you've been given plus your token a
 Like this. `https://telegram-bot.username.workers.dev/YOURTOKENHERE?command=set`
 
 Now when you send your bot a message on Telegram it should respond with `Hello from Cloudflare workers`.
+
+### Starter Template
 
 If you've got this far and you don't want to code it all by yourself, you can
 fork my repository [here](https://github.com/codebam/cwtb-consumer) to get

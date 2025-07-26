@@ -4,10 +4,14 @@ date: 2023-10-12T14:21:27-04:00
 draft: false
 ---
 
+### Introduction
+
 You might know I've made a Chat Bot
 [cf-workers-telegram-bot](https://github.com/codebam/cf-workers-telegram-bot).
 Recently I added AI to it using Cloudflare AI. Here I'm going to show you how
 and how you too can make your own chatbot using Cloudflare AI.
+
+### Cloudflare Workers AI Setup
 
 First you'll want to add the AI section to your wrangler.toml.
 
@@ -15,6 +19,8 @@ First you'll want to add the AI section to your wrangler.toml.
 \[ai\]
 binding = "AI"
 ```
+
+### Using the AI Model
 
 Then you can simply import
 
@@ -31,6 +37,8 @@ const result = await ai.run('@cf/meta/llama-2-7b-chat-int8', {
 	prompt
 });
 ```
+
+### Other Models and Tips
 
 That's it!
 

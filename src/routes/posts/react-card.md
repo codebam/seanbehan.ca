@@ -9,10 +9,14 @@ tags:
 draft: false
 ---
 
+### Introduction
+
 I've been learning React so that I can build my web applications for others and
 myself. React is component based. You create reusable components and render
 them with data. Here I created a card component that lets me insert cards. They
 can even contain other cards and are easy to understand from the App.js.
+
+### Creating the Card Component
 
 To create a new component I just create a new file called `Card.js` and import
 it at the top of `App.js`.
@@ -42,6 +46,8 @@ export default Card;
 At the bottom I set the default export to Card so that we can import it
 properly in `App.js`.
 
+### Styling the Card
+
 My styles are fairly simple, they just create a nice looking card.
 
 ```css
@@ -69,6 +75,8 @@ My styles are fairly simple, they just create a nice looking card.
 }
 ```
 
+### Using the Card Component
+
 That's great but we still have to insert our card in App.js. Now that we've
 created a component and imported it all I have to do in App.js to create a card
 is this.
@@ -76,6 +84,8 @@ is this.
 ```jsx
 <Card cardTitle="Example Card Title">Hello World</Card>
 ```
+
+### Conclusion
 
 Finally we can see that this builds a card.
 

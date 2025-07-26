@@ -8,6 +8,8 @@ tags:
 draft: false
 ---
 
+### Introduction
+
 Podman[^1] is a container management software similar to Docker that can run
 OCI containers as regular users (not root) by using container management
 libraries such as crun or runc, and cgroups v1 or v2. It can be used as a
@@ -17,6 +19,8 @@ podman-compose.
 Unfortunately for some distributions after installing podman the operating
 system defaults to cgroups v1 and runc, not cgroups v2 and crun. As was the
 case on Rocky Linux for me.
+
+### Switching to crun
 
 First we can switch to crun instead of runc by installing crun with our package
 manager. It was already installed for me, but on Fedora you would use `sudo dnf
@@ -32,6 +36,8 @@ package: crun-0.20.1-1.module+el8.4.0+643+525e162a.x86_64
 path: /usr/bin/crun
   crun version 0.20.1
 ```
+
+### Enabling cgroups v2
 
 Now the harder part was enabling cgroups v2. Luckily I found a
 [comment](https://github.com/containers/podman/issues/9410#issuecomment-785840320)
@@ -54,6 +60,8 @@ sudo loginctl enable-linger codebam
 Then the last step which made everything work for me is to set the
 `pid_limit=0`. For me it was in `/usr/share/containers/containers.conf` instead
 of `/etc/containers/`.
+
+### Verification
 
 Now you can reboot. `podman info | grep cgroup` should say
 

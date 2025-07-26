@@ -8,6 +8,8 @@ tags:
 draft: false
 ---
 
+### How it Works
+
 In this post I'm just going to show you something cool I made using cloudflare workers.
 
 ```typescript

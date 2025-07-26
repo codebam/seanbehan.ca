@@ -7,6 +7,8 @@ tags:
 draft: false
 ---
 
+### Password Management
+
 I'll start this post by saying one thing. Are you SURE you want to wipe that
 yubikey? I spent the last 2 weeks redoing my entire password manager. Silly me
 forgot that I had my passwords encrypted using the yubikey I wiped to create
@@ -29,6 +31,8 @@ NFC](https://www.yubico.com/ca/product/yubikey-5c-nfc/) to go alongside my
 previous [Yubikey 5C](https://www.yubico.com/ca/product/yubikey-5c/). There
 might be better alternatives, but this is the one I purchased. This one had NFC
 and was convenient for accessing passwords on my phone and laptop.
+
+### Yubikey PGP Key Generation
 
 To generate my PGP keys I actually generated them on the Yubikey itself, this
 way the private key never touches the laptop I used to generate the key.
@@ -76,6 +80,8 @@ keyserver that I just uploaded it to, then imported it. I went through the
 setup to add a security token and imported it so that it was recognized as one
 of my keys.
 
+### Git and Password Store Sync
+
 At this point I set up my password store with git to use for syncing. I set it
 up on some mirrors just in case one went down, and I backed it up to Nextcloud.
 
@@ -96,6 +102,8 @@ mkdir pass
 cd pass
 git init --bare
 ```
+
+### Yubikey for SSH
 
 I generated a new SSH key from within the password store app and used that for
 authentication from my phone. On my laptop I set up gpg-agent with ssh support
@@ -133,6 +141,8 @@ and valid.
 git config --global user.signingkey 0F6D5021A87F92BA
 git config --global commit.gpgsign true
 ```
+
+### System-level U2F Authentication
 
 As an extra layer of security on Fedora I installed the `pam-u2f` package on
 and generated U2F logins.

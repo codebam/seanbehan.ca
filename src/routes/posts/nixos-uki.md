@@ -8,6 +8,8 @@ tags:
 draft: false
 ---
 
+### Introduction
+
 In this post I simply want to share a NixOS flake that might help you in the
 case you enabled secure boot on a device such as the Steam Deck OLED, still
 have keys because you backed them up, and want to get back in to either disable
@@ -135,6 +137,8 @@ Now the config that you can use to build an image.
 
 ### Building
 
+### Building the Image
+
 ```sh
 nix build
 ```
@@ -143,6 +147,8 @@ Make sure you change the user and password, or you won't be able to login. Also
 note that if you are using a Steam Deck OLED like me, WiFi won't work so you'll
 need to use either ethernet or an external wireless adapter that has support in
 the kernel.
+
+### Signing for Secure Boot
 
 So ok you burn it to your USB drive:
 
@@ -164,6 +170,8 @@ sbctl sign /mnt/EFI/Linux/nixos.efi
 sync
 umount /mnt
 ```
+
+### Booting and Repair
 
 Now you're ready to boot it, so plug it into your USB hub or however you planned
 on plugging it into the Steam Deck or your device.

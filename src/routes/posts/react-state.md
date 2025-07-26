@@ -8,6 +8,8 @@ tags:
 draft: false
 ---
 
+### Introduction to useState
+
 In React when we want to manage individual state there is a function we can
 import called `useState` that gives us a getter and setter letting React know
 when it needs to re-render.
@@ -23,6 +25,8 @@ const myComponent = () => {
 
 This initializes count as a state variable that can be accessed with `count`
 and set with `setCount`.
+
+### Incrementing a Counter
 
 If we wanted to write a function that incremented count, we could add a button.
 
@@ -45,6 +49,8 @@ Then I set the `onClick` for button to an inline function that increases count
 by 1 using `setCount`. If we were to do this without a state variable, i.e.
 `const count = 0` React wouldn't know when to re-render our data.
 
+### Managing List State
+
 This can be used to hold any state or object however, not just numbers and
 strings. If we wanted to instead append to a list we might write a function
 that gets passed to the `onSubmit` of a form.
@@ -60,6 +66,8 @@ const onFormSubmit(event) {
   setList(list);
 }
 ```
+
+### Handling Form Input
 
 Changing all our input `onChange` methods as well to update the state of `form`
 when the data changes.

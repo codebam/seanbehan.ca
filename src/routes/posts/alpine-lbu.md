@@ -7,12 +7,16 @@ tags:
 draft: false
 ---
 
+### What is LBU?
+
 Alpine Linux has a cool feature called LBU that lets you create a backup on top
 of the Live ISO. These backups are called local backups.
 
 I plan on using LBU as a system maintenance drive. It allows you to save
 changes you make to the Live ISO and restore them automatically when you boot
 the next time.
+
+### Setup and Committing
 
 To set up LBU I booted the Alpine Linux ISO, ran `setup-alpine`, mounted my
 drive to `/media/alpine_usb` and when I got to the disk selection I selected no
@@ -28,6 +32,8 @@ When I was rebooting I had an issue where the drive would automount itself to
 /media/sdb and then wouldn't work with lbu when I wanted to commit or check the
 status because it was already mounted. To fix this I just had to `umount
 /dev/sdb` on boot and then lbu worked as expected.
+
+### Caching and Configuration
 
 To use cache you have to mount it to `/media/alpine_usb` so that it can write
 the cache files when you're installing packages. I want this because it makes

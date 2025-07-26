@@ -6,10 +6,14 @@ tags:
 draft: false
 ---
 
+### Introduction
+
 Over the past few months I experimented with some new Linux distributions. Here
 I'll show you the one I'm currently using and why I think it's great.
 
 ![Fedora Silverblue desktop screenshot](/img/20210213_15h31m29s_grim.png)
+
+### Atomic Updates and Rollbacks
 
 Fedora Silverblue is what's known as an Atomic operating system. On Fedora
 Silverblue every update is checked out similar to how git checks out a new
@@ -17,11 +21,15 @@ reference. If you want to install packages into the base image you can use
 rpm-ostree install like you usually would, the only difference is that you need
 to reboot to boot into your new base system reference.
 
+### Toolbox for Development
+
 If you don't want to reboot there is a better way though. Instead of layering
 packages into your base image you can use a tool called toolbox which is simply
 a wrapper around podman for creating containers with the current Fedora image.
 You can use toolbox enter and install and run any software as well as access
 files inside your home directory.
+
+### Rebasing and Customization
 
 If at some point you do updates and your system doesn't boot, you don't have to
 worry. You can simply reboot and choose the last working base image and your

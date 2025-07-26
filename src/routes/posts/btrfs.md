@@ -8,11 +8,15 @@ tags:
 draft: false
 ---
 
+### BTRFS RAID1 Setup
+
 I mentioned in my previous post that I use an external drive to keep my Steam
 games on. In an attempt to not have to re-download hundreds of gigabytes of
 games I keep them on a RAID1 with 2x5TB drives that I use BTRFS to manage. In
 this post I'm going to outline how I set it all up, and how I manage it when
 issues arise.
+
+### Formatting Drives
 
 First of all I had to format the drives, so I made sure they were empty and
 everything was backed up. Don't do this unless you know for sure that all the
@@ -34,6 +38,8 @@ mkfs.btrfs /dev/sd_1
 mkfs.btrfs /dev/sd_1
 ```
 
+### Creating the RAID1 Array
+
 Now you can mount the newly formatted drives to a single RAID1.
 
 ```sh
@@ -44,6 +50,8 @@ btrfs balance start -dconvert=raid1 -mconvert=raid1 /mnt
 
 The last command might take a little bit of time, but once it's finished your
 drives will be all ready to be used.
+
+### Managing the Array
 
 Now if you need to swap out a drive, add another, or you unplug one when it's
 writing you can simply balance again and btrfs should be able to balance back

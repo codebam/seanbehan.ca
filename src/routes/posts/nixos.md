@@ -6,6 +6,8 @@ tags:
 draft: false
 ---
 
+### Introduction to Flakes
+
 Flakes in NixOS allow you to write Nix code that has custom inputs and outputs.
 For example this is a simple example of a Flake. You can get a copy for
 yourself by running `nix flake init`.
@@ -28,7 +30,11 @@ yourself by running `nix flake init`.
 }
 ```
 
+### Flake Structure
+
 As you can see there are inputs (nixpkgs), and outputs (self, nixpkgs).
+
+### Managing Dependencies with flake.lock
 
 If you build this Flake using `nix build` you'll end up with a new directory
 called `result` which is a symlink to where the package was built in your Nix
@@ -46,6 +52,8 @@ package version you can do so with `nix flake update`
 
 Now so far I've only showed a very basic example of a Flake, the example from
 `nix flake init`. You can see more templates with `nix flake show templates`.
+
+### Development Shells (devShell)
 
 One thing I like using Flakes for is to create a `devShell`. You can initialize
 a Flake with a `devShell` preconfigured with `nix flake init -t
@@ -89,6 +97,8 @@ be installed temporarily. You can activate it with `nix develop`. This is the
       };
 # ...
 ```
+
+### Building Packages with Flakes
 
 You can use Flakes to build packages as well. You can look at just about any
 Nix package for an example. Just choose one in
