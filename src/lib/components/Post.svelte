@@ -18,7 +18,7 @@
 	</div>
 	<ul class="flex">
 		{#each tags as tag}
-			<div class="bg-primary-900 m-2 rounded-md p-1 text-primary-50">
+			<div class="bg-primary-900 text-primary-50 m-2 rounded-md p-1">
 				{tag}
 			</div>
 		{/each}

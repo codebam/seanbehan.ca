@@ -26,7 +26,7 @@
 				throw new Error(`Failed to load content: ${response.status}`);
 			}
 
-			const data = await response.json() as { html: string; meta: any };
+			const data = (await response.json()) as { html: string; meta: any };
 			content = data.html;
 		} catch (err) {
 			error = err instanceof Error ? err.message : 'Failed to load content';
@@ -49,16 +49,16 @@
 <Accordion {value} onValueChange={handleValueChange} collapsible>
 	<Accordion.Item value={post.path}>
 		{#snippet control()}
-			<div class="flex w-full justify-between items-center">
+			<div class="flex w-full items-center justify-between">
 				<div class="flex-1">
-					<h2 class="text-xl font-bold text-left">
+					<h2 class="text-left text-xl font-bold">
 						{post.meta.title}
 					</h2>
-					<p class="text-sm text-surface-600 dark:text-surface-400 text-left">
+					<p class="text-surface-600 dark:text-surface-400 text-left text-sm">
 						{new Date(post.meta.date).toDateString()}
 					</p>
 				</div>
-				<div class="flex flex-wrap gap-1 ml-4">
+				<div class="ml-4 flex flex-wrap gap-1">
 					{#each tags as tag}
 						<span class="badge variant-filled-primary text-xs">
 							{tag}
@@ -70,24 +70,22 @@
 
 		{#snippet panel()}
 			{#if loading}
-				<div class="flex justify-center items-center p-8">
+				<div class="flex items-center justify-center p-8">
 					<div class="spinner"></div>
 					<span class="ml-2">Loading content...</span>
 				</div>
 			{:else if error}
 				<div class="alert variant-filled-error">
 					<p>Error: {error}</p>
-					<button class="btn variant-filled" onclick={() => loadContent()}>
-						Try Again
-					</button>
+					<button class="btn variant-filled" onclick={() => loadContent()}> Try Again </button>
 				</div>
 			{:else if content}
-				<article class="prose prose-lg max-w-none dark:prose-invert">
+				<article class="prose prose-lg dark:prose-invert max-w-none">
 					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 					{@html content}
 				</article>
 			{:else}
-				<div class="flex justify-center items-center p-4">
+				<div class="flex items-center justify-center p-4">
 					<button class="btn variant-filled-primary" onclick={() => loadContent()}>
 						Load Content
 					</button>
@@ -108,7 +106,11 @@
 	}
 
 	@keyframes spin {
-		0% { transform: rotate(0deg); }
-		100% { transform: rotate(360deg); }
+		0% {
+			transform: rotate(0deg);
+		}
+		100% {
+			transform: rotate(360deg);
+		}
 	}
 </style>

@@ -37,12 +37,16 @@
 	<link rel="stylesheet" href="https://prismjs.catppuccin.com/mocha.css" />
 	<link rel="stylesheet" href="/cactus.css" type="text/css" />
 </svelte:head>
-<article class="md:max-w-2/3 mx-auto">
+<article>
 	<h2 class="text-secondary dark:text-dark-secondary text-xl font-bold">{data.post.meta.title}</h2>
-	<h5 class="text-secondary dark:text-dark-secondary">{new Date(data.post.meta.date).toDateString()}</h5>
+	<h5 class="text-secondary dark:text-dark-secondary">
+		{new Date(data.post.meta.date).toDateString()}
+	</h5>
 	<!-- Note: {@html} is safe here as content is processed by mdsvex from trusted markdown files -->
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-	<p id="blogpost" class="text-secondary dark:text-dark-secondary my-4">{@html data.post.html}</p>
+	<div id="blogpost" class="prose text-secondary dark:text-dark-secondary my-4">
+		{@html data.post.html}
+	</div>
 </article>
 <div>
 	<div id="comment-section"></div>

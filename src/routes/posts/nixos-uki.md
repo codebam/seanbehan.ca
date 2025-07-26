@@ -13,6 +13,8 @@ case you enabled secure boot on a device such as the Steam Deck OLED, still
 have keys because you backed them up, and want to get back in to either disable
 secure boot with sbctl, or fix your unbootable NixOS system.
 
+## Configuration
+
 First, here is the flake that will load your configuration:
 
 ```nix

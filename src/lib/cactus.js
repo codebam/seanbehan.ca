@@ -4,15 +4,15 @@ function n(n) {
 	n.storedSession = JSON.parse(localStorage.getItem('cactus-session')); // get node from the config
 	// remove it from config object before passing to elm
 	var t = n.node;
-	delete n.node,
+	(delete n.node,
 		'string' == typeof t && (t = document.querySelector(t)), // subscribe to commands from localstorage port
 		(0, r.Elm).Main.init({ node: t, flags: n }).ports.storeSession.subscribe((r) =>
 			localStorage.setItem('cactus-session', r)
-		);
+		));
 }
 !(function (r) {
 	function n(r, n, t) {
-		return (t.a = r), (t.f = n), t;
+		return ((t.a = r), (t.f = n), t);
 	}
 	function t(r) {
 		return n(2, r, function (n) {
@@ -110,8 +110,9 @@ function n(n) {
 	}
 	function p(r, n, t, e) {
 		if (r === n) return !0;
-		if ('object' != typeof r || null === r || null === n) return 'function' == typeof r && R(5), !1;
-		if (t > 100) return e.push(D(r, n)), !0;
+		if ('object' != typeof r || null === r || null === n)
+			return ('function' == typeof r && R(5), !1);
+		if (t > 100) return (e.push(D(r, n)), !0);
 		for (var u in (0 > r.$ && ((r = nT(r)), (n = nT(n))), r))
 			if (!p(r[u], n[u], t + 1, e)) return !1;
 		return !0;
@@ -177,8 +178,8 @@ function n(n) {
 			return e;
 		}),
 		T = t(function (r, n) {
-			for (var t = Array(r), e = 0; r > e && n.b; e++) (t[e] = n.a), (n = n.b);
-			return (t.length = e), D(t, n);
+			for (var t = Array(r), e = 0; r > e && n.b; e++) ((t[e] = n.a), (n = n.b));
+			return ((t.length = e), D(t, n));
 		});
 	function R(r) {
 		throw Error('https://github.com/elm/core/blob/1.0.0/hints/' + r + '.md');
@@ -202,7 +203,7 @@ function n(n) {
 			for (var e = t.length, u = 0; e > u; ) {
 				var a = t[u],
 					c = t.charCodeAt(u);
-				u++, 55296 > c || c > 56319 || ((a += t[u]), u++), (n = o(r, a, n));
+				(u++, 55296 > c || c > 56319 || ((a += t[u]), u++), (n = o(r, a, n)));
 			}
 			return n;
 		}),
@@ -210,7 +211,7 @@ function n(n) {
 			for (var e = t.length; e--; ) {
 				var u = t[e],
 					a = t.charCodeAt(e);
-				56320 > a || a > 57343 || (u = t[--e] + u), (n = o(r, u, n));
+				(56320 > a || a > 57343 || (u = t[--e] + u), (n = o(r, u, n)));
 			}
 			return n;
 		}),
@@ -408,7 +409,7 @@ function n(n) {
 			return JSON.stringify(n, null, r) + '';
 		}),
 		rD = e(function (r, n, t) {
-			return (t[r] = n), t;
+			return ((t[r] = n), t);
 		});
 	function r$(r) {
 		return { $: 0, a: r };
@@ -425,7 +426,7 @@ function n(n) {
 		rq = 0;
 	function rS(r) {
 		var n = { $: 0, e: rq++, f: r, g: null, h: [] };
-		return rN(n), n;
+		return (rN(n), n);
 	}
 	function rA(r) {
 		return rw(function (n) {
@@ -433,11 +434,11 @@ function n(n) {
 		});
 	}
 	function rk(r, n) {
-		r.h.push(n), rN(r);
+		(r.h.push(n), rN(r));
 	}
 	var rE = t(function (r, n) {
 			return rw(function (t) {
-				rk(r, n), t(r$(0));
+				(rk(r, n), t(r$(0)));
 			});
 		}),
 		rC = !1,
@@ -451,16 +452,16 @@ function n(n) {
 						if (0 === n || 1 === n) {
 							for (; r.g && r.g.$ !== n; ) r.g = r.g.i;
 							if (!r.g) return;
-							(r.f = r.g.b(r.f.a)), (r.g = r.g.i);
+							((r.f = r.g.b(r.f.a)), (r.g = r.g.i));
 						} else {
 							if (2 === n)
 								return void (r.f.c = r.f.b(function (n) {
-									(r.f = n), rN(r);
+									((r.f = n), rN(r));
 								}));
 							if (5 === n) {
 								if (0 === r.h.length) return;
 								r.f = r.f.b(r.h.shift());
-							} else (r.g = { $: 3 === n ? 0 : 1, b: r.f.b, i: r.g }), (r.f = r.f.d);
+							} else ((r.g = { $: 3 === n ? 0 : 1, b: r.f.b, i: r.g }), (r.f = r.f.d));
 						}
 					}
 				})(r);
@@ -483,7 +484,7 @@ function n(n) {
 	}
 	var rU = t(function (r, n) {
 			return rw(function (t) {
-				r.g(n), t(r$(0));
+				(r.g(n), t(r$(0)));
 			});
 		}),
 		rH = t(function (r, n) {
@@ -554,9 +555,9 @@ function n(n) {
 			return t(function (t, e) {
 				for (var u = [], a = 0; e.b; e = e.b) {
 					var c = e.a;
-					(a += c.b || 0), u.push(c);
+					((a += c.b || 0), u.push(c));
 				}
-				return (a += u.length), { $: 1, c: n, d: r6(t), e: u, f: r, b: a };
+				return ((a += u.length), { $: 1, c: n, d: r6(t), e: u, f: r, b: a });
 			});
 		}),
 		rK = rQ(void 0);
@@ -564,9 +565,9 @@ function n(n) {
 		return t(function (t, e) {
 			for (var u = [], a = 0; e.b; e = e.b) {
 				var c = e.a;
-				(a += c.b.b || 0), u.push(c);
+				((a += c.b.b || 0), u.push(c));
 			}
-			return (a += u.length), { $: 2, c: n, d: r6(t), e: u, f: r, b: a };
+			return ((a += u.length), { $: 2, c: n, d: r6(t), e: u, f: r, b: a });
 		});
 	})(void 0);
 	var rY = t(function (r, n) {
@@ -628,13 +629,13 @@ function n(n) {
 		if (0 === t) return rM.createTextNode(r.a);
 		if (4 === t) {
 			for (var e = r.k, u = r.j; 4 === e.$; )
-				'object' != typeof u ? (u = [u, e.j]) : u.push(e.j), (e = e.k);
+				('object' != typeof u ? (u = [u, e.j]) : u.push(e.j), (e = e.k));
 			var a = { j: u, p: n };
-			return ((c = r7(e, a)).elm_event_node_ref = a), c;
+			return (((c = r7(e, a)).elm_event_node_ref = a), c);
 		}
-		if (3 === t) return nr((c = r.h(r.g)), n, r.d), c;
+		if (3 === t) return (nr((c = r.h(r.g)), n, r.d), c);
 		var c = r.f ? rM.createElementNS(r.f, r.c) : rM.createElement(r.c);
-		rP && 'a' == r.c && c.addEventListener('click', rP(c)), nr(c, n, r.d);
+		(rP && 'a' == r.c && c.addEventListener('click', rP(c)), nr(c, n, r.d));
 		for (var i = r.e, o = 0; i.length > o; o++) rJ(c, r7(1 === t ? i[o] : i[o].b, n));
 		return c;
 	}
@@ -660,7 +661,7 @@ function n(n) {
 										}
 										r.removeEventListener(u, c);
 									}
-									(c = (function (r, n) {
+									((c = (function (r, n) {
 										function t(n) {
 											var e = t.q,
 												u = rl(e.a, n);
@@ -685,11 +686,11 @@ function n(n) {
 												s(o, f);
 											}
 										}
-										return (t.q = n), t;
+										return ((t.q = n), t);
 									})(n, a)),
 										r.addEventListener(u, c, r3 && { passive: 2 > th(a) }),
-										(e[u] = c);
-								} else r.removeEventListener(u, c), (e[u] = void 0);
+										(e[u] = c));
+								} else (r.removeEventListener(u, c), (e[u] = void 0));
 							}
 						})(r, n, u)
 					: 'a3' === e
@@ -724,7 +725,7 @@ function n(n) {
 	} catch (r) {}
 	function nn(r, n, t, e) {
 		var u = { $: n, r: t, s: e, t: void 0, u: void 0 };
-		return r.push(u), u;
+		return (r.push(u), u);
 	}
 	function nt(r, n, t, e) {
 		if (r !== n) {
@@ -732,11 +733,11 @@ function n(n) {
 				a = n.$;
 			if (u !== a) {
 				if (1 !== u || 2 !== a) return void nn(t, 0, e, n);
-				(n = (function (r) {
+				((n = (function (r) {
 					for (var n = r.e, t = n.length, e = Array(t), u = 0; t > u; u++) e[u] = n[u].b;
 					return { $: 1, c: r.c, d: r.d, e: e, f: r.f, b: r.b };
 				})(n)),
-					(a = 1);
+					(a = 1));
 			}
 			switch (a) {
 				case 5:
@@ -745,12 +746,12 @@ function n(n) {
 					if (f) return void (n.k = r.k);
 					n.k = n.m();
 					var s = [];
-					return nt(r.k, n.k, s, 0), void (s.length > 0 && nn(t, 1, e, s));
+					return (nt(r.k, n.k, s, 0), void (s.length > 0 && nn(t, 1, e, s)));
 				case 4:
 					for (var l = r.j, b = n.j, d = !1, v = r.k; 4 === v.$; )
-						(d = !0), 'object' != typeof l ? (l = [l, v.j]) : l.push(v.j), (v = v.k);
+						((d = !0), 'object' != typeof l ? (l = [l, v.j]) : l.push(v.j), (v = v.k));
 					for (var p = n.k; 4 === p.$; )
-						(d = !0), 'object' != typeof b ? (b = [b, p.j]) : b.push(p.j), (p = p.k);
+						((d = !0), 'object' != typeof b ? (b = [b, p.j]) : b.push(p.j), (p = p.k));
 					return d && l.length !== b.length
 						? void nn(t, 0, e, n)
 						: ((d
@@ -778,7 +779,7 @@ function n(n) {
 	function ne(r, n, t, e, u) {
 		if (r.c === n.c && r.f === n.f) {
 			var a = nu(r.d, n.d);
-			a && nn(t, 4, e, a), u(r, n, t, e);
+			(a && nn(t, 4, e, a), u(r, n, t, e));
 		} else nn(t, 0, e, n);
 	}
 	function nu(r, n, t) {
@@ -816,7 +817,7 @@ function n(n) {
 		c > i ? nn(t, 6, e, { v: i, i: c - i }) : i > c && nn(t, 7, e, { v: c, e: a });
 		for (var o = i > c ? c : i, f = 0; o > f; f++) {
 			var s = u[f];
-			nt(s, a[f], t, ++e), (e += s.b || 0);
+			(nt(s, a[f], t, ++e), (e += s.b || 0));
 		}
 	}
 	function nc(r, n, t, e) {
@@ -845,50 +846,51 @@ function n(n) {
 					m = v === q;
 				}
 				if (m && D)
-					nt(g, S, u, ++d),
+					(nt(g, S, u, ++d),
 						no(a, u, v, h, b, c),
 						(d += g.b || 0),
 						nf(a, u, v, y, ++d),
 						(d += y.b || 0),
 						(l += 2),
-						(b += 2);
-				else if (m) d++, no(a, u, p, h, b, c), nt(g, S, u, d), (d += g.b || 0), (l += 1), (b += 2);
+						(b += 2));
+				else if (m)
+					(d++, no(a, u, p, h, b, c), nt(g, S, u, d), (d += g.b || 0), (l += 1), (b += 2));
 				else if (D)
-					nf(a, u, v, g, ++d),
+					(nf(a, u, v, g, ++d),
 						(d += g.b || 0),
 						nt(y, h, u, ++d),
 						(d += y.b || 0),
 						(l += 2),
-						(b += 1);
+						(b += 1));
 				else {
 					if (!$ || x !== q) break;
-					nf(a, u, v, g, ++d),
+					(nf(a, u, v, g, ++d),
 						no(a, u, p, h, b, c),
 						(d += g.b || 0),
 						nt(y, S, u, ++d),
 						(d += y.b || 0),
 						(l += 2),
-						(b += 2);
+						(b += 2));
 				}
-			} else nt(g, h, u, ++d), (d += g.b || 0), l++, b++;
+			} else (nt(g, h, u, ++d), (d += g.b || 0), l++, b++);
 		}
-		for (; f > l; ) d++, nf(a, u, (A = i[l]).a, (g = A.b), d), (d += g.b || 0), l++;
+		for (; f > l; ) (d++, nf(a, u, (A = i[l]).a, (g = A.b), d), (d += g.b || 0), l++);
 		for (; s > b; ) {
 			var A,
 				k,
 				E = E || [];
-			no(a, u, (k = o[b]).a, k.b, void 0, E), b++;
+			(no(a, u, (k = o[b]).a, k.b, void 0, E), b++);
 		}
 		(u.length > 0 || c.length > 0 || E) && nn(t, 8, e, { w: u, x: c, y: E });
 	}
 	var ni = '_elmW6BL';
 	function no(r, n, t, e, u, a) {
 		var c = r[t];
-		if (!c) return a.push({ r: u, A: (c = { c: 0, z: e, r: u, s: void 0 }) }), void (r[t] = c);
+		if (!c) return (a.push({ r: u, A: (c = { c: 0, z: e, r: u, s: void 0 }) }), void (r[t] = c));
 		if (1 === c.c) {
-			a.push({ r: u, A: c }), (c.c = 2);
+			(a.push({ r: u, A: c }), (c.c = 2));
 			var i = [];
-			return nt(c.z, e, i, c.r), (c.r = u), void (c.s.s = { w: i, A: c });
+			return (nt(c.z, e, i, c.r), (c.r = u), void (c.s.s = { w: i, A: c }));
 		}
 		no(r, n, t + ni, e, u, a);
 	}
@@ -898,7 +900,7 @@ function n(n) {
 			if (0 === a.c) {
 				a.c = 2;
 				var c = [];
-				return nt(e, a.z, c, u), void nn(n, 9, u, { w: c, A: a });
+				return (nt(e, a.z, c, u), void nn(n, 9, u, { w: c, A: a }));
 			}
 			nf(r, n, t + ni, e, u);
 		} else {
@@ -918,7 +920,7 @@ function n(n) {
 						var t;
 						for (var e in rR) {
 							var u = rR[e];
-							u.a && ((t = t || {})[e] = u.a(e, n)),
+							(u.a && ((t = t || {})[e] = u.a(e, n)),
 								(r[e] = (function (r, n) {
 									var t = { g: n, h: void 0 },
 										e = r.c,
@@ -944,15 +946,15 @@ function n(n) {
 											r.b
 										)
 									));
-								})(u, n));
+								})(u, n)));
 						}
 						return t;
 					})(i, p);
 				function p(r, n) {
 					var t = o(e, r, b);
-					d((b = t.a), n), rF(i, t.b, u(b));
+					(d((b = t.a), n), rF(i, t.b, u(b)));
 				}
-				return rF(i, l.b, u(b)), v ? { ports: v } : {};
+				return (rF(i, l.b, u(b)), v ? { ports: v } : {});
 			})(n, e, r.dd, r.ee, r.dY, function (n, t) {
 				var u = r.eg,
 					a = e.node,
@@ -976,7 +978,7 @@ function n(n) {
 						t = 1 === t ? 0 : (nl(e), n(r), 1);
 					}
 					return function (u, a) {
-						(r = u), a ? (n(r), 2 === t && (t = 1)) : (0 === t && nl(e), (t = 2));
+						((r = u), a ? (n(r), 2 === t && (t = 1)) : (0 === t && nl(e), (t = 2)));
 					};
 				})(t, function (r) {
 					var t,
@@ -984,7 +986,7 @@ function n(n) {
 						i,
 						o = u(r),
 						f = (nt(c, o, (t = []), 0), t);
-					(e = a),
+					((e = a),
 						(i = c),
 						(a =
 							0 === f.length
@@ -995,13 +997,13 @@ function n(n) {
 												var l = f.$;
 												if (1 === l) r(t, e.k, f.s, o);
 												else if (8 === l)
-													(f.t = t), (f.u = o), (b = f.s.w).length > 0 && n(t, e, b, 0, c, i, o);
+													((f.t = t), (f.u = o), (b = f.s.w).length > 0 && n(t, e, b, 0, c, i, o));
 												else if (9 === l) {
-													(f.t = t), (f.u = o);
+													((f.t = t), (f.u = o));
 													var b,
 														d = f.s;
 													d && ((d.A.s = t), (b = d.w).length > 0 && n(t, e, b, 0, c, i, o));
-												} else (f.t = t), (f.u = o);
+												} else ((f.t = t), (f.u = o));
 												if (!(f = u[++a]) || (s = f.r) > i) return a;
 											}
 											var v = e.$;
@@ -1044,9 +1046,9 @@ function n(n) {
 																c
 															);
 														case 4:
-															return nr(n, t.u, t.s), n;
+															return (nr(n, t.u, t.s), n);
 														case 3:
-															return n.replaceData(0, n.length, t.s), n;
+															return (n.replaceData(0, n.length, t.s), n);
 														case 1:
 															return r(n, t.s);
 														case 2:
@@ -1069,10 +1071,12 @@ function n(n) {
 																n.insertBefore(r7(f[o], t.u), s);
 															return n;
 														case 9:
-															if (!(i = t.s)) return n.parentNode.removeChild(n), n;
+															if (!(i = t.s)) return (n.parentNode.removeChild(n), n);
 															var l = i.A;
 															return (
-																void 0 !== l.r && n.parentNode.removeChild(n), (l.s = r(n, i.w)), n
+																void 0 !== l.r && n.parentNode.removeChild(n),
+																(l.s = r(n, i.w)),
+																n
 															);
 														case 8:
 															return (function (n, t) {
@@ -1097,7 +1101,7 @@ function n(n) {
 																		f = 2 === o.c ? o.s : r7(o.z, t.u);
 																	n.insertBefore(f, n.childNodes[i.r]);
 																}
-																return u && rJ(n, u), n;
+																return (u && rJ(n, u), n);
 															})(n, t);
 														case 5:
 															return t.s(n);
@@ -1109,7 +1113,7 @@ function n(n) {
 										}
 										return n;
 									})(e, f))),
-						(c = o);
+						(c = o));
 				});
 			});
 		}),
@@ -1120,7 +1124,7 @@ function n(n) {
 				: function (r) {
 						return setTimeout(r, 1e3 / 60);
 					});
-	'undefined' != typeof document && document, 'undefined' != typeof window && window;
+	('undefined' != typeof document && document, 'undefined' != typeof window && window);
 	var nb = e(function (r, n, t) {
 			return rw(function (e) {
 				function u(r) {
@@ -1128,7 +1132,7 @@ function n(n) {
 				}
 				var a,
 					c = new XMLHttpRequest();
-				c.addEventListener('error', function () {
+				(c.addEventListener('error', function () {
 					u(t2);
 				}),
 					c.addEventListener('timeout', function () {
@@ -1177,7 +1181,7 @@ function n(n) {
 						c.addEventListener('progress', function (n) {
 							c.c ||
 								rS(o(t7, r, D(a, t3({ dH: n.loaded, cs: n.lengthComputable ? nj(n.total) : n_ }))));
-						}));
+						})));
 				try {
 					c.open(t.dk, t.ef, !0);
 				} catch (r) {
@@ -1186,12 +1190,12 @@ function n(n) {
 				return (
 					(function (r, n) {
 						for (var t = n.c7; t.b; t = t.b) r.setRequestHeader(t.a.a, t.a.b);
-						(r.timeout = n.d7.a || 0), (r.responseType = n.aU.d), (r.withCredentials = n.cP);
+						((r.timeout = n.d7.a || 0), (r.responseType = n.aU.d), (r.withCredentials = n.cP));
 					})(c, t),
 					t.cS.a && c.setRequestHeader('Content-Type', t.cS.a),
 					c.send(t.cS.b),
 					function () {
-						(c.c = !0), c.abort();
+						((c.c = !0), c.abort());
 					}
 				);
 			});
@@ -1273,7 +1277,7 @@ function n(n) {
 		}),
 		ny = t(function (r, n) {
 			var t = 'g';
-			r.dn && (t += 'm'), r.cU && (t += 'i');
+			(r.dn && (t += 'm'), r.cU && (t += 'i'));
 			try {
 				return nj(RegExp(n, t));
 			} catch (r) {
@@ -1293,9 +1297,9 @@ function n(n) {
 					var l = e[o];
 					f[--o] = l ? nj(l) : n_;
 				}
-				u.push(s(oB, e[0], e.index, a, k(f))), (i = n.lastIndex);
+				(u.push(s(oB, e[0], e.index, a, k(f))), (i = n.lastIndex));
 			}
-			return (n.lastIndex = c), k(u);
+			return ((n.lastIndex = c), k(u));
 		}),
 		nA = u(function (r, n, t, e) {
 			var u = 0;
@@ -1318,7 +1322,7 @@ function n(n) {
 				var e = t.d,
 					u = r,
 					a = f(r, t.b, t.c, f(nN, r, n, t.e));
-				(r = u), (n = a), (t = e);
+				((r = u), (n = a), (t = e));
 			}
 		}),
 		nT = function (r) {
@@ -1371,7 +1375,7 @@ function n(n) {
 				var e = t.b,
 					u = r,
 					a = o(r, t.a, n);
-				(r = u), (n = a), (t = e);
+				((r = u), (n = a), (t = e));
 			}
 		}),
 		nM = function (r) {
@@ -1390,7 +1394,7 @@ function n(n) {
 				var e = r,
 					u = n - 1,
 					a = o(A, n, t);
-				(r = e), (n = u), (t = a);
+				((r = e), (n = u), (t = a));
 			}
 		}),
 		nZ = t(function (r, n) {
@@ -1446,12 +1450,12 @@ function n(n) {
 									u = e.b;
 								return nW(e.a) && o(G, n0, u);
 							})();
-						(r = e), (n = o(A, u ? '.' + t : "['" + t + "']", n));
+						((r = e), (n = o(A, u ? '.' + t : "['" + t + "']", n)));
 						continue;
 					case 1:
 						e = r.b;
 						var a = '[' + nV(r.a) + ']';
-						(r = e), (n = o(A, a, n));
+						((r = e), (n = o(A, a, n)));
 						continue;
 					case 2:
 						var c = r.a;
@@ -1513,7 +1517,7 @@ function n(n) {
 					e = t.b,
 					u = o(A, { $: 0, a: t.a }, n);
 				if (!e.b) return n2(u);
-				(r = e), (n = u);
+				((r = e), (n = u));
 			}
 		}),
 		to = function (r) {
@@ -1523,7 +1527,7 @@ function n(n) {
 			for (;;) {
 				var t = n9(n / 32);
 				if (1 === t) return o(T, 32, r).a;
-				(r = o(ti, r, q)), (n = t);
+				((r = o(ti, r, q)), (n = t));
 			}
 		}),
 		ts = t(function (r, n) {
@@ -1539,7 +1543,7 @@ function n(n) {
 			for (;;) {
 				if (0 > n) return o(ts, !1, { k: e, h: (t / 32) | 0, i: u });
 				var a = { $: 1, a: f(N, 32, n, r) };
-				(n -= 32), (e = o(A, a, e));
+				((n -= 32), (e = o(A, a, e)));
 			}
 		}),
 		tb = t(function (r, n) {
@@ -1819,7 +1823,7 @@ function n(n) {
 			if (-1 !== u.$ || u.a) {
 				if (-1 !== e.$ || e.a || -1 !== e.d.$ || e.d.a) return l(en, r, n, t, e, u);
 				var a = e.d;
-				return (c = e.e), l(en, 0, e.b, e.c, l(en, 1, a.b, a.c, a.d, a.e), l(en, 1, n, t, c, u));
+				return ((c = e.e), l(en, 0, e.b, e.c, l(en, 1, a.b, a.c, a.d, a.e), l(en, 1, n, t, c, u)));
 			}
 			var c,
 				i = u.b,
@@ -2172,7 +2176,7 @@ function n(n) {
 					var i = c.a;
 					return o(eV, u || i, c.b);
 				}
-				return (i = c.a), f(eF, u || i, c.b, c.c);
+				return ((i = c.a), f(eF, u || i, c.b, c.c));
 			};
 		}),
 		eP = function (r) {
@@ -2397,12 +2401,12 @@ function n(n) {
 		ux = u(function (r, n, t, e) {
 			for (;;) {
 				var u = t(n)(e);
-				if (u.$) return (a = u.a), o(eV, r || a, u.b);
+				if (u.$) return ((a = u.a), o(eV, r || a, u.b));
 				var a = u.a,
 					c = u.b,
 					i = u.c;
 				if (c.$) return f(eF, r || a, c.a, i);
-				(r = r || a), (n = c.a), (e = i);
+				((r = r || a), (n = c.a), (e = i));
 			}
 		}),
 		uy = t(function (r, n) {
@@ -2434,7 +2438,7 @@ function n(n) {
 						u = (0, t.a)(r);
 					if (u.$) {
 						if (u.a) return u;
-						(n = o(uE, n, u.b)), (t = e);
+						((n = o(uE, n, u.b)), (t = e));
 						continue;
 					}
 					return u;
@@ -4636,55 +4640,55 @@ function n(n) {
 					u = n.b;
 				switch (e) {
 					case '0':
-						(r = a = r - 1), (n = c = u), (t = i = t);
+						((r = a = r - 1), (n = c = u), (t = i = t));
 						continue;
 					case '1':
 						var a = r - 1,
 							c = u,
 							i = t + o(H, 16, r);
-						(r = a), (n = c), (t = i);
+						((r = a), (n = c), (t = i));
 						continue;
 					case '2':
-						(a = r - 1), (c = u), (i = t + 2 * o(H, 16, r)), (r = a), (n = c), (t = i);
+						((a = r - 1), (c = u), (i = t + 2 * o(H, 16, r)), (r = a), (n = c), (t = i));
 						continue;
 					case '3':
-						(a = r - 1), (c = u), (i = t + 3 * o(H, 16, r)), (r = a), (n = c), (t = i);
+						((a = r - 1), (c = u), (i = t + 3 * o(H, 16, r)), (r = a), (n = c), (t = i));
 						continue;
 					case '4':
-						(a = r - 1), (c = u), (i = t + 4 * o(H, 16, r)), (r = a), (n = c), (t = i);
+						((a = r - 1), (c = u), (i = t + 4 * o(H, 16, r)), (r = a), (n = c), (t = i));
 						continue;
 					case '5':
-						(a = r - 1), (c = u), (i = t + 5 * o(H, 16, r)), (r = a), (n = c), (t = i);
+						((a = r - 1), (c = u), (i = t + 5 * o(H, 16, r)), (r = a), (n = c), (t = i));
 						continue;
 					case '6':
-						(a = r - 1), (c = u), (i = t + 6 * o(H, 16, r)), (r = a), (n = c), (t = i);
+						((a = r - 1), (c = u), (i = t + 6 * o(H, 16, r)), (r = a), (n = c), (t = i));
 						continue;
 					case '7':
-						(a = r - 1), (c = u), (i = t + 7 * o(H, 16, r)), (r = a), (n = c), (t = i);
+						((a = r - 1), (c = u), (i = t + 7 * o(H, 16, r)), (r = a), (n = c), (t = i));
 						continue;
 					case '8':
-						(a = r - 1), (c = u), (i = t + 8 * o(H, 16, r)), (r = a), (n = c), (t = i);
+						((a = r - 1), (c = u), (i = t + 8 * o(H, 16, r)), (r = a), (n = c), (t = i));
 						continue;
 					case '9':
-						(a = r - 1), (c = u), (i = t + 9 * o(H, 16, r)), (r = a), (n = c), (t = i);
+						((a = r - 1), (c = u), (i = t + 9 * o(H, 16, r)), (r = a), (n = c), (t = i));
 						continue;
 					case 'a':
-						(a = r - 1), (c = u), (i = t + 10 * o(H, 16, r)), (r = a), (n = c), (t = i);
+						((a = r - 1), (c = u), (i = t + 10 * o(H, 16, r)), (r = a), (n = c), (t = i));
 						continue;
 					case 'b':
-						(a = r - 1), (c = u), (i = t + 11 * o(H, 16, r)), (r = a), (n = c), (t = i);
+						((a = r - 1), (c = u), (i = t + 11 * o(H, 16, r)), (r = a), (n = c), (t = i));
 						continue;
 					case 'c':
-						(a = r - 1), (c = u), (i = t + 12 * o(H, 16, r)), (r = a), (n = c), (t = i);
+						((a = r - 1), (c = u), (i = t + 12 * o(H, 16, r)), (r = a), (n = c), (t = i));
 						continue;
 					case 'd':
-						(a = r - 1), (c = u), (i = t + 13 * o(H, 16, r)), (r = a), (n = c), (t = i);
+						((a = r - 1), (c = u), (i = t + 13 * o(H, 16, r)), (r = a), (n = c), (t = i));
 						continue;
 					case 'e':
-						(a = r - 1), (c = u), (i = t + 14 * o(H, 16, r)), (r = a), (n = c), (t = i);
+						((a = r - 1), (c = u), (i = t + 14 * o(H, 16, r)), (r = a), (n = c), (t = i));
 						continue;
 					case 'f':
-						(a = r - 1), (c = u), (i = t + 15 * o(H, 16, r)), (r = a), (n = c), (t = i);
+						((a = r - 1), (c = u), (i = t + 15 * o(H, 16, r)), (r = a), (n = c), (t = i));
 						continue;
 					default:
 						return nR(uB(e) + ' is not a valid hexadecimal character.');
@@ -4959,11 +4963,11 @@ function n(n) {
 						return n;
 					case 1:
 						var t = r.b;
-						(r = r.a), (n = o(A, t, n));
+						((r = r.a), (n = o(A, t, n)));
 						continue;
 					default:
 						var e = r.b;
-						(r = r.a), (n = o(ai, e, n));
+						((r = r.a), (n = o(ai, e, n)));
 						continue;
 				}
 		}),
@@ -5526,7 +5530,7 @@ function n(n) {
 				var e = t.e,
 					u = r,
 					a = f(r, t.b, t.c, f(cv, r, n, t.d));
-				(r = u), (n = a), (t = e);
+				((r = u), (n = a), (t = e));
 			}
 		}),
 		cp = c(function (r, n, u, a, c, i) {
@@ -5595,7 +5599,7 @@ function n(n) {
 							},
 							rw(function (r) {
 								var t = n.f;
-								2 === t.$ && t.c && t.c(), (n.f = null), r(r$(0));
+								(2 === t.$ && t.c && t.c(), (n.f = null), r(r$(0)));
 							})
 						)
 					);
@@ -6022,17 +6026,17 @@ function n(n) {
 							case 6:
 								if (6 === t.a.$) {
 									var a = t.b;
-									return (u = a.b), o(A, iv(o(iD, a.a.a, t.a.a)), u);
+									return ((u = a.b), o(A, iv(o(iD, a.a.a, t.a.a)), u));
 								}
 								break r;
 							case 11:
 								switch (t.a.$) {
 									case 1:
 										var c = t.b;
-										return (u = c.b), o(A, iu(f(im, '\n', c.a.a, t.a.a)), u);
+										return ((u = c.b), o(A, iu(f(im, '\n', c.a.a, t.a.a)), u));
 									case 11:
 										var i = t.b;
-										return (u = i.b), o(A, iu(o(iD, i.a.a, t.a.a)), u);
+										return ((u = i.b), o(A, iu(o(iD, i.a.a, t.a.a)), u));
 									default:
 										break r;
 								}
@@ -6040,14 +6044,14 @@ function n(n) {
 								switch (t.a.$) {
 									case 1:
 										var s = t.b;
-										return (u = s.b), o(A, cX(f(im, '\n', s.a.a, t.a.a)), u);
+										return ((u = s.b), o(A, cX(f(im, '\n', s.a.a, t.a.a)), u));
 									case 12:
 										if (t.a.a) {
 											var l = t.b;
-											return (u = l.b), o(A, o(id, 2, l.a.a), u);
+											return ((u = l.b), o(A, o(id, 2, l.a.a), u));
 										}
 										var b = t.b;
-										return (u = b.b), o(A, o(id, 1, b.a.a), u);
+										return ((u = b.b), o(A, o(id, 1, b.a.a), u));
 									case 9:
 										var d = t.a.a,
 											v = d.a,
@@ -6059,7 +6063,7 @@ function n(n) {
 										break r;
 								}
 							case 8:
-								if (8 === t.a.$) return (u = t.b.b), o(A, ip(t.a.a), u);
+								if (8 === t.a.$) return ((u = t.b.b), o(A, ip(t.a.a), u));
 								break r;
 							default:
 								break r;
@@ -6988,7 +6992,7 @@ function n(n) {
 				var u = t.b,
 					a = r,
 					c = f(o0, r, t.a, n);
-				(r = a), (n = c), (t = u);
+				((r = a), (n = c), (t = u));
 			}
 		}),
 		o3 = o(eg, oj, oI('(\\\\*)(\\<)')),
@@ -7357,7 +7361,7 @@ function n(n) {
 				var e = t.a,
 					u = t.b;
 				if (n(e)) return nj($(e, n2(r), u));
-				(r = o(A, e, r)), (t = u);
+				((r = o(A, e, r)), (t = u));
 			}
 		}),
 		fX = t(function (r, n) {
@@ -7496,11 +7500,11 @@ function n(n) {
 						var f = i.a,
 							s = o(fX, f5(a), n);
 						if (s.$) {
-							(r = c), (n = o(A, a, n));
+							((r = c), (n = o(A, a, n)));
 							continue;
 						}
 						var d = l(su, a, t, e, u, s.a);
-						(r = c), (n = m = d.a), (t = D = d.b);
+						((r = c), (n = m = d.a), (t = D = d.b));
 						continue;
 					case 5:
 						f = i.a;
@@ -7509,21 +7513,21 @@ function n(n) {
 							},
 							p = o(fX, v, n);
 						if (p.$) {
-							(r = c), (n = o(cA, o(tj, e9, v), n));
+							((r = c), (n = o(cA, o(tj, e9, v), n)));
 							continue;
 						}
 						var g = b(st, a, f, t, e, u, p.a);
 						if (g.$) {
-							(r = c), (n = o(cA, o(tj, e9, v), n));
+							((r = c), (n = o(cA, o(tj, e9, v), n)));
 							continue;
 						}
 						var h = g.a,
 							m = h.a,
 							D = h.b;
-						(r = c), (n = o(cA, o(tj, e9, v), m)), (t = D);
+						((r = c), (n = o(cA, o(tj, e9, v), m)), (t = D));
 						continue;
 					default:
-						(r = c), (n = o(A, a, n));
+						((r = c), (n = o(A, a, n)));
 						continue;
 				}
 			}
@@ -7546,7 +7550,7 @@ function n(n) {
 				var a = r.a,
 					c = r.b,
 					i = a.c;
-				if (7 !== i.$) (r = c), (n = o(A, a, n));
+				if (7 !== i.$) ((r = c), (n = o(A, a, n)));
 				else {
 					var f = i.a,
 						s = i.b.aD,
@@ -7558,15 +7562,15 @@ function n(n) {
 						}
 						var d = o(fX, f4(a), n);
 						if (d.$) {
-							(r = c), (n = o(A, a, n));
+							((r = c), (n = o(A, a, n)));
 							continue;
 						}
 						var p = l(sc, e, u, a, c, d.a);
-						(r = p.a), (n = p.c), (t = o(A, p.b, t));
+						((r = p.a), (n = p.c), (t = o(A, p.b, t)));
 						continue;
 					}
 					if (0 > h(s, b)) {
-						(r = c), (n = o(A, a, n));
+						((r = c), (n = o(A, a, n)));
 						continue;
 					}
 					var g = o(fX, f4(a), n);
@@ -7575,7 +7579,7 @@ function n(n) {
 						continue;
 					}
 					var m = l(sc, e, u, a, c, g.a);
-					(r = m.a), (n = m.c), (t = o(A, m.b, t));
+					((r = m.a), (n = m.c), (t = o(A, m.b, t)));
 				}
 			}
 		}),
@@ -7609,16 +7613,16 @@ function n(n) {
 				var a = r.a,
 					c = r.b,
 					i = a.c;
-				if (6 !== i.$) (r = c), (n = o(A, a, n));
+				if (6 !== i.$) ((r = c), (n = o(A, a, n)));
 				else {
 					var f = i.b;
 					if (1 === i.a) {
-						(r = c), (t = o(A, o(f7, a, fE(f)), t));
+						((r = c), (t = o(A, o(f7, a, fE(f)), t)));
 						continue;
 					}
 					var s = o(fX, f3(f), c);
 					if (1 === s.$) {
-						(r = c), (t = o(A, o(f7, a, fE(f)), t));
+						((r = c), (t = o(A, o(f7, a, fE(f)), t)));
 						continue;
 					}
 					var b = s.a,
@@ -7637,7 +7641,7 @@ function n(n) {
 							v,
 							p
 						);
-					(r = g), (t = o(A, h, t));
+					((r = g), (t = o(A, h, t)));
 				}
 			}
 		}),
@@ -7646,7 +7650,7 @@ function n(n) {
 				if (!r.b) return l(sa, n2(n), q, t, e, u);
 				var a = r.a,
 					c = r.b;
-				if (3 !== a.c.$) (r = c), (n = o(A, a, n));
+				if (3 !== a.c.$) ((r = c), (n = o(A, a, n)));
 				else {
 					var i = o(fX, f8, n);
 					if (i.$) {
@@ -7659,7 +7663,7 @@ function n(n) {
 						continue;
 					}
 					var s = f.a;
-					(r = s.a), (n = s.c), (t = s.b);
+					((r = s.a), (n = s.c), (t = s.b));
 				}
 			}
 		}),
@@ -7724,15 +7728,15 @@ function n(n) {
 				if (!r.b) return l(sr, n2(n), q, t, e, u);
 				var a = r.a,
 					c = r.b;
-				if (10 !== a.c.$) (r = c), (n = o(A, a, n));
+				if (10 !== a.c.$) ((r = c), (n = o(A, a, n)));
 				else {
 					var i = o(fX, f6(a), n);
 					if (i.$) {
-						(r = c), (n = o(A, a, n));
+						((r = c), (n = o(A, a, n)));
 						continue;
 					}
 					var f = l(sl, a, t, e, u, i.a);
-					(r = c), (n = f.a), (t = f.b);
+					((r = c), (n = f.a), (t = f.b));
 				}
 			}
 		}),
@@ -7858,7 +7862,7 @@ function n(n) {
 		sD = e(function (r, n, t) {
 			for (;;) {
 				if (0 >= n) return r;
-				(r = o(A, t, r)), (n -= 1);
+				((r = o(A, t, r)), (n -= 1));
 			}
 		}),
 		s$ = t(function (r, n) {
@@ -8305,7 +8309,7 @@ function n(n) {
 			for (;;) {
 				if (r > 0 && n.b) {
 					var e = n.a;
-					(r -= 1), (n = n.b), (t = o(A, e, t));
+					((r -= 1), (n = n.b), (t = o(A, e, t)));
 					continue;
 				}
 				return t;
@@ -8538,7 +8542,7 @@ function n(n) {
 				var t = r.b,
 					e = o(l$, r.a, n);
 				if (e.$) return nR(e.a);
-				(r = t), (n = e.a);
+				((r = t), (n = e.a));
 			}
 		}),
 		lA = function (r) {
@@ -8567,7 +8571,7 @@ function n(n) {
 					u = o(lL, r.R, n.a);
 				switch (u.$) {
 					case 1:
-						(n = e), (t = o(A, u.a, t));
+						((n = e), (t = o(A, u.a, t)));
 						continue;
 					case 0:
 						n = e;
@@ -8634,7 +8638,7 @@ function n(n) {
 						)
 					});
 				case 4:
-					return (t = n.b), c0(o(cW, n.a, o(tE, o(lN, r, tm), t)));
+					return ((t = n.b), c0(o(cW, n.a, o(tE, o(lN, r, tm), t))));
 				case 5:
 					return c0(cI(n.a));
 				case 7:
@@ -8829,7 +8833,7 @@ function n(n) {
 		lY = t(function (r, n) {
 			for (;;) {
 				if (r > 0 && n.b) {
-					(r -= 1), (n = n.b);
+					((r -= 1), (n = n.b));
 					continue;
 				}
 				return n;
@@ -8844,13 +8848,13 @@ function n(n) {
 					case 0:
 						var a = e.a;
 						if (a.$) {
-							(i = r), (f = o(r, e, n)), (r = i), (n = f), (t = u);
+							((i = r), (f = o(r, e, n)), (r = i), (n = f), (t = u));
 							continue;
 						}
 						var c = a.c,
 							i = r,
 							f = o(r, e, n);
-						(r = i), (n = f), (t = y(c, u));
+						((r = i), (n = f), (t = y(c, u)));
 						continue;
 					case 1:
 					case 2:
@@ -8859,11 +8863,11 @@ function n(n) {
 					case 6:
 					case 7:
 					default:
-						(i = r), (f = o(r, e, n)), (r = i), (n = f), (t = u);
+						((i = r), (f = o(r, e, n)), (r = i), (n = f), (t = u));
 						continue;
 					case 3:
 						var s = e.a;
-						(i = r), (f = o(r, e, n)), (r = i), (n = f), (t = y(s, u));
+						((i = r), (f = o(r, e, n)), (r = i), (n = f), (t = y(s, u)));
 						continue;
 				}
 			}
@@ -9445,9 +9449,9 @@ function n(n) {
 					var c = r.a;
 					return r.b ? $(t, e, o(A, bM(bZ(c)), u)) : n;
 				case 3:
-					return (a = r.b), $(t, e, o(A, o(bJ, bZ((c = r.a)), o(rm, 0, a)), u));
+					return ((a = r.b), $(t, e, o(A, o(bJ, bZ((c = r.a)), o(rm, 0, a)), u)));
 				case 4:
-					return (a = r.b), $(t, o(A, bG(r.a) + ': ' + bG(a), e), u);
+					return ((a = r.b), $(t, o(A, bG(r.a) + ': ' + bG(a), e), u));
 				default:
 					return n;
 			}
@@ -9474,18 +9478,18 @@ function n(n) {
 							c = r,
 							i = u.b,
 							f = w(t, { p: t.p - 1, r: o(A, o(r, t.p - 1, '</' + (l = u.a) + '>'), t.r), N: a });
-						(r = c), (n = i), (t = f);
+						((r = c), (n = i), (t = f));
 						continue;
 					}
 					return t;
 				}
 				if (n.a.$)
-					(c = r),
+					((c = r),
 						(i = a = n.b),
 						(f = w(t, { r: o(A, o(r, t.p, bz(n.a.a)), t.r) })),
 						(r = c),
 						(n = i),
-						(t = f);
+						(t = f));
 				else {
 					var s = n.a,
 						l = s.a,
@@ -9493,15 +9497,15 @@ function n(n) {
 						d = s.c;
 					switch (((a = n.b), d.$)) {
 						case 0:
-							(c = r),
+							((c = r),
 								(i = a),
 								(f = w(t, { r: o(A, o(r, t.p, o(bX, l, b)), t.r) })),
 								(r = c),
 								(n = i),
-								(t = f);
+								(t = f));
 							continue;
 						case 1:
-							(c = r),
+							((c = r),
 								(i = d.a),
 								(f = w(t, {
 									p: t.p + 1,
@@ -9510,10 +9514,10 @@ function n(n) {
 								})),
 								(r = c),
 								(n = i),
-								(t = f);
+								(t = f));
 							continue;
 						default:
-							(c = r),
+							((c = r),
 								(i = o(tE, bP, d.a)),
 								(f = w(t, {
 									p: t.p + 1,
@@ -9522,7 +9526,7 @@ function n(n) {
 								})),
 								(r = c),
 								(n = i),
-								(t = f);
+								(t = f));
 							continue;
 					}
 				}
@@ -11145,11 +11149,11 @@ function n(n) {
 					var e = t.a;
 					return o(dx, k([dD('cactus-message-text')]), o(p_, r, e));
 				case 1:
-					if (t.a.$) return (e = t.a), o(dx, k([dD('cactus-message-text')]), o(p_, r, e));
+					if (t.a.$) return ((e = t.a), o(dx, k([dD('cactus-message-text')]), o(p_, r, e)));
 					var u = t.a.a;
 					return o(dx, k([dD('cactus-message-emote')]), k([o(d6, q, k([rZ(n + ' ' + u)]))]));
 				case 2:
-					return (e = t.a), o(dx, k([dD('cactus-message-text')]), o(p_, r, e));
+					return ((e = t.a), o(dx, k([dD('cactus-message-text')]), o(p_, r, e)));
 				case 3:
 					return o(pz, r, t.a);
 				case 4:
@@ -11242,7 +11246,7 @@ function n(n) {
 				)
 			);
 		});
-	(lJ = {
+	((lJ = {
 		Main: {
 			init: ns({
 				dd: function (r) {
@@ -11356,7 +11360,7 @@ function n(n) {
 			? (function r(n, t) {
 					for (var e in t) e in n ? ('init' == e ? R(6) : r(n[e], t[e])) : (n[e] = t[e]);
 				})(r.Elm, lJ)
-			: (r.Elm = lJ);
+			: (r.Elm = lJ));
 })(r);
 export { n as initComments }; //# sourceMappingURL=cactus.js.map
 
