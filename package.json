@@ -37,7 +37,7 @@
 		"@testing-library/jest-dom": "^6.6.4",
 		"@testing-library/svelte": "^5.2.8",
 		"cookie": "^1.0.2",
-		"eslint": "^9.32.0",
+		"eslint": "^9.33.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.11.0",
 		"fuse.js": "^7.1.0",
