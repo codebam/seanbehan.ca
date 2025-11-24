@@ -35,7 +35,7 @@
 		"@tailwindcss/typography": "^0.5.19",
 		"@tailwindcss/vite": "^4.1.17",
 		"@testing-library/jest-dom": "^6.9.1",
-		"@testing-library/svelte": "^5.2.8",
+		"@testing-library/svelte": "^5.2.9",
 		"cookie": "^1.0.2",
 		"eslint": "^9.39.1",
 		"eslint-config-prettier": "^10.1.8",
