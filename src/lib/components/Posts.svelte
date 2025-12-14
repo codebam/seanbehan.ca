@@ -4,6 +4,7 @@
 	import Fuse from 'fuse.js';
 	import { debounce } from '$lib/utils';
 	import type { PostsProps, Post as PostType } from '$lib/types';
+	import { Search, Accordion } from 'carbon-components-svelte';
 
 	const { posts, useAccordion = false }: PostsProps & { useAccordion?: boolean } = $props();
 	let query = $state('');
@@ -38,28 +39,22 @@
 	});
 </script>
 
-<div class="m-2 flex flex-wrap justify-between">
-	<input
-		type="search"
-		class="mt-2 rounded-md p-2 text-black"
-		bind:value={query}
-		placeholder="Search posts..."
-		aria-label="Search posts"
-	/>
+<div class="m-2">
+	<Search bind:value={query} placeholder="Search posts..." labelText="Search posts" />
 </div>
 
 {#if results.length === 0}
 	<p class="text-secondary dark:text-dark-secondary mt-4">No posts found</p>
 {:else if useAccordion}
-	<div class="space-y-2">
+	<Accordion>
 		{#each results as post (post.path)}
 			<LazyPostAccordion {post} />
 		{/each}
-	</div>
+	</Accordion>
 {:else}
-	<ul class="grid md:grid-cols-2 lg:grid-cols-3">
+	<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
 		{#each results as post (post.path)}
 			<Post {post} />
 		{/each}
-	</ul>
+	</div>
 {/if}

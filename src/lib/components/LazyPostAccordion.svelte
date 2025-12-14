@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Accordion } from '@skeletonlabs/skeleton-svelte';
+	import { AccordionItem, Button, Loading, Tag } from 'carbon-components-svelte';
 	import type { Post, PostMeta } from '$lib/types';
 
 	interface Props {
@@ -8,10 +8,10 @@
 
 	const { post }: Props = $props();
 
-	let value = $state<string[]>([]);
 	let content = $state<string | null>(null);
 	let loading = $state(false);
 	let error = $state<string | null>(null);
+	let open = $state(false);
 
 	async function loadContent() {
 		if (content || loading) return;
@@ -36,81 +36,69 @@
 		}
 	}
 
-	function handleValueChange(e: { value: string[] }) {
-		value = e.value;
-		if (value.includes(post.path) && !content) {
+	$effect(() => {
+		if (open && !content) {
 			loadContent();
 		}
-	}
+	});
 
 	const tags = post.meta.tags ?? [];
 </script>
 
-<Accordion {value} onValueChange={handleValueChange} collapsible>
-	<Accordion.Item value={post.path}>
-		{#snippet control()}
-			<div class="flex w-full items-center justify-between">
-				<div class="flex-1">
-					<h2 class="text-left text-xl font-bold">
-						{post.meta.title}
-					</h2>
-					<p class="text-surface-600 dark:text-surface-400 text-left text-sm">
-						{new Date(post.meta.date).toDateString()}
-					</p>
-				</div>
-				<div class="ml-4 flex flex-wrap gap-1">
+<AccordionItem bind:open>
+	<svelte:fragment slot="title">
+		<div class="flex w-full items-center justify-between mr-4">
+			<div class="flex-1">
+				<h5 class="font-bold m-0">
+					{post.meta.title}
+				</h5>
+			</div>
+			<div class="flex items-center gap-2">
+				<span class="text-sm text-gray-500">
+					{new Date(post.meta.date).toDateString()}
+				</span>
+				<div class="hidden sm:flex gap-1">
 					{#each tags as tag (tag)}
-						<span class="badge variant-filled-primary text-xs">
-							{tag}
-						</span>
+						<Tag type="blue" size="sm">{tag}</Tag>
 					{/each}
 				</div>
 			</div>
-		{/snippet}
-
-		{#snippet panel()}
-			{#if loading}
-				<div class="flex items-center justify-center p-8">
-					<div class="spinner"></div>
-					<span class="ml-2">Loading content...</span>
-				</div>
-			{:else if error}
-				<div class="alert variant-filled-error">
-					<p>Error: {error}</p>
-					<button class="btn variant-filled" onclick={() => loadContent()}> Try Again </button>
-				</div>
-			{:else if content}
-				<article class="prose prose-lg dark:prose-invert max-w-none">
-					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-					{@html content}
-				</article>
-			{:else}
-				<div class="flex items-center justify-center p-4">
-					<button class="btn variant-filled-primary" onclick={() => loadContent()}>
-						Load Content
-					</button>
-				</div>
-			{/if}
-		{/snippet}
-	</Accordion.Item>
-</Accordion>
+		</div>
+	</svelte:fragment>
+	
+	{#if loading}
+		<div class="flex items-center justify-center p-4">
+			<Loading withOverlay={false} small />
+			<span class="ml-2">Loading content...</span>
+		</div>
+	{:else if error}
+		<div class="p-4 text-red-500">
+			<p>Error: {error}</p>
+			<Button kind="danger" size="small" onclick={() => loadContent()}>Try Again</Button>
+		</div>
+	{:else if content}
+		<article class="blog-content">
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+			{@html content}
+		</article>
+	{:else}
+		<div class="flex items-center justify-center p-4">
+			<Button size="small" onclick={() => loadContent()}>
+				Load Content
+			</Button>
+		</div>
+	{/if}
+</AccordionItem>
 
 <style>
-	.spinner {
-		width: 20px;
-		height: 20px;
-		border: 2px solid #f3f3f3;
-		border-top: 2px solid #3498db;
-		border-radius: 50%;
-		animation: spin 1s linear infinite;
-	}
-
-	@keyframes spin {
-		0% {
-			transform: rotate(0deg);
-		}
-		100% {
-			transform: rotate(360deg);
-		}
-	}
+	:global(.blog-content h1) { font-size: 2rem; font-weight: bold; margin-bottom: 1rem; }
+	:global(.blog-content h2) { font-size: 1.75rem; font-weight: bold; margin-bottom: 1rem; margin-top: 2rem; }
+	:global(.blog-content h3) { font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem; margin-top: 1.5rem; }
+	:global(.blog-content p) { margin-bottom: 1.25rem; line-height: 1.6; }
+	:global(.blog-content ul) { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1.25rem; }
+	:global(.blog-content ol) { list-style-type: decimal; margin-left: 1.5rem; margin-bottom: 1.25rem; }
+	:global(.blog-content pre) { margin-bottom: 1.5rem; border-radius: 4px; }
+	:global(.blog-content a) { color: #4589ff; text-decoration: none; }
+	:global(.blog-content a:hover) { text-decoration: underline; }
+	:global(.blog-content blockquote) { border-left: 4px solid #4589ff; padding-left: 1rem; font-style: italic; margin-bottom: 1.5rem; }
 </style>

@@ -1,26 +1,25 @@
 <script lang="ts">
 	import type { PostProps } from '$lib/types';
+	import { ClickableTile, Tag } from 'carbon-components-svelte';
 
 	const { post }: PostProps = $props();
 	const tags = post.meta.tags ?? [];
 </script>
 
-<li class="bg-surface-100-900 m-2 my-2 flex flex-col justify-between rounded-md p-1">
-	<div>
-		<a href={post.path}>
-			<h2 class="text-2xl font-bold">
+<ClickableTile href={post.path} class="h-full">
+	<div class="flex flex-col justify-between h-full">
+		<div>
+			<h2 class="text-2xl font-bold mb-2">
 				{post.meta.title}
 			</h2>
-		</a>
-		<p class="mt-1">
-			{new Date(post.meta.date).toDateString()}
-		</p>
+			<p class="mb-4">
+				{new Date(post.meta.date).toDateString()}
+			</p>
+		</div>
+		<div class="flex flex-wrap gap-2">
+			{#each tags as tag (tag)}
+				<Tag type="blue" size="sm">{tag}</Tag>
+			{/each}
+		</div>
 	</div>
-	<ul class="flex">
-		{#each tags as tag (tag)}
-			<div class="bg-primary-900 text-primary-50 m-2 rounded-md p-1">
-				{tag}
-			</div>
-		{/each}
-	</ul>
-</li>
+</ClickableTile>
