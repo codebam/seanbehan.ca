@@ -35,7 +35,7 @@
 		"@testing-library/jest-dom": "^6.9.1",
 		"@testing-library/svelte": "^5.2.9",
 		"carbon-components": "^10.59.2",
-		"carbon-components-svelte": "^0.95.2",
+		"carbon-components-svelte": "^0.96.0",
 		"carbon-icons-svelte": "^13.7.0",
 		"cookie": "^1.1.1",
 		"eslint": "^9.39.2",
