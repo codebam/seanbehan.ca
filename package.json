@@ -33,7 +33,7 @@
 		"@tailwindcss/typography": "^0.5.19",
 		"@tailwindcss/vite": "^4.1.18",
 		"@testing-library/jest-dom": "^6.9.1",
-		"@testing-library/svelte": "^5.2.9",
+		"@testing-library/svelte": "^5.2.10",
 		"carbon-components": "^10.59.2",
 		"carbon-components-svelte": "^0.96.0",
 		"carbon-icons-svelte": "^13.8.0",
