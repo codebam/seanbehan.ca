@@ -19,7 +19,7 @@
 		"cf-typegen": "wrangler types && mv worker-configuration.d.ts src/"
 	},
 	"devDependencies": {
-		"@cloudflare/workers-types": "^4.20260103.0",
+		"@cloudflare/workers-types": "^4.20260111.0",
 		"@eslint/compat": "^2.0.0",
 		"@eslint/js": "^9.39.2",
 		"@fontsource-variable/inter": "^5.2.8",
