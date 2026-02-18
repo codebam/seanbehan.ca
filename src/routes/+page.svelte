@@ -54,12 +54,13 @@
 		<Column>
 			<div>
 				<p id="bio" class="my-2">
-					As a full-stack developer, I specialize in creating and managing web applications using various
-					programming languages and technologies. My primary focus lies within the Linux operating system,
-					where I spend most of my time writing software and contributing to open-source projects. With my
-					aptitude for quick learning, I am always eager to expand my knowledge base and explore new
-					technologies to enhance my skills. This passion for continuous growth enables me to create
-					innovative, efficient, and cutting-edge solutions for a wide range of projects.
+					As a full-stack developer, I specialize in creating and managing web applications using
+					various programming languages and technologies. My primary focus lies within the Linux
+					operating system, where I spend most of my time writing software and contributing to
+					open-source projects. With my aptitude for quick learning, I am always eager to expand my
+					knowledge base and explore new technologies to enhance my skills. This passion for
+					continuous growth enables me to create innovative, efficient, and cutting-edge solutions
+					for a wide range of projects.
 				</p>
 				<p class="flex justify-end">
 					<a href="https://ai.cloudflare.com">@cf/meta/llama-3.2-11b-vision-instruct</a>

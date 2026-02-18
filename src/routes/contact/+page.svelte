@@ -10,15 +10,13 @@
 <Grid>
 	<Row>
 		<Column lg={{ span: 8, offset: 2 }} md={{ span: 6, offset: 1 }} sm={4}>
-			<div class="mb-8 text-center mt-8">
+			<div class="mt-8 mb-8 text-center">
 				<h1 class="mb-4 text-4xl font-bold">Get in Touch</h1>
-				<p class="text-gray-500 text-lg">
-					Feel free to reach out through any of these channels
-				</p>
+				<p class="text-lg text-gray-500">Feel free to reach out through any of these channels</p>
 			</div>
-			
+
 			<div class="mb-8 flex justify-center">
-				<img src="/profile.webp" alt="Sean Behan profile photo" class="w-32 h-32 rounded-full" />
+				<img src="/profile.webp" alt="Sean Behan" class="h-32 w-32 rounded-full" />
 			</div>
 
 			<div class="grid gap-4 md:grid-cols-2">
@@ -71,10 +69,8 @@
 				</ClickableTile>
 			</div>
 
-			<div class="mt-8 text-center flex justify-center">
-				<Button href="/publickey.txt" kind="tertiary" icon={Locked}>
-					PGP Public Key
-				</Button>
+			<div class="mt-8 flex justify-center text-center">
+				<Button href="/publickey.txt" kind="tertiary" icon={Locked}>PGP Public Key</Button>
 			</div>
 		</Column>
 	</Row>

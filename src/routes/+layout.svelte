@@ -1,8 +1,14 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import 'carbon-components-svelte/css/g100.css';
-	import { Header, HeaderNav, HeaderNavItem, Content, SkipToContent } from 'carbon-components-svelte';
-	
+	import {
+		Header,
+		HeaderNav,
+		HeaderNavItem,
+		Content,
+		SkipToContent
+	} from 'carbon-components-svelte';
+
 	let { children } = $props<{
 		children: Snippet;
 	}>();
@@ -16,8 +22,8 @@
 	></script>
 </svelte:head>
 
-<Header company="Sean" platformName="Behan" href="/">
-	<svelte:fragment slot="skip-to-content">
+<Header companyName="Sean" platformName="Behan" href="/">
+	<svelte:fragment slot="skipToContent">
 		<SkipToContent />
 	</svelte:fragment>
 	<HeaderNav>

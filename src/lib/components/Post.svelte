@@ -3,13 +3,13 @@
 	import { ClickableTile, Tag } from 'carbon-components-svelte';
 
 	const { post }: PostProps = $props();
-	const tags = post.meta.tags ?? [];
+	let tags = $derived(post.meta.tags ?? []);
 </script>
 
 <ClickableTile href={post.path} class="h-full">
-	<div class="flex flex-col justify-between h-full">
+	<div class="flex h-full flex-col justify-between">
 		<div>
-			<h2 class="text-2xl font-bold mb-2">
+			<h2 class="mb-2 text-2xl font-bold">
 				{post.meta.title}
 			</h2>
 			<p class="mb-4">

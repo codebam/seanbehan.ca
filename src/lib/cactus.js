@@ -677,7 +677,6 @@ function n(n) {
 															(2 == c ? i.b : 3 == c && i.ba) && n.preventDefault(),
 															r);
 													(a = s.j);
-
 												) {
 													if ('function' == typeof a) o = a(o);
 													else for (var l = a.length; l--; ) o = a[l](o);
@@ -824,7 +823,6 @@ function n(n) {
 		for (
 			var u = [], a = {}, c = [], i = r.e, o = n.e, f = i.length, s = o.length, l = 0, b = 0, d = e;
 			f > l && s > b;
-
 		) {
 			var v = (A = i[l]).a,
 				p = (k = o[b]).a,
@@ -1291,7 +1289,6 @@ function n(n) {
 			for (
 				var e, u = [], a = 0, c = n.lastIndex, i = -1;
 				a++ < r && (e = n.exec(t)) && i != n.lastIndex;
-
 			) {
 				for (var o = e.length - 1, f = Array(o); o > 0; ) {
 					var l = e[o];

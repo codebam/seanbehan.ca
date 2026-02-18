@@ -52,6 +52,6 @@ export default async (): Promise<Post[]> => {
 		});
 	} catch (error) {
 		console.error('Failed to load posts:', error);
-		throw new Error('Unable to load blog posts');
+		throw new Error('Unable to load blog posts', { cause: error });
 	}
 };
