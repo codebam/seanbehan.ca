@@ -36,7 +36,7 @@
 		"@testing-library/svelte": "^5.3.1",
 		"carbon-components": "^10.59.2",
 		"carbon-components-svelte": "^0.103.0",
-		"carbon-icons-svelte": "^13.9.1",
+		"carbon-icons-svelte": "^13.10.0",
 		"cookie": "^1.1.1",
 		"eslint": "^10.0.3",
 		"eslint-config-prettier": "^10.1.8",
