@@ -56,20 +56,18 @@ export function initAIBio(bioElementId: string): () => void {
 
 		source.onmessage = (event) => {
 			try {
-				if (!hasStarted) {
-					bioElement.innerHTML = '';
-					hasStarted = true;
-				}
-
 				if (event.data === '[DONE]') {
 					source.close();
 					return;
 				}
-
 				const data = JSON.parse(event.data);
-				if (data.response && typeof data.response === 'string') {
-					// Basic sanitization for AI response (though it should be safe)
-					bioElement.innerHTML += data.response;
+				const content = data.choices?.[0]?.delta?.content || data.response || '';
+				if (content) {
+					if (!hasStarted) {
+						bioElement.innerHTML = '';
+						hasStarted = true;
+					}
+					bioElement.innerHTML += content;
 				}
 			} catch (error) {
 				console.error('Error processing AI response:', error);
