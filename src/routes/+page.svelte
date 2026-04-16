@@ -1,34 +1,17 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import Posts from '$lib/components/Posts.svelte';
-	import { initComments } from '$lib/cactus.js';
-	import { initAIBio, safeGetElementById } from '$lib/utils';
+	import { initAIBio } from '$lib/utils';
 	import type { PostsPageData } from '$lib/types';
 	import { Grid, Row, Column } from 'carbon-components-svelte';
 
 	const { data }: { data: PostsPageData } = $props();
 
 	/**
-	 * Initialize comments system and AI-generated bio
+	 * Initialize AI-generated bio
 	 */
 	onMount(() => {
 		let cleanupAIBio: (() => void) | undefined;
-
-		// Initialize comments system
-		try {
-			const commentNode = safeGetElementById('comment-section');
-			if (commentNode) {
-				initComments({
-					node: commentNode,
-					defaultHomeserverUrl: 'https://matrix.cactus.chat:8448',
-					serverName: 'cactus.chat',
-					siteName: 'seanbehan.ca',
-					commentSectionId: 'main'
-				});
-			}
-		} catch (error) {
-			console.error('Failed to initialize comments:', error);
-		}
 
 		// Initialize AI-generated bio
 		try {
@@ -71,11 +54,6 @@
 	<Row>
 		<Column>
 			<Posts posts={data.posts} />
-		</Column>
-	</Row>
-	<Row>
-		<Column>
-			<div id="comment-section"></div>
 		</Column>
 	</Row>
 </Grid>

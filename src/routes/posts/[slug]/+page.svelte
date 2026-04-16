@@ -1,36 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { initComments } from '$lib/cactus.js';
 	import { safeGetElementById } from '$lib/utils';
 	import type { PostPageData } from '$lib/types';
 	import { Grid, Row, Column } from 'carbon-components-svelte';
 
 	const { data }: { data: { post: PostPageData['post'] } } = $props();
-
-	let mounted = $state(false);
-
-	$effect(() => {
-		if (!mounted) return;
-
-		try {
-			const commentNode = safeGetElementById('comment-section');
-			if (commentNode) {
-				initComments({
-					node: commentNode,
-					defaultHomeserverUrl: 'https://matrix.cactus.chat:8448',
-					serverName: 'cactus.chat',
-					siteName: 'seanbehan.ca',
-					commentSectionId: data.post.meta.title.split(' ').join('-')
-				});
-			}
-		} catch (error) {
-			console.error('Failed to initialize comments:', error);
-		}
-	});
-
-	onMount(() => {
-		mounted = true;
-	});
 </script>
 
 <svelte:head>
@@ -52,11 +26,6 @@
 					{@html data.post.html}
 				</div>
 			</article>
-		</Column>
-	</Row>
-	<Row>
-		<Column>
-			<div id="comment-section"></div>
 		</Column>
 	</Row>
 </Grid>
