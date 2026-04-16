@@ -46,7 +46,7 @@
 					for a wide range of projects.
 				</p>
 				<p class="flex justify-end">
-					<a href="https://ai.cloudflare.com">@cf/meta/llama-3.2-11b-vision-instruct</a>
+					<a href="https://ai.cloudflare.com">@cf/google/gemma-4-26b-a4b-it</a>
 				</p>
 			</div>
 		</Column>

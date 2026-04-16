@@ -44,7 +44,7 @@ export function initAIBio(bioElementId: string): () => void {
 		}
 
 		const url = new URL(apiUrl);
-		url.searchParams.set('model', '@cf/meta/llama-3.2-11b-vision-instruct');
+		url.searchParams.set('model', '@cf/google/gemma-4-26b-a4b-it');
 		url.searchParams.set('system', 'pretend you are Sean Behan.');
 		url.searchParams.set(
 			'content',
