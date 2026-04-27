@@ -40,7 +40,7 @@
 		"cookie": "^1.1.1",
 		"eslint": "^10.2.1",
 		"eslint-config-prettier": "^10.1.8",
-		"eslint-plugin-svelte": "^3.17.0",
+		"eslint-plugin-svelte": "^3.17.1",
 		"fuse.js": "^7.3.0",
 		"globals": "^17.5.0",
 		"jsdom": "^29.0.2",
