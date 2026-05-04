@@ -38,7 +38,7 @@
 		"carbon-components-svelte": "^0.107.0",
 		"carbon-icons-svelte": "^13.10.0",
 		"cookie": "^1.1.1",
-		"eslint": "^10.2.1",
+		"eslint": "^10.3.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.17.1",
 		"fuse.js": "^7.3.0",
