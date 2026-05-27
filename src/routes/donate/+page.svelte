@@ -409,10 +409,6 @@
 											Pay with Web3 Wallet
 										</Button>
 									{/if}
-									
-									<Button onclick={simulatePayment} class="w-full" kind="tertiary">
-										Simulate Payment (Mock)
-									</Button>
 								</div>
 
 								{#if checking}
