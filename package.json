@@ -41,7 +41,7 @@
 		"eslint": "^10.4.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.17.1",
-		"fuse.js": "^7.3.0",
+		"fuse.js": "^7.4.1",
 		"globals": "^17.6.0",
 		"jsdom": "^29.1.1",
 		"mdsvex": "^0.12.7",
