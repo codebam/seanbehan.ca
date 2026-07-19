@@ -12,6 +12,9 @@
 	],
 	"observability": {
 		"enabled": true
+	},
+	"vars": {
+		"NODE_VERSION": "26.5.0"
 	}
 	/**
 	 * Smart Placement
