@@ -51,10 +51,19 @@
 		"svelte": "^5.56.4",
 		"svelte-check": "^4.7.2",
 		"tailwindcss": "^4.3.1",
-		"typescript": "^7.0.2",
 		"typescript-eslint": "^8.63.0",
 		"vite": "^8.1.4",
 		"vitest": "^4.1.10",
 		"wrangler": "^4.110.0"
+	},
+	"dependencies": {
+		"typescript": "^6.0.3"
+	},
+	"allowScripts": {
+		"carbon-components@10.59.2": true,
+		"carbon-components-svelte@0.110.0": true,
+		"esbuild@0.28.1": true,
+		"sharp@0.34.5": true,
+		"workerd@1.20260708.1": true
 	}
 }
