@@ -16,10 +16,10 @@
       {
         devShell = pkgs.mkShell {
           buildInputs = with pkgs; [
-            nodePackages_latest.nodejs
-            nodePackages_latest.typescript-language-server
-            nodePackages_latest.prettier
-            nodePackages_latest.svelte-language-server
+            nodejs
+            typescript-language-server
+            prettier
+            svelte-language-server
             tailwindcss-language-server
             vscode-langservers-extracted
           ];
