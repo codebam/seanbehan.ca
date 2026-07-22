@@ -56,14 +56,14 @@
 					</div>
 				</ClickableTile>
 
-				<ClickableTile href="https://matrix.to/#/@codebam:nixos.dev">
+				<ClickableTile href="https://matrix.to/#/@codebam:mozilla.org">
 					<div class="flex items-center">
 						<div class="mr-4 text-green-600">
 							<Chat size={32} />
 						</div>
 						<div>
 							<h3 class="text-lg font-semibold">Matrix</h3>
-							<p>@codebam:nixos.dev</p>
+							<p>@codebam:mozilla.org</p>
 						</div>
 					</div>
 				</ClickableTile>
