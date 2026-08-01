@@ -2,7 +2,10 @@
 @plugin '@tailwindcss/typography';
 @plugin '@tailwindcss/forms';
 
-@import 'carbon-components-svelte/css/g100.css';
+/* Must be layered. Unlayered CSS outranks every cascade layer, so carbon's reset
+   (`div, section, ... { margin: 0; padding: 0 }`) would otherwise beat all of
+   Tailwind's spacing utilities, which live in @layer utilities. */
+@import 'carbon-components-svelte/css/g100.css' layer(base);
 
 @layer base {
 	html {

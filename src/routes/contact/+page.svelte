@@ -9,7 +9,8 @@
 
 <Grid>
 	<Row>
-		<Column lg={{ span: 8, offset: 2 }} md={{ span: 6, offset: 1 }} sm={4}>
+		<!-- carbon's lg grid is 16 columns, so an 8-span centers at offset 4 -->
+		<Column lg={{ span: 8, offset: 4 }} md={{ span: 6, offset: 1 }} sm={4}>
 			<div class="mb-10 mt-4 text-center">
 				<h1 class="mb-3 text-4xl font-bold tracking-tight text-[#f4f4f4]">Get in Touch</h1>
 				<p class="text-lg text-[#6f6f6f]">Feel free to reach out through any of these channels</p>

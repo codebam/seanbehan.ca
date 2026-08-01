@@ -294,7 +294,8 @@
 
 <Grid class="py-12">
 	<Row>
-		<Column lg={{ span: 8, offset: 2 }} md={{ span: 6, offset: 1 }} sm={4}>
+		<!-- carbon's lg grid is 16 columns, so an 8-span centers at offset 4 -->
+		<Column lg={{ span: 8, offset: 4 }} md={{ span: 6, offset: 1 }} sm={4}>
 			
 			<div class="mt-8 mb-8 text-center space-y-2">
 				<h1 class="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">
