@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { debounce, sanitizeHTML, isValidExternalURL, renderInlineMarkdown } from './utils';
+import { debounce, isValidExternalURL, renderInlineMarkdown } from './utils';
 
 describe('debounce', () => {
 	beforeEach(() => {
@@ -27,20 +27,6 @@ describe('debounce', () => {
 		vi.advanceTimersByTime(100);
 		expect(fn).toHaveBeenCalledTimes(1);
 		expect(fn).toHaveBeenCalledWith('second');
-	});
-});
-
-describe('sanitizeHTML', () => {
-	it('should escape HTML tags', () => {
-		const input = '<script>alert("xss")</script>';
-		const result = sanitizeHTML(input);
-		expect(result).toBe('&lt;script&gt;alert("xss")&lt;/script&gt;');
-	});
-
-	it('should handle plain text', () => {
-		const input = 'Hello world';
-		const result = sanitizeHTML(input);
-		expect(result).toBe('Hello world');
 	});
 });
 

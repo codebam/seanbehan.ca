@@ -138,32 +138,6 @@ export function initAIBio(bioElementId: string): () => void {
 }
 
 /**
- * Safely gets an element by ID with type assertion
- * @param id - Element ID
- * @returns HTMLElement or null
- */
-export function safeGetElementById(id: string): HTMLElement | null {
-	try {
-		return document.getElementById(id);
-	} catch (error) {
-		console.error(`Error getting element by ID '${id}':`, error);
-		return null;
-	}
-}
-
-/**
- * Basic HTML sanitization for user input (not needed for mdsvex content)
- * @param html - HTML string to sanitize
- * @returns Sanitized HTML string
- */
-export function sanitizeHTML(html: string): string {
-	// Create a temporary div to parse HTML
-	const temp = document.createElement('div');
-	temp.textContent = html;
-	return temp.innerHTML;
-}
-
-/**
  * Validates that a URL is safe for external requests
  * @param url - URL to validate
  * @returns boolean indicating if URL is safe

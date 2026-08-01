@@ -485,8 +485,10 @@
 
 								<!-- Payee Address Detail -->
 								<div class="w-full space-y-1 text-left">
-									<label class="text-[10px] font-bold tracking-wider text-gray-500 uppercase"
-										>Donation payee Address</label
+									<!-- A caption over a read-only value, not a form control, so it is a
+									     span like the sibling captions below rather than a <label>. -->
+									<span class="block text-[10px] font-bold tracking-wider text-gray-500 uppercase"
+										>Donation payee Address</span
 									>
 									<div
 										class="truncate rounded-xl border border-gray-800/50 bg-gray-950/60 px-3 py-2.5 font-mono text-xs text-gray-300 select-all"

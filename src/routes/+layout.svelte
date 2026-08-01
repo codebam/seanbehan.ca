@@ -17,12 +17,29 @@
 		children: Snippet;
 	}>();
 
-	let showAds = $state(true);
+	const ADSENSE_SRC =
+		'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3287237463323384';
 
 	onMount(() => {
+		// Inject AdSense only after checking the cookie, never via markup.
+		//
+		// The site is prerendered, so a `{#if showAds}` in <svelte:head> cannot
+		// work: there is no request to read the cookie from at render time, so the
+		// tag shipped to everyone and the browser began executing it on first
+		// paint. Flipping a flag in onMount afterwards cannot unload a script that
+		// has already run — donors kept getting ads despite paying to remove them.
+		if (dev) return;
+
 		const cookies = document.cookie.split(';').map((c) => c.trim());
-		const hasDisableAdsCookie = cookies.some((c) => c.startsWith('disable_ads=true'));
-		showAds = !hasDisableAdsCookie;
+		if (cookies.some((c) => c.startsWith('disable_ads=true'))) return;
+
+		const script = document.createElement('script');
+		script.async = true;
+		script.crossOrigin = 'anonymous';
+		script.src = ADSENSE_SRC;
+		document.head.appendChild(script);
+
+		return () => script.remove();
 	});
 
 	onMount(async () => {
@@ -46,16 +63,6 @@
 
 	const currentYear = new Date().getFullYear();
 </script>
-
-<svelte:head>
-	{#if showAds}
-		<script
-			async
-			src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3287237463323384"
-			crossorigin="anonymous"
-		></script>
-	{/if}
-</svelte:head>
 
 <Header companyName="Sean" platformName="Behan" href="/">
 	<svelte:fragment slot="skipToContent">
@@ -110,14 +117,6 @@
 					class="text-sm text-[#6f6f6f] transition-colors duration-200 hover:text-[#f4f4f4]"
 				>
 					Contact
-				</a>
-				<a
-					href="https://ai.clo...om"
-					target="_blank"
-					rel="noopener noreferrer"
-					class="text-sm text-[#6f6f6f] transition-colors duration-200 hover:text-[#f4f4f4]"
-				>
-					AI Bio API
 				</a>
 			</div>
 		</div>

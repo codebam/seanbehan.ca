@@ -1,4 +1,5 @@
 name: Dependabot auto-merge
+
 on: pull_request
 
 permissions:
@@ -6,13 +7,21 @@ permissions:
   pull-requests: write
 
 jobs:
+  # Auto-merge lands dependency bumps straight on master, and master deploys.
+  # Gate it on the full check suite so a bump that breaks lint, types, tests or
+  # the build cannot ship unattended.
+  ci:
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    uses: ./.github/workflows/ci.yml
+
   merge_pr:
+    needs: ci
     runs-on: ubuntu-latest
     if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
       - name: Dependabot metadata
         id: metadata
-        uses: dependabot/fetch-metadata@v1.1.1
+        uses: dependabot/fetch-metadata@v2
         with:
           github-token: '${{ secrets.GITHUB_TOKEN }}'
       - name: Enable auto-merge for Dependabot PRs

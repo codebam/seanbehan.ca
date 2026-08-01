@@ -16,11 +16,12 @@
 	></div>
 
 	<div class="relative z-10 flex h-full flex-col">
-		<h2
+		<!-- h3: these cards sit under the "Latest Posts" h2, matching the project cards -->
+		<h3
 			class="mb-2 text-lg font-bold text-[#f4f4f4] transition-colors duration-200 group-hover:text-[#a6c8ff]"
 		>
 			{post.meta.title}
-		</h2>
+		</h3>
 		<p class="mb-4 text-xs text-[#6f6f6f]">
 			{new Date(post.meta.date).toDateString()}
 		</p>
