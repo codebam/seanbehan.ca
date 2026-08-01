@@ -2,23 +2,80 @@
 @plugin '@tailwindcss/typography';
 @plugin '@tailwindcss/forms';
 
-@source '../node_modules/@skeletonlabs/skeleton-svelte/dist';
-
-@import '@skeletonlabs/skeleton';
-@import '@skeletonlabs/skeleton/optional/presets';
-@import '@skeletonlabs/skeleton/themes/catppuccin';
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'carbon-components-svelte/css/g100.css';
 
 @layer base {
+	html {
+		scroll-behavior: smooth;
+	}
+
 	:root {
 		--tw-prose-body: oklch(50.06% 0.03 280.09deg); /* --color-surface-700 */
 		--tw-prose-invert-body: oklch(90.6% 0.01 264.54deg); /* --color-surface-50 */
+	}
+
+	body {
+		@apply bg-[#161616] text-[#f4f4f4];
+		min-height: 100vh;
 	}
 }
 
 .dark .prose {
 	color: var(--tw-prose-invert-body);
+}
+
+/* Subtle fade-in for page content */
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.animate-fade-in-up {
+	animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* Card hover effect */
+.card-hover {
+	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Glow accent for interactive elements */
+.glow-accent {
+	transition: box-shadow 0.25s ease;
+}
+
+.glow-accent:hover {
+	box-shadow: 0 0 20px rgba(69, 137, 255, 0.15);
+}
+
+/* Smooth link underline animation */
+.link-underline {
+	position: relative;
+	text-decoration: none;
+}
+
+.link-underline::after {
+	content: '';
+	position: absolute;
+	bottom: -2px;
+	left: 0;
+	width: 0;
+	height: 2px;
+	background: #4589ff;
+	transition: width 0.3s ease;
+}
+
+.link-underline:hover::after {
+	width: 100%;
 }

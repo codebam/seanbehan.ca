@@ -10,66 +10,62 @@
 <Grid>
 	<Row>
 		<Column lg={{ span: 8, offset: 2 }} md={{ span: 6, offset: 1 }} sm={4}>
-			<div class="mt-8 mb-8 text-center">
-				<h1 class="mb-4 text-4xl font-bold">Get in Touch</h1>
-				<p class="text-lg text-gray-500">Feel free to reach out through any of these channels</p>
+			<div class="mb-10 mt-4 text-center">
+				<h1 class="mb-3 text-4xl font-bold tracking-tight text-[#f4f4f4]">Get in Touch</h1>
+				<p class="text-lg text-[#6f6f6f]">Feel free to reach out through any of these channels</p>
 			</div>
 
-			<div class="mb-8 flex justify-center">
-				<img src="/profile.webp" alt="Sean Behan" class="h-32 w-32 rounded-full" />
+			<div class="mb-10 flex justify-center">
+				<img src="/profile.webp" alt="Sean Behan" class="h-32 w-32 rounded-full border-2 border-[#4589ff]/30 object-cover shadow-lg ring-2 ring-[#4589ff]/10" />
 			</div>
 
 			<div class="grid gap-4 md:grid-cols-2">
-				<ClickableTile href="mailto:contact@seanbehan.ca">
-					<div class="flex items-center">
-						<div class="mr-4 text-blue-600">
-							<Email size={32} />
-						</div>
-						<div>
-							<h3 class="text-lg font-semibold">Email</h3>
-							<p>contact@seanbehan.ca</p>
-						</div>
+				<a href="mailto:contact@seanbehan.ca"
+					class="card-hover group flex items-center rounded-xl border border-[#393939] bg-[#1c1c1c] p-5 transition-all duration-200 hover:border-[#4589ff]/40">
+					<div class="mr-4 flex h-12 w-12 items-center justify-center rounded-lg bg-[#4589ff]/10 text-[#4589ff] transition-colors group-hover:bg-[#4589ff]/20">
+						<Email size={24} />
 					</div>
-				</ClickableTile>
+					<div>
+						<h3 class="text-base font-semibold text-[#f4f4f4]">Email</h3>
+						<p class="text-sm text-[#6f6f6f]">contact@seanbehan.ca</p>
+					</div>
+				</a>
 
-				<ClickableTile href="https://github.com/codebam">
-					<div class="flex items-center">
-						<div class="mr-4">
-							<LogoGithub size={32} />
-						</div>
-						<div>
-							<h3 class="text-lg font-semibold">GitHub</h3>
-							<p>@codebam</p>
-						</div>
+				<a href="https://github.com/codebam" target="_blank" rel="noopener noreferrer"
+					class="card-hover group flex items-center rounded-xl border border-[#393939] bg-[#1c1c1c] p-5 transition-all duration-200 hover:border-[#4589ff]/40">
+					<div class="mr-4 flex h-12 w-12 items-center justify-center rounded-lg bg-[#6f6f6f]/10 text-[#c6c6c6] transition-colors group-hover:bg-[#6f6f6f]/20">
+						<LogoGithub size={24} />
 					</div>
-				</ClickableTile>
+					<div>
+						<h3 class="text-base font-semibold text-[#f4f4f4]">GitHub</h3>
+						<p class="text-sm text-[#6f6f6f]">@codebam</p>
+					</div>
+				</a>
 
-				<ClickableTile href="https://www.linkedin.com/in/sean-behan">
-					<div class="flex items-center">
-						<div class="mr-4 text-blue-700">
-							<LogoLinkedin size={32} />
-						</div>
-						<div>
-							<h3 class="text-lg font-semibold">LinkedIn</h3>
-							<p>Sean Behan</p>
-						</div>
+				<a href="https://www.linkedin.com/in/sean-behan" target="_blank" rel="noopener noreferrer"
+					class="card-hover group flex items-center rounded-xl border border-[#393939] bg-[#1c1c1c] p-5 transition-all duration-200 hover:border-[#4589ff]/40">
+					<div class="mr-4 flex h-12 w-12 items-center justify-center rounded-lg bg-[#0a66c2]/10 text-[#0a66c2] transition-colors group-hover:bg-[#0a66c2]/20">
+						<LogoLinkedin size={24} />
 					</div>
-				</ClickableTile>
+					<div>
+						<h3 class="text-base font-semibold text-[#f4f4f4]">LinkedIn</h3>
+						<p class="text-sm text-[#6f6f6f]">Sean Behan</p>
+					</div>
+				</a>
 
-				<ClickableTile href="https://matrix.to/#/@codebam:mozilla.org">
-					<div class="flex items-center">
-						<div class="mr-4 text-green-600">
-							<Chat size={32} />
-						</div>
-						<div>
-							<h3 class="text-lg font-semibold">Matrix</h3>
-							<p>@codebam:mozilla.org</p>
-						</div>
+				<a href="https://matrix.to/#/@codebam:mozilla.org" target="_blank" rel="noopener noreferrer"
+					class="card-hover group flex items-center rounded-xl border border-[#393939] bg-[#1c1c1c] p-5 transition-all duration-200 hover:border-[#4589ff]/40">
+					<div class="mr-4 flex h-12 w-12 items-center justify-center rounded-lg bg-[#42be65]/10 text-[#42be65] transition-colors group-hover:bg-[#42be65]/20">
+						<Chat size={24} />
 					</div>
-				</ClickableTile>
+					<div>
+						<h3 class="text-base font-semibold text-[#f4f4f4]">Matrix</h3>
+						<p class="text-sm text-[#6f6f6f]">@codebam:mozilla.org</p>
+					</div>
+				</a>
 			</div>
 
-			<div class="mt-8 flex justify-center text-center">
+			<div class="mt-8 flex justify-center">
 				<Button href="/publickey.txt" kind="tertiary" icon={Locked}>PGP Public Key</Button>
 			</div>
 		</Column>

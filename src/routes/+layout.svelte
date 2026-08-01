@@ -21,6 +21,8 @@
 		const hasDisableAdsCookie = cookies.some((c) => c.startsWith('disable_ads=true'));
 		showAds = !hasDisableAdsCookie;
 	});
+
+	const currentYear = new Date().getFullYear();
 </script>
 
 <svelte:head>
@@ -48,5 +50,62 @@
 </Header>
 
 <Content>
-	{@render children()}
+	<main class="animate-fade-in-up min-h-[60vh] px-4 py-8">
+		{@render children()}
+	</main>
 </Content>
+
+<!-- Footer -->
+<footer class="border-t border-[#393939] bg-[#161616] px-4 py-12">
+	<div class="mx-auto max-w-6xl">
+		<div class="flex flex-col items-center justify-between gap-6 md:flex-row">
+			<!-- Brand -->
+			<div class="text-center md:text-left">
+				<p class="text-sm font-semibold text-[#f4f4f4]">Sean Behan</p>
+				<p class="mt-1 text-xs text-[#6f6f6f]">
+					Full-stack developer &amp; open-source enthusiast
+				</p>
+			</div>
+
+			<!-- Social links -->
+			<div class="flex flex-wrap items-center justify-center gap-6">
+				<a
+					href="https://github.com/codebam"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="text-sm text-[#6f6f6f] transition-colors duration-200 hover:text-[#f4f4f4]"
+				>
+					GitHub
+				</a>
+				<a
+					href="https://mstdn.ca/@codebam"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="text-sm text-[#6f6f6f] transition-colors duration-200 hover:text-[#f4f4f4]"
+				>
+					Mastodon
+				</a>
+				<a
+					href="/contact"
+					class="text-sm text-[#6f6f6f] transition-colors duration-200 hover:text-[#f4f4f4]"
+				>
+					Contact
+				</a>
+				<a
+					href="https://ai.clo...om"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="text-sm text-[#6f6f6f] transition-colors duration-200 hover:text-[#f4f4f4]"
+				>
+					AI Bio API
+				</a>
+			</div>
+		</div>
+
+		<div class="mt-8 border-t border-[#262626] pt-6 text-center">
+			<p class="text-xs text-[#525252]">
+				&copy; {currentYear} Sean Behan. Built with SvelteKit &middot; Hosted on Cloudflare
+			</p>
+		</div>
+	</div>
+</footer>
