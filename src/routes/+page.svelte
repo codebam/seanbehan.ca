@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { dev } from '$app/environment';
 	import { resolve } from '$app/paths';
 	import Posts from '$lib/components/Posts.svelte';
 	import { initAIBio } from '$lib/utils';
@@ -14,6 +15,11 @@
 	 * Initialize AI-generated bio
 	 */
 	onMount(() => {
+		// Skipped in dev: it streams from an external worker, so every reload
+		// would hit the API and the page would sit on a spinner offline. The
+		// static bio in the markup stays put instead.
+		if (dev) return;
+
 		let cleanupAIBio: (() => void) | undefined;
 
 		// Initialize AI-generated bio

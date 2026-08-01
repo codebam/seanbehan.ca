@@ -23,6 +23,46 @@ export function debounce<T extends (...args: any[]) => any>(
 }
 
 /**
+ * Renders the inline subset of markdown the bio model actually emits: bold,
+ * italics, inline code and links. Block constructs (headings, lists) are
+ * deliberately unsupported — the bio renders into a <p>, where block elements
+ * would be invalid HTML.
+ *
+ * Input is escaped before any markup is added, so model output can never
+ * introduce HTML of its own.
+ *
+ * @param markdown - Raw markdown text
+ * @returns HTML string safe to assign to innerHTML
+ */
+export function renderInlineMarkdown(markdown: string): string {
+	const escaped = markdown
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&#39;');
+
+	return (
+		escaped
+			// Links first, so their text can still pick up emphasis below.
+			// Only http(s) — javascript: and data: URLs never match.
+			.replace(
+				/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+				'<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
+			)
+			.replace(/`([^`]+)`/g, '<code>$1</code>')
+			// Double markers before single, or `**x**` would match as `*` twice.
+			.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+			.replace(/__([^_]+)__/g, '<strong>$1</strong>')
+			// Single `*` only. `_foo_` is left alone so identifiers and
+			// snake_case words survive intact.
+			.replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>')
+			.replace(/\n{2,}/g, '<br /><br />')
+			.replace(/\n/g, '<br />')
+	);
+}
+
+/**
  * Initializes AI-generated bio with error handling and security validation
  * @param bioElementId - ID of the element to populate with bio content
  * @returns Cleanup function to close the EventSource
@@ -52,7 +92,11 @@ export function initAIBio(bioElementId: string): () => void {
 		);
 
 		const source = new EventSource(url.toString());
-		let hasStarted = false;
+		// Markdown has to be re-rendered from the whole buffer on each chunk: a
+		// `**bold**` span routinely arrives split across several deltas. Assigning
+		// the full render each time also replaces the static fallback bio on the
+		// first chunk.
+		let received = '';
 
 		source.onmessage = (event) => {
 			try {
@@ -63,11 +107,8 @@ export function initAIBio(bioElementId: string): () => void {
 				const data = JSON.parse(event.data);
 				const content = data.choices?.[0]?.delta?.content || data.response || '';
 				if (content) {
-					if (!hasStarted) {
-						bioElement.innerHTML = '';
-						hasStarted = true;
-					}
-					bioElement.innerHTML += content;
+					received += content;
+					bioElement.innerHTML = renderInlineMarkdown(received);
 				}
 			} catch (error) {
 				console.error('Error processing AI response:', error);
