@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { resolve } from '$app/paths';
 	import Posts from '$lib/components/Posts.svelte';
 	import { initAIBio } from '$lib/utils';
 	import type { PostsPageData } from '$lib/types';
@@ -38,7 +39,7 @@
 <!-- HERO SECTION                                -->
 <!-- ════════════════════════════════════════════ -->
 <section
-	class="relative mb-16 mt-2 overflow-hidden rounded-3xl bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] px-6 py-16 shadow-2xl md:px-14 md:py-20"
+	class="relative mt-2 mb-16 overflow-hidden rounded-3xl bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] px-6 py-16 shadow-2xl md:px-14 md:py-20"
 >
 	<!-- Animated grid overlay -->
 	<div
@@ -48,10 +49,10 @@
 
 	<!-- Ambient orbs -->
 	<div
-		class="pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full bg-[#4589ff]/10 blur-3xl"
+		class="pointer-events-none absolute -top-20 -left-20 h-72 w-72 rounded-full bg-[#4589ff]/10 blur-3xl"
 	></div>
 	<div
-		class="pointer-events-none absolute -bottom-32 -right-20 h-80 w-80 rounded-full bg-[#ff7eb6]/10 blur-3xl"
+		class="pointer-events-none absolute -right-20 -bottom-32 h-80 w-80 rounded-full bg-[#ff7eb6]/10 blur-3xl"
 	></div>
 
 	<div class="relative z-10 flex flex-col items-center gap-8 md:flex-row md:items-center">
@@ -82,7 +83,7 @@
 			</div>
 
 			<h1
-				class="mb-3 text-4xl font-extrabold leading-tight tracking-tight text-[#f4f4f4] md:text-5xl"
+				class="mb-3 text-4xl leading-tight font-extrabold tracking-tight text-[#f4f4f4] md:text-5xl"
 			>
 				Sean Behan
 			</h1>
@@ -118,8 +119,8 @@
 			<!-- CTA buttons -->
 			<div class="mt-6 flex flex-wrap justify-center gap-3 md:justify-start">
 				<a
-					href="/posts"
-					class="inline-flex items-center gap-2 rounded-xl bg-[#4589ff] px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-200 hover:bg-[#3d7ae8] hover:shadow-[#4589ff]/30 hover:shadow-xl active:scale-[0.97]"
+					href={resolve('/posts')}
+					class="inline-flex items-center gap-2 rounded-xl bg-[#4589ff] px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-200 hover:bg-[#3d7ae8] hover:shadow-xl hover:shadow-[#4589ff]/30 active:scale-[0.97]"
 				>
 					<svg
 						width="14"
@@ -151,7 +152,7 @@
 					GitHub
 				</a>
 				<a
-					href="/contact"
+					href={resolve('/contact')}
 					class="inline-flex items-center gap-2 rounded-xl border border-[#6f6f6f]/40 bg-[#262626]/60 px-6 py-3 text-sm font-semibold text-[#f4f4f4] backdrop-blur-sm transition-all duration-200 hover:border-[#42be65]/40 hover:bg-[#333333]/60 hover:shadow-lg active:scale-[0.97]"
 				>
 					<svg
@@ -183,7 +184,7 @@
 		class="group relative h-full overflow-hidden rounded-2xl border border-[#393939]/60 bg-gradient-to-br from-[#1c1c1c] to-[#262626] p-6 transition-all duration-300 hover:border-[#4589ff]/30 hover:shadow-lg hover:shadow-[#4589ff]/5"
 	>
 		<div
-			class="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-[#4589ff]/5 blur-2xl transition-all duration-500 group-hover:bg-[#4589ff]/10 group-hover:blur-3xl"
+			class="absolute -top-8 -right-8 h-24 w-24 rounded-full bg-[#4589ff]/5 blur-2xl transition-all duration-500 group-hover:bg-[#4589ff]/10 group-hover:blur-3xl"
 		></div>
 		<div class="relative z-10">
 			<div class="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-[#4589ff]/10">
@@ -214,7 +215,7 @@
 		class="group relative h-full overflow-hidden rounded-2xl border border-[#393939]/60 bg-gradient-to-br from-[#1c1c1c] to-[#262626] p-6 transition-all duration-300 hover:border-[#42be65]/30 hover:shadow-lg hover:shadow-[#42be65]/5"
 	>
 		<div
-			class="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-[#42be65]/5 blur-2xl transition-all duration-500 group-hover:bg-[#42be65]/10 group-hover:blur-3xl"
+			class="absolute -top-8 -right-8 h-24 w-24 rounded-full bg-[#42be65]/5 blur-2xl transition-all duration-500 group-hover:bg-[#42be65]/10 group-hover:blur-3xl"
 		></div>
 		<div class="relative z-10">
 			<div class="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-[#42be65]/10">
@@ -245,7 +246,7 @@
 		class="group relative h-full overflow-hidden rounded-2xl border border-[#393939]/60 bg-gradient-to-br from-[#1c1c1c] to-[#262626] p-6 transition-all duration-300 hover:border-[#ff7eb6]/30 hover:shadow-lg hover:shadow-[#ff7eb6]/5"
 	>
 		<div
-			class="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-[#ff7eb6]/5 blur-2xl transition-all duration-500 group-hover:bg-[#ff7eb6]/10 group-hover:blur-3xl"
+			class="absolute -top-8 -right-8 h-24 w-24 rounded-full bg-[#ff7eb6]/5 blur-2xl transition-all duration-500 group-hover:bg-[#ff7eb6]/10 group-hover:blur-3xl"
 		></div>
 		<div class="relative z-10">
 			<div class="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-[#ff7eb6]/10">
@@ -276,14 +277,14 @@
 <!-- ════════════════════════════════════════════ -->
 <!-- LATEST POSTS                                -->
 <!-- ════════════════════════════════════════════ -->
-<section class="mb-8 mt-16">
+<section class="mt-16 mb-8">
 	<div class="mb-6 flex items-center justify-between">
 		<div>
 			<h2 class="text-2xl font-bold text-[#f4f4f4]">Latest Posts</h2>
 			<p class="mt-1 text-sm text-[#6f6f6f]">Thoughts on tech, Linux, and building things</p>
 		</div>
 		<a
-			href="/posts"
+			href={resolve('/posts')}
 			class="inline-flex items-center gap-1 text-sm font-medium text-[#4589ff] transition-colors hover:text-[#a6c8ff]"
 		>
 			View all

@@ -6,7 +6,10 @@
 	let tags = $derived(post.meta.tags ?? []);
 </script>
 
-<ClickableTile href={post.path} class="!rounded-xl !transition-all !duration-200 hover:!translate-y-[-2px] hover:!shadow-lg">
+<ClickableTile
+	href={post.path}
+	class="!rounded-xl !transition-all !duration-200 hover:!translate-y-[-2px] hover:!shadow-lg"
+>
 	<div class="flex h-full flex-col justify-between p-1">
 		<div>
 			<h2 class="mb-2 text-xl font-bold text-[#f4f4f4]">

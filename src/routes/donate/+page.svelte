@@ -1,15 +1,25 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { Grid, Row, Column, Button, TextInput, Select, SelectItem, Tile, InlineNotification } from 'carbon-components-svelte';
+	import {
+		Grid,
+		Row,
+		Column,
+		Button,
+		TextInput,
+		Select,
+		SelectItem,
+		Tile,
+		InlineNotification
+	} from 'carbon-components-svelte';
 	import { Currency, Locked, Checkmark, Wallet } from 'carbon-icons-svelte';
 
-	let amountUsd = $state("5.00");
-	let network = $state("arbitrum"); // evm, arbitrum, solana, bitcoin
-	let callbackUrl = $state("");
+	let amountUsd = $state('5.00');
+	let network = $state('arbitrum'); // evm, arbitrum, solana, bitcoin
+	let callbackUrl = $state('');
 
 	let loading = $state(false);
 	let session = $state<any>(null); // holds generated session
-	let errorMsg = $state("");
+	let errorMsg = $state('');
 	let successData = $state<any>(null);
 
 	let checking = $state(false);
@@ -17,15 +27,15 @@
 	let simulated = $state(false);
 
 	// Auto-detect payment worker URL
-	let gatewayUrl = $state("https://x402-crypto-worker.codebam.workers.dev");
+	let gatewayUrl = $state('https://x402-crypto-worker.codebam.workers.dev');
 
 	onMount(() => {
 		if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-			gatewayUrl = "https://localhost:8787";
+			gatewayUrl = 'https://localhost:8787';
 		}
 		// Dynamically load Solana web3 IIFE library into the DOM
 		const script = document.createElement('script');
-		script.src = "https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js";
+		script.src = 'https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js';
 		document.head.appendChild(script);
 	});
 
@@ -35,7 +45,7 @@
 
 	async function requestInvoice() {
 		loading = true;
-		errorMsg = "";
+		errorMsg = '';
 		session = null;
 		successData = null;
 		simulated = false;
@@ -44,7 +54,7 @@
 		try {
 			const parsedAmount = parseFloat(amountUsd);
 			if (isNaN(parsedAmount) || parsedAmount <= 0) {
-				throw new Error("Please enter a valid amount greater than 0");
+				throw new Error('Please enter a valid amount greater than 0');
 			}
 
 			const res = await fetch(`${gatewayUrl}/api/payment/create`, {
@@ -82,7 +92,7 @@
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({
 						payee_address: session.payee_address,
-						transaction_hash: "check"
+						transaction_hash: 'check'
 					})
 				});
 				if (res.ok) {
@@ -90,7 +100,7 @@
 					if (data.session && data.session.status === 'paid') {
 						successData = data;
 						stopVerificationLoop();
-						document.cookie = "disable_ads=true; max-age=31536000; path=/";
+						document.cookie = 'disable_ads=true; max-age=31536000; path=/';
 					}
 				}
 			} catch (e) {
@@ -122,7 +132,7 @@
 
 			if (!res.ok) {
 				const err = (await res.json()) as any;
-				throw new Error(err.error || "Verification failed");
+				throw new Error(err.error || 'Verification failed');
 			}
 
 			const verified = (await res.json()) as any;
@@ -130,7 +140,7 @@
 				successData = verified;
 				stopVerificationLoop();
 				// Set cookie to disable ads for 1 year
-				document.cookie = "disable_ads=true; max-age=31536000; path=/";
+				document.cookie = 'disable_ads=true; max-age=31536000; path=/';
 			}
 		} catch (err: any) {
 			errorMsg = err.message || err;
@@ -142,31 +152,35 @@
 	async function simulatePayment() {
 		if (!session) return;
 		simulated = true;
-		const mockHash = "mock_" + Array.from({length: 60}, () => Math.floor(Math.random()*16).toString(16)).join('');
+		const mockHash =
+			'mock_' +
+			Array.from({ length: 60 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
 		await verifyPayment(mockHash);
 	}
 
 	async function payWithWeb3() {
 		if (!session) return;
-		errorMsg = "";
+		errorMsg = '';
 		const parsedAmount = parseFloat(amountUsd);
 
 		try {
 			if (network === 'solana') {
 				const solana = (window as any).solana;
 				if (!solana || !solana.isPhantom) {
-					throw new Error("Phantom Wallet not detected! Please install Phantom to sign Solana payments.");
+					throw new Error(
+						'Phantom Wallet not detected! Please install Phantom to sign Solana payments.'
+					);
 				}
 				await solana.connect();
 				const userAddress = solana.publicKey.toString();
 
 				const solanaWeb3 = (window as any).solanaWeb3;
 				if (!solanaWeb3) {
-					throw new Error("Solana Web3 library is loading, please try again in a second.");
+					throw new Error('Solana Web3 library is loading, please try again in a second.');
 				}
-				
-				const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
-				
+
+				const connection = new solanaWeb3.Connection('https://api.devnet.solana.com', 'confirmed');
+
 				// Map USD amount dynamically: $1 -> 0.01 SOL = parsedAmount * 10,000,000 lamports
 				const lamports = Math.floor(parsedAmount * 10000000);
 
@@ -188,7 +202,9 @@
 				// EVM / Arbitrum MetaMask / Uniswap Wallet
 				const provider = (window as any).ethereum;
 				if (!provider) {
-					throw new Error("Web3 Wallet extension not detected! Please install Uniswap Wallet or MetaMask.");
+					throw new Error(
+						'Web3 Wallet extension not detected! Please install Uniswap Wallet or MetaMask.'
+					);
 				}
 
 				const accounts = await provider.request({ method: 'eth_requestAccounts' });
@@ -219,24 +235,28 @@
 						if (session.network_id === 'eip155:42161') {
 							await provider.request({
 								method: 'wallet_addEthereumChain',
-								params: [{
-									chainId: '0xa4b1',
-									chainName: 'Arbitrum One',
-									nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-									rpcUrls: ['https://arb1.arbitrum.io/rpc'],
-									blockExplorerUrls: ['https://arbiscan.io']
-								}]
+								params: [
+									{
+										chainId: '0xa4b1',
+										chainName: 'Arbitrum One',
+										nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+										rpcUrls: ['https://arb1.arbitrum.io/rpc'],
+										blockExplorerUrls: ['https://arbiscan.io']
+									}
+								]
 							});
 						} else if (session.network_id === 'eip155:421614') {
 							await provider.request({
 								method: 'wallet_addEthereumChain',
-								params: [{
-									chainId: '0x66eee',
-									chainName: 'Arbitrum Sepolia',
-									nativeCurrency: { name: 'Arbitrum ETH', symbol: 'ETH', decimals: 18 },
-									rpcUrls: ['https://sepolia-rollup.arbitrum.io/rpc'],
-									blockExplorerUrls: ['https://sepolia.arbiscan.io']
-								}]
+								params: [
+									{
+										chainId: '0x66eee',
+										chainName: 'Arbitrum Sepolia',
+										nativeCurrency: { name: 'Arbitrum ETH', symbol: 'ETH', decimals: 18 },
+										rpcUrls: ['https://sepolia-rollup.arbitrum.io/rpc'],
+										blockExplorerUrls: ['https://sepolia.arbiscan.io']
+									}
+								]
 							});
 						}
 					} else {
@@ -257,9 +277,10 @@
 					};
 				} else {
 					// USDC contract
-					const usdcContract = session.network_id === 'eip155:42161'
-						? '0xaf88d065e77c8cC2239327C5EDb3A432268e5831' // Arbitrum USDC
-						: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'; // Ethereum USDC
+					const usdcContract =
+						session.network_id === 'eip155:42161'
+							? '0xaf88d065e77c8cC2239327C5EDb3A432268e5831' // Arbitrum USDC
+							: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'; // Ethereum USDC
 
 					const usdcDecimals = BigInt(Math.floor(parsedAmount * 1000000));
 					const cleanAddress = session.payee_address.toLowerCase().replace('0x', '');
@@ -296,9 +317,10 @@
 	<Row>
 		<!-- carbon's lg grid is 16 columns, so an 8-span centers at offset 4 -->
 		<Column lg={{ span: 8, offset: 4 }} md={{ span: 6, offset: 1 }} sm={4}>
-			
-			<div class="mt-8 mb-8 text-center space-y-2">
-				<h1 class="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">
+			<div class="mt-8 mb-8 space-y-2 text-center">
+				<h1
+					class="bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-4xl font-extrabold tracking-tight text-transparent"
+				>
 					Support Sean Behan
 				</h1>
 				<p class="text-lg text-gray-400">
@@ -308,19 +330,29 @@
 
 			{#if errorMsg}
 				<div class="mb-6">
-					<InlineNotification kind="error" title="Payment Error" subtitle={errorMsg} hideCloseButton />
+					<InlineNotification
+						kind="error"
+						title="Payment Error"
+						subtitle={errorMsg}
+						hideCloseButton
+					/>
 				</div>
 			{/if}
 
 			{#if successData}
-				<Tile class="bg-green-950/20 border border-green-800/40 rounded-2xl p-6 text-center space-y-6">
-					<div class="w-16 h-16 rounded-full bg-green-900/30 border border-green-700/50 flex items-center justify-center mx-auto text-green-400 shadow-lg">
+				<Tile
+					class="space-y-6 rounded-2xl border border-green-800/40 bg-green-950/20 p-6 text-center"
+				>
+					<div
+						class="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-green-700/50 bg-green-900/30 text-green-400 shadow-lg"
+					>
 						<Checkmark size={32} />
 					</div>
 					<div class="space-y-1">
 						<h2 class="text-2xl font-bold text-white">Donation Cleared successfully!</h2>
 						<p class="text-sm text-gray-400">
-							Thank you so much for your support! Secure ad-bypass cookie has been set. Ads are now disabled globally.
+							Thank you so much for your support! Secure ad-bypass cookie has been set. Ads are now
+							disabled globally.
 						</p>
 					</div>
 					<div class="pt-4">
@@ -329,11 +361,12 @@
 				</Tile>
 			{:else}
 				<div class="grid gap-8 md:grid-cols-12">
-					
 					<!-- Left Column: Controls -->
-					<div class="md:col-span-6 space-y-6">
-						<Tile class="bg-gray-900/40 border border-gray-800/60 rounded-2xl p-6 space-y-6 shadow-xl">
-							<h3 class="text-xl font-bold text-gray-200 flex items-center gap-2">
+					<div class="space-y-6 md:col-span-6">
+						<Tile
+							class="space-y-6 rounded-2xl border border-gray-800/60 bg-gray-900/40 p-6 shadow-xl"
+						>
+							<h3 class="flex items-center gap-2 text-xl font-bold text-gray-200">
 								<Currency size={20} class="text-indigo-400" />
 								Configure Donation
 							</h3>
@@ -358,46 +391,60 @@
 								<Button
 									onclick={requestInvoice}
 									disabled={loading}
-									class="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-400 hover:to-indigo-400 text-white font-semibold py-3 rounded-xl transition"
+									class="w-full rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 py-3 font-semibold text-white transition hover:from-blue-400 hover:to-indigo-400"
 								>
-									{loading ? "Generating Paywall..." : "Request Invoice"}
+									{loading ? 'Generating Paywall...' : 'Request Invoice'}
 								</Button>
 							</div>
 						</Tile>
 					</div>
 
 					<!-- Right Column: Invoice challenge -->
-					<div class="md:col-span-6 flex flex-col justify-stretch">
+					<div class="flex flex-col justify-stretch md:col-span-6">
 						{#if session}
-							<Tile class="bg-gray-900/40 border border-gray-800/60 rounded-2xl p-6 flex flex-col items-center justify-center text-center space-y-6 shadow-xl flex-1">
+							<Tile
+								class="flex flex-1 flex-col items-center justify-center space-y-6 rounded-2xl border border-gray-800/60 bg-gray-900/40 p-6 text-center shadow-xl"
+							>
 								<div class="space-y-1">
-									<span class="px-2.5 py-0.5 text-[10px] uppercase font-bold tracking-widest rounded bg-rose-950/40 text-rose-400 border border-rose-800/30">
+									<span
+										class="rounded border border-rose-800/30 bg-rose-950/40 px-2.5 py-0.5 text-[10px] font-bold tracking-widest text-rose-400 uppercase"
+									>
 										Unpaid Invoice
 									</span>
-									<h4 class="text-lg font-bold text-white mt-2">Dynamic Multi-Chain Paywall</h4>
+									<h4 class="mt-2 text-lg font-bold text-white">Dynamic Multi-Chain Paywall</h4>
 								</div>
 
 								<!-- QR Image -->
-								<div class="bg-white p-3 rounded-2xl shadow-xl w-44 h-44 flex items-center justify-center">
-									<img src={session.qr_code_uri} alt="Donation QR Code" class="w-full h-full" />
+								<div
+									class="flex h-44 w-44 items-center justify-center rounded-2xl bg-white p-3 shadow-xl"
+								>
+									<img src={session.qr_code_uri} alt="Donation QR Code" class="h-full w-full" />
 								</div>
 
 								<!-- Payee Address Detail -->
-								<div class="space-y-1 w-full text-left">
-									<label class="text-[10px] uppercase font-bold text-gray-500 tracking-wider">Donation payee Address</label>
-									<div class="px-3 py-2.5 bg-gray-950/60 rounded-xl border border-gray-800/50 font-mono text-xs text-gray-300 truncate select-all">
+								<div class="w-full space-y-1 text-left">
+									<label class="text-[10px] font-bold tracking-wider text-gray-500 uppercase"
+										>Donation payee Address</label
+									>
+									<div
+										class="truncate rounded-xl border border-gray-800/50 bg-gray-950/60 px-3 py-2.5 font-mono text-xs text-gray-300 select-all"
+									>
 										{session.payee_address}
 									</div>
 								</div>
 
 								<!-- Invoice specs -->
-								<div class="grid grid-cols-2 gap-4 w-full text-left text-xs">
-									<div class="bg-gray-950/60 p-3 rounded-xl border border-gray-800/50">
-										<span class="block text-gray-500 text-[9px] uppercase font-bold tracking-wider">Amount</span>
+								<div class="grid w-full grid-cols-2 gap-4 text-left text-xs">
+									<div class="rounded-xl border border-gray-800/50 bg-gray-950/60 p-3">
+										<span class="block text-[9px] font-bold tracking-wider text-gray-500 uppercase"
+											>Amount</span
+										>
 										<span class="font-bold text-gray-200">${amountUsd} USD</span>
 									</div>
-									<div class="bg-gray-950/60 p-3 rounded-xl border border-gray-800/50">
-										<span class="block text-gray-500 text-[9px] uppercase font-bold tracking-wider">Network</span>
+									<div class="rounded-xl border border-gray-800/50 bg-gray-950/60 p-3">
+										<span class="block text-[9px] font-bold tracking-wider text-gray-500 uppercase"
+											>Network</span
+										>
 										<span class="font-bold text-gray-200 capitalize">{network}</span>
 									</div>
 								</div>
@@ -405,7 +452,11 @@
 								<!-- Signing triggers -->
 								<div class="w-full space-y-3 pt-2">
 									{#if network !== 'bitcoin'}
-										<Button onclick={payWithWeb3} class="w-full flex items-center justify-center gap-2" kind="secondary">
+										<Button
+											onclick={payWithWeb3}
+											class="flex w-full items-center justify-center gap-2"
+											kind="secondary"
+										>
 											<Wallet size={16} />
 											Pay with Web3 Wallet
 										</Button>
@@ -413,29 +464,32 @@
 								</div>
 
 								{#if checking}
-									<div class="text-[10px] text-gray-500 italic animate-pulse">
+									<div class="animate-pulse text-[10px] text-gray-500 italic">
 										Monitoring on-chain address for deposits...
 									</div>
 								{/if}
 							</Tile>
 						{:else}
-							<Tile class="bg-gray-900/40 border border-gray-800/60 rounded-2xl p-6 flex flex-col items-center justify-center text-center space-y-4 shadow-xl flex-1 min-h-[300px]">
-								<div class="w-12 h-12 rounded-full bg-gray-950/60 border border-gray-800/50 flex items-center justify-center mx-auto text-gray-400">
+							<Tile
+								class="flex min-h-[300px] flex-1 flex-col items-center justify-center space-y-4 rounded-2xl border border-gray-800/60 bg-gray-900/40 p-6 text-center shadow-xl"
+							>
+								<div
+									class="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-gray-800/50 bg-gray-950/60 text-gray-400"
+								>
 									<Locked size={24} />
 								</div>
 								<div class="space-y-1">
 									<h4 class="text-md font-semibold text-gray-300">Invoice Generation Locked</h4>
-									<p class="text-xs text-gray-500 max-w-[200px] mx-auto">
-										Enter your donation details and click "Request Invoice" to unlock checkout tools.
+									<p class="mx-auto max-w-[200px] text-xs text-gray-500">
+										Enter your donation details and click "Request Invoice" to unlock checkout
+										tools.
 									</p>
 								</div>
 							</Tile>
 						{/if}
 					</div>
-
 				</div>
 			{/if}
-
 		</Column>
 	</Row>
 </Grid>

@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { safeGetElementById } from '$lib/utils';
 	import type { PostPageData } from '$lib/types';
 	import { Grid, Row, Column } from 'carbon-components-svelte';
 
@@ -17,7 +15,9 @@
 		<Column>
 			<article class="animate-fade-in-up">
 				<header class="mb-8 border-b border-[#393939] pb-6">
-					<h2 class="mb-3 text-3xl font-bold tracking-tight text-[#f4f4f4] md:text-4xl">{data.post.meta.title}</h2>
+					<h2 class="mb-3 text-3xl font-bold tracking-tight text-[#f4f4f4] md:text-4xl">
+						{data.post.meta.title}
+					</h2>
 					<div class="flex flex-wrap items-center gap-4 text-sm text-[#6f6f6f]">
 						<span>
 							{new Date(data.post.meta.date).toDateString()}
@@ -29,7 +29,7 @@
 						{/if}
 					</div>
 				</header>
-				<div id="blogpost" class="prose prose-invert max-w-none blog-content mb-8">
+				<div id="blogpost" class="prose prose-invert blog-content mb-8 max-w-none">
 					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 					{@html data.post.html}
 				</div>

@@ -2,6 +2,7 @@
 	import type { Snippet } from 'svelte';
 	import { onMount } from 'svelte';
 	import { dev } from '$app/environment';
+	import { resolve } from '$app/paths';
 	// app.css pulls in Tailwind and then carbon's g100 theme, in that order.
 	import '../app.css';
 	import {
@@ -105,7 +106,7 @@
 					Mastodon
 				</a>
 				<a
-					href="/contact"
+					href={resolve('/contact')}
 					class="text-sm text-[#6f6f6f] transition-colors duration-200 hover:text-[#f4f4f4]"
 				>
 					Contact

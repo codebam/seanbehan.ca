@@ -155,7 +155,7 @@ function n(n) {
 	}
 	var A = t(S);
 	function k(r) {
-		for (var n = q, t = r.length; t--; ) n = S(r[t], n);
+		for (var n = q, t = r.length; t--;) n = S(r[t], n);
 		return n;
 	}
 	function E(r) {
@@ -200,7 +200,7 @@ function n(n) {
 			return r + n;
 		}),
 		_ = e(function (r, n, t) {
-			for (var e = t.length, u = 0; e > u; ) {
+			for (var e = t.length, u = 0; e > u;) {
 				var a = t[u],
 					c = t.charCodeAt(u);
 				(u++, 55296 > c || c > 56319 || ((a += t[u]), u++), (n = o(r, a, n)));
@@ -208,7 +208,7 @@ function n(n) {
 			return n;
 		}),
 		V = e(function (r, n, t) {
-			for (var e = t.length; e--; ) {
+			for (var e = t.length; e--;) {
 				var u = t[e],
 					a = t.charCodeAt(e);
 				(56320 > a || a > 57343 || (u = t[--e] + u), (n = o(r, u, n)));
@@ -225,7 +225,7 @@ function n(n) {
 			return t.slice(r, n);
 		}),
 		G = t(function (r, n) {
-			for (var t = n.length; t--; ) {
+			for (var t = n.length; t--;) {
 				var e = n[t],
 					u = n.charCodeAt(t);
 				if ((56320 > u || u > 57343 || (e = n[--t] + e), !r(e))) return !1;
@@ -445,12 +445,12 @@ function n(n) {
 		rL = [];
 	function rN(r) {
 		if ((rL.push(r), !rC)) {
-			for (rC = !0; (r = rL.shift()); )
+			for (rC = !0; (r = rL.shift());)
 				!(function (r) {
-					for (; r.f; ) {
+					for (; r.f;) {
 						var n = r.f.$;
 						if (0 === n || 1 === n) {
-							for (; r.g && r.g.$ !== n; ) r.g = r.g.i;
+							for (; r.g && r.g.$ !== n;) r.g = r.g.i;
 							if (!r.g) return;
 							((r.f = r.g.b(r.f.a)), (r.g = r.g.i));
 						} else {
@@ -506,7 +506,7 @@ function n(n) {
 	function rF(r, n, t) {
 		if ((r_.push({ p: r, q: n, r: t }), !rV)) {
 			rV = !0;
-			for (var e; (e = r_.shift()); )
+			for (var e; (e = r_.shift());)
 				!(function (r, n, t) {
 					var e = {};
 					for (var u in (rz(!0, n, e, null), rz(!1, t, e, null), r))
@@ -628,7 +628,7 @@ function n(n) {
 		if (5 === t) return r7(r.k || (r.k = r.m()), n);
 		if (0 === t) return rM.createTextNode(r.a);
 		if (4 === t) {
-			for (var e = r.k, u = r.j; 4 === e.$; )
+			for (var e = r.k, u = r.j; 4 === e.$;)
 				('object' != typeof u ? (u = [u, e.j]) : u.push(e.j), (e = e.k));
 			var a = { j: u, p: n };
 			return (((c = r7(e, a)).elm_event_node_ref = a), c);
@@ -679,7 +679,7 @@ function n(n) {
 													(a = s.j);
 												) {
 													if ('function' == typeof a) o = a(o);
-													else for (var l = a.length; l--; ) o = a[l](o);
+													else for (var l = a.length; l--;) o = a[l](o);
 													s = s.p;
 												}
 												s(o, f);
@@ -740,16 +740,15 @@ function n(n) {
 			}
 			switch (a) {
 				case 5:
-					for (var c = r.l, i = n.l, o = c.length, f = o === i.length; f && o--; )
-						f = c[o] === i[o];
+					for (var c = r.l, i = n.l, o = c.length, f = o === i.length; f && o--;) f = c[o] === i[o];
 					if (f) return void (n.k = r.k);
 					n.k = n.m();
 					var s = [];
 					return (nt(r.k, n.k, s, 0), void (s.length > 0 && nn(t, 1, e, s)));
 				case 4:
-					for (var l = r.j, b = n.j, d = !1, v = r.k; 4 === v.$; )
+					for (var l = r.j, b = n.j, d = !1, v = r.k; 4 === v.$;)
 						((d = !0), 'object' != typeof l ? (l = [l, v.j]) : l.push(v.j), (v = v.k));
-					for (var p = n.k; 4 === p.$; )
+					for (var p = n.k; 4 === p.$;)
 						((d = !0), 'object' != typeof b ? (b = [b, p.j]) : b.push(p.j), (p = p.k));
 					return d && l.length !== b.length
 						? void nn(t, 0, e, n)
@@ -872,8 +871,8 @@ function n(n) {
 				}
 			} else (nt(g, h, u, ++d), (d += g.b || 0), l++, b++);
 		}
-		for (; f > l; ) (d++, nf(a, u, (A = i[l]).a, (g = A.b), d), (d += g.b || 0), l++);
-		for (; s > b; ) {
+		for (; f > l;) (d++, nf(a, u, (A = i[l]).a, (g = A.b), d), (d += g.b || 0), l++);
+		for (; s > b;) {
 			var A,
 				k,
 				E = E || [];
@@ -959,14 +958,14 @@ function n(n) {
 					c = (function r(n) {
 						if (3 === n.nodeType) return rZ(n.textContent);
 						if (1 !== n.nodeType) return rZ('');
-						for (var t = q, e = n.attributes, u = e.length; u--; ) {
+						for (var t = q, e = n.attributes, u = e.length; u--;) {
 							var a = e[u];
 							t = S(o(r0, a.name, a.value), t);
 						}
 						var c = n.tagName.toLowerCase(),
 							i = q,
 							s = n.childNodes;
-						for (u = s.length; u--; ) i = S(r(s[u]), i);
+						for (u = s.length; u--;) i = S(r(s[u]), i);
 						return f(rK, c, t, i);
 					})(a);
 				return (function (r, n) {
@@ -991,7 +990,7 @@ function n(n) {
 								? e
 								: ((function r(n, t, e, u) {
 										!(function n(t, e, u, a, c, i, o) {
-											for (var f = u[a], s = f.r; s === c; ) {
+											for (var f = u[a], s = f.r; s === c;) {
 												var l = f.$;
 												if (1 === l) r(t, e.k, f.s, o);
 												else if (8 === l)
@@ -1006,20 +1005,18 @@ function n(n) {
 											}
 											var v = e.$;
 											if (4 === v) {
-												for (var p = e.k; 4 === p.$; ) p = p.k;
+												for (var p = e.k; 4 === p.$;) p = p.k;
 												return n(t, p, u, a, c + 1, i, t.elm_event_node_ref);
 											}
 											for (var g = e.e, h = t.childNodes, m = 0; g.length > m; m++) {
 												c++;
 												var D = 1 === v ? g[m] : g[m].b,
 													$ = c + (D.b || 0);
-												if (
-													!(
-														c > s ||
-														s > $ ||
-														((f = u[(a = n(h[m], D, u, a, c, $, o))]) && (s = f.r) <= i)
-													)
-												)
+												if (!(
+													c > s ||
+													s > $ ||
+													((f = u[(a = n(h[m], D, u, a, c, $, o))]) && (s = f.r) <= i)
+												))
 													break;
 												c = $;
 											}
@@ -1148,7 +1145,7 @@ function n(n) {
 									dU: c.statusText,
 									c7: (function (r) {
 										if (!r) return t6;
-										for (var n = t6, t = r.split('\r\n'), e = t.length; e--; ) {
+										for (var n = t6, t = r.split('\r\n'), e = t.length; e--;) {
 											var u = t[e],
 												a = u.indexOf(': ');
 											if (a > 0) {
@@ -1205,7 +1202,7 @@ function n(n) {
 			return { $: 0, a: r, b: n };
 		}),
 		np = a(function (r, n, t, e, u) {
-			for (var a = r.length, c = u.length >= n + a, i = 0; c && a > i; ) {
+			for (var a = r.length, c = u.length >= n + a, i = 0; c && a > i;) {
 				var o = u.charCodeAt(n);
 				c =
 					r[i++] === u[n++] &&
@@ -1257,7 +1254,7 @@ function n(n) {
 			return D(r, t);
 		}),
 		nw = a(function (r, n, t, e, u) {
-			for (var a = u.indexOf(r, n), c = 0 > a ? u.length : a + r.length; c > n; ) {
+			for (var a = u.indexOf(r, n), c = 0 > a ? u.length : a + r.length; c > n;) {
 				var i = u.charCodeAt(n++);
 				10 === i ? ((e = 1), t++) : (e++, 55296 == (63488 & i) && n++);
 			}
@@ -1290,7 +1287,7 @@ function n(n) {
 				var e, u = [], a = 0, c = n.lastIndex, i = -1;
 				a++ < r && (e = n.exec(t)) && i != n.lastIndex;
 			) {
-				for (var o = e.length - 1, f = Array(o); o > 0; ) {
+				for (var o = e.length - 1, f = Array(o); o > 0;) {
 					var l = e[o];
 					f[--o] = l ? nj(l) : n_;
 				}
@@ -1302,7 +1299,7 @@ function n(n) {
 			var u = 0;
 			return e.replace(n, function (n) {
 				if (u++ >= r) return n;
-				for (var e = arguments.length - 3, a = Array(e); e > 0; ) {
+				for (var e = arguments.length - 3, a = Array(e); e > 0;) {
 					var c = arguments[e];
 					a[--e] = c ? nj(c) : n_;
 				}
@@ -6011,7 +6008,7 @@ function n(n) {
 				R: r.R,
 				H: (function () {
 					var t = D(n, r.H);
-					r: for (; t.b.b; )
+					r: for (; t.b.b;)
 						switch (t.b.a.$) {
 							case 5:
 								if (5 === t.a.$) {
@@ -7135,7 +7132,7 @@ function n(n) {
 		fb = o(eg, oj, oI('(?:(\\\\+)|( {2,}))\\n')),
 		fd = { $: 9 },
 		fv = function (r) {
-			for (var n = r.bl; ; ) {
+			for (var n = r.bl; ;) {
 				if (n.b) {
 					if (n.a.$) {
 						if (n.b.b && !n.b.a.$) return nj({ a: r.a, a2: tD(r.ah), c: fd });
@@ -8702,7 +8699,7 @@ function n(n) {
 						},
 						(function () {
 							var n = r.H;
-							r: for (; n.b; )
+							r: for (; n.b;)
 								switch (n.a.$) {
 									case 1:
 										return lB();

@@ -63,7 +63,7 @@ self.addEventListener('install', (event) => {
 	event.waitUntil(
 		(async () => {
 			try {
-				const cache = await caches.open(`cache-${CACHE_CONFIG.version}`);
+				// CacheManager.addAssets opens the cache itself.
 				await CacheManager.addAssets([...build, ...files]);
 				await self.skipWaiting();
 			} catch (error) {

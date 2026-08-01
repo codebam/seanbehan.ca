@@ -58,11 +58,15 @@
 	"dependencies": {
 		"typescript": "^6.0.3"
 	},
+	"overrides": {
+		"cookie": "^0.7.2",
+		"sharp": "^0.35.3"
+	},
 	"allowScripts": {
 		"carbon-components@10.59.2": true,
 		"carbon-components-svelte@0.110.0": true,
 		"esbuild@0.28.1": true,
-		"sharp@0.34.5": true,
-		"workerd@1.20260708.1": true
+		"sharp@0.35.3": true,
+		"workerd@1.20260722.1": true
 	}
 }
