@@ -4,10 +4,10 @@
 	import { resolve } from '$app/paths';
 	import Posts from '$lib/components/Posts.svelte';
 	import { initAIBio } from '$lib/utils';
-	import type { PostsPageData } from '$lib/types';
+	import type { HomePageData } from '$lib/types';
 	import { Tag } from 'carbon-components-svelte';
 
-	const { data }: { data: PostsPageData } = $props();
+	const { data }: { data: HomePageData } = $props();
 
 	let yearStarted = $derived(new Date().getFullYear() - 2018);
 
@@ -279,6 +279,139 @@
 		</div>
 	</div>
 </div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- FEATURED PROJECTS                           -->
+<!-- ════════════════════════════════════════════ -->
+<section class="mt-16 mb-8">
+	<div class="mb-6 flex items-center justify-between">
+		<div>
+			<h2 class="text-2xl font-bold text-[#f4f4f4]">Featured Projects</h2>
+			<p class="mt-1 text-sm text-[#6f6f6f]">Things I've built and maintain</p>
+		</div>
+		<a
+			href="https://github.com/codebam?tab=repositories"
+			target="_blank"
+			rel="noopener noreferrer"
+			class="inline-flex items-center gap-1 text-sm font-medium text-[#4589ff] transition-colors hover:text-[#a6c8ff]"
+		>
+			All repositories
+			<svg
+				width="14"
+				height="14"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke="currentColor"
+				stroke-width="2"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+				/>
+			</svg>
+		</a>
+	</div>
+
+	<div class="grid gap-6 md:grid-cols-2">
+		{#each data.projects as project (project.repo)}
+			<article
+				class="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[#393939]/60 bg-gradient-to-br from-[#1c1c1c] to-[#262626] p-6 transition-all duration-300 hover:border-[#4589ff]/30 hover:shadow-lg hover:shadow-[#4589ff]/5"
+			>
+				<div
+					class="pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full bg-[#4589ff]/5 blur-2xl transition-all duration-500 group-hover:bg-[#4589ff]/10 group-hover:blur-3xl"
+				></div>
+
+				<div class="relative z-10 flex h-full flex-col">
+					<div class="mb-2 flex items-start justify-between gap-4">
+						<h3 class="text-lg font-bold text-[#f4f4f4]">{project.title}</h3>
+						{#if project.stars > 0}
+							<span
+								class="inline-flex shrink-0 items-center gap-1 text-xs text-[#6f6f6f]"
+								title="{project.stars} {project.stars === 1 ? 'star' : 'stars'} on GitHub"
+							>
+								<svg
+									width="14"
+									height="14"
+									viewBox="0 0 24 24"
+									fill="currentColor"
+									aria-hidden="true"
+								>
+									<path
+										d="M11.48 3.5a.56.56 0 0 1 1.04 0l2.13 4.9 5.32.51c.5.05.7.68.32 1.02l-4.01 3.54 1.17 5.23c.11.49-.42.88-.85.62L12 16.6l-4.6 2.72c-.43.26-.96-.13-.85-.62l1.17-5.23-4.01-3.54c-.38-.34-.18-.97.32-1.02l5.32-.51 2.13-4.9Z"
+									/>
+								</svg>
+								{project.stars}
+							</span>
+						{/if}
+					</div>
+
+					<p class="mb-4 text-sm leading-relaxed text-[#c6c6c6]">{project.description}</p>
+
+					<div class="mb-4 flex flex-wrap gap-2">
+						<span class="rounded-full bg-[#4589ff]/10 px-2.5 py-0.5 text-xs text-[#a6c8ff]">
+							{project.language}
+						</span>
+						{#each project.tags as tag (tag)}
+							<span class="rounded-full bg-[#393939]/60 px-2.5 py-0.5 text-xs text-[#8d8d8d]">
+								{tag}
+							</span>
+						{/each}
+					</div>
+
+					<div class="mt-auto flex flex-wrap gap-3">
+						<a
+							href="https://github.com/codebam/{project.repo}"
+							target="_blank"
+							rel="noopener noreferrer"
+							class="inline-flex items-center gap-2 rounded-lg border border-[#6f6f6f]/40 bg-[#262626]/60 px-4 py-2 text-xs font-semibold text-[#f4f4f4] transition-all duration-200 hover:border-[#4589ff]/40 hover:bg-[#333333]/60"
+						>
+							<svg
+								width="14"
+								height="14"
+								fill="currentColor"
+								viewBox="0 0 24 24"
+								aria-hidden="true"
+							>
+								<path
+									d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"
+								/>
+							</svg>
+							Source
+						</a>
+						{#if project.homepage}
+							<!-- Absolute external URLs from $lib/projects, so resolve() does not apply -->
+							<!-- eslint-disable svelte/no-navigation-without-resolve -->
+							<a
+								href={project.homepage}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="inline-flex items-center gap-2 rounded-lg bg-[#4589ff] px-4 py-2 text-xs font-semibold text-white transition-all duration-200 hover:bg-[#3d7ae8]"
+							>
+								{project.homepageLabel}
+								<svg
+									width="12"
+									height="12"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+									stroke-width="2"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+									/>
+								</svg>
+							</a>
+							<!-- eslint-enable svelte/no-navigation-without-resolve -->
+						{/if}
+					</div>
+				</div>
+			</article>
+		{/each}
+	</div>
+</section>
 
 <!-- ════════════════════════════════════════════ -->
 <!-- LATEST POSTS                                -->

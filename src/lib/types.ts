@@ -22,9 +22,27 @@ export interface SearchResult {
 	score: number;
 }
 
+export interface FeaturedProject {
+	/** Repository name under github.com/codebam */
+	repo: string;
+	title: string;
+	description: string;
+	language: string;
+	stars: number;
+	/** Live deployment or install link, where one exists */
+	homepage?: string;
+	homepageLabel?: string;
+	tags: string[];
+}
+
 // Page data types
 export interface PostsPageData {
 	posts: Post[];
+}
+
+/** The home page shows the post list plus the featured project cards. */
+export interface HomePageData extends PostsPageData {
+	projects: FeaturedProject[];
 }
 
 export interface PostPageData {
