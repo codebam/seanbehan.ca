@@ -10,8 +10,13 @@
 	let debouncedQuery = $state('');
 
 	$effect(() => {
+		// Read `query` here, in the effect body. Svelte only tracks what an effect
+		// reads synchronously, so reading it inside the setTimeout callback instead
+		// would leave the effect with no dependencies — it would run once on mount
+		// and never again, pinning debouncedQuery to ''.
+		const pending = query;
 		const timer = setTimeout(() => {
-			debouncedQuery = query;
+			debouncedQuery = pending;
 		}, 300);
 		return () => clearTimeout(timer);
 	});
