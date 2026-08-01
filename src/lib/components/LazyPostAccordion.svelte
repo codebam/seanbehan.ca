@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AccordionItem, Button, Loading, Tag } from 'carbon-components-svelte';
+	import { AccordionItem, Button, Loading } from 'carbon-components-svelte';
 	import type { Post, PostMeta } from '$lib/types';
 
 	interface Props {
@@ -47,19 +47,21 @@
 
 <AccordionItem bind:open>
 	<svelte:fragment slot="title">
-		<div class="mr-4 flex w-full items-center justify-between">
+		<div class="mr-4 flex w-full items-center justify-between gap-4">
 			<div class="flex-1">
-				<h5 class="m-0 font-bold">
+				<h5 class="m-0 font-bold text-[#f4f4f4]">
 					{post.meta.title}
 				</h5>
 			</div>
 			<div class="flex items-center gap-2">
-				<span class="text-sm text-gray-500">
+				<span class="text-xs text-[#6f6f6f]">
 					{new Date(post.meta.date).toDateString()}
 				</span>
-				<div class="hidden gap-1 sm:flex">
+				<div class="hidden flex-wrap gap-2 sm:flex">
 					{#each tags as tag (tag)}
-						<Tag type="blue" size="sm">{tag}</Tag>
+						<span class="rounded-full bg-[#393939]/60 px-2.5 py-0.5 text-xs text-[#8d8d8d]">
+							{tag}
+						</span>
 					{/each}
 				</div>
 			</div>

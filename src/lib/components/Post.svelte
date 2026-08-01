@@ -1,28 +1,36 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { PostProps } from '$lib/types';
-	import { ClickableTile, Tag } from 'carbon-components-svelte';
 
 	const { post }: PostProps = $props();
 	let tags = $derived(post.meta.tags ?? []);
+	let slug = $derived(post.path.split('/').pop() ?? '');
 </script>
 
-<ClickableTile
-	href={post.path}
-	class="!rounded-xl !transition-all !duration-200 hover:!translate-y-[-2px] hover:!shadow-lg"
+<a
+	href={resolve('/posts/[slug]', { slug })}
+	class="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[#393939]/60 bg-gradient-to-br from-[#1c1c1c] to-[#262626] p-6 transition-all duration-300 hover:border-[#4589ff]/30 hover:shadow-lg hover:shadow-[#4589ff]/5"
 >
-	<div class="flex h-full flex-col justify-between p-1">
-		<div>
-			<h2 class="mb-2 text-xl font-bold text-[#f4f4f4]">
-				{post.meta.title}
-			</h2>
-			<p class="mb-4 text-sm text-[#6f6f6f]">
-				{new Date(post.meta.date).toDateString()}
-			</p>
-		</div>
-		<div class="flex flex-wrap gap-2">
+	<div
+		class="pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full bg-[#4589ff]/5 blur-2xl transition-all duration-500 group-hover:bg-[#4589ff]/10 group-hover:blur-3xl"
+	></div>
+
+	<div class="relative z-10 flex h-full flex-col">
+		<h2
+			class="mb-2 text-lg font-bold text-[#f4f4f4] transition-colors duration-200 group-hover:text-[#a6c8ff]"
+		>
+			{post.meta.title}
+		</h2>
+		<p class="mb-4 text-xs text-[#6f6f6f]">
+			{new Date(post.meta.date).toDateString()}
+		</p>
+
+		<div class="mt-auto flex flex-wrap gap-2">
 			{#each tags as tag (tag)}
-				<Tag type="blue" size="sm">{tag}</Tag>
+				<span class="rounded-full bg-[#393939]/60 px-2.5 py-0.5 text-xs text-[#8d8d8d]">
+					{tag}
+				</span>
 			{/each}
 		</div>
 	</div>
-</ClickableTile>
+</a>
