@@ -13,18 +13,92 @@
 	} from 'carbon-components-svelte';
 	import { Currency, Locked, Checkmark, Wallet } from 'carbon-icons-svelte';
 
+	/** Invoice returned by the payment gateway's /api/payment/create. */
+	interface PaymentSession {
+		payee_address: string;
+		network_id: string;
+		qr_code_uri: string;
+	}
+
+	/** Reply from /api/payment/verify, for both polling and explicit checks. */
+	interface VerifyResponse {
+		success?: boolean;
+		error?: string;
+		session?: { status?: string };
+	}
+
+	/** EIP-1193 wallet (MetaMask, Uniswap Wallet). Results are unknown by
+	 *  design — each caller narrows to what its own method returns. */
+	interface EthereumProvider {
+		request(args: { method: string; params?: unknown[] }): Promise<unknown>;
+	}
+
+	interface PhantomProvider {
+		isPhantom?: boolean;
+		publicKey: { toString(): string };
+		connect(): Promise<unknown>;
+		signAndSendTransaction(transaction: SolanaTransaction): Promise<{ signature: string }>;
+	}
+
+	interface SolanaTransaction {
+		add(instruction: unknown): SolanaTransaction;
+		feePayer: unknown;
+		recentBlockhash: string;
+	}
+
+	/** The subset of the @solana/web3.js IIFE bundle this page touches. */
+	interface SolanaWeb3 {
+		Connection: new (
+			endpoint: string,
+			commitment: string
+		) => { getLatestBlockhash(): Promise<{ blockhash: string }> };
+		Transaction: new () => SolanaTransaction;
+		PublicKey: new (address: string) => unknown;
+		SystemProgram: {
+			transfer(params: { fromPubkey: unknown; toPubkey: unknown; lamports: number }): unknown;
+		};
+	}
+
+	interface WalletWindow extends Window {
+		ethereum?: EthereumProvider;
+		solana?: PhantomProvider;
+		solanaWeb3?: SolanaWeb3;
+	}
+
+	interface EvmTxParams {
+		from: string;
+		to: string;
+		value: string;
+		data?: string;
+	}
+
+	/** Wallets reject with a plain object carrying a numeric `code`, not an Error. */
+	function hasCode(err: unknown): err is { code: number } {
+		return (
+			typeof err === 'object' &&
+			err !== null &&
+			typeof (err as { code?: unknown }).code === 'number'
+		);
+	}
+
+	/** Mirrors the previous `err.message || err`, but without assuming a shape. */
+	function messageFrom(err: unknown): string {
+		if (err instanceof Error) return err.message;
+		if (typeof err === 'string') return err;
+		return 'Something went wrong';
+	}
+
 	let amountUsd = $state('5.00');
 	let network = $state('arbitrum'); // evm, arbitrum, solana, bitcoin
 	let callbackUrl = $state('');
 
 	let loading = $state(false);
-	let session = $state<any>(null); // holds generated session
+	let session = $state<PaymentSession | null>(null); // holds generated session
 	let errorMsg = $state('');
-	let successData = $state<any>(null);
+	let successData = $state<VerifyResponse | null>(null);
 
 	let checking = $state(false);
-	let checkInterval: any = null;
-	let simulated = $state(false);
+	let checkInterval: ReturnType<typeof setInterval> | null = null;
 
 	// Auto-detect payment worker URL
 	let gatewayUrl = $state('https://x402-crypto-worker.codebam.workers.dev');
@@ -48,7 +122,6 @@
 		errorMsg = '';
 		session = null;
 		successData = null;
-		simulated = false;
 		stopVerificationLoop();
 
 		try {
@@ -72,10 +145,10 @@
 				throw new Error(errText || `Server returned status ${res.status}`);
 			}
 
-			session = await res.json();
+			session = (await res.json()) as PaymentSession;
 			startVerificationLoop();
-		} catch (err: any) {
-			errorMsg = err.message || err;
+		} catch (err) {
+			errorMsg = messageFrom(err);
 		} finally {
 			loading = false;
 		}
@@ -96,14 +169,14 @@
 					})
 				});
 				if (res.ok) {
-					const data = (await res.json()) as any;
+					const data = (await res.json()) as VerifyResponse;
 					if (data.session && data.session.status === 'paid') {
 						successData = data;
 						stopVerificationLoop();
 						document.cookie = 'disable_ads=true; max-age=31536000; path=/';
 					}
 				}
-			} catch (e) {
+			} catch {
 				// silent catch during polling
 			}
 		}, 6000);
@@ -131,31 +204,22 @@
 			});
 
 			if (!res.ok) {
-				const err = (await res.json()) as any;
+				const err = (await res.json()) as VerifyResponse;
 				throw new Error(err.error || 'Verification failed');
 			}
 
-			const verified = (await res.json()) as any;
+			const verified = (await res.json()) as VerifyResponse;
 			if (verified.success) {
 				successData = verified;
 				stopVerificationLoop();
 				// Set cookie to disable ads for 1 year
 				document.cookie = 'disable_ads=true; max-age=31536000; path=/';
 			}
-		} catch (err: any) {
-			errorMsg = err.message || err;
+		} catch (err) {
+			errorMsg = messageFrom(err);
 		} finally {
 			loading = false;
 		}
-	}
-
-	async function simulatePayment() {
-		if (!session) return;
-		simulated = true;
-		const mockHash =
-			'mock_' +
-			Array.from({ length: 60 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
-		await verifyPayment(mockHash);
 	}
 
 	async function payWithWeb3() {
@@ -163,9 +227,11 @@
 		errorMsg = '';
 		const parsedAmount = parseFloat(amountUsd);
 
+		const walletWindow = window as WalletWindow;
+
 		try {
 			if (network === 'solana') {
-				const solana = (window as any).solana;
+				const solana = walletWindow.solana;
 				if (!solana || !solana.isPhantom) {
 					throw new Error(
 						'Phantom Wallet not detected! Please install Phantom to sign Solana payments.'
@@ -174,7 +240,7 @@
 				await solana.connect();
 				const userAddress = solana.publicKey.toString();
 
-				const solanaWeb3 = (window as any).solanaWeb3;
+				const solanaWeb3 = walletWindow.solanaWeb3;
 				if (!solanaWeb3) {
 					throw new Error('Solana Web3 library is loading, please try again in a second.');
 				}
@@ -200,28 +266,24 @@
 				await verifyPayment(signature);
 			} else {
 				// EVM / Arbitrum MetaMask / Uniswap Wallet
-				const provider = (window as any).ethereum;
+				const provider = walletWindow.ethereum;
 				if (!provider) {
 					throw new Error(
 						'Web3 Wallet extension not detected! Please install Uniswap Wallet or MetaMask.'
 					);
 				}
 
-				const accounts = await provider.request({ method: 'eth_requestAccounts' });
+				const accounts = (await provider.request({ method: 'eth_requestAccounts' })) as string[];
 				const userAddress = accounts[0];
 
 				// Determine target chain
 				let targetHex = '0x1';
-				let targetName = 'Ethereum Mainnet';
 				if (session.network_id === 'eip155:11155111') {
 					targetHex = '0xaa36a7';
-					targetName = 'Sepolia';
 				} else if (session.network_id === 'eip155:42161') {
 					targetHex = '0xa4b1';
-					targetName = 'Arbitrum One';
 				} else if (session.network_id === 'eip155:421614') {
 					targetHex = '0x66eee';
-					targetName = 'Arbitrum Sepolia';
 				}
 
 				// Switch chain
@@ -230,8 +292,8 @@
 						method: 'wallet_switchEthereumChain',
 						params: [{ chainId: targetHex }]
 					});
-				} catch (switchError: any) {
-					if (switchError.code === 4902) {
+				} catch (switchError) {
+					if (hasCode(switchError) && switchError.code === 4902) {
 						if (session.network_id === 'eip155:42161') {
 							await provider.request({
 								method: 'wallet_addEthereumChain',
@@ -265,7 +327,7 @@
 				}
 
 				// Assemble transfer parameters (ETH or USDC)
-				let txParams: any = {};
+				let txParams: EvmTxParams;
 
 				if (session.network_id === 'eip155:11155111' || session.network_id === 'eip155:421614') {
 					// ETH: Map dynamic amount: parsedAmount * 10^12 Wei (0.0001 ETH per $0.10)
@@ -296,15 +358,15 @@
 					};
 				}
 
-				const txHash = await provider.request({
+				const txHash = (await provider.request({
 					method: 'eth_sendTransaction',
 					params: [txParams]
-				});
+				})) as string;
 
 				await verifyPayment(txHash);
 			}
-		} catch (err: any) {
-			errorMsg = err.message || err;
+		} catch (err) {
+			errorMsg = messageFrom(err);
 		}
 	}
 </script>
