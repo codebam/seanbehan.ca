@@ -2,32 +2,123 @@
 @plugin '@tailwindcss/typography';
 @plugin '@tailwindcss/forms';
 
+/* ═══════════════════════════════════════════════════════════
+   Inter variable font
+   Already installed as @fontsource-variable/inter — import it
+   so Carbon's font-family picks up our chosen font.
+   ═══════════════════════════════════════════════════════════ */
+@import '@fontsource-variable/inter';
+
+/* ═══════════════════════════════════════════════════════════
+   Carbon g100 theme — layered so Tailwind's utility layer wins
+   ═══════════════════════════════════════════════════════════ */
 /* Must be layered. Unlayered CSS outranks every cascade layer, so carbon's reset
    (`div, section, ... { margin: 0; padding: 0 }`) would otherwise beat all of
    Tailwind's spacing utilities, which live in @layer utilities. */
 @import 'carbon-components-svelte/css/g100.css' layer(base);
 
+/* ═══════════════════════════════════════════════════════════
+   Design tokens — Carbon g100 palette as CSS custom properties
+   ═══════════════════════════════════════════════════════════ */
 @layer base {
+	:root {
+		/* Surfaces */
+		--surface-base: #161616;
+		--surface-card: #1c1c1c;
+		--surface-card-alt: #262626;
+		--surface-hover: #333333;
+
+		/* Borders */
+		--border-subtle: #393939;
+		--border-default: #525252;
+
+		/* Text */
+		--text-primary: #f4f4f4;
+		--text-secondary: #c6c6c6;
+		--text-tertiary: #6f6f6f;
+		--text-subtle: #8d8d8d;
+		--text-muted: #525252;
+
+		/* Accents (Carbon palette) */
+		--accent-blue: #4589ff;
+		--accent-blue-light: #a6c8ff;
+		--accent-blue-hover: #3d7ae8;
+		--accent-green: #42be65;
+		--accent-magenta: #ff7eb6;
+		--accent-cyan: #3ddbd9;
+
+		/* Hero gradient */
+		--hero-start: #1a1a2e;
+		--hero-mid: #16213e;
+		--hero-end: #0f3460;
+
+		/* Typography */
+		--tw-prose-body: oklch(50.06% 0.03 280.09deg);
+		--tw-prose-invert-body: oklch(90.6% 0.01 264.54deg);
+	}
+
 	html {
 		scroll-behavior: smooth;
 	}
 
-	:root {
-		--tw-prose-body: oklch(50.06% 0.03 280.09deg); /* --color-surface-700 */
-		--tw-prose-invert-body: oklch(90.6% 0.01 264.54deg); /* --color-surface-50 */
-	}
-
 	body {
-		@apply bg-[#161616] text-[#f4f4f4];
+		@apply bg-[var(--surface-base)] text-[var(--text-primary)];
 		min-height: 100vh;
 	}
 }
 
-.dark .prose {
-	color: var(--tw-prose-invert-body);
+/* ═══════════════════════════════════════════════════════════
+   Utility classes
+   ═══════════════════════════════════════════════════════════ */
+
+/* Card — the core card pattern used for posts, projects, panels */
+.card {
+	border-radius: 1rem;
+	border: 1px solid color-mix(in srgb, var(--border-subtle) 60%, transparent);
+	background-image: linear-gradient(to bottom right, var(--surface-card), var(--surface-card-alt));
+	transition:
+		border-color 0.3s ease,
+		box-shadow 0.3s ease,
+		transform 0.3s ease;
+}
+.card:hover {
+	border-color: color-mix(in srgb, var(--accent-blue) 30%, transparent);
+	box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--accent-blue) 5%, transparent);
+	transform: translateY(-2px);
 }
 
-/* Subtle fade-in for page content */
+/* Spotlight orb — used inside cards for subtle glow */
+.spotlight {
+	pointer-events: none;
+	position: absolute;
+	top: -2rem;
+	right: -2rem;
+	height: 6rem;
+	width: 6rem;
+	border-radius: 9999px;
+	background: color-mix(in srgb, var(--accent-blue) 5%, transparent);
+	filter: blur(40px);
+	transition:
+		background 0.5s ease,
+		filter 0.5s ease;
+}
+.card:hover .spotlight {
+	background: color-mix(in srgb, var(--accent-blue) 10%, transparent);
+	filter: blur(64px);
+}
+
+/* Tag badge */
+.tag {
+	display: inline-flex;
+	border-radius: 9999px;
+	padding: 0.125rem 0.625rem;
+	font-size: 0.75rem;
+	line-height: 1rem;
+	background: color-mix(in srgb, var(--border-subtle) 60%, transparent);
+	color: var(--text-subtle);
+}
+
+/* Fade-in animation */
 @keyframes fadeInUp {
 	from {
 		opacity: 0;
@@ -38,16 +129,33 @@
 		transform: translateY(0);
 	}
 }
-
 .animate-fade-in-up {
 	animation: fadeInUp 0.5s ease-out forwards;
 }
 
-/* Card hover effect */
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+	.animate-fade-in-up {
+		animation: none;
+		opacity: 1;
+	}
+	.card:hover {
+		transform: none;
+	}
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}
+
+/* Card hover effect (legacy class, kept for external references) */
 .card-hover {
 	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .card-hover:hover {
 	transform: translateY(-4px);
 	box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
@@ -57,9 +165,8 @@
 .glow-accent {
 	transition: box-shadow 0.25s ease;
 }
-
 .glow-accent:hover {
-	box-shadow: 0 0 20px rgba(69, 137, 255, 0.15);
+	box-shadow: 0 0 20px color-mix(in srgb, var(--accent-blue) 15%, transparent);
 }
 
 /* Smooth link underline animation */
@@ -67,7 +174,6 @@
 	position: relative;
 	text-decoration: none;
 }
-
 .link-underline::after {
 	content: '';
 	position: absolute;
@@ -75,10 +181,9 @@
 	left: 0;
 	width: 0;
 	height: 2px;
-	background: #4589ff;
+	background: var(--accent-blue);
 	transition: width 0.3s ease;
 }
-
 .link-underline:hover::after {
 	width: 100%;
 }

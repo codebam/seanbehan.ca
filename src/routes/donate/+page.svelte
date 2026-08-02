@@ -381,7 +381,7 @@
 		<Column lg={{ span: 8, offset: 4 }} md={{ span: 6, offset: 1 }} sm={4}>
 			<div class="mt-8 mb-8 space-y-2 text-center">
 				<h1
-					class="bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-4xl font-extrabold tracking-tight text-transparent"
+					class="bg-gradient-to-r from-[var(--accent-blue)] via-[var(--accent-blue-light)] to-[var(--accent-magenta)] bg-clip-text text-4xl font-extrabold tracking-tight text-transparent"
 				>
 					Support Sean Behan
 				</h1>
@@ -403,16 +403,16 @@
 
 			{#if successData}
 				<Tile
-					class="space-y-6 rounded-2xl border border-green-800/40 bg-green-950/20 p-6 text-center"
-				>
-					<div
-						class="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-green-700/50 bg-green-900/30 text-green-400 shadow-lg"
-					>
-						<Checkmark size={32} />
-					</div>
-					<div class="space-y-1">
-						<h2 class="text-2xl font-bold text-white">Donation Cleared successfully!</h2>
-						<p class="text-sm text-gray-400">
+								class="space-y-6 rounded-2xl border border-[var(--accent-green)]/40 bg-[var(--accent-green)]/20 p-6 text-center"
+							>
+								<div
+									class="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-[var(--accent-green)]/50 bg-[var(--accent-green)]/30 text-[var(--accent-green)] shadow-lg"
+								>
+									<Checkmark size={32} />
+								</div>
+								<div class="space-y-1">
+									<h2 class="text-2xl font-bold text-[var(--text-primary)]">Donation Cleared successfully!</h2>
+									<p class="text-sm text-[var(--text-tertiary)]">
 							Thank you so much for your support! Secure ad-bypass cookie has been set. Ads are now
 							disabled globally.
 						</p>
@@ -465,16 +465,16 @@
 					<div class="flex flex-col justify-stretch md:col-span-6">
 						{#if session}
 							<Tile
-								class="flex flex-1 flex-col items-center justify-center space-y-6 rounded-2xl border border-gray-800/60 bg-gray-900/40 p-6 text-center shadow-xl"
-							>
-								<div class="space-y-1">
-									<span
-										class="rounded border border-rose-800/30 bg-rose-950/40 px-2.5 py-0.5 text-[10px] font-bold tracking-widest text-rose-400 uppercase"
-									>
-										Unpaid Invoice
-									</span>
-									<h4 class="mt-2 text-lg font-bold text-white">Dynamic Multi-Chain Paywall</h4>
-								</div>
+												class="flex flex-1 flex-col items-center justify-center space-y-6 rounded-2xl border border-[var(--border-subtle)]/60 bg-gradient-to-br from-[var(--surface-card)] to-[var(--surface-card-alt)] p-6 text-center shadow-xl"
+											>
+												<div class="space-y-1">
+													<span
+														class="rounded border border-rose-800/30 bg-rose-950/40 px-2.5 py-0.5 text-[10px] font-bold tracking-widest text-rose-400 uppercase"
+													>
+														Unpaid Invoice
+													</span>
+													<h4 class="mt-2 text-lg font-bold text-[var(--text-primary)]">Dynamic Multi-Chain Paywall</h4>
+												</div>
 
 								<!-- QR Image -->
 								<div
@@ -491,15 +491,14 @@
 										>Donation payee Address</span
 									>
 									<div
-										class="truncate rounded-xl border border-gray-800/50 bg-gray-950/60 px-3 py-2.5 font-mono text-xs text-gray-300 select-all"
+										class="truncate rounded-xl border border-[var(--border-subtle)]/50 bg-[var(--surface-base)]/60 px-3 py-2.5 font-mono text-xs text-[var(--text-tertiary)] select-all"
 									>
 										{session.payee_address}
 									</div>
 								</div>
 
 								<!-- Invoice specs -->
-								<div class="grid w-full grid-cols-2 gap-4 text-left text-xs">
-									<div class="rounded-xl border border-gray-800/50 bg-gray-950/60 p-3">
+								<div class="rounded-xl border border-gray-800/50 bg-gray-950/60 p-3">
 										<span class="block text-[9px] font-bold tracking-wider text-gray-500 uppercase"
 											>Amount</span
 										>
@@ -511,7 +510,6 @@
 										>
 										<span class="font-bold text-gray-200 capitalize">{network}</span>
 									</div>
-								</div>
 
 								<!-- Signing triggers -->
 								<div class="w-full space-y-3 pt-2">
@@ -535,16 +533,16 @@
 							</Tile>
 						{:else}
 							<Tile
-								class="flex min-h-[300px] flex-1 flex-col items-center justify-center space-y-4 rounded-2xl border border-gray-800/60 bg-gray-900/40 p-6 text-center shadow-xl"
-							>
-								<div
-									class="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-gray-800/50 bg-gray-950/60 text-gray-400"
-								>
-									<Locked size={24} />
-								</div>
-								<div class="space-y-1">
-									<h4 class="text-md font-semibold text-gray-300">Invoice Generation Locked</h4>
-									<p class="mx-auto max-w-[200px] text-xs text-gray-500">
+												class="flex min-h-[300px] flex-1 flex-col items-center justify-center space-y-4 rounded-2xl border border-[var(--border-subtle)]/60 bg-gradient-to-br from-[var(--surface-card)] to-[var(--surface-card-alt)] p-6 text-center shadow-xl"
+											>
+												<div
+													class="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-[var(--border-subtle)]/50 bg-[var(--surface-base)]/60 text-[var(--text-tertiary)]"
+												>
+													<Locked size={24} />
+												</div>
+												<div class="space-y-1">
+													<h4 class="text-md font-semibold text-[var(--text-secondary)]">Invoice Generation Locked</h4>
+													<p class="mx-auto max-w-[200px] text-xs text-[var(--text-tertiary)]">
 										Enter your donation details and click "Request Invoice" to unlock checkout
 										tools.
 									</p>

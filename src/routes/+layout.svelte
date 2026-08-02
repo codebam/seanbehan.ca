@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import { dev } from '$app/environment';
 	import { base, resolve } from '$app/paths';
-	// app.css pulls in Tailwind and then carbon's g100 theme, in that order.
+	// app.css pulls in Tailwind, Inter font, carbon theme, and design tokens.
 	import '../app.css';
 	import {
 		Header,
@@ -21,13 +21,6 @@
 		'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3287237463323384';
 
 	onMount(() => {
-		// Inject AdSense only after checking the cookie, never via markup.
-		//
-		// The site is prerendered, so a `{#if showAds}` in <svelte:head> cannot
-		// work: there is no request to read the cookie from at render time, so the
-		// tag shipped to everyone and the browser began executing it on first
-		// paint. Flipping a flag in onMount afterwards cannot unload a script that
-		// has already run — donors kept getting ads despite paying to remove them.
 		if (dev) return;
 
 		const cookies = document.cookie.split(';').map((c) => c.trim());
@@ -46,8 +39,6 @@
 		if (!('serviceWorker' in navigator)) return;
 
 		if (dev) {
-			// Tear down any service worker left over from a production visit or an
-			// older dev session — its cache-first fetch handler serves stale modules.
 			const registrations = await navigator.serviceWorker.getRegistrations();
 			const unregistered = await Promise.all(registrations.map((r) => r.unregister()));
 			if ('caches' in window) {
@@ -96,13 +87,13 @@
 </Content>
 
 <!-- Footer -->
-<footer class="border-t border-[#393939] bg-[#161616] px-4 py-12">
+<footer class="border-t border-[var(--border-subtle)] bg-[var(--surface-base)] px-4 py-12">
 	<div class="mx-auto max-w-6xl">
 		<div class="flex flex-col items-center justify-between gap-6 md:flex-row">
 			<!-- Brand -->
 			<div class="text-center md:text-left">
-				<p class="text-sm font-semibold text-[#f4f4f4]">Sean Behan</p>
-				<p class="mt-1 text-xs text-[#6f6f6f]">Full-stack developer &amp; open-source enthusiast</p>
+				<p class="text-sm font-semibold text-[var(--text-primary)]">Sean Behan</p>
+				<p class="mt-1 text-xs text-[var(--text-tertiary)]">Full-stack developer &amp; open-source enthusiast</p>
 			</div>
 
 			<!-- Social links -->
@@ -111,7 +102,7 @@
 					href="https://github.com/codebam"
 					target="_blank"
 					rel="noopener noreferrer"
-					class="text-sm text-[#6f6f6f] transition-colors duration-200 hover:text-[#f4f4f4]"
+					class="text-sm text-[var(--text-tertiary)] transition-colors duration-200 hover:text-[var(--text-primary)]"
 				>
 					GitHub
 				</a>
@@ -119,21 +110,21 @@
 					href="https://mstdn.ca/@codebam"
 					target="_blank"
 					rel="noopener noreferrer"
-					class="text-sm text-[#6f6f6f] transition-colors duration-200 hover:text-[#f4f4f4]"
+					class="text-sm text-[var(--text-tertiary)] transition-colors duration-200 hover:text-[var(--text-primary)]"
 				>
 					Mastodon
 				</a>
 				<a
 					href={resolve('/contact')}
-					class="text-sm text-[#6f6f6f] transition-colors duration-200 hover:text-[#f4f4f4]"
+					class="text-sm text-[var(--text-tertiary)] transition-colors duration-200 hover:text-[var(--text-primary)]"
 				>
 					Contact
 				</a>
 			</div>
 		</div>
 
-		<div class="mt-8 border-t border-[#262626] pt-6 text-center">
-			<p class="text-xs text-[#525252]">
+		<div class="mt-8 border-t border-[var(--surface-card-alt)] pt-6 text-center">
+			<p class="text-xs text-[var(--text-muted)]">
 				&copy; {currentYear} Sean Behan. Built with SvelteKit &middot; Hosted on Cloudflare
 			</p>
 		</div>
