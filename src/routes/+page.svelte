@@ -38,7 +38,6 @@
 
 <svelte:head>
 	<title>Sean Behan — Full-Stack Developer & Linux Enthusiast</title>
-	<link rel="stylesheet" href="/cactus.css" type="text/css" />
 </svelte:head>
 
 <!-- ════════════════════════════════════════════ -->

@@ -7,8 +7,6 @@ export default defineConfig({
 	plugins: [enhancedImages(), tailwindcss(), sveltekit()],
 	build: {
 		// Use default minification (esbuild)
-		minify: true,
-		// Generate source maps for production debugging
-		sourcemap: true
+		minify: true
 	}
 });

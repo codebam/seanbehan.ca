@@ -7,8 +7,6 @@
 
 <svelte:head>
 	<title>{data.post.meta.title}</title>
-	<link rel="stylesheet" href="https://prismjs.catppuccin.com/mocha.css" />
-	<link rel="stylesheet" href="/cactus.css" type="text/css" />
 </svelte:head>
 <Grid>
 	<Row>

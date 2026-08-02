@@ -2,7 +2,7 @@
 	import type { Snippet } from 'svelte';
 	import { onMount } from 'svelte';
 	import { dev } from '$app/environment';
-	import { resolve } from '$app/paths';
+	import { base, resolve } from '$app/paths';
 	// app.css pulls in Tailwind and then carbon's g100 theme, in that order.
 	import '../app.css';
 	import {
@@ -63,6 +63,17 @@
 
 	const currentYear = new Date().getFullYear();
 </script>
+
+<svelte:head>
+	<meta name="description" content="Sean Behan — Full-stack developer, Linux enthusiast, and open-source contributor. Personal blog about SvelteKit, Rust, NixOS, and building software." />
+	<meta property="og:title" content="Sean Behan" />
+	<meta property="og:description" content="Full-stack developer, Linux enthusiast, and open-source contributor." />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://seanbehan.ca" />
+	<link rel="canonical" href="https://seanbehan.ca" />
+	<link rel="sitemap" type="application/xml" title="Sitemap" href="{base}/sitemap.xml" />
+	<link rel="alternate" type="application/rss+xml" title="RSS Feed" href="{base}/rss.xml" />
+</svelte:head>
 
 <Header companyName="Sean" platformName="Behan" href="/">
 	<svelte:fragment slot="skipToContent">

@@ -89,7 +89,7 @@ is this.
 
 Finally we can see that this builds a card.
 
-![react card](/img/reactjs-card.png)
+![react card](/img/reactjs-card.webp)
 
 This can be used for building any kind of component, such as dialog boxes,
 forms, or anything you can imagine in HTML/CSS.

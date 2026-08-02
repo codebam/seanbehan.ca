@@ -11,7 +11,7 @@ draft: false
 Over the past few months I experimented with some new Linux distributions. Here
 I'll show you the one I'm currently using and why I think it's great.
 
-![Fedora Silverblue desktop screenshot](/img/20210213_15h31m29s_grim.png)
+![Fedora Silverblue desktop screenshot](/img/20210213_15h31m29s_grim.webp)
 
 ### Atomic Updates and Rollbacks
 
