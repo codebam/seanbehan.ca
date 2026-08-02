@@ -134,7 +134,7 @@
 </section>
 
 <!-- HERO PANELS — What I Do -->
-<div class="grid gap-6 md:grid-cols-3">
+<div class="grid gap-3 md:gap-6 md:grid-cols-3">
 	<div class="group card relative h-full overflow-hidden" style="--card-accent: var(--accent-blue);">
 		<div class="spotlight"></div>
 		<div class="relative z-10">
@@ -204,7 +204,7 @@
 		</a>
 	</div>
 
-	<div class="grid gap-6 md:grid-cols-2">
+	<div class="grid gap-3 md:gap-6 md:grid-cols-2">
 		{#each data.projects as project (project.repo)}
 			<article class="group card relative flex h-full flex-col overflow-hidden">
 				<div class="spotlight"></div>
