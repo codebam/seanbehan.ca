@@ -403,16 +403,18 @@
 
 			{#if successData}
 				<Tile
-								class="space-y-6 rounded-2xl border border-[var(--accent-green)]/40 bg-[var(--accent-green)]/20 p-6 text-center"
-							>
-								<div
-									class="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-[var(--accent-green)]/50 bg-[var(--accent-green)]/30 text-[var(--accent-green)] shadow-lg"
-								>
-									<Checkmark size={32} />
-								</div>
-								<div class="space-y-1">
-									<h2 class="text-2xl font-bold text-[var(--text-primary)]">Donation Cleared successfully!</h2>
-									<p class="text-sm text-[var(--text-tertiary)]">
+					class="space-y-6 rounded-2xl border border-[var(--accent-green)]/40 bg-[var(--accent-green)]/20 p-6 text-center"
+				>
+					<div
+						class="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-[var(--accent-green)]/50 bg-[var(--accent-green)]/30 text-[var(--accent-green)] shadow-lg"
+					>
+						<Checkmark size={32} />
+					</div>
+					<div class="space-y-1">
+						<h2 class="text-2xl font-bold text-[var(--text-primary)]">
+							Donation Cleared successfully!
+						</h2>
+						<p class="text-sm text-[var(--text-tertiary)]">
 							Thank you so much for your support! Secure ad-bypass cookie has been set. Ads are now
 							disabled globally.
 						</p>
@@ -465,16 +467,18 @@
 					<div class="flex flex-col justify-stretch md:col-span-6">
 						{#if session}
 							<Tile
-												class="flex flex-1 flex-col items-center justify-center space-y-6 rounded-2xl border border-[var(--border-subtle)]/60 bg-gradient-to-br from-[var(--surface-card)] to-[var(--surface-card-alt)] p-6 text-center shadow-xl"
-											>
-												<div class="space-y-1">
-													<span
-														class="rounded border border-rose-800/30 bg-rose-950/40 px-2.5 py-0.5 text-[10px] font-bold tracking-widest text-rose-400 uppercase"
-													>
-														Unpaid Invoice
-													</span>
-													<h4 class="mt-2 text-lg font-bold text-[var(--text-primary)]">Dynamic Multi-Chain Paywall</h4>
-												</div>
+								class="flex flex-1 flex-col items-center justify-center space-y-6 rounded-2xl border border-[var(--border-subtle)]/60 bg-gradient-to-br from-[var(--surface-card)] to-[var(--surface-card-alt)] p-6 text-center shadow-xl"
+							>
+								<div class="space-y-1">
+									<span
+										class="rounded border border-rose-800/30 bg-rose-950/40 px-2.5 py-0.5 text-[10px] font-bold tracking-widest text-rose-400 uppercase"
+									>
+										Unpaid Invoice
+									</span>
+									<h4 class="mt-2 text-lg font-bold text-[var(--text-primary)]">
+										Dynamic Multi-Chain Paywall
+									</h4>
+								</div>
 
 								<!-- QR Image -->
 								<div
@@ -499,17 +503,17 @@
 
 								<!-- Invoice specs -->
 								<div class="rounded-xl border border-gray-800/50 bg-gray-950/60 p-3">
-										<span class="block text-[9px] font-bold tracking-wider text-gray-500 uppercase"
-											>Amount</span
-										>
-										<span class="font-bold text-gray-200">${amountUsd} USD</span>
-									</div>
-									<div class="rounded-xl border border-gray-800/50 bg-gray-950/60 p-3">
-										<span class="block text-[9px] font-bold tracking-wider text-gray-500 uppercase"
-											>Network</span
-										>
-										<span class="font-bold text-gray-200 capitalize">{network}</span>
-									</div>
+									<span class="block text-[9px] font-bold tracking-wider text-gray-500 uppercase"
+										>Amount</span
+									>
+									<span class="font-bold text-gray-200">${amountUsd} USD</span>
+								</div>
+								<div class="rounded-xl border border-gray-800/50 bg-gray-950/60 p-3">
+									<span class="block text-[9px] font-bold tracking-wider text-gray-500 uppercase"
+										>Network</span
+									>
+									<span class="font-bold text-gray-200 capitalize">{network}</span>
+								</div>
 
 								<!-- Signing triggers -->
 								<div class="w-full space-y-3 pt-2">
@@ -533,16 +537,18 @@
 							</Tile>
 						{:else}
 							<Tile
-												class="flex min-h-[300px] flex-1 flex-col items-center justify-center space-y-4 rounded-2xl border border-[var(--border-subtle)]/60 bg-gradient-to-br from-[var(--surface-card)] to-[var(--surface-card-alt)] p-6 text-center shadow-xl"
-											>
-												<div
-													class="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-[var(--border-subtle)]/50 bg-[var(--surface-base)]/60 text-[var(--text-tertiary)]"
-												>
-													<Locked size={24} />
-												</div>
-												<div class="space-y-1">
-													<h4 class="text-md font-semibold text-[var(--text-secondary)]">Invoice Generation Locked</h4>
-													<p class="mx-auto max-w-[200px] text-xs text-[var(--text-tertiary)]">
+								class="flex min-h-[300px] flex-1 flex-col items-center justify-center space-y-4 rounded-2xl border border-[var(--border-subtle)]/60 bg-gradient-to-br from-[var(--surface-card)] to-[var(--surface-card-alt)] p-6 text-center shadow-xl"
+							>
+								<div
+									class="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-[var(--border-subtle)]/50 bg-[var(--surface-base)]/60 text-[var(--text-tertiary)]"
+								>
+									<Locked size={24} />
+								</div>
+								<div class="space-y-1">
+									<h4 class="text-md font-semibold text-[var(--text-secondary)]">
+										Invoice Generation Locked
+									</h4>
+									<p class="mx-auto max-w-[200px] text-xs text-[var(--text-tertiary)]">
 										Enter your donation details and click "Request Invoice" to unlock checkout
 										tools.
 									</p>

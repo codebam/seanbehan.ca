@@ -14,7 +14,9 @@
 	<div class="spotlight"></div>
 
 	<div class="relative z-10 flex h-full flex-col">
-		<h3 class="mb-2 text-lg font-bold text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[var(--accent-blue-light)]">
+		<h3
+			class="mb-2 text-lg font-bold text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[var(--accent-blue-light)]"
+		>
 			{post.meta.title}
 		</h3>
 		<p class="mb-4 text-xs text-[var(--text-tertiary)]">

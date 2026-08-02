@@ -40,7 +40,11 @@
 		stroke-width="2"
 		aria-hidden="true"
 	>
-		<path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+		<path
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+		/>
 	</svg>
 	<input
 		type="search"
@@ -62,7 +66,7 @@
 		{/each}
 	</Accordion>
 {:else}
-	<div class="grid gap-2 md:gap-6 md:grid-cols-2 lg:grid-cols-3">
+	<div class="grid gap-2 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
 		{#each results as post (post.path)}
 			<Post {post} />
 		{/each}
@@ -83,7 +87,11 @@
 		border: 1px solid color-mix(in srgb, var(--border-subtle) 60%, transparent);
 		border-radius: 1rem;
 		overflow: hidden;
-		background-image: linear-gradient(to bottom right, var(--surface-card), var(--surface-card-alt));
+		background-image: linear-gradient(
+			to bottom right,
+			var(--surface-card),
+			var(--surface-card-alt)
+		);
 		transition:
 			border-color 0.3s ease,
 			box-shadow 0.3s ease;

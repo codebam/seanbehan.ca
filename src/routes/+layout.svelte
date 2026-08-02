@@ -56,9 +56,15 @@
 </script>
 
 <svelte:head>
-	<meta name="description" content="Sean Behan — Full-stack developer, Linux enthusiast, and open-source contributor. Personal blog about SvelteKit, Rust, NixOS, and building software." />
+	<meta
+		name="description"
+		content="Sean Behan — Full-stack developer, Linux enthusiast, and open-source contributor. Personal blog about SvelteKit, Rust, NixOS, and building software."
+	/>
 	<meta property="og:title" content="Sean Behan" />
-	<meta property="og:description" content="Full-stack developer, Linux enthusiast, and open-source contributor." />
+	<meta
+		property="og:description"
+		content="Full-stack developer, Linux enthusiast, and open-source contributor."
+	/>
 	<meta property="og:type" content="website" />
 	<meta property="og:url" content="https://seanbehan.ca" />
 	<link rel="canonical" href="https://seanbehan.ca" />
@@ -93,7 +99,9 @@
 			<!-- Brand -->
 			<div class="text-center md:text-left">
 				<p class="text-sm font-semibold text-[var(--text-primary)]">Sean Behan</p>
-				<p class="mt-1 text-xs text-[var(--text-tertiary)]">Full-stack developer &amp; open-source enthusiast</p>
+				<p class="mt-1 text-xs text-[var(--text-tertiary)]">
+					Full-stack developer &amp; open-source enthusiast
+				</p>
 			</div>
 
 			<!-- Social links -->
