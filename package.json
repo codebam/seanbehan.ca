@@ -69,12 +69,5 @@
 		"esbuild@0.28.1": true,
 		"sharp@0.35.3": true,
 		"workerd@1.20260722.1": true
-	},
-	"lint-staged": {
-		"*.{js,ts,svelte}": [
-			"eslint --fix --no-warn-ignored",
-			"prettier --write"
-		],
-		"!(*.{js,ts,svelte})": "prettier --write --ignore-unknown"
 	}
 }
