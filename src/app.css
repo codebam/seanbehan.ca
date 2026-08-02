@@ -64,6 +64,18 @@
 		scroll-behavior: smooth;
 	}
 
+	/* Carbon ships `.bx--content { padding: 2rem }`, which stacks with <main>'s own
+	   padding and eats 40px per side on phones. Let <main> own the horizontal
+	   spacing on mobile; restore Carbon's gutter at md and up. */
+	.bx--content {
+		padding: 0;
+	}
+	@media (width >= 48rem) {
+		.bx--content {
+			padding: 2rem;
+		}
+	}
+
 	body {
 		@apply bg-[var(--surface-base)] text-[var(--text-primary)];
 		min-height: 100vh;

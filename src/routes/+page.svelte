@@ -29,7 +29,7 @@
 
 <!-- HERO SECTION -->
 <section
-	class="relative mt-2 mb-16 overflow-hidden rounded-3xl bg-gradient-to-br from-[var(--hero-start)] via-[var(--hero-mid)] to-[var(--hero-end)] px-4 py-10 shadow-2xl md:px-14 md:py-20"
+	class="relative mt-0 mb-8 overflow-hidden rounded-3xl md:mt-2 md:mb-16 bg-gradient-to-br from-[var(--hero-start)] via-[var(--hero-mid)] to-[var(--hero-end)] px-4 py-10 shadow-2xl md:px-14 md:py-20"
 >
 	<!-- Animated grid overlay -->
 	<div
