@@ -81,7 +81,7 @@
 </Header>
 
 <Content>
-	<main class="animate-fade-in-up mx-auto min-h-[60vh] max-w-6xl px-3 py-8 md:px-4">
+	<main class="animate-fade-in-up mx-auto min-h-[60vh] max-w-6xl px-2 py-8 md:px-4">
 		{@render children()}
 	</main>
 </Content>

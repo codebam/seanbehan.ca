@@ -29,7 +29,7 @@
 
 <!-- HERO SECTION -->
 <section
-	class="relative mt-2 mb-16 overflow-hidden rounded-3xl bg-gradient-to-br from-[var(--hero-start)] via-[var(--hero-mid)] to-[var(--hero-end)] px-6 py-16 shadow-2xl md:px-14 md:py-20"
+	class="relative mt-2 mb-16 overflow-hidden rounded-3xl bg-gradient-to-br from-[var(--hero-start)] via-[var(--hero-mid)] to-[var(--hero-end)] px-4 py-10 shadow-2xl md:px-14 md:py-20"
 >
 	<!-- Animated grid overlay -->
 	<div
@@ -134,7 +134,7 @@
 </section>
 
 <!-- HERO PANELS — What I Do -->
-<div class="grid gap-3 md:gap-6 md:grid-cols-3">
+<div class="grid gap-2 md:gap-6 md:grid-cols-3">
 	<div class="group card relative h-full overflow-hidden" style="--card-accent: var(--accent-blue);">
 		<div class="spotlight"></div>
 		<div class="relative z-10">
@@ -204,7 +204,7 @@
 		</a>
 	</div>
 
-	<div class="grid gap-3 md:gap-6 md:grid-cols-2">
+	<div class="grid gap-2 md:gap-6 md:grid-cols-2">
 		{#each data.projects as project (project.repo)}
 			<article class="group card relative flex h-full flex-col overflow-hidden">
 				<div class="spotlight"></div>

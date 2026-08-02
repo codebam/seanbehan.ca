@@ -101,7 +101,7 @@
 	border-radius: 1rem;
 	border: 1px solid color-mix(in srgb, var(--border-subtle) 60%, transparent);
 	background-image: linear-gradient(to bottom right, var(--surface-card), var(--surface-card-alt));
-	padding: 1rem;
+	padding: 0.75rem;
 	transition:
 		border-color 0.3s ease,
 		box-shadow 0.3s ease,
