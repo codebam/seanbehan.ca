@@ -1,26 +1,29 @@
 #!/bin/sh
-# Blocks a commit whose staged files aren't Prettier-clean.
+# Formats staged files with Prettier before they're committed.
 #
 # CI runs `prettier --check .` on every push and it went red for five commits
-# straight before anyone noticed. Catch it at commit time instead.
+# straight before anyone noticed. Formatting at commit time keeps it green
+# without anyone having to remember `npm run format`.
 #
 # lint-staged does the work: it stashes unstaged changes first, so Prettier
-# judges exactly what's in the index. A plain `prettier --check <staged paths>`
-# reads the working tree instead, which gives a stale verdict whenever you
-# stage a hunk with `git add -p` and keep editing.
+# only ever rewrites what's in the index, then re-stages the results. Your
+# half-finished working-tree edits are restored untouched afterward.
 #
-# It also checks staged files only, so pre-existing drift in files you didn't
-# touch won't block unrelated work. The file globs and command live under
+# It also touches staged files only, so pre-existing drift in files you didn't
+# touch stays out of your commit. The globs and command live under
 # "lint-staged" in package.json.
+#
+# Note that the commit records the formatted version, which is not byte-for-byte
+# what you staged. Run `git diff HEAD` after committing if you want to see what
+# Prettier changed.
 #
 # Installed by the `prepare` npm script, which points core.hooksPath here.
 # Bypass a single commit with `git commit --no-verify`.
 
 if ! npx lint-staged; then
 	echo
-	echo "Prettier check failed. Fix with:"
-	echo "    npm run format"
-	echo "then re-stage the files and commit again."
+	echo "Prettier could not format the staged files — usually a syntax error."
+	echo "Fix the file it named above and commit again."
 	echo
 	echo "To bypass this check: git commit --no-verify"
 	exit 1

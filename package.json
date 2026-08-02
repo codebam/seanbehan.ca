@@ -71,6 +71,6 @@
 		"workerd@1.20260722.1": true
 	},
 	"lint-staged": {
-		"*": "prettier --check --ignore-unknown"
+		"*": "prettier --write --ignore-unknown"
 	}
 }
