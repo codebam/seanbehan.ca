@@ -135,7 +135,7 @@
 
 <!-- HERO PANELS — What I Do -->
 <div class="grid gap-6 md:grid-cols-3">
-	<div class="group card relative h-full overflow-hidden p-6" style="--card-accent: var(--accent-blue);">
+	<div class="group card relative h-full overflow-hidden" style="--card-accent: var(--accent-blue);">
 		<div class="spotlight"></div>
 		<div class="relative z-10">
 			<div class="mb-3 flex h-10 w-10 items-center justify-center rounded-xl" style="background: color-mix(in srgb, var(--card-accent) 10%, transparent);">
@@ -151,7 +151,7 @@
 		</div>
 	</div>
 
-	<div class="group card relative h-full overflow-hidden p-6" style="--card-accent: var(--accent-green);">
+	<div class="group card relative h-full overflow-hidden" style="--card-accent: var(--accent-green);">
 		<div class="spotlight"></div>
 		<div class="relative z-10">
 			<div class="mb-3 flex h-10 w-10 items-center justify-center rounded-xl" style="background: color-mix(in srgb, var(--card-accent) 10%, transparent);">
@@ -167,7 +167,7 @@
 		</div>
 	</div>
 
-	<div class="group card relative h-full overflow-hidden p-6" style="--card-accent: var(--accent-magenta);">
+	<div class="group card relative h-full overflow-hidden" style="--card-accent: var(--accent-magenta);">
 		<div class="spotlight"></div>
 		<div class="relative z-10">
 			<div class="mb-3 flex h-10 w-10 items-center justify-center rounded-xl" style="background: color-mix(in srgb, var(--card-accent) 10%, transparent);">
@@ -206,7 +206,7 @@
 
 	<div class="grid gap-6 md:grid-cols-2">
 		{#each data.projects as project (project.repo)}
-			<article class="group card relative flex h-full flex-col overflow-hidden p-6">
+			<article class="group card relative flex h-full flex-col overflow-hidden">
 				<div class="spotlight"></div>
 
 				<div class="relative z-10 flex h-full flex-col">

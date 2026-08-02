@@ -9,7 +9,7 @@
 
 <a
 	href={resolve('/posts/[slug]', { slug })}
-	class="group card relative flex h-full flex-col overflow-hidden p-6"
+	class="group card relative flex h-full flex-col overflow-hidden"
 >
 	<div class="spotlight"></div>
 

@@ -101,11 +101,17 @@
 	border-radius: 1rem;
 	border: 1px solid color-mix(in srgb, var(--border-subtle) 60%, transparent);
 	background-image: linear-gradient(to bottom right, var(--surface-card), var(--surface-card-alt));
+	padding: 1.25rem;
 	transition:
 		border-color 0.3s ease,
 		box-shadow 0.3s ease,
 		transform 0.3s ease;
 	will-change: transform, box-shadow;
+}
+@media (width >= 48rem) {
+	.card {
+		padding: 1.5rem;
+	}
 }
 .card:hover {
 	border-color: color-mix(in srgb, var(--card-accent, var(--accent-blue)) 30%, transparent);
