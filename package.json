@@ -43,6 +43,7 @@
 		"fuse.js": "^7.5.0",
 		"globals": "^17.8.0",
 		"jsdom": "^30.0.0",
+		"lint-staged": "^17.3.0",
 		"mdsvex": "^0.12.8",
 		"prettier": "^3.9.6",
 		"prettier-plugin-svelte": "^4.1.1",
@@ -68,5 +69,8 @@
 		"esbuild@0.28.1": true,
 		"sharp@0.35.3": true,
 		"workerd@1.20260722.1": true
+	},
+	"lint-staged": {
+		"*": "prettier --check --ignore-unknown"
 	}
 }

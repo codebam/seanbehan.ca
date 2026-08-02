@@ -2,32 +2,21 @@
 # Blocks a commit whose staged files aren't Prettier-clean.
 #
 # CI runs `prettier --check .` on every push and it went red for five commits
-# straight before anyone noticed, so catch it at commit time instead.
+# straight before anyone noticed. Catch it at commit time instead.
 #
-# Only staged files are checked, not the whole tree — pre-existing drift in
-# files you didn't touch shouldn't block unrelated work.
+# lint-staged does the work: it stashes unstaged changes first, so Prettier
+# judges exactly what's in the index. A plain `prettier --check <staged paths>`
+# reads the working tree instead, which gives a stale verdict whenever you
+# stage a hunk with `git add -p` and keep editing.
+#
+# It also checks staged files only, so pre-existing drift in files you didn't
+# touch won't block unrelated work. The file globs and command live under
+# "lint-staged" in package.json.
 #
 # Installed by the `prepare` npm script, which points core.hooksPath here.
 # Bypass a single commit with `git commit --no-verify`.
 
-set -e
-
-# Prettier reads the working tree, not the index. A file staged clean but since
-# edited is judged on its on-disk contents. Fine for the normal
-# stage-then-commit flow; `git add -p` users may see a stale verdict.
-
-# NUL-delimited via a temp file: command substitution can't carry NUL bytes,
-# and `xargs -r` is GNU-only, so test the file for emptiness instead.
-list=$(mktemp)
-trap 'rm -f "$list"' EXIT
-
-# ACMR = added/copied/modified/renamed. Deleted files have nothing to check.
-git diff --cached --name-only --diff-filter=ACMR -z >"$list"
-[ -s "$list" ] || exit 0
-
-# --ignore-unknown skips extensions Prettier has no parser for (.webp, .ico).
-# .prettierignore is honored automatically.
-if ! xargs -0 npx prettier --check --ignore-unknown <"$list"; then
+if ! npx lint-staged; then
 	echo
 	echo "Prettier check failed. Fix with:"
 	echo "    npm run format"
