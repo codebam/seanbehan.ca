@@ -71,6 +71,10 @@
 		"workerd@1.20260722.1": true
 	},
 	"lint-staged": {
-		"*": "prettier --write --ignore-unknown"
+		"*.{js,ts,svelte}": [
+			"eslint --fix --no-warn-ignored",
+			"prettier --write"
+		],
+		"!(*.{js,ts,svelte})": "prettier --write --ignore-unknown"
 	}
 }
