@@ -57,7 +57,7 @@
 		"wrangler": "^4.116.0"
 	},
 	"dependencies": {
-		"typescript": "^6.0.3"
+		"typescript": "^7.0.2"
 	},
 	"overrides": {
 		"cookie": "^0.7.2",
