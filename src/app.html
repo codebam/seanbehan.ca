@@ -2,7 +2,10 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<!-- .ico first for the browsers that only look for one, then the sized PNGs -->
+		<!-- SVG where it is supported, then .ico for the browsers that only look for
+		     one, then the sized PNGs. The SVG's lettering is outlined, so it needs
+		     no font installed — see tools/favicon. -->
+		<link rel="icon" type="image/svg+xml" href="%sveltekit.assets%/favicon.svg" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.ico" sizes="16x16 32x32 48x48" />
 		<link rel="icon" type="image/png" sizes="32x32" href="%sveltekit.assets%/favicon-32x32.png" />
 		<link rel="icon" type="image/png" sizes="16x16" href="%sveltekit.assets%/favicon-16x16.png" />
