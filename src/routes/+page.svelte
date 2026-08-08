@@ -30,34 +30,36 @@
 
 <!-- HERO -->
 <section class="border-b border-[var(--line)] pt-10 pb-14 md:pt-12 md:pb-16">
-	<p class="eyebrow">Full-stack developer &middot; Linux</p>
-
-	<h1 class="display mt-4 max-w-[22ch] text-[2.6rem] sm:text-[3.4rem] md:text-[3.9rem]">
-		I build software that lives <em>close to the metal</em> and ships to the edge.
-	</h1>
-
-	<div class="mt-8 grid items-end gap-8 md:mt-9 md:grid-cols-[1fr_240px] md:gap-12">
-		<div>
-			<p class="max-w-[56ch] text-[1.05rem] leading-relaxed text-[var(--body)] md:text-[1.15rem]">
-				{yearsBuilding} years of web applications, from database to frontend. I daily-drive NixOS, write
-				Rust and TypeScript, and build everything in the open — a Wayland compositor, bots on Cloudflare
-				Workers, and an encrypted pastebin.
-			</p>
-
-			<div class="mt-7 flex flex-wrap items-center gap-x-6 gap-y-4 text-[0.95rem]">
-				<a href={resolve('/posts')} class="btn">Read the writing</a>
-				<a href="https://github.com/codebam" rel="noopener noreferrer" class="link-quiet">GitHub</a>
-				<a href="mailto:sean@seanbehan.ca" class="link-quiet">sean@seanbehan.ca</a>
-			</div>
-		</div>
-
+	<!-- Byline: the photo identifies the author rather than decorating the page,
+	     which leaves the headline the full column width. -->
+	<div class="flex items-center gap-3.5">
 		<img
 			src="/profile.webp"
 			alt="Sean Behan"
-			width="240"
-			height="240"
-			class="order-first aspect-square w-40 rounded object-cover md:order-none md:w-full"
+			width="52"
+			height="52"
+			class="h-13 w-13 shrink-0 rounded-full object-cover"
 		/>
+		<div>
+			<p class="eyebrow">Full-stack developer &middot; Linux</p>
+			<p class="mt-0.5 text-[0.95rem] text-[var(--muted)]">Sean Behan &middot; Ontario, Canada</p>
+		</div>
+	</div>
+
+	<h1 class="display mt-7 max-w-[24ch] text-[2.6rem] sm:text-[3.4rem] md:text-[3.9rem]">
+		I build software that lives <em>close to the metal</em> and ships to the edge.
+	</h1>
+
+	<p class="mt-7 max-w-[56ch] text-[1.05rem] leading-relaxed text-[var(--body)] md:text-[1.15rem]">
+		{yearsBuilding} years of web applications, from database to frontend. I daily-drive NixOS, write Rust
+		and TypeScript, and build everything in the open — a Wayland compositor, bots on Cloudflare Workers,
+		and an encrypted pastebin.
+	</p>
+
+	<div class="mt-7 flex flex-wrap items-center gap-x-6 gap-y-4 text-[0.95rem]">
+		<a href={resolve('/posts')} class="btn">Read the writing</a>
+		<a href="https://github.com/codebam" rel="noopener noreferrer" class="link-quiet">GitHub</a>
+		<a href="mailto:sean@seanbehan.ca" class="link-quiet">sean@seanbehan.ca</a>
 	</div>
 </section>
 
