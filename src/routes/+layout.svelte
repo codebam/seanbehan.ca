@@ -63,7 +63,7 @@
 <a href="#main" class="skip-link">Skip to content</a>
 
 <header class="border-b border-[var(--line)]">
-	<div class="mx-auto flex max-w-[940px] items-center gap-6 px-6 py-5 md:px-10 md:py-6">
+	<div class="shell flex items-center gap-6 py-5 md:py-6">
 		<a
 			href={resolve('/')}
 			class="display mr-auto text-[1.2rem] whitespace-nowrap"
@@ -91,13 +91,15 @@
 	</div>
 </header>
 
-<main id="main" class="animate-fade-in-up mx-auto max-w-[940px] px-6 md:px-10">
+<!-- Full-bleed: each page owns its own panels and .shell columns, so a section
+     can run edge to edge on its own background. -->
+<main id="main" class="animate-fade-in-up">
 	{@render children()}
 </main>
 
-<footer class="mt-4 border-t border-[var(--line)]">
+<footer class="panel-invert">
 	<div
-		class="mx-auto flex max-w-[940px] flex-wrap items-center gap-x-6 gap-y-3 px-6 py-10 text-sm text-[var(--muted)] md:px-10 md:py-12"
+		class="shell flex flex-wrap items-center gap-x-6 gap-y-3 py-10 text-sm text-[var(--muted)] md:py-12"
 	>
 		<span>&copy; {currentYear} Sean Behan</span>
 		<!-- Prerendered endpoint, not a route resolve() knows about -->

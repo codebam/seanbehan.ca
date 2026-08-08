@@ -7,9 +7,9 @@
 	<title>{page.status} — Sean Behan</title>
 </svelte:head>
 
-<section class="flex min-h-[55vh] flex-col justify-center py-16">
+<section class="panel shell flex min-h-[55vh] flex-col justify-center py-20">
 	<p class="eyebrow">Error {page.status}</p>
-	<h1 class="display mt-4 max-w-[20ch] text-[2.6rem] md:text-[3.4rem]">
+	<h1 class="display display-xl mt-5 max-w-[18ch]">
 		{page.status === 404 ? 'That page is not here.' : 'Something went wrong.'}
 	</h1>
 	<p class="mt-4 max-w-[50ch] text-[1.05rem] text-[var(--body)]">

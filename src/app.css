@@ -31,12 +31,43 @@
 		Consolas, 'Liberation Mono', monospace;
 }
 
+/* The two palettes, written once each so the panel classes below can hand a
+   section the palette it is not currently in. */
+@layer base {
+	:root {
+		--palette-light-bg: #faf8f4;
+		--palette-light-alt: #f2eee6;
+		--palette-light-panel: #ffffff;
+		--palette-light-line: #e3ded4;
+		--palette-light-line-strong: #d3ccbe;
+		--palette-light-text: #17181a;
+		--palette-light-body: #4a4b4f;
+		--palette-light-muted: #6c6a66;
+		--palette-light-dim: #8b8880;
+		--palette-light-accent: #a8391f;
+		--palette-light-accent-hover: #8c2d16;
+
+		--palette-dark-bg: #111110;
+		--palette-dark-alt: #191817;
+		--palette-dark-panel: #191817;
+		--palette-dark-line: #2b2825;
+		--palette-dark-line-strong: #3c3833;
+		--palette-dark-text: #f0eae0;
+		--palette-dark-body: #b8b2a8;
+		--palette-dark-muted: #948e85;
+		--palette-dark-dim: #6b665e;
+		--palette-dark-accent: #e2724f;
+		--palette-dark-accent-hover: #f08a6a;
+	}
+}
+
 @layer base {
 	:root {
 		color-scheme: light dark;
 
 		/* Surfaces */
 		--bg: #faf8f4;
+		--surface-alt: #f2eee6;
 		--panel: #ffffff;
 		--line: #e3ded4;
 		--line-strong: #d3ccbe;
@@ -62,6 +93,7 @@
 	@media (prefers-color-scheme: dark) {
 		:root {
 			--bg: #111110;
+			--surface-alt: #191817;
 			--panel: #191817;
 			--line: #2b2825;
 			--line-strong: #3c3833;
@@ -146,6 +178,21 @@
 		color: var(--accent);
 	}
 
+	/* Page headline. Fluid rather than stepped, so the line count stays put
+	   between the breakpoints instead of reflowing at each one. */
+	.display-xl {
+		font-size: clamp(2.6rem, 7vw, 5.4rem);
+		line-height: 1;
+		letter-spacing: -0.03em;
+	}
+
+	/* Panel heading */
+	.display-lg {
+		font-size: clamp(2rem, 3.6vw, 2.9rem);
+		line-height: 1.05;
+		letter-spacing: -0.028em;
+	}
+
 	/* Section label: small, uppercase, tracked out */
 	.eyebrow {
 		font-size: 0.78rem;
@@ -153,6 +200,70 @@
 		letter-spacing: 0.16em;
 		text-transform: uppercase;
 		color: var(--accent);
+	}
+
+	/* ═══════════════════════════════════════════════════════════
+	   Panels
+
+	   Full-bleed horizontal bands. `panel-invert` hands a section the palette
+	   the page is *not* in, so the alternation reads as strongly in dark mode
+	   as in light instead of one theme losing all its contrast.
+	   ═══════════════════════════════════════════════════════════ */
+	.panel {
+		background: var(--bg);
+		color: var(--text);
+	}
+	.panel-alt {
+		background: var(--surface-alt);
+		color: var(--text);
+	}
+
+	.panel-invert {
+		--bg: var(--palette-dark-bg);
+		--surface-alt: var(--palette-dark-alt);
+		--panel: var(--palette-dark-panel);
+		--line: var(--palette-dark-line);
+		--line-strong: var(--palette-dark-line-strong);
+		--text: var(--palette-dark-text);
+		--body: var(--palette-dark-body);
+		--muted: var(--palette-dark-muted);
+		--dim: var(--palette-dark-dim);
+		--accent: var(--palette-dark-accent);
+		--accent-hover: var(--palette-dark-accent-hover);
+		--invert-bg: var(--palette-dark-text);
+		--invert-text: var(--palette-dark-bg);
+		background: var(--bg);
+		color: var(--text);
+	}
+	@media (prefers-color-scheme: dark) {
+		.panel-invert {
+			--bg: var(--palette-light-bg);
+			--surface-alt: var(--palette-light-alt);
+			--panel: var(--palette-light-panel);
+			--line: var(--palette-light-line);
+			--line-strong: var(--palette-light-line-strong);
+			--text: var(--palette-light-text);
+			--body: var(--palette-light-body);
+			--muted: var(--palette-light-muted);
+			--dim: var(--palette-light-dim);
+			--accent: var(--palette-light-accent);
+			--accent-hover: var(--palette-light-accent-hover);
+			--invert-bg: var(--palette-light-text);
+			--invert-text: var(--palette-light-bg);
+		}
+	}
+
+	/* Inner column shared by every panel, and by the pages that are a single
+	   panel of their own. */
+	.shell {
+		max-width: 1040px;
+		margin-inline: auto;
+		padding-inline: 1.5rem;
+	}
+	@media (width >= 48rem) {
+		.shell {
+			padding-inline: 2.5rem;
+		}
 	}
 
 	/* ═══════════════════════════════════════════════════════════

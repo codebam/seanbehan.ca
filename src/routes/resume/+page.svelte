@@ -7,9 +7,9 @@
 	<meta name="description" content="Résumé for Sean Behan, full-stack developer." />
 </svelte:head>
 
-<section class="pt-10 pb-16 md:pt-12">
+<section class="panel shell pt-14 pb-20 md:pt-16">
 	<p class="eyebrow">Full-stack developer &middot; Ontario, Canada</p>
-	<h1 class="display mt-4 text-[2.4rem] md:text-[3rem]">Résumé</h1>
+	<h1 class="display display-xl mt-5">Résumé</h1>
 
 	<p class="mt-4 flex flex-wrap items-center gap-x-6 gap-y-3 text-[0.95rem]">
 		<!-- Absolute R2 asset, so resolve() does not apply -->

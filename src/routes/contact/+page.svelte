@@ -44,14 +44,14 @@
 	<meta name="description" content="Get in touch with Sean Behan — email, GitHub, Mastodon." />
 </svelte:head>
 
-<section class="pt-10 pb-16 md:pt-12">
+<section class="panel shell pt-14 pb-20 md:pt-16">
 	<p class="eyebrow">Open to work &middot; Ontario, Canada</p>
 
-	<h1 class="display mt-4 max-w-[20ch] text-[2.4rem] md:text-[3.1rem]">
+	<h1 class="display display-xl mt-5 max-w-[18ch]">
 		Say <em>hello</em>.
 	</h1>
 
-	<div class="mt-8 grid items-start gap-8 md:grid-cols-[1fr_180px] md:gap-12">
+	<div class="mt-10 grid items-start gap-8 md:grid-cols-[1fr_180px] md:gap-12">
 		<p class="max-w-[52ch] text-[1.05rem] leading-relaxed text-[var(--body)]">
 			Email is the surest way to reach me. If you are hiring, contracting, or want to talk about
 			something I built, say what you need and I will get back to you.
