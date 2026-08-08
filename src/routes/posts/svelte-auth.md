@@ -1,5 +1,6 @@
 ---
 title: 'Auth and Databases in Sveltekit'
+description: 'HTTP Basic Auth with a session cookie in SvelteKit, backed by Cloudflare D1.'
 date: 2023-11-12T05:40:33.821Z
 tags:
   - svelte

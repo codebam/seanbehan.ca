@@ -1,5 +1,6 @@
 ---
 title: '2FA Everything'
+description: 'Moving a password store between pass and KeePass, and getting two YubiKeys to guard all of it.'
 date: 2020-12-03T20:38:10-05:00
 tags:
   - security

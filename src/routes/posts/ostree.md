@@ -1,5 +1,6 @@
 ---
 title: 'Using Ostree for file snapshots'
+description: 'Ostree is not just for Silverblue. Using it as a content-addressed snapshot store for your own files.'
 date: 2023-05-27T11:47:26Z
 tags:
   - linux

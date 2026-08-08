@@ -1,5 +1,6 @@
 ---
 title: 'NixOS Flakes'
+description: 'What a flake actually is: inputs, outputs, and a NixOS configuration with every dependency pinned.'
 date: 2024-06-01T22:38:41Z
 tags:
   - nixos

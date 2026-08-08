@@ -1,5 +1,6 @@
 ---
 title: 'Fedora Silverblue'
+description: 'Why an atomic rpm-ostree desktop stuck: updates that check out like git, and roll back the same way.'
 date: 2021-02-13T15:21:43-05:00
 tags:
   - linux

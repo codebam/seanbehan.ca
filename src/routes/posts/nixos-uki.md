@@ -1,5 +1,6 @@
 ---
 title: 'Secure Boot NixOS UKI Installer'
+description: 'A flake that builds a signed unified kernel image, for rescuing a Steam Deck locked out by Secure Boot.'
 date: 2025-07-06T13:57:04-04:00
 tags:
   - nixos

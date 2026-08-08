@@ -1,5 +1,6 @@
 ---
 title: 'Using any Linux Distribution with Flatpak'
+description: 'Flatpak makes the host distribution almost irrelevant, down to proprietary codecs and games on musl Alpine.'
 date: 2023-05-23T13:49:32Z
 tags:
   - linux

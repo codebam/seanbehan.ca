@@ -1,5 +1,6 @@
 ---
 title: 'Podman Auto Updating Systemd Services'
+description: 'podman generate systemd plus an autoupdate label: containers that start on boot and update themselves.'
 date: 2021-09-23T10:34:43-04:00
 tags:
   - linux

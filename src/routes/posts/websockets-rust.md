@@ -1,5 +1,6 @@
 ---
 title: 'WebSockets in Rust'
+description: 'Part one of a Rust series: a WebSocket server built on the ws crate.'
 date: 2019-11-26T21:56:22-05:00
 tags:
   - rust

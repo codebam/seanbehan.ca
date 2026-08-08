@@ -1,5 +1,6 @@
 ---
 title: 'Using X11Docker for secure GUI applications'
+description: 'Running GUI applications like telegram-desktop inside a container with x11docker, xpra and Wayland.'
 date: 2021-10-07T16:51:51-04:00
 tags:
   - docker

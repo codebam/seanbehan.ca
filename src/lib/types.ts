@@ -25,6 +25,8 @@ export interface SearchResult {
 export interface FeaturedProject {
 	/** Repository name under github.com/codebam */
 	repo: string;
+	/** Year the repo was created; refreshed from GitHub at build time */
+	since: string;
 	title: string;
 	description: string;
 	language: string;

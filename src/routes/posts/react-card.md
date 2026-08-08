@@ -1,5 +1,6 @@
 ---
 title: 'React.js Card'
+description: 'Building a reusable, nestable card component while learning how React composition works.'
 date: 2021-02-17T19:27:04-05:00
 tags:
   - programming

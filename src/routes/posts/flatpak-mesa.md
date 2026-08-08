@@ -1,5 +1,6 @@
 ---
 title: 'Flatpak Mesa Git'
+description: 'Swapping the Flatpak Mesa runtime for mesa-git so a new AMD card stops falling back to software OpenGL.'
 date: 2023-05-25T17:48:28Z
 tags:
   - linux

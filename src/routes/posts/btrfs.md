@@ -1,5 +1,6 @@
 ---
 title: 'BTRFS RAID1 and how to fix it'
+description: 'Setting up a two-disk BTRFS RAID1 for a Steam library, and repairing it when a drive starts throwing errors.'
 date: 2023-05-23T14:39:58Z
 tags:
   - linux

@@ -1,5 +1,6 @@
 ---
 title: 'Search bar in Sveltekit'
+description: 'The fuzzy search on this site, built with fuse.js.'
 date: 2023-12-06T20:29:41.990Z
 tags:
   - svelte

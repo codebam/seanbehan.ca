@@ -1,21 +1,22 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
 </script>
 
 <svelte:head>
-	<title>{$page.status} - Error</title>
+	<title>{page.status} — Sean Behan</title>
 </svelte:head>
 
-<div class="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
-	<h1 class="mb-2 text-6xl font-bold text-[var(--text-primary)]">{$page.status}</h1>
-	<p class="mb-8 text-lg text-[var(--text-tertiary)]">
-		{$page.error?.message || 'Something went wrong'}
+<section class="flex min-h-[55vh] flex-col justify-center py-16">
+	<p class="eyebrow">Error {page.status}</p>
+	<h1 class="display mt-4 max-w-[20ch] text-[2.6rem] md:text-[3.4rem]">
+		{page.status === 404 ? 'That page is not here.' : 'Something went wrong.'}
+	</h1>
+	<p class="mt-4 max-w-[50ch] text-[1.05rem] text-[var(--body)]">
+		{page.error?.message ?? 'No further detail available.'}
 	</p>
-	<a
-		href={resolve('/')}
-		class="inline-flex items-center gap-2 rounded-lg bg-[var(--accent-blue)] px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-[var(--accent-blue-light)] hover:text-[var(--surface-base)]"
-	>
-		Return Home
-	</a>
-</div>
+	<p class="mt-8 flex flex-wrap gap-x-6 gap-y-3">
+		<a href={resolve('/')} class="btn">Back home</a>
+		<a href={resolve('/posts')} class="link-quiet self-center">Read the writing</a>
+	</p>
+</section>

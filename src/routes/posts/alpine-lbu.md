@@ -1,5 +1,6 @@
 ---
 title: 'Alpine Linux LBU'
+description: 'Alpine can commit changes back onto its own live ISO. Using LBU to build a persistent maintenance drive.'
 date: 2020-12-03T22:09:46-05:00
 tags:
   - linux

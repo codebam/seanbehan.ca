@@ -37,6 +37,7 @@ function generateRSSItem(post: Post): string {
 	return `<item>
 		<guid isPermaLink="true">${SITE_URL}${post.path}</guid>
 		<title><![CDATA[${post.meta.title}]]></title>
+		${post.meta.description ? `<description><![CDATA[${post.meta.description}]]></description>` : ''}
 		<link>${SITE_URL}${post.path}</link>
 		<pubDate>${new Date(post.meta.date).toUTCString()}</pubDate>
 		${post.meta.tags ? `<category>${post.meta.tags.join('</category><category>')}</category>` : ''}

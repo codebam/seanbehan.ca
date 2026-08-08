@@ -1,5 +1,6 @@
 ---
 title: 'Podman crun and cgroups v2'
+description: 'Getting Podman onto cgroups v2 and crun on distributions that still default to cgroups v1 and runc.'
 date: 2021-09-18T23:09:02-04:00
 tags:
   - linux

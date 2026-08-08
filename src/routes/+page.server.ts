@@ -4,9 +4,9 @@ import { featuredProjects } from '$lib/projects';
 import type { FeaturedProject } from '$lib/types';
 
 /**
- * Refresh star counts from GitHub.
+ * Refresh star counts and creation years from GitHub.
  *
- * Only stars — `language` stays curated, because linguist reports
+ * Not `language` — that stays curated, because linguist reports
  * pastebin-worker as HTML when the interesting part is the Rust worker.
  *
  * The site is prerendered, so in a real build this runs once per deploy and
@@ -31,8 +31,12 @@ async function withLiveStats(projects: FeaturedProject[]): Promise<FeaturedProje
 				});
 				if (!res.ok) return project;
 
-				const repo = (await res.json()) as { stargazers_count?: number };
-				return { ...project, stars: repo.stargazers_count ?? project.stars };
+				const repo = (await res.json()) as { stargazers_count?: number; created_at?: string };
+				return {
+					...project,
+					stars: repo.stargazers_count ?? project.stars,
+					since: repo.created_at?.slice(0, 4) ?? project.since
+				};
 			} catch {
 				return project;
 			}

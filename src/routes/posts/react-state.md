@@ -1,5 +1,6 @@
 ---
 title: 'Managing State in React'
+description: 'useState, what triggers a re-render, and where React state should actually live.'
 date: 2021-09-04T16:31:25-04:00
 tags:
   - programming

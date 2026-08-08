@@ -58,7 +58,8 @@ describe('Posts search', () => {
 		const input = screen.getByRole('searchbox');
 
 		await fireEvent.input(input, { target: { value: 'zzzznotathing' } });
-		await waitFor(() => expect(screen.queryByText('No posts found')).not.toBeNull(), {
+		// The empty state quotes the query back, so match on a substring.
+		await waitFor(() => expect(screen.queryByText(/No posts match/)).not.toBeNull(), {
 			timeout: 2000
 		});
 	});

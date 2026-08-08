@@ -28,10 +28,6 @@ const render = (posts: Post[]) => `<?xml version="1.0" encoding="UTF-8"?>
 <loc>https://seanbehan.ca/resume</loc>
 <lastmod>${new Date().toISOString()}</lastmod>
 </url>
-<url>
-<loc>https://seanbehan.ca/playlists</loc>
-<lastmod>${new Date().toISOString()}</lastmod>
-</url>
 ${posts
 	.map(
 		(post) => `<url>

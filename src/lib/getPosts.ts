@@ -26,6 +26,10 @@ export default async (): Promise<Post[]> => {
 						return null;
 					}
 
+					// Drafts stay out of every list, the RSS feed and the sitemap. The
+					// route itself still renders, so a draft can be shared by URL.
+					if (metadata.draft) return null;
+
 					const postPath = path.slice(11, -3); // Remove '/src/routes' and '.md'
 					return { meta: metadata, path: postPath };
 				} catch (error) {

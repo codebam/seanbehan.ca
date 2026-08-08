@@ -1,5 +1,6 @@
 ---
 title: 'USB Cable Testing on Linux'
+description: 'usbmon turns Wireshark into a cable tester, and finds retransmissions on cables that supposedly work.'
 date: 2026-04-15T07:11:06.679Z
 tags:
   - usb

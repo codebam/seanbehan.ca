@@ -1,5 +1,6 @@
 ---
 title: 'Podman Quadlets'
+description: 'Quadlets describe a container as a systemd unit, so systemd owns the lifecycle instead of Podman.'
 date: 2025-03-28T14:39:58Z
 tags:
   - linux

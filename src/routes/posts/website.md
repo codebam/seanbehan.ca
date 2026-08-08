@@ -1,5 +1,6 @@
 ---
 title: 'Running a successful Website'
+description: 'Hard-won rules for running a personal site that stays fast and stays worth reading.'
 date: 2023-05-26T22:54:36Z
 tags:
   - advice

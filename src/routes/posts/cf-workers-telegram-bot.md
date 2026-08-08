@@ -1,5 +1,6 @@
 ---
 title: 'Cloudflare Workers Telegram Bot'
+description: 'A tour of the rewritten cf-workers-telegram-bot API for running a Telegram bot on Cloudflare Workers.'
 date: 2024-05-15T07:11:06.679Z
 tags:
   - typescript

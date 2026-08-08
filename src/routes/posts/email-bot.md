@@ -1,5 +1,6 @@
 ---
 title: 'Email bot'
+description: 'Cloudflare email routing plus Workers AI: an inbox that answers its own mail.'
 date: 2024-12-04T20:29:41.990Z
 tags:
   - typescript
