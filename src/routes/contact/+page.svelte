@@ -72,6 +72,7 @@
 				<!-- eslint-disable svelte/no-navigation-without-resolve -->
 				<a
 					href={channel.href}
+					target={channel.href.startsWith('http') ? '_blank' : null}
 					rel="noopener noreferrer"
 					class="channel grid gap-x-6 gap-y-1 py-5 md:grid-cols-[110px_1fr_auto] md:items-baseline"
 				>

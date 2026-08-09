@@ -105,8 +105,17 @@
 		<!-- Prerendered endpoint, not a route resolve() knows about -->
 		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 		<a class="footer-link" href="{base}/rss.xml">RSS</a>
-		<a class="footer-link" href="https://github.com/codebam" rel="me noopener noreferrer">GitHub</a>
-		<a class="footer-link" href="https://mstdn.ca/@codebam" rel="me noopener noreferrer">Mastodon</a
+		<a
+			class="footer-link"
+			href="https://github.com/codebam"
+			target="_blank"
+			rel="me noopener noreferrer">GitHub</a
+		>
+		<a
+			class="footer-link"
+			href="https://mstdn.ca/@codebam"
+			target="_blank"
+			rel="me noopener noreferrer">Mastodon</a
 		>
 		<a class="footer-link" href="mailto:sean@seanbehan.ca">sean@seanbehan.ca</a>
 		<span class="ml-auto text-[var(--dim)]">Built with SvelteKit, hosted on Cloudflare</span>

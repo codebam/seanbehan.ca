@@ -16,7 +16,12 @@
 		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 		<a class="btn" href={RESUME_URL} download="sean-behan-resume.pdf">Download PDF</a>
 		<a class="link-quiet" href="mailto:sean@seanbehan.ca">sean@seanbehan.ca</a>
-		<a class="link-quiet" href="https://github.com/codebam" rel="noopener noreferrer">GitHub</a>
+		<a
+			class="link-quiet"
+			href="https://github.com/codebam"
+			target="_blank"
+			rel="noopener noreferrer">GitHub</a
+		>
 	</p>
 
 	<!-- Fixed 8.5×11 ratio so the embed never letterboxes, and it is a plain

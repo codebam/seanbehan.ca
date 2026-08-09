@@ -59,7 +59,12 @@
 
 		<div class="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4">
 			<a href={resolve('/posts')} class="btn">Read the writing</a>
-			<a href="https://github.com/codebam" rel="noopener noreferrer" class="link-quiet">GitHub</a>
+			<a
+				href="https://github.com/codebam"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="link-quiet">GitHub</a
+			>
 			<a href="mailto:sean@seanbehan.ca" class="link-quiet">sean@seanbehan.ca</a>
 		</div>
 	</div>
@@ -84,6 +89,7 @@
 			<h2 class="display display-lg">Selected work</h2>
 			<a
 				href="https://github.com/codebam?tab=repositories"
+				target="_blank"
 				rel="noopener noreferrer"
 				class="link-accent whitespace-nowrap">All repositories &rarr;</a
 			>
@@ -110,15 +116,20 @@
 						<p class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-[0.98rem]">
 							<a
 								href="https://github.com/codebam/{project.repo}"
+								target="_blank"
 								rel="noopener noreferrer"
 								class="link-quiet">Source</a
 							>
 							{#if project.homepage}
 								<!-- Absolute external URLs from $lib/projects, so resolve() does not apply -->
-								<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-								<a href={project.homepage} rel="noopener noreferrer" class="link-accent"
-									>{project.homepageLabel} &rarr;</a
+								<!-- eslint-disable svelte/no-navigation-without-resolve -->
+								<a
+									href={project.homepage}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="link-accent">{project.homepageLabel} &rarr;</a
 								>
+								<!-- eslint-enable svelte/no-navigation-without-resolve -->
 							{/if}
 						</p>
 					</div>
