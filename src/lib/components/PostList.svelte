@@ -45,10 +45,21 @@
 		}
 	}
 
+	/* Whole-card hover: the rule warms to the accent and the block slides a
+	   couple of pixels toward the reader's click. Two pixels is enough to feel
+	   live and small enough that a column of entries does not visibly reflow. */
 	.entry {
 		display: block;
 		padding: 1.25rem 0;
 		border-top: 1px solid var(--line);
+		transition:
+			border-color 0.3s ease,
+			transform 0.3s var(--ease-out-soft);
+	}
+	.entry:hover,
+	.entry:focus-visible {
+		border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+		transform: translateX(2px);
 	}
 
 	.entry time {
@@ -56,6 +67,10 @@
 		letter-spacing: 0.1em;
 		text-transform: uppercase;
 		color: var(--muted);
+		transition: color 0.25s ease;
+	}
+	.entry:hover time {
+		color: var(--accent);
 	}
 
 	.entry h3 {

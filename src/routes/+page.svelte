@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import PostList from '$lib/components/PostList.svelte';
+	import { reveal } from '$lib/actions/reveal';
 	import type { HomePageData } from '$lib/types';
 
 	const { data }: { data: HomePageData } = $props();
@@ -33,7 +34,7 @@
 	<div class="shell">
 		<!-- Byline: the photo identifies the author rather than decorating the page,
 		     which leaves the headline the full column width. -->
-		<div class="flex items-center gap-3.5">
+		<div class="enter flex items-center gap-3.5">
 			<img
 				src="/profile.webp"
 				alt="Sean Behan"
@@ -47,17 +48,20 @@
 			</div>
 		</div>
 
-		<h1 class="display display-xl mt-9 max-w-[20ch]">
+		<h1 class="enter display display-xl mt-9 max-w-[20ch]" style="--enter-delay:70ms">
 			I build software that lives <em>close to the metal</em> and ships to the edge.
 		</h1>
 
-		<p class="mt-8 max-w-[52ch] text-[1.15rem] leading-[1.55] text-[var(--body)] md:text-[1.35rem]">
+		<p
+			class="enter mt-8 max-w-[52ch] text-[1.15rem] leading-[1.55] text-[var(--body)] md:text-[1.35rem]"
+			style="--enter-delay:140ms"
+		>
 			{yearsBuilding} years of web applications, from database to frontend. I daily-drive NixOS, write
 			Rust and TypeScript, and build everything in the open — a Wayland compositor, bots on Cloudflare
 			Workers, and an encrypted pastebin.
 		</p>
 
-		<div class="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4">
+		<div class="enter mt-9 flex flex-wrap items-center gap-x-7 gap-y-4" style="--enter-delay:210ms">
 			<a href={resolve('/posts')} class="btn">Read the writing</a>
 			<a
 				href="https://github.com/codebam"
@@ -73,8 +77,8 @@
 <!-- FACTS — tinted band -->
 <section class="panel-alt py-12 md:py-14">
 	<div class="shell grid grid-cols-2 gap-x-8 gap-y-8 md:grid-cols-4">
-		{#each [{ n: `${yearsBuilding}+`, l: 'years building software' }, { n: `${data.posts.length}`, l: 'technical posts' }, { n: starLabel, l: 'GitHub stars' }, { n: 'Rust', l: '+ TypeScript, Nix' }] as fact (fact.l)}
-			<div>
+		{#each [{ n: `${yearsBuilding}+`, l: 'years building software' }, { n: `${data.posts.length}`, l: 'technical posts' }, { n: starLabel, l: 'GitHub stars' }, { n: 'Rust', l: '+ TypeScript, Nix' }] as fact, i (fact.l)}
+			<div use:reveal={{ delay: i * 60 }}>
 				<div class="display text-[2.4rem] md:text-[2.9rem]">{fact.n}</div>
 				<div class="mt-1 text-sm text-[var(--muted)]">{fact.l}</div>
 			</div>
@@ -85,25 +89,26 @@
 <!-- SELECTED WORK — inverted panel -->
 <section id="work" class="panel-invert scroll-mt-4 py-20 md:py-24">
 	<div class="shell">
-		<div class="flex items-baseline justify-between gap-4">
+		<div class="flex items-baseline justify-between gap-4" use:reveal>
 			<h2 class="display display-lg">Selected work</h2>
 			<a
 				href="https://github.com/codebam?tab=repositories"
 				target="_blank"
 				rel="noopener noreferrer"
-				class="link-accent whitespace-nowrap">All repositories &rarr;</a
+				class="link-accent whitespace-nowrap">All repositories <span class="arrow">&rarr;</span></a
 			>
 		</div>
 
 		<div class="mt-12">
-			{#each data.projects as project (project.repo)}
+			{#each data.projects as project, i (project.repo)}
 				<article
-					class="grid gap-x-8 gap-y-2 border-t border-[var(--line)] py-8 md:grid-cols-[110px_1fr_auto]"
+					class="work-row grid gap-x-8 gap-y-2 border-t border-[var(--line)] py-8 md:grid-cols-[110px_1fr_auto]"
+					use:reveal={{ delay: Math.min(i, 4) * 70 }}
 				>
 					<div class="text-[0.95rem] text-[var(--muted)] md:pt-1.5">{project.since} &mdash;</div>
 
 					<div>
-						<h3 class="text-[1.45rem] font-medium tracking-tight">{project.title}</h3>
+						<h3 class="title text-[1.45rem] font-medium tracking-tight">{project.title}</h3>
 						<p class="mt-2.5 max-w-[58ch] text-[1.05rem] leading-relaxed text-[var(--body)]">
 							{project.description}
 						</p>
@@ -127,7 +132,7 @@
 									href={project.homepage}
 									target="_blank"
 									rel="noopener noreferrer"
-									class="link-accent">{project.homepageLabel} &rarr;</a
+									class="link-accent">{project.homepageLabel} <span class="arrow">&rarr;</span></a
 								>
 								<!-- eslint-enable svelte/no-navigation-without-resolve -->
 							{/if}
@@ -151,15 +156,33 @@
 <!-- LATEST WRITING — back to the page surface -->
 <section class="panel py-20 md:py-24">
 	<div class="shell">
-		<div class="flex items-baseline justify-between gap-4">
+		<div class="flex items-baseline justify-between gap-4" use:reveal>
 			<h2 class="display display-lg">Latest writing</h2>
 			<a href={resolve('/posts')} class="link-accent whitespace-nowrap"
-				>All {data.posts.length} posts &rarr;</a
+				>All {data.posts.length} posts <span class="arrow">&rarr;</span></a
 			>
 		</div>
 
-		<div class="mt-10">
+		<div class="mt-10" use:reveal={{ delay: 60 }}>
 			<PostList posts={latest} columns={2} />
 		</div>
 	</div>
 </section>
+
+<style>
+	/* A work row is not a link, so it gets the lightest possible hover: the
+	   rule above it warms to the accent and the title follows. No lift, no
+	   shadow — the row is a reading surface first. */
+	.work-row {
+		transition: border-color 0.3s ease;
+	}
+	.work-row:hover {
+		border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+	}
+	.work-row .title {
+		transition: color 0.25s ease;
+	}
+	.work-row:hover .title {
+		color: var(--accent);
+	}
+</style>

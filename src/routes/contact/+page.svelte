@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { reveal } from '$lib/actions/reveal';
+
 	const channels = [
 		{
 			label: 'Email',
@@ -45,13 +47,16 @@
 </svelte:head>
 
 <section class="panel shell pt-14 pb-20 md:pt-16">
-	<p class="eyebrow">Open to work &middot; Ontario, Canada</p>
+	<p class="enter eyebrow">Open to work &middot; Ontario, Canada</p>
 
-	<h1 class="display display-xl mt-5 max-w-[18ch]">
+	<h1 class="enter display display-xl mt-5 max-w-[18ch]" style="--enter-delay:70ms">
 		Say <em>hello</em>.
 	</h1>
 
-	<div class="mt-10 grid items-start gap-8 md:grid-cols-[1fr_180px] md:gap-12">
+	<div
+		class="enter mt-10 grid items-start gap-8 md:grid-cols-[1fr_180px] md:gap-12"
+		style="--enter-delay:140ms"
+	>
 		<p class="max-w-[52ch] text-[1.05rem] leading-relaxed text-[var(--body)]">
 			Email is the surest way to reach me. If you are hiring, contracting, or want to talk about
 			something I built, say what you need and I will get back to you.
@@ -66,8 +71,8 @@
 	</div>
 
 	<ul class="mt-12">
-		{#each channels as channel (channel.label)}
-			<li class="border-t border-[var(--line)]">
+		{#each channels as channel, i (channel.label)}
+			<li class="border-t border-[var(--line)]" use:reveal={{ delay: i * 55 }}>
 				<!-- Absolute or non-route URLs (mailto:, /publickey.txt), so resolve() does not apply -->
 				<!-- eslint-disable svelte/no-navigation-without-resolve -->
 				<a

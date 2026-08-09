@@ -3,6 +3,7 @@
 	import { onMount } from 'svelte';
 	import { dev } from '$app/environment';
 	import { page } from '$app/state';
+	import { onNavigate } from '$app/navigation';
 	import { base, resolve } from '$app/paths';
 	// app.css pulls in Tailwind, both fonts, and the light/dark token set.
 	import '../app.css';
@@ -26,6 +27,23 @@
 		}
 
 		navigator.serviceWorker.register('/service-worker.js');
+	});
+
+	/**
+	 * Cross-fade between pages where the browser supports it. Skipped outright
+	 * for reduced-motion readers rather than animated faster, since the point of
+	 * the transition is the animation and nothing else.
+	 */
+	onNavigate((navigation) => {
+		if (!document.startViewTransition) return;
+		if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+		return new Promise((resolve) => {
+			document.startViewTransition(async () => {
+				resolve();
+				await navigation.complete;
+			});
+		});
 	});
 
 	const currentYear = new Date().getFullYear();
@@ -66,7 +84,7 @@
 	<div class="shell flex items-center gap-6 py-5 md:py-6">
 		<a
 			href={resolve('/')}
-			class="display mr-auto text-[1.2rem] whitespace-nowrap"
+			class="wordmark display mr-auto text-[1.2rem] whitespace-nowrap"
 			aria-current={page.url.pathname === '/' ? 'page' : undefined}
 		>
 			Sean&nbsp;Behan
@@ -123,24 +141,75 @@
 </footer>
 
 <style>
+	/* Nav and footer links carry the same underline wipe as `.link-quiet`: it
+	   grows from the left on hover and retracts to the left on the way out, so
+	   the label itself never shifts and the row height never changes. */
 	.nav-link {
+		position: relative;
 		color: var(--muted);
 		transition: color 0.2s ease;
 	}
-	.nav-link:hover {
+	.nav-link::after,
+	.footer-link::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: -4px;
+		height: 1px;
+		background: currentColor;
+		transform: scaleX(0);
+		transform-origin: left;
+		transition: transform 0.28s var(--ease-out-soft);
+	}
+	.nav-link:hover,
+	.footer-link:hover {
 		color: var(--accent);
+	}
+	.nav-link:hover::after,
+	.nav-link:focus-visible::after,
+	.footer-link:hover::after,
+	.footer-link:focus-visible::after {
+		transform: scaleX(1);
 	}
 	/* Current section stays legible without a heavier weight shifting layout */
 	.nav-link[aria-current='page'] {
 		color: var(--text);
 	}
+	/* The current page keeps its rule up permanently, in the accent, so hover
+	   state and location state never look like the same thing. */
+	.nav-link[aria-current='page']::after {
+		background: var(--accent);
+		transform: scaleX(1);
+	}
 
 	.footer-link {
+		position: relative;
 		color: var(--muted);
 		transition: color 0.2s ease;
 	}
-	.footer-link:hover {
-		color: var(--accent);
+
+	/* The wordmark's own small flourish: the accent dot after the name grows in
+	   on hover. Cheap, and it makes the home link feel like a target. */
+	.wordmark {
+		position: relative;
+		transition: color 0.2s ease;
+	}
+	.wordmark::after {
+		content: '';
+		display: inline-block;
+		width: 5px;
+		height: 5px;
+		margin-left: 4px;
+		border-radius: 999px;
+		background: var(--accent);
+		transform: scale(0);
+		transition: transform 0.3s var(--ease-out-soft);
+	}
+	.wordmark:hover::after,
+	.wordmark:focus-visible::after,
+	.wordmark[aria-current='page']::after {
+		transform: scale(1);
 	}
 
 	/* Visible only once focused, so keyboard users get the jump and nobody else

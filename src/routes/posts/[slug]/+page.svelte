@@ -23,9 +23,14 @@
 	<meta property="article:published_time" content={meta.date} />
 </svelte:head>
 
+<!-- Reading progress: a 2px accent strip across the top of the viewport, driven
+     entirely by a scroll timeline in app.css. No scroll listener, and it is
+     hidden outright for reduced-motion readers. -->
+<div class="read-progress" aria-hidden="true"></div>
+
 <article class="panel pt-14 pb-20 md:pt-16">
 	<div class="shell">
-		<header class="border-b border-[var(--line)] pb-10">
+		<header class="enter border-b border-[var(--line)] pb-10">
 			<p class="eyebrow">
 				<a href={resolve('/posts')} class="hover:underline">Writing</a>
 			</p>
@@ -49,13 +54,23 @@
 			</p>
 		</header>
 
-		<div class="prose mt-12 max-w-[68ch] text-[1.05rem]">
+		<div class="enter prose mt-12 max-w-[68ch] text-[1.05rem]" style="--enter-delay:90ms">
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 			{@html data.post.html}
 		</div>
 
 		<footer class="mt-16 border-t border-[var(--line)] pt-6 text-sm">
-			<a href={resolve('/posts')} class="link-accent">&larr; All posts</a>
+			<a href={resolve('/posts')} class="link-accent back"
+				><span class="arrow">&larr;</span> All posts</a
+			>
 		</footer>
 	</div>
 </article>
+
+<style>
+	/* The back arrow travels the other way, so its nudge has to as well. */
+	.back:hover :global(.arrow),
+	.back:focus-visible :global(.arrow) {
+		transform: translateX(-3px);
+	}
+</style>

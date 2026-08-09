@@ -287,6 +287,7 @@
 	.btn:hover {
 		background: var(--accent);
 		color: #fff;
+		transform: translateY(-1px);
 	}
 	.btn:active {
 		transform: scale(0.98);
@@ -310,21 +311,38 @@
 		color: var(--accent);
 	}
 
-	/* Quiet inline link with a rule under it, for secondary hero actions */
+	/* Quiet inline link with a rule under it, for secondary hero actions.
+	   The resting rule stays put and a second accent rule wipes across it from
+	   the left, so the link gains weight on hover without the text moving. */
 	.link-quiet {
+		position: relative;
 		color: var(--text);
 		border-bottom: 1px solid var(--line-strong);
 		padding-bottom: 2px;
-		transition:
-			color 0.2s ease,
-			border-color 0.2s ease;
+		transition: color 0.2s ease;
+	}
+	.link-quiet::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: -1px;
+		height: 1px;
+		background: var(--accent);
+		transform: scaleX(0);
+		transform-origin: left;
+		transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 	}
 	.link-quiet:hover {
 		color: var(--accent);
-		border-color: var(--accent);
+	}
+	.link-quiet:hover::after,
+	.link-quiet:focus-visible::after {
+		transform: scaleX(1);
 	}
 
-	/* Accent link used for "All repositories →" style affordances */
+	/* Accent link used for "All repositories →" style affordances. The arrow is
+	   its own span so it can slide without dragging the label with it. */
 	.link-accent {
 		color: var(--accent);
 		font-size: 0.9rem;
@@ -332,6 +350,14 @@
 	}
 	.link-accent:hover {
 		color: var(--accent-hover);
+	}
+	.link-accent .arrow {
+		display: inline-block;
+		transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+	.link-accent:hover .arrow,
+	.link-accent:focus-visible .arrow {
+		transform: translateX(3px);
 	}
 
 	.input {
@@ -446,7 +472,20 @@
 
 /* ═══════════════════════════════════════════════════════════
    Motion
+
+   House rules for everything below: nothing moves more than a
+   few pixels, nothing loops, nothing runs longer than ~0.6s,
+   and nothing animates while the reader is trying to read it.
+   Motion is used to say "this is new" and "this is where the
+   click goes" — never for decoration.
    ═══════════════════════════════════════════════════════════ */
+
+/* The one easing curve the site uses: a fast start that settles rather than
+   arriving at a constant speed. */
+:root {
+	--ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 @keyframes fadeInUp {
 	from {
 		opacity: 0;
@@ -461,10 +500,91 @@
 	animation: fadeInUp 0.45s ease-out forwards;
 }
 
+/* ── Entrance stagger ──
+   Above-the-fold blocks come in on a short ladder. Delays are small enough
+   that the whole hero has settled well before a reader finishes the headline. */
+.enter {
+	animation: fadeInUp 0.55s var(--ease-out-soft) both;
+	animation-delay: var(--enter-delay, 0ms);
+}
+
+/* ── Scroll reveal ──
+   `reveal-pending` is added by the reveal action (src/lib/actions/reveal.ts),
+   never by markup, so content is visible when JS is not. */
+.reveal-pending {
+	opacity: 0;
+	transform: translateY(14px);
+}
+.reveal-in {
+	animation: fadeInUp 0.6s var(--ease-out-soft) both;
+	animation-delay: var(--reveal-delay, 0ms);
+}
+
+/* ── Reading progress ──
+   Scroll-driven, so it costs no JS and no scroll listener. Browsers without
+   `animation-timeline` simply never show the bar, which is the correct
+   degradation for a purely informational strip. */
+.read-progress {
+	position: fixed;
+	inset: 0 0 auto 0;
+	height: 2px;
+	transform-origin: left;
+	transform: scaleX(0);
+	background: var(--accent);
+	z-index: 40;
+	pointer-events: none;
+}
+@supports (animation-timeline: scroll()) {
+	.read-progress {
+		animation: growProgress linear;
+		animation-timeline: scroll(root block);
+	}
+}
+@keyframes growProgress {
+	to {
+		transform: scaleX(1);
+	}
+}
+
+/* ── Cross-page transition ──
+   Paired with the `onNavigate` hook in +layout.svelte. A cross-fade with a
+   couple of pixels of travel: enough to register as a page change, short
+   enough that it never sits between a click and the content. */
+@keyframes vtFadeOut {
+	to {
+		opacity: 0;
+		transform: translateY(-4px);
+	}
+}
+@keyframes vtFadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(6px);
+	}
+}
+@media (prefers-reduced-motion: no-preference) {
+	::view-transition-old(root) {
+		animation: vtFadeOut 0.18s ease-in both;
+	}
+	::view-transition-new(root) {
+		animation: vtFadeIn 0.32s var(--ease-out-soft) both;
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
-	.animate-fade-in-up {
+	.animate-fade-in-up,
+	.enter,
+	.reveal-in {
 		animation: none;
 		opacity: 1;
+		transform: none;
+	}
+	.reveal-pending {
+		opacity: 1;
+		transform: none;
+	}
+	.read-progress {
+		display: none;
 	}
 	*,
 	*::before,
