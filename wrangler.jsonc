@@ -12,15 +12,23 @@
 		"enabled": true
 	}
 	/**
-	 * No "vars" block on purpose. Declaring one here makes Cloudflare treat this
-	 * file as the source of truth for the whole project's variables, which locks
-	 * the dashboard ("Environment variables for this project are being managed
-	 * through wrangler.toml") for every Pages project built from this repo.
+	 * No "vars" block, and do not add one for PUBLIC_SITE.
 	 *
-	 * Both seanbehan.ca and codebam.ca build from this one repo and need
-	 * different values for PUBLIC_SITE, which a shared file cannot express. The
-	 * Node version that used to live here is pinned in .node-version instead,
-	 * where it applies to both and costs nothing.
+	 * The existence of this file makes it the source of truth for the Pages
+	 * project's configuration — the dashboard reports "environment variables for
+	 * this project are being managed through wrangler.toml" and goes read-only,
+	 * and a dashboard variable would be overwritten on the next deploy anyway.
+	 *
+	 * That leaves nowhere here to express a per-site value: seanbehan.ca and
+	 * codebam.ca are two Pages projects built from this one repo, so they read
+	 * this same file and would get the same PUBLIC_SITE. Variables declared here
+	 * are also runtime bindings for Pages Functions, and the site is prerendered
+	 * — the identity is baked in during `vite build`, before any binding exists.
+	 *
+	 * The variant is selected by the build command instead, which is per-project
+	 * and not governed by this file: codebam.ca runs `npm run build:codebam`.
+	 * The Node version that used to live here is in .node-version, which Pages
+	 * and CI both read.
 	 */
 	/**
 	 * Smart Placement
