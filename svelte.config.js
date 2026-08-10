@@ -79,6 +79,40 @@ const config = {
 		// so it only runs in production builds.
 		serviceWorker: {
 			register: false
+		},
+
+		// Content-Security-Policy. Everything is prerendered to static HTML, so
+		// SvelteKit injects the policy as a <meta> tag with 'auto' mode, hashing
+		// the inline bootstrap script whose hash is per-build and therefore can't
+		// live in the static _headers file. frame-ancestors can't travel in a meta
+		// tag, so clickjacking protection is the X-Frame-Options header in _headers.
+		csp: {
+			mode: 'auto',
+			directives: {
+				// Everything loads from this origin unless listed below.
+				'default-src': ['self'],
+				// Rely on the hash SvelteKit appends for the inline bootstrap; the
+				// service worker and client bundle are same-origin module scripts.
+				'script-src': ['self'],
+				// Inline style attributes are used throughout (enter animations)
+				// and shiki bakes per-token `--shiki-light/--shiki-dark` custom
+				// properties into inline styles, so inline styles must be allowed.
+				'style-src': ['self', 'unsafe-inline'],
+				'img-src': ['self'],
+				// Fontsource variable fonts are bundled under /_app by Vite.
+				'font-src': ['self'],
+				// SvelteKit fetches __data.json payloads for client-side navigation.
+				'connect-src': ['self'],
+				// The résumé is embedded as an <object> from a Cloudflare R2 bucket.
+				'object-src': ['self', 'https://pub-b1fc9705d9cd4b50885284c3ede52d27.r2.dev'],
+				'frame-src': ['none'],
+				'base-uri': ['self'],
+				// No <form> on the site; mailto: links are plain anchors.
+				'form-action': ['none'],
+				'manifest-src': ['self'],
+				// The service worker at /service-worker.js.
+				'worker-src': ['self']
+			}
 		}
 	},
 
