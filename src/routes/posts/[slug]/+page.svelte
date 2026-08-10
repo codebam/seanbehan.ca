@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { slugifyTag } from '$lib/tags';
 	import type { PostPageData } from '$lib/types';
 
 	const { data }: { data: { post: PostPageData['post'] } } = $props();
@@ -53,7 +54,14 @@
 				{/if}
 				{#if meta.tags?.length}
 					<span class="text-[var(--dim)]">&middot;</span>
-					<span>{meta.tags.join(' · ')}</span>
+					<span class="flex flex-wrap items-center gap-x-3">
+						{#each meta.tags as tag (tag)}
+							<a
+								href={resolve('/posts/tag/[tag]', { tag: slugifyTag(tag) })}
+								class="hover:underline">{tag}</a
+							>
+						{/each}
+					</span>
 				{/if}
 			</p>
 		</header>

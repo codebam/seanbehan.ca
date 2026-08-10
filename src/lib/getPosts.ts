@@ -1,5 +1,6 @@
 import { readSource } from './postSources';
 import { readingMinutes } from './readingTime';
+import { slugifyTag } from './tags';
 import type { Post, PostMeta } from './types';
 
 /**
@@ -7,7 +8,7 @@ import type { Post, PostMeta } from './types';
  * @returns Promise<Post[]> - Array of posts sorted by date (newest first)
  * @throws Error if posts cannot be loaded or parsed
  */
-export default async (): Promise<Post[]> => {
+export default async function getPosts(): Promise<Post[]> {
 	try {
 		const postModules = import.meta.glob('/src/routes/posts/*.md');
 
@@ -67,4 +68,46 @@ export default async (): Promise<Post[]> => {
 		console.error('Failed to load posts:', error);
 		throw new Error('Unable to load blog posts', { cause: error });
 	}
+}
+
+/** One topic tag as it appears on the /posts/tags index. */
+export interface TagInfo {
+	/** The display form (first-seen casing, e.g. "Secure Boot"). */
+	tag: string;
+	/** URL-safe form: lowercase, spaces to hyphens ("secure-boot"). */
+	slug: string;
+	/** How many posts carry this tag. */
+	count: number;
+}
+
+/**
+ * Every distinct tag across the posts, with how many posts carry it. Sorted by
+ * frequency first, then alphabetically within a tie, so the index reads as a
+ * topic cloud rather than an arbitrary list.
+ */
+export const getAllTags = async (): Promise<TagInfo[]> => {
+	const posts = await getPosts();
+	const bySlug = new Map<string, TagInfo>();
+
+	for (const post of posts) {
+		for (const rawTag of post.meta.tags ?? []) {
+			const slug = slugifyTag(rawTag);
+			const existing = bySlug.get(slug);
+			if (existing) existing.count += 1;
+			else bySlug.set(slug, { tag: rawTag, slug, count: 1 });
+		}
+	}
+
+	return [...bySlug.values()].sort((a, b) => b.count - a.count || a.slug.localeCompare(b.slug));
+};
+
+/**
+ * Posts carrying a given tag, matched on the tag's slug so the lookup is
+ * case-insensitive ("NixOS" and "nixos" hit the same page). The result keeps
+ * getPosts' ordering — newest first. An unknown tag yields an empty list.
+ */
+export const getPostsByTag = async (tagSlug: string): Promise<Post[]> => {
+	const target = slugifyTag(tagSlug);
+	const posts = await getPosts();
+	return posts.filter((post) => (post.meta.tags ?? []).some((t) => slugifyTag(t) === target));
 };
