@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { reveal } from '$lib/actions/reveal';
+	import { site } from '$lib/site';
 
 	const channels = [
 		{
 			label: 'Email',
-			value: 'sean@seanbehan.ca',
-			href: 'mailto:sean@seanbehan.ca',
+			value: site.email,
+			href: `mailto:${site.email}`,
 			note: 'Best for anything that needs a reply'
 		},
 		{
@@ -26,12 +27,18 @@
 			href: 'https://matrix.to/#/@codebam:mozilla.org',
 			note: 'End-to-end encrypted chat'
 		},
-		{
-			label: 'LinkedIn',
-			value: 'Sean Behan',
-			href: 'https://www.linkedin.com/in/sean-behan',
-			note: 'For the recruiters'
-		},
+		// Same reasoning as the resume: a recruiter channel does not belong on the
+		// variant that leads with the code.
+		...(site.showResume
+			? [
+					{
+						label: 'LinkedIn',
+						value: 'Sean Behan',
+						href: 'https://www.linkedin.com/in/sean-behan',
+						note: 'For the recruiters'
+					}
+				]
+			: []),
 		{
 			label: 'PGP',
 			value: 'publickey.txt',
@@ -42,8 +49,8 @@
 </script>
 
 <svelte:head>
-	<title>Contact — Sean Behan</title>
-	<meta name="description" content="Get in touch with Sean Behan — email, GitHub, Mastodon." />
+	<title>Contact — {site.name}</title>
+	<meta name="description" content="Get in touch with {site.name} — email, GitHub, Mastodon." />
 </svelte:head>
 
 <section class="panel shell pt-14 pb-20 md:pt-16">
@@ -63,7 +70,7 @@
 		</p>
 		<img
 			src="/profile.webp"
-			alt="Sean Behan"
+			alt={site.name}
 			width="180"
 			height="180"
 			class="order-first aspect-square w-32 rounded object-cover md:order-none md:w-full"

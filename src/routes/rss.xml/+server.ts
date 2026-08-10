@@ -1,11 +1,12 @@
 import getPosts from '$lib/getPosts';
+import { site } from '$lib/site';
 import type { Post } from '$lib/types';
 
 export const prerender = true;
 
-const SITE_URL = 'https://seanbehan.ca';
-const SITE_TITLE = 'Sean Behan';
-const SITE_DESCRIPTION = "Sean Behan's website and blog";
+const SITE_URL = site.url;
+const SITE_TITLE = site.name;
+const SITE_DESCRIPTION = `${site.name}'s website and blog`;
 
 export const GET = async () => {
 	const posts = await getPosts();
