@@ -15,9 +15,10 @@ import type { Handle } from '@sveltejs/kit';
 const SECURITY_HEADERS = {
 	'X-Content-Type-Options': 'nosniff',
 	'Referrer-Policy': 'strict-origin-when-cross-origin',
+	'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
 	'X-Frame-Options': 'DENY',
 	'Permissions-Policy':
-		'accelerometer=(), ambient-light-sensor=(), autoplay=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), hid=(), idle-detection=(), interest-cohort=(), magnetometer=(), microphone=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), serial=(), usb=(), web-share=(), xr-spatial-tracking=()',
+		'accelerometer=(), ambient-light-sensor=(), autoplay=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), hid=(), idle-detection=(), magnetometer=(), microphone=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), serial=(), usb=(), web-share=(), xr-spatial-tracking=()',
 	'Cache-Control': 'public, max-age=0, must-revalidate'
 } as const;
 
@@ -30,6 +31,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 	}
 
 	for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
+		// Respect a Cache-Control a route handler set itself (e.g. the RSS feed's
+		// max-age=3600); this default only fills in when none was declared.
+		if (name === 'Cache-Control' && response.headers.has('Cache-Control')) {
+			continue;
+		}
 		response.headers.set(name, value);
 	}
 
