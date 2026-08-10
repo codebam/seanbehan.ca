@@ -1,3 +1,5 @@
+import { readSource } from './postSources';
+import { readingMinutes } from './readingTime';
 import type { Post, PostMeta } from './types';
 
 /**
@@ -15,7 +17,10 @@ export default async (): Promise<Post[]> => {
 		}
 
 		const posts = await Promise.all(
-			Object.entries(postModules).map(async ([path, resolver]) => {
+			// The annotation is load-bearing: without it the inferred element type
+			// has readingMinutes as required, and the `post is Post` predicate
+			// below stops being assignable to it now that the field is optional.
+			Object.entries(postModules).map(async ([path, resolver]): Promise<Post | null> => {
 				try {
 					const module = (await resolver()) as { metadata: PostMeta };
 					const { metadata } = module;
@@ -31,7 +36,11 @@ export default async (): Promise<Post[]> => {
 					if (metadata.draft) return null;
 
 					const postPath = path.slice(11, -3); // Remove '/src/routes' and '.md'
-					return { meta: metadata, path: postPath };
+					return {
+						meta: metadata,
+						path: postPath,
+						readingMinutes: readingMinutes(await readSource(path))
+					};
 				} catch (error) {
 					console.error(`Failed to load post at ${path}:`, error);
 					return null;

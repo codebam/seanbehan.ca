@@ -1,4 +1,6 @@
 import { render } from 'svelte/server';
+import { readSource, sourcePath } from '$lib/postSources';
+import { readingMinutes } from '$lib/readingTime';
 import type { BlogPost, PostMeta } from '$lib/types';
 
 /**
@@ -36,7 +38,8 @@ export async function load({ params }): Promise<{ post: BlogPost }> {
 			post: {
 				path: `/posts/${params.slug}`,
 				meta: metadata,
-				html: htmlWithExternalLinks
+				html: htmlWithExternalLinks,
+				readingMinutes: readingMinutes(await readSource(sourcePath(params.slug)))
 			}
 		};
 	} catch (error) {

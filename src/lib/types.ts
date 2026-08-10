@@ -10,6 +10,12 @@ export interface PostMeta {
 export interface Post {
 	path: string;
 	meta: PostMeta;
+	/**
+	 * Estimated minutes to read the body, from src/lib/readingTime.ts. Optional
+	 * because it needs the raw markdown, which not every caller that builds a
+	 * Post has to hand; the display sites omit the line rather than guess.
+	 */
+	readingMinutes?: number;
 }
 
 export interface BlogPost extends Post {

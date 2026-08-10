@@ -16,6 +16,8 @@ describe('getPosts', () => {
 			expect(post.meta).toHaveProperty('title');
 			expect(post.meta).toHaveProperty('date');
 			expect(post.meta).toHaveProperty('draft');
+			expect(post.readingMinutes).toBeGreaterThanOrEqual(1);
+			expect(Number.isInteger(post.readingMinutes)).toBe(true);
 		}
 	});
 

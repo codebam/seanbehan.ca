@@ -23,6 +23,9 @@
 	{#each posts as post (post.path)}
 		<a class="entry" href={resolve('/posts/[slug]', { slug: slugOf(post) })}>
 			<time datetime={post.meta.date}>{monthYear(post.meta.date)}</time>
+			{#if post.readingMinutes}
+				<span class="read">&middot; {post.readingMinutes} min</span>
+			{/if}
 			<h3>{post.meta.title}</h3>
 			{#if post.meta.description}
 				<p>{post.meta.description}</p>
@@ -71,6 +74,15 @@
 	}
 	.entry:hover time {
 		color: var(--accent);
+	}
+
+	/* Same eyebrow treatment as the date, one step dimmer: it is the secondary
+	   fact on the line and should not compete with it. */
+	.entry .read {
+		font-size: 0.78rem;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--dim);
 	}
 
 	.entry h3 {
