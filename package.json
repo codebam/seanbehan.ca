@@ -6,6 +6,7 @@
 	"scripts": {
 		"dev": "NODE_ENV=development vite dev",
 		"build": "vite build",
+		"build:codebam": "PUBLIC_SITE=codebam vite build",
 		"preview": "npm run build && wrangler pages dev",
 		"prepare": "svelte-kit sync || echo ''; git config core.hooksPath .githooks || true",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",

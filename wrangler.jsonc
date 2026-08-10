@@ -10,10 +10,18 @@
 	"compatibility_flags": ["nodejs_compat"],
 	"observability": {
 		"enabled": true
-	},
-	"vars": {
-		"NODE_VERSION": "26.5.0"
 	}
+	/**
+	 * No "vars" block on purpose. Declaring one here makes Cloudflare treat this
+	 * file as the source of truth for the whole project's variables, which locks
+	 * the dashboard ("Environment variables for this project are being managed
+	 * through wrangler.toml") for every Pages project built from this repo.
+	 *
+	 * Both seanbehan.ca and codebam.ca build from this one repo and need
+	 * different values for PUBLIC_SITE, which a shared file cannot express. The
+	 * Node version that used to live here is pinned in .node-version instead,
+	 * where it applies to both and costs nothing.
+	 */
 	/**
 	 * Smart Placement
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement

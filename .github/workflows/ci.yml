@@ -16,7 +16,10 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 24
+          # One source of truth, shared with Cloudflare Pages, which reads the
+          # same file. CI was on 24 while production built on 26, so the checks
+          # gating a deploy were not running on the runtime that served it.
+          node-version-file: .node-version
           cache: npm
 
       - run: npm ci
