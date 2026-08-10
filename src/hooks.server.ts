@@ -15,7 +15,7 @@ import type { Handle } from '@sveltejs/kit';
 const SECURITY_HEADERS = {
 	'X-Content-Type-Options': 'nosniff',
 	'Referrer-Policy': 'strict-origin-when-cross-origin',
-	'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
+	'Strict-Transport-Security': 'max-age=63072000',
 	'X-Frame-Options': 'DENY',
 	'Permissions-Policy':
 		'accelerometer=(), ambient-light-sensor=(), autoplay=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), hid=(), idle-detection=(), magnetometer=(), microphone=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), serial=(), usb=(), web-share=(), xr-spatial-tracking=()',
