@@ -1,38 +1,84 @@
-# create-svelte
+# Sean Behan's Personal Website
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+This is a personal website for Sean Behan, built with SvelteKit. It serves as both a portfolio and technical blog.
 
-## Creating a project
+## Project Structure
 
-If you're seeing this, you've probably already done this step. Congrats!
+The project uses dual-domain variants:
+
+- `seanbehan.ca` - Main identity focused on personal accomplishments
+- `codebam.ca` - Developer-focused identity emphasizing open source contributions
+
+Both domains share:
+
+- All posts and content
+- Common infrastructure and build process
+- Same underlying codebase
+
+### Site Variants Configuration
+
+The two websites are built from the same codebase using environment variables:
 
 ```bash
-# create a new project in the current directory
-npm create svelte@latest
+# To build the seanbehan.ca variant
+PUBLIC_SITE=seanbehan npm run build
 
-# create a new project in my-app
-npm create svelte@latest my-app
+# To build the codebam.ca variant
+PUBLIC_SITE=codebam npm run build
 ```
 
-## Developing
+## Development
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+### Prerequisites
+
+- Node.js 18+
+- pnpm (recommended) or npm
+
+### Setup
 
 ```bash
+# Clone repo and install dependencies
+git clone https://github.com/codebam/seanbehan.ca.git
+cd seanbehan.ca
+npm install
+```
+
+### Development Server
+
+```bash
+# Start development server
 npm run dev
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+# Build for development with seanbehan variant
+PUBLIC_SITE=seanbehan npm run build
+
+# Build for development with codebam variant
+PUBLIC_SITE=codebam npm run build
 ```
 
-## Building
+## Build Process
 
-To create a production version of your app:
+- Built using SvelteKit (Svelte 5) and TypeScript
+- Deployed to Cloudflare Pages
+- Uses Tailwind CSS for styling with a dark/light theme system
+- Implements progressive enhancement techniques
+
+## Assets Optimization
+
+- Profile image optimized in WebP format (13.7KB)
+- All images follow size constraints and are optimized for web
+
+## Deployment
+
+For deployment, use the standard build process:
 
 ```bash
-npm run build
+# Build seanbehan.ca variant
+PUBLIC_SITE=seanbehan npm run build
+
+# Build codebam.ca variant
+PUBLIC_SITE=codebam npm run build
 ```
 
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+The repository includes a `build:codebam` script in package.json that handles building the codebam variant with appropriate settings.
+This project uses the `.githooks` directory to automatically set up pre-commit hooks during `npm install`, which will trigger linters and checks before each commit.

@@ -78,6 +78,10 @@
 	<meta property="og:description" content={site.ogDescription} />
 	<meta property="og:type" content="website" />
 	<meta property="og:url" content={canonical} />
+	<meta property="og:image" content={absolute('/profile.webp')} />
+	<meta property="og:image:alt" content={site.name} />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:image" content={absolute('/profile.webp')} />
 	<link rel="canonical" href={canonical} />
 	<link rel="sitemap" type="application/xml" title="Sitemap" href="{base}/sitemap.xml" />
 	<link rel="alternate" type="application/rss+xml" title="RSS Feed" href="{base}/rss.xml" />
