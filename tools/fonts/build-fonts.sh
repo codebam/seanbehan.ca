@@ -41,9 +41,18 @@ instance() {
 
 instance "$SRC/newsreader/files/newsreader-latin-standard-normal.woff2" \
 	newsreader-latin wght=400:500 opsz=18:72
+# The italic pins `opsz` rather than keeping it variable, which is what takes it
+# from 71 kB to 42 kB. It can afford to: the roman is set at everything from
+# 16px body copy to an 86px headline, but the italic only ever appears inside
+# `.display em` — the emphasised half of a hero headline, 42–86px. 48 sits in
+# that band. Prose `em` is Inter, obliqued by the browser, so it is not a caller.
 instance "$SRC/newsreader/files/newsreader-latin-standard-italic.woff2" \
-	newsreader-latin-italic wght=400:500 opsz=18:72
+	newsreader-latin-italic wght=400:500 opsz=48
 
-cp "$SRC/inter/files/inter-latin-wght-normal.woff2" "$OUT/inter-latin.woff2"
+# Inter ships wght 100–900. The site sets 400, 500 and 600, and Tailwind's
+# typography plugin bolds `strong` to 600; 400–700 covers all of it with room to
+# spare, for 12 kB less. Keep the @font-face range in app.css in step with this.
+instance "$SRC/inter/files/inter-latin-wght-normal.woff2" \
+	inter-latin wght=400:700
 
 ls -l "$OUT"

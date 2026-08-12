@@ -20,7 +20,7 @@
 	font-family: 'Inter Variable';
 	font-style: normal;
 	font-display: swap;
-	font-weight: 100 900;
+	font-weight: 400 700;
 	src: url('/fonts/inter-latin.woff2') format('woff2-variations');
 }
 /* Newsreader keeps a live `opsz` axis, which is what makes `font-optical-sizing`
