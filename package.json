@@ -16,7 +16,8 @@
 		"test": "vitest",
 		"test:run": "vitest run",
 		"test:coverage": "vitest run --coverage",
-		"deploy": "npm run build && wrangler pages deploy",
+		"deploy": "npm run build && wrangler pages deploy && npm run purge",
+		"purge": "bash tools/cloudflare/purge.sh",
 		"cf-typegen": "wrangler types && mv worker-configuration.d.ts src/"
 	},
 	"devDependencies": {

@@ -47,23 +47,21 @@ Dashboard → **Caching** → **Cache Rules** → **Create rule**, on the
 | Edge TTL          | **Use cache-control header if present, use default otherwise**, default `10 minutes`   |
 | Browser TTL       | **Respect origin**                                                                     |
 
-The same rule as an API call:
+Or, the same rule without the dashboard:
 
 ```sh
-curl -X POST "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/rulesets/phases/http_request_cache_settings/entrypoint/rules" \
-  -H "Authorization: Bearer $CF_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "description": "Cache prerendered HTML",
-    "expression": "(http.request.uri.path.extension eq \"\" or http.request.uri.path.extension eq \"html\")",
-    "action": "set_cache_settings",
-    "action_parameters": {
-      "cache": true,
-      "edge_ttl": { "mode": "respect_origin", "default": 600 },
-      "browser_ttl": { "mode": "respect_origin" }
-    }
-  }'
+CF_API_TOKEN=… bash tools/cloudflare/cache-rule.sh          # seanbehan.ca
+CF_API_TOKEN=… bash tools/cloudflare/cache-rule.sh codebam.ca
 ```
+
+The token needs **Zone → Cache Rules → Edit**, plus **Zone → Zone → Read** for
+the name lookup, scoped to the zone you are changing. Wrangler's own OAuth
+token will not do: it carries `zone (read)` and nothing that can write a
+ruleset, so `wrangler whoami` looking healthy says nothing about this.
+
+The script is idempotent — it reads the existing cache ruleset, replaces any
+rule with the same description, and writes the set back, so re-running after an
+edit updates in place instead of stacking duplicates.
 
 Notes on the shape of it:
 
@@ -87,27 +85,20 @@ exist in the deployment that built them. Ten minutes of stale HTML pointing at
 bundles the new deployment does not have means 404s on hydration for anyone who
 lands in that window.
 
-So the deploy has to purge. Either narrow, on the pages themselves:
+So the deploy has to purge. `npm run deploy` now ends with
+`tools/cloudflare/purge.sh`, which purges the whole zone when `CF_API_TOKEN` is
+set in the environment and prints a skip notice when it is not — a deploy from
+a machine without the token still succeeds, it just leaves the purge to you:
 
 ```sh
-curl -X POST "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/purge_cache" \
-  -H "Authorization: Bearer $CF_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"files":["https://seanbehan.ca/","https://seanbehan.ca/posts","https://seanbehan.ca/resume","https://seanbehan.ca/contact"]}'
+CF_API_TOKEN=… npm run deploy     # build, deploy, purge
+bash tools/cloudflare/purge.sh    # or by hand, any time
 ```
 
-or, simplest for a site this size, everything:
-
-```sh
-curl -X POST "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/purge_cache" \
-  -H "Authorization: Bearer $CF_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"purge_everything":true}'
-```
-
-The token needs `Zone.Cache Purge` on this zone and nothing else. A post-file
-purge does not touch the hashed assets — they are immutable and their URLs
-changed anyway.
+That token needs **Zone → Cache Purge**. It purges everything rather than a
+file list, because the site is small and a hardcoded list of URLs drifts out of
+step with the routes. The hashed assets do not care either way — their URLs
+changed with the deployment.
 
 Shorten `s-maxage` if a purge step is not wired up yet: at `s-maxage=60` the
 worst case is a minute of broken hydration for a reader who happened to load
