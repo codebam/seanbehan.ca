@@ -24,37 +24,44 @@ function parseCsp(csp: string): Record<string, string[]> {
 const PAGES = ['index.html', 'posts/nixos.html', 'posts/tag/nixos.html', 'resume.html'];
 
 describe('built site Content-Security-Policy', () => {
-	it('injects a meta CSP on every prerendered page that blocks unsafe-inline scripts', () => {
-		// The policy lives in the built output; build it if a bare `npm run test:run`
-		// was run before `npm run build`.
-		const output = resolve('.svelte-kit/cloudflare/index.html');
-		if (!existsSync(output)) {
-			execSync('npm run build', { stdio: 'pipe' });
+	// The 5s default is a build short by an order of magnitude. CI builds before
+	// it tests, so the fallback below is normally skipped, but when it does run
+	// it needs room to finish rather than a timeout that guarantees a red run.
+	it(
+		'injects a meta CSP on every prerendered page that blocks unsafe-inline scripts',
+		{ timeout: 300_000 },
+		() => {
+			// The policy lives in the built output; build it if a bare `npm run test:run`
+			// was run before `npm run build`.
+			const output = resolve('.svelte-kit/cloudflare/index.html');
+			if (!existsSync(output)) {
+				execSync('npm run build', { stdio: 'pipe' });
+			}
+
+			for (const page of PAGES) {
+				const file = resolve(`.svelte-kit/cloudflare/${page}`);
+				expect(existsSync(file), `${page}: built output missing (${file})`).toBe(true);
+
+				const html = readFileSync(file, 'utf8');
+				const match = html.match(
+					/<meta[^>]*http-equiv="content-security-policy"[^>]*content="([^"]+)"/
+				);
+				expect(match, `${page}: missing Content-Security-Policy meta tag`).not.toBeNull();
+
+				const directives = parseCsp(match![1]);
+
+				expect(directives['script-src'], `${page}: missing script-src directive`).toBeDefined();
+				const scriptSrc = directives['script-src']!.join(' ');
+				// The whole point of the policy: inline script execution is gated behind
+				// SvelteKit's per-build hash, never 'unsafe-inline'.
+				expect(scriptSrc, `${page}: script-src must not allow unsafe-inline`).not.toContain(
+					"'unsafe-inline'"
+				);
+				expect(
+					directives['script-src']!.some((v) => v.startsWith("'sha256-")),
+					`${page}: script-src should carry SvelteKit's hash of the inline bootstrap`
+				).toBe(true);
+			}
 		}
-
-		for (const page of PAGES) {
-			const file = resolve(`.svelte-kit/cloudflare/${page}`);
-			expect(existsSync(file), `${page}: built output missing (${file})`).toBe(true);
-
-			const html = readFileSync(file, 'utf8');
-			const match = html.match(
-				/<meta[^>]*http-equiv="content-security-policy"[^>]*content="([^"]+)"/
-			);
-			expect(match, `${page}: missing Content-Security-Policy meta tag`).not.toBeNull();
-
-			const directives = parseCsp(match![1]);
-
-			expect(directives['script-src'], `${page}: missing script-src directive`).toBeDefined();
-			const scriptSrc = directives['script-src']!.join(' ');
-			// The whole point of the policy: inline script execution is gated behind
-			// SvelteKit's per-build hash, never 'unsafe-inline'.
-			expect(scriptSrc, `${page}: script-src must not allow unsafe-inline`).not.toContain(
-				"'unsafe-inline'"
-			);
-			expect(
-				directives['script-src']!.some((v) => v.startsWith("'sha256-")),
-				`${page}: script-src should carry SvelteKit's hash of the inline bootstrap`
-			).toBe(true);
-		}
-	});
+	);
 });

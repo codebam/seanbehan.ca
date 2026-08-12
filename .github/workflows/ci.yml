@@ -30,9 +30,9 @@ jobs:
       - name: Type check
         run: npm run check
 
-      - name: Test
-        run: npm run test:run
-
+      # Ahead of the tests, not after them: security.test.ts asserts against the
+      # CSP in the real built output, and on a clean checkout it would otherwise
+      # have to run the build itself, from inside a test timeout.
       - name: Build
         # The home page pulls project star counts from the GitHub API during
         # prerender. Passing a token avoids the shared-runner rate limit; the
@@ -40,3 +40,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run build
+
+      - name: Test
+        run: npm run test:run
