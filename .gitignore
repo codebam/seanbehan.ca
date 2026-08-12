@@ -26,3 +26,7 @@ vite.config.ts.timestamp-*
 
 # direnv
 .direnv/
+
+# Local git worktrees. One was once committed as a bare gitlink with no
+# .gitmodules entry, which made every fresh clone fail on `git submodule`.
+.worktrees/
