@@ -64,5 +64,5 @@
 		No posts match “{debouncedQuery}”.
 	</p>
 {:else}
-	<PostList posts={results} showTags />
+	<PostList posts={results} showTags headingLevel={2} />
 {/if}

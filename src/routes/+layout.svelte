@@ -145,7 +145,9 @@
 			rel="me noopener noreferrer">Mastodon</a
 		>
 		<a class="footer-link" href="mailto:{site.email}">{site.email}</a>
-		<span class="ml-auto text-[var(--dim)]">Built with SvelteKit, hosted on Cloudflare</span>
+		<!-- Colour inherited from the row: --dim failed AA here (3.3:1 against the
+		     inverted panel) and is no longer used for type. -->
+		<span class="ml-auto">Built with SvelteKit, hosted on Cloudflare</span>
 	</div>
 </footer>
 

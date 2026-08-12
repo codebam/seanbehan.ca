@@ -8,9 +8,18 @@
 		columns?: 1 | 2;
 		/** Topic tags are noise next to six posts, useful across twenty-four */
 		showTags?: boolean;
+		/**
+		 * Heading level for an entry title. The default suits the home page,
+		 * where the list sits under an h2 section heading. A page whose list is
+		 * the content itself — the archive, a tag — follows its h1 directly and
+		 * must pass 2, or the document skips a level.
+		 */
+		headingLevel?: 2 | 3;
 	}
 
-	const { posts, columns = 1, showTags = false }: Props = $props();
+	const { posts, columns = 1, showTags = false, headingLevel = 3 }: Props = $props();
+
+	const heading = $derived(`h${headingLevel}` as const);
 
 	const slugOf = (post: Post) => post.path.split('/').pop() ?? '';
 
@@ -26,7 +35,7 @@
 			{#if post.readingMinutes}
 				<span class="read">&middot; {post.readingMinutes} min</span>
 			{/if}
-			<h3>{post.meta.title}</h3>
+			<svelte:element this={heading} class="title">{post.meta.title}</svelte:element>
 			{#if post.meta.description}
 				<p>{post.meta.description}</p>
 			{/if}
@@ -76,23 +85,26 @@
 		color: var(--accent);
 	}
 
-	/* Same eyebrow treatment as the date, one step dimmer: it is the secondary
-	   fact on the line and should not compete with it. */
+	/* Same eyebrow treatment as the date. It reads as the secondary fact on the
+	   line through size and tracking rather than colour: at 0.78rem it needs
+	   4.5:1, and --dim only reaches 3.3:1 on any of our surfaces. */
 	.entry .read {
 		font-size: 0.78rem;
 		letter-spacing: 0.1em;
 		text-transform: uppercase;
-		color: var(--dim);
+		color: var(--muted);
 	}
 
-	.entry h3 {
+	/* Selector is the class, not the tag: the level varies with where the list
+	   sits in the document outline, the styling does not. */
+	.entry .title {
 		margin-top: 0.35rem;
 		font-size: 1.2rem;
 		font-weight: 500;
 		letter-spacing: -0.01em;
 		transition: color 0.2s ease;
 	}
-	.entry:hover h3 {
+	.entry:hover .title {
 		color: var(--accent);
 	}
 

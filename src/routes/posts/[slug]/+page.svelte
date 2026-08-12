@@ -49,11 +49,11 @@
 			<p class="mt-7 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[var(--muted)]">
 				<time datetime={meta.date}>{published}</time>
 				{#if data.post.readingMinutes}
-					<span class="text-[var(--dim)]">&middot;</span>
+					<span class="text-[var(--muted)]">&middot;</span>
 					<span>{data.post.readingMinutes} min read</span>
 				{/if}
 				{#if meta.tags?.length}
-					<span class="text-[var(--dim)]">&middot;</span>
+					<span class="text-[var(--muted)]">&middot;</span>
 					<span class="flex flex-wrap items-center gap-x-3">
 						{#each meta.tags as tag (tag)}
 							<a

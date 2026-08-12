@@ -102,6 +102,10 @@
 		--text: #17181a;
 		--body: #4a4b4f;
 		--muted: #6c6a66;
+		/* Non-text only — scrollbar thumb, the search icon. It sits at 3.3:1 on
+		   every surface here, which clears the 3:1 bar for UI marks but not the
+		   4.5:1 one for type, and it fails hardest in the inverted footer where
+		   Lighthouse caught it. The faintest *text* tier is --muted. */
 		--dim: #8b8880;
 
 		/* Accent */
@@ -398,8 +402,10 @@
 			border-color 0.2s ease,
 			box-shadow 0.2s ease;
 	}
+	/* Placeholders are read as text and carry the same 4.5:1 bar, which --dim
+	   does not clear. */
 	.input::placeholder {
-		color: var(--dim);
+		color: var(--muted);
 	}
 	.input:focus {
 		outline: none;

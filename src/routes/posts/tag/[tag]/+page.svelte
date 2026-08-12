@@ -25,7 +25,7 @@
 		</p>
 
 		<div class="mt-12" use:reveal>
-			<PostList posts={data.posts} />
+			<PostList posts={data.posts} headingLevel={2} />
 		</div>
 	</div>
 </section>
