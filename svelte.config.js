@@ -74,6 +74,19 @@ const config = {
 		// See https://svelte.dev/docs/kit/adapters for more information about adapters.
 		adapter: adapter(),
 
+		// Inline the stylesheet into every prerendered page rather than linking
+		// it. The whole site's CSS is ~45 kB (about 9 kB over the wire), and as a
+		// <link> it was the one render-blocking request left: the browser parses
+		// the HTML, discovers the stylesheet, and waits a full round trip before
+		// it can paint anything. Lighthouse put that at 390 ms on mobile.
+		//
+		// The trade is that the CSS is no longer cached across pages — but only
+		// on hard loads, since client-side navigation reuses the styles already
+		// in the document, and the HTML itself is what most visits re-fetch.
+		// Raise this if the stylesheet ever grows past the point where paying for
+		// it on each page load beats one cacheable request.
+		inlineStyleThreshold: 51200,
+
 		// SvelteKit registers the service worker in dev too, where its cache-first
 		// strategy serves stale modules on reload. Register it ourselves in +layout.svelte
 		// so it only runs in production builds.

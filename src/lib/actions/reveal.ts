@@ -24,6 +24,17 @@ export function reveal(node: HTMLElement, options: RevealOptions = {}) {
 
 	const { delay = 0, margin = '0px 0px -10% 0px' } = options;
 
+	// Anything already on screen when the action runs is left alone. The observer
+	// would reveal it too, but only on its first callback — which is after
+	// hydration, so on a slow phone a band that was in the first viewport sits
+	// invisible for a second or more after the page has otherwise painted. That
+	// is a late visual change in the viewport Lighthouse measures, and it was
+	// most of the gap between First Contentful Paint and Speed Index.
+	//
+	// The read is safe to do here: the only thing this action writes is opacity
+	// and transform, neither of which invalidates layout, so no thrash.
+	if (node.getBoundingClientRect().top < window.innerHeight) return;
+
 	node.classList.add('reveal-pending');
 	if (delay) node.style.setProperty('--reveal-delay', `${delay}ms`);
 

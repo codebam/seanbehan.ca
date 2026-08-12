@@ -23,6 +23,16 @@
   ! Cache-Control
   Cache-Control: public, max-age=2592000
 
+# The favicon set, for the same reason — it is the last few KiB Lighthouse
+# still flags under inefficient cache lifetimes.
+/*.svg
+  ! Cache-Control
+  Cache-Control: public, max-age=2592000
+
+/*.ico
+  ! Cache-Control
+  Cache-Control: public, max-age=2592000
+
 # RSS declares its own cache intent (max-age=3600 in its route handler). The
 # blanket /* rule would override it; `! Cache-Control` strips that value so the
 # feed's wins. sitemap.xml sets no cache header and keeps the /* revalidation.
