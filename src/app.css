@@ -7,12 +7,38 @@
    Inter for UI and body copy, Newsreader for display type.
    Newsreader carries the italic in the hero headline, so its
    italic axis is not optional.
+
+   Served from static/fonts rather than imported from
+   Fontsource: the packages declare every subset and the full
+   axis ranges, which is ~330 kB of font for a latin-only site
+   that uses two serif weights. tools/fonts/build-fonts.sh
+   rebuilds these three files — run it when either package is
+   upgraded. Stable filenames, so app.html can preload them
+   instead of waiting for this stylesheet to be parsed first.
    ═══════════════════════════════════════════════════════════ */
-@import '@fontsource-variable/inter';
-/* `standard` carries the full standard axis set (wght + opsz), which is what
-   makes `font-optical-sizing` in `.display` do anything. */
-@import '@fontsource-variable/newsreader/standard.css';
-@import '@fontsource-variable/newsreader/standard-italic.css';
+@font-face {
+	font-family: 'Inter Variable';
+	font-style: normal;
+	font-display: swap;
+	font-weight: 100 900;
+	src: url('/fonts/inter-latin.woff2') format('woff2-variations');
+}
+/* Newsreader keeps a live `opsz` axis, which is what makes `font-optical-sizing`
+   in `.display` do anything. */
+@font-face {
+	font-family: 'Newsreader Variable';
+	font-style: normal;
+	font-display: swap;
+	font-weight: 400 500;
+	src: url('/fonts/newsreader-latin.woff2') format('woff2-variations');
+}
+@font-face {
+	font-family: 'Newsreader Variable';
+	font-style: italic;
+	font-display: swap;
+	font-weight: 400 500;
+	src: url('/fonts/newsreader-latin-italic.woff2') format('woff2-variations');
+}
 
 /* ═══════════════════════════════════════════════════════════
    Design tokens
@@ -502,9 +528,15 @@
 
 /* ── Entrance stagger ──
    Above-the-fold blocks come in on a short ladder. Delays are small enough
-   that the whole hero has settled well before a reader finishes the headline. */
+   that the whole hero has settled well before a reader finishes the headline.
+
+   The ladder is deliberately short: every millisecond of delay here is a
+   millisecond the largest text on the page is transparent, which is time
+   Lighthouse counts against LCP and Speed Index. `both` keeps the pre-delay
+   frame, so the delay is dead time on screen, not just a late start. Nothing
+   above the fold is wrapped in a second page-level fade for the same reason. */
 .enter {
-	animation: fadeInUp 0.55s var(--ease-out-soft) both;
+	animation: fadeInUp 0.4s var(--ease-out-soft) both;
 	animation-delay: var(--enter-delay, 0ms);
 }
 

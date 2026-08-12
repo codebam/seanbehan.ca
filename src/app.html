@@ -17,6 +17,34 @@
 		<meta name="theme-color" media="(prefers-color-scheme: light)" content="#faf8f4" />
 		<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#111110" />
 		<link rel="manifest" href="/site.webmanifest" />
+		<!-- Both faces are above the fold on every page — the wordmark and headline
+		     are Newsreader, everything else is Inter. Preloading them starts the
+		     fetch with the HTML instead of one round trip later, once the
+		     stylesheet has been fetched and parsed. -->
+		<link
+			rel="preload"
+			href="%sveltekit.assets%/fonts/inter-latin.woff2"
+			as="font"
+			type="font/woff2"
+			crossorigin
+		/>
+		<link
+			rel="preload"
+			href="%sveltekit.assets%/fonts/newsreader-latin.woff2"
+			as="font"
+			type="font/woff2"
+			crossorigin
+		/>
+		<!-- The italic carries the emphasised half of the hero headline, so it is
+		     as critical as the roman: leaving it to load a beat later swaps a
+		     fallback italic in and out of the largest text on the page. -->
+		<link
+			rel="preload"
+			href="%sveltekit.assets%/fonts/newsreader-latin-italic.woff2"
+			as="font"
+			type="font/woff2"
+			crossorigin
+		/>
 		%sveltekit.head%
 	</head>
 

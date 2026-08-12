@@ -4,7 +4,24 @@
   Strict-Transport-Security: max-age=63072000
   X-Frame-Options: DENY
   Permissions-Policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), hid=(), idle-detection=(), magnetometer=(), microphone=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), serial=(), usb=(), web-share=(), xr-spatial-tracking=()
-  Cache-Control: public, max-age=0, must-revalidate
+  Cache-Control: public, max-age=0, s-maxage=600, must-revalidate
+
+# Fonts and raster art are byte-stable between deploys, so the blanket
+# revalidation above buys nothing and costs a conditional request per file per
+# visit. A month of caching, not a year with `immutable`, because the filenames
+# are stable rather than content-hashed — a rebuilt font reaches readers within
+# 30 days instead of never.
+/fonts/*
+  ! Cache-Control
+  Cache-Control: public, max-age=2592000
+
+/*.webp
+  ! Cache-Control
+  Cache-Control: public, max-age=2592000
+
+/*.png
+  ! Cache-Control
+  Cache-Control: public, max-age=2592000
 
 # RSS declares its own cache intent (max-age=3600 in its route handler). The
 # blanket /* rule would override it; `! Cache-Control` strips that value so the

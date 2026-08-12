@@ -120,7 +120,7 @@
 
 <!-- Full-bleed: each page owns its own panels and .shell columns, so a section
      can run edge to edge on its own background. -->
-<main id="main" class="animate-fade-in-up">
+<main id="main">
 	{@render children()}
 </main>
 

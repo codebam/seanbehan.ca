@@ -56,13 +56,13 @@
 <section class="panel shell pt-14 pb-20 md:pt-16">
 	<p class="enter eyebrow">Open to work &middot; Ontario, Canada</p>
 
-	<h1 class="enter display display-xl mt-5 max-w-[18ch]" style="--enter-delay:70ms">
+	<h1 class="enter display display-xl mt-5 max-w-[18ch]" style="--enter-delay:0ms">
 		Say <em>hello</em>.
 	</h1>
 
 	<div
 		class="enter mt-10 grid items-start gap-8 md:grid-cols-[1fr_180px] md:gap-12"
-		style="--enter-delay:140ms"
+		style="--enter-delay:80ms"
 	>
 		<p class="max-w-[52ch] text-[1.05rem] leading-relaxed text-[var(--body)]">
 			Email is the surest way to reach me. If you are hiring, contracting, or want to talk about

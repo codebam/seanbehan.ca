@@ -17,10 +17,10 @@
 		<p class="enter eyebrow">
 			<a href={resolve('/posts')} class="hover:underline">Writing</a> · {data.tags.length} tags
 		</p>
-		<h1 class="enter display display-xl mt-5" style="--enter-delay:70ms">Tags</h1>
+		<h1 class="enter display display-xl mt-5" style="--enter-delay:0ms">Tags</h1>
 		<p
 			class="enter mt-6 max-w-[52ch] text-[1.15rem] leading-[1.55] text-[var(--body)] md:text-[1.3rem]"
-			style="--enter-delay:140ms"
+			style="--enter-delay:80ms"
 		>
 			Every topic I write about, with how many posts sit under each heading.
 		</p>

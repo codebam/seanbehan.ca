@@ -19,7 +19,12 @@ const SECURITY_HEADERS = {
 	'X-Frame-Options': 'DENY',
 	'Permissions-Policy':
 		'accelerometer=(), ambient-light-sensor=(), autoplay=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), hid=(), idle-detection=(), magnetometer=(), microphone=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), serial=(), usb=(), web-share=(), xr-spatial-tracking=()',
-	'Cache-Control': 'public, max-age=0, must-revalidate'
+	// `max-age=0, must-revalidate` for the browser — a reader always gets fresh
+	// HTML — with `s-maxage` letting Cloudflare hold the response at the edge in
+	// between. The shared TTL only takes effect once a Cache Rule marks HTML
+	// eligible for caching, which is a zone setting rather than a repo one; see
+	// docs/edge-caching.md, including the deploy-time purge it requires.
+	'Cache-Control': 'public, max-age=0, s-maxage=600, must-revalidate'
 } as const;
 
 export const handle: Handle = async ({ event, resolve }) => {

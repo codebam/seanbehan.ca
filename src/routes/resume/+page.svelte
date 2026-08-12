@@ -9,11 +9,11 @@
 
 <section class="panel shell pt-14 pb-20 md:pt-16">
 	<p class="enter eyebrow">Full-stack developer &middot; Ontario, Canada</p>
-	<h1 class="enter display display-xl mt-5" style="--enter-delay:70ms">Résumé</h1>
+	<h1 class="enter display display-xl mt-5" style="--enter-delay:0ms">Résumé</h1>
 
 	<p
 		class="enter mt-4 flex flex-wrap items-center gap-x-6 gap-y-3 text-[0.95rem]"
-		style="--enter-delay:140ms"
+		style="--enter-delay:80ms"
 	>
 		<!-- Absolute R2 asset, so resolve() does not apply -->
 		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->

@@ -19,8 +19,8 @@
 			<a href={resolve('/posts')} class="hover:underline">Writing</a> · {data.posts.length}
 			{data.posts.length === 1 ? 'post' : 'posts'}
 		</p>
-		<h1 class="enter display display-xl mt-5" style="--enter-delay:70ms">{data.tag}</h1>
-		<p class="enter link-accent mt-6" style="--enter-delay:140ms">
+		<h1 class="enter display display-xl mt-5" style="--enter-delay:0ms">{data.tag}</h1>
+		<p class="enter link-accent mt-6" style="--enter-delay:80ms">
 			<a href={resolve('/posts/tags')} class="hover:underline">All tags &rarr;</a>
 		</p>
 

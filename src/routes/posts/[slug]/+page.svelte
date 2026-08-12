@@ -66,7 +66,7 @@
 			</p>
 		</header>
 
-		<div class="enter prose mt-12 max-w-[68ch] text-[1.05rem]" style="--enter-delay:90ms">
+		<div class="enter prose mt-12 max-w-[68ch] text-[1.05rem]" style="--enter-delay:60ms">
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 			{@html data.post.html}
 		</div>

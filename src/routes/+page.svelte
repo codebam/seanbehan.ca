@@ -38,11 +38,15 @@
 		<!-- Byline: the photo identifies the author rather than decorating the page,
 		     which leaves the headline the full column width. -->
 		<div class="enter flex items-center gap-3.5">
+			<!-- avatar.webp is the 2x crop of profile.webp at the size this actually
+			     renders (1.4 kB against 13 kB). profile.webp stays as the og:image,
+			     where the full 460px is the point. -->
 			<img
-				src="/profile.webp"
+				src="/avatar.webp"
 				alt={site.name}
 				width="56"
 				height="56"
+				fetchpriority="high"
 				class="h-14 w-14 shrink-0 rounded-full object-cover"
 			/>
 			<div>
@@ -51,18 +55,18 @@
 			</div>
 		</div>
 
-		<h1 class="enter display display-xl mt-9 max-w-[20ch]" style="--enter-delay:70ms">
+		<h1 class="enter display display-xl mt-9 max-w-[20ch]" style="--enter-delay:0ms">
 			{site.headline.before}<em>{site.headline.emphasis}</em>{site.headline.after}
 		</h1>
 
 		<p
 			class="enter mt-8 max-w-[52ch] text-[1.15rem] leading-[1.55] text-[var(--body)] md:text-[1.35rem]"
-			style="--enter-delay:140ms"
+			style="--enter-delay:80ms"
 		>
 			{intro}
 		</p>
 
-		<div class="enter mt-9 flex flex-wrap items-center gap-x-7 gap-y-4" style="--enter-delay:210ms">
+		<div class="enter mt-9 flex flex-wrap items-center gap-x-7 gap-y-4" style="--enter-delay:140ms">
 			<a href={resolve('/posts')} class="btn">Read the writing</a>
 			<a
 				href="https://github.com/codebam"
