@@ -8,6 +8,26 @@ $ curl -sSI https://seanbehan.ca/ | grep -i cf-cache-status
 cf-cache-status: DYNAMIC
 ```
 
+## The part that is not the Cache Rule
+
+A Cache Rule alone does nothing here if the page is served by the Worker rather
+than as a static asset — a Worker response is generated per request and is not
+held in the edge cache. That was the state of this site: the adapter names
+every prerendered page individually in `_routes.json`, which for 50-odd posts
+overflows Cloudflare's 100-rule limit, and the adapter drops the overflow:
+
+```
+Cloudflare Pages Functions' includes/excludes exceeds _routes.json limits.
+Dropping 41 exclude rules — this will cause unnecessary function invocations.
+```
+
+Every dropped rule is a page that falls through to the Worker. `svelte.config.js`
+now passes the adapter a wildcard exclude list instead, which says the same
+thing in 34 rules with nothing dropped. Anything genuinely dynamic must stay
+off that list: an excluded path never reaches the Worker at all.
+
+## Why the rule is still needed
+
 `DYNAMIC` means Cloudflare never even considered the response for its cache.
 That is the zone default: HTML is not a cacheable content type unless a rule
 says otherwise, no matter what `Cache-Control` the origin sends. So this is not

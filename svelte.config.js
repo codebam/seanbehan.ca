@@ -72,7 +72,38 @@ const config = {
 		// adapter-auto only supports some environments, see https://svelte.dev/docs/kit/adapter-auto for a list.
 		// If your environment is not supported, or you settled on a specific environment, switch out the adapter.
 		// See https://svelte.dev/docs/kit/adapters for more information about adapters.
-		adapter: adapter(),
+		// The adapter's default exclude list names every prerendered page one by
+		// one, which for a site with 50 posts overflows Cloudflare's 100-rule
+		// limit on _routes.json. The adapter then drops the overflow — "Dropping
+		// 41 exclude rules" in the build log — and every post is served by the
+		// Worker instead of as a static asset. A Worker response is generated per
+		// request and cannot be held in the edge cache, so those pages were
+		// `cf-cache-status: DYNAMIC` no matter what Cache Rule the zone carried.
+		//
+		// Wildcards say the same thing in a handful of rules. `<build>` covers
+		// /_app, `<files>` covers static/. Everything else here is prerendered.
+		//
+		// Anything genuinely dynamic must NOT be listed: an excluded path never
+		// reaches the Worker. A future server route under /posts would need the
+		// wildcard below narrowed to match.
+		adapter: adapter({
+			routes: {
+				include: ['/*'],
+				exclude: [
+					'<build>',
+					'<files>',
+					'/',
+					'/__data.json',
+					'/contact',
+					'/posts',
+					'/posts/*',
+					'/resume',
+					'/rss.xml',
+					'/site.webmanifest',
+					'/sitemap.xml'
+				]
+			}
+		}),
 
 		// Inline the stylesheet into every prerendered page rather than linking
 		// it. The whole site's CSS is ~45 kB (about 9 kB over the wire), and as a

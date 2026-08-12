@@ -50,7 +50,9 @@ if [ -z "$ZONE_ID" ]; then
 	fail_if_error "$response"
 	ZONE_ID="$(printf '%s' "$response" | json "print(d['result'][0]['id'] if d['result'] else '')")"
 	[ -n "$ZONE_ID" ] || {
-		echo "no zone named $ZONE_NAME on this account" >&2
+		echo "no zone named $ZONE_NAME visible to this token." >&2
+		echo "A token scoped to a single zone can edit it without being able to" >&2
+		echo "list it — pass the id directly: CF_ZONE_ID=… $0 $ZONE_NAME" >&2
 		exit 1
 	}
 fi
@@ -79,8 +81,11 @@ payload="$(
 		        'cache': True,
 		        # Both TTLs respect the origin, so the cache window lives in
 		        # _headers and hooks.server.ts — in the repo, next to the comment
-		        # explaining it — rather than as a number in a dashboard.
-		        'edge_ttl': {'mode': 'respect_origin', 'default': 600},
+		        # explaining it — rather than as a number in a dashboard. No
+		        # `default` alongside: the API rejects one in respect_origin mode
+		        # ("default is useless in respect_origin mode"), since s-maxage
+		        # from the origin is the whole answer.
+		        'edge_ttl': {'mode': 'respect_origin'},
 		        'browser_ttl': {'mode': 'respect_origin'},
 		    },
 		    'enabled': True,
