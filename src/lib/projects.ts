@@ -13,7 +13,7 @@ import type { FeaturedProject } from './types';
  */
 export const featuredProjects: FeaturedProject[] = [
 	{
-		repo: 'viewport-smithay',
+		repo: 'viewport',
 		since: '2026',
 		title: 'Viewport',
 		description:
