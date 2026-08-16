@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import PostList from '$lib/components/PostList.svelte';
+	import CountUp from '$lib/components/svelte-bits/CountUp.svelte';
+	import DotGrid from '$lib/components/svelte-bits/DotGrid.svelte';
+	import Grainient from '$lib/components/svelte-bits/Grainient.svelte';
+	import StarBorder from '$lib/components/svelte-bits/StarBorder.svelte';
 	import { reveal } from '$lib/actions/reveal';
 	import { site } from '$lib/site';
 	import type { HomePageData } from '$lib/types';
@@ -19,9 +23,8 @@
 
 	/** Stars across the featured repos, rounded down to a round number. */
 	let starTotal = $derived(data.projects.reduce((sum, p) => sum + p.stars, 0));
-	let starLabel = $derived(
-		starTotal >= 100 ? `${Math.floor(starTotal / 50) * 50}+` : `${starTotal}`
-	);
+	let starCount = $derived(starTotal >= 100 ? Math.floor(starTotal / 50) * 50 : starTotal);
+	let starSuffix = $derived(starTotal >= 100 ? '+' : '');
 
 	let latest = $derived(data.posts.slice(0, 6));
 
@@ -32,9 +35,17 @@
 	<title>{site.title}</title>
 </svelte:head>
 
-<!-- HERO — page surface -->
-<section class="panel pt-14 pb-20 md:pt-16 md:pb-24">
-	<div class="shell">
+<!-- HERO — page surface, over an ambient wash
+
+	Grainient is decorative and sits behind everything, masked out before the
+	fold ends so the band below starts on flat paper. It is the one place on the
+	site where something moves on its own; every reading surface stays still. -->
+<section class="hero panel relative overflow-hidden pt-14 pb-20 md:pt-16 md:pb-24">
+	<div class="wash" aria-hidden="true">
+		<Grainient />
+	</div>
+
+	<div class="shell relative">
 		<!-- Byline: the photo identifies the author rather than decorating the page,
 		     which leaves the headline the full column width. -->
 		<div class="enter flex items-center gap-3.5">
@@ -67,7 +78,9 @@
 		</p>
 
 		<div class="enter mt-9 flex flex-wrap items-center gap-x-7 gap-y-4" style="--enter-delay:140ms">
-			<a href={resolve('/posts')} class="btn">Read the writing</a>
+			<StarBorder>
+				<a href={resolve('/posts')} class="btn">Read the writing</a>
+			</StarBorder>
 			<a
 				href="https://github.com/codebam"
 				target="_blank"
@@ -95,12 +108,22 @@
 {/if}
 
 {#snippet facts()}
-	<!-- FACTS — tinted band -->
-	<section class="panel-alt py-12 md:py-14">
-		<div class="shell grid grid-cols-2 gap-x-8 gap-y-8 md:grid-cols-4">
-			{#each [{ n: `${yearsBuilding}+`, l: 'years building software' }, { n: `${data.posts.length}`, l: 'technical posts' }, { n: starLabel, l: 'GitHub stars' }, { n: 'Rust', l: '+ TypeScript, Nix' }] as fact, i (fact.l)}
+	<!-- FACTS — tinted band over a dot field that answers the pointer.
+	     The numbers count once, the first time the band is seen; the fourth cell
+	     is a word, so it is spelled out rather than forced into the component. -->
+	<section class="facts panel-alt relative overflow-hidden py-12 md:py-14">
+		<DotGrid />
+
+		<div class="shell relative grid grid-cols-2 gap-x-8 gap-y-8 md:grid-cols-4">
+			{#each [{ n: yearsBuilding, suffix: '+', l: 'years building software' }, { n: data.posts.length, suffix: '', l: 'technical posts' }, { n: starCount, suffix: starSuffix, l: 'GitHub stars' }, { n: 'Rust', suffix: '', l: '+ TypeScript, Nix' }] as fact, i (fact.l)}
 				<div use:reveal={{ delay: i * 60 }}>
-					<div class="display text-[2.4rem] md:text-[2.9rem]">{fact.n}</div>
+					<div class="display text-[2.4rem] tabular-nums md:text-[2.9rem]">
+						{#if typeof fact.n === 'number'}
+							<CountUp to={fact.n} suffix={fact.suffix} duration={1.2 + i * 0.15} />
+						{:else}
+							{fact.n}
+						{/if}
+					</div>
 					<div class="mt-1 text-sm text-[var(--muted)]">{fact.l}</div>
 				</div>
 			{/each}
@@ -195,6 +218,24 @@
 </section>
 
 <style>
+	/* The wash is held at low opacity and faded out over the last third of the
+	   hero, so the headline sits on something close to paper and the boundary
+	   with the band below is a colour change rather than a visible edge. The
+	   mask is what keeps it ambient instead of a hero image. */
+	.hero .wash {
+		position: absolute;
+		inset: 0;
+		opacity: 0.5;
+		mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 100%);
+	}
+	@media (prefers-color-scheme: dark) {
+		/* The dark palette has far less headroom between the accent and the page,
+		   so the same opacity that reads as a wash in light reads as a wall here. */
+		.hero .wash {
+			opacity: 0.32;
+		}
+	}
+
 	/* A work row is not a link, so it gets the lightest possible hover: the
 	   rule above it warms to the accent and the title follows. No lift, no
 	   shadow — the row is a reading surface first. */

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import SpotlightCard from '$lib/components/svelte-bits/SpotlightCard.svelte';
 	import type { Post } from '$lib/types';
 
 	interface Props {
@@ -28,9 +29,12 @@
 		new Date(date).toLocaleDateString('en-CA', { month: 'short', year: 'numeric' });
 </script>
 
-<div class:paired={columns === 2}>
+<div class="list" class:paired={columns === 2}>
 	{#each posts as post (post.path)}
-		<a class="entry" href={resolve('/posts/[slug]', { slug: slugOf(post) })}>
+		<!-- The spotlight is the anchor itself rather than a wrapper around it:
+		     the whole row is one click target, and the paired grid keeps taking
+		     the entries as its direct children. -->
+		<SpotlightCard as="a" class="entry" href={resolve('/posts/[slug]', { slug: slugOf(post) })}>
 			<time datetime={post.meta.date}>{monthYear(post.meta.date)}</time>
 			{#if post.readingMinutes}
 				<span class="read">&middot; {post.readingMinutes} min</span>
@@ -42,7 +46,7 @@
 			{#if showTags && post.meta.tags?.length}
 				<p class="tags">{post.meta.tags.join(' · ')}</p>
 			{/if}
-		</a>
+		</SpotlightCard>
 	{/each}
 </div>
 
@@ -60,7 +64,7 @@
 	/* Whole-card hover: the rule warms to the accent and the block slides a
 	   couple of pixels toward the reader's click. Two pixels is enough to feel
 	   live and small enough that a column of entries does not visibly reflow. */
-	.entry {
+	.list :global(.entry) {
 		display: block;
 		padding: 1.25rem 0;
 		border-top: 1px solid var(--line);
@@ -68,27 +72,27 @@
 			border-color 0.3s ease,
 			transform 0.3s var(--ease-out-soft);
 	}
-	.entry:hover,
-	.entry:focus-visible {
+	.list :global(.entry:hover),
+	.list :global(.entry:focus-visible) {
 		border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
 		transform: translateX(2px);
 	}
 
-	.entry time {
+	.list :global(.entry time) {
 		font-size: 0.78rem;
 		letter-spacing: 0.1em;
 		text-transform: uppercase;
 		color: var(--muted);
 		transition: color 0.25s ease;
 	}
-	.entry:hover time {
+	.list :global(.entry:hover time) {
 		color: var(--accent);
 	}
 
 	/* Same eyebrow treatment as the date. It reads as the secondary fact on the
 	   line through size and tracking rather than colour: at 0.78rem it needs
 	   4.5:1, and --dim only reaches 3.3:1 on any of our surfaces. */
-	.entry .read {
+	.list :global(.entry .read) {
 		font-size: 0.78rem;
 		letter-spacing: 0.1em;
 		text-transform: uppercase;
@@ -97,18 +101,18 @@
 
 	/* Selector is the class, not the tag: the level varies with where the list
 	   sits in the document outline, the styling does not. */
-	.entry .title {
+	.list :global(.entry .title) {
 		margin-top: 0.35rem;
 		font-size: 1.2rem;
 		font-weight: 500;
 		letter-spacing: -0.01em;
 		transition: color 0.2s ease;
 	}
-	.entry:hover .title {
+	.list :global(.entry:hover .title) {
 		color: var(--accent);
 	}
 
-	.entry p {
+	.list :global(.entry p) {
 		margin-top: 0.3rem;
 		color: var(--body);
 		font-size: 0.95rem;
@@ -116,7 +120,7 @@
 		max-width: 62ch;
 	}
 
-	.entry .tags {
+	.list :global(.entry .tags) {
 		margin-top: 0.5rem;
 		font-size: 0.82rem;
 		color: var(--muted);
