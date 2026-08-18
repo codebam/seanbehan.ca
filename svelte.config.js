@@ -98,6 +98,9 @@ const config = {
 					'/posts',
 					'/posts/*',
 					'/resume',
+					// Generated from the site config rather than kept in static/, so it
+					// no longer falls under <files> and needs naming here.
+					'/robots.txt',
 					'/rss.xml',
 					'/site.webmanifest',
 					'/sitemap.xml'

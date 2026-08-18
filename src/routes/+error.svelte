@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
+	import { site } from '$lib/site';
 </script>
 
 <svelte:head>
-	<title>{page.status} — Sean Behan</title>
+	<title>{page.status} — {site.name}</title>
 </svelte:head>
 
 <section class="panel shell flex min-h-[55vh] flex-col justify-center py-20">

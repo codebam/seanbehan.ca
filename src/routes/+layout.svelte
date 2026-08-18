@@ -6,6 +6,7 @@
 	import { onNavigate } from '$app/navigation';
 	import { base, resolve } from '$app/paths';
 	import { site, absolute } from '$lib/site';
+	import type { BlogPost } from '$lib/types';
 	// app.css pulls in Tailwind, both fonts, and the light/dark token set.
 	import '../app.css';
 
@@ -64,6 +65,76 @@
 	 */
 	let canonical = $derived(absolute(page.url.pathname));
 
+	/**
+	 * Social metadata is resolved here rather than per page, because a page that
+	 * emitted its own og:title got two of them — svelte:head appends, it does
+	 * not replace what an ancestor layout already wrote. The post page passes
+	 * its metadata down through page data instead.
+	 */
+	let post = $derived(page.data?.post as BlogPost | undefined);
+	let metaDescription = $derived(post?.meta.description ?? post?.meta.title ?? site.description);
+	let ogImage = $derived(absolute(post?.meta.image ?? '/profile.webp'));
+
+	/**
+	 * Structured data. The home page describes the site and the person behind
+	 * it; a post describes itself as a BlogPosting. Everything else inherits the
+	 * WebSite node, which is what carries the name a search result shows.
+	 */
+	let jsonLd = $derived.by(() => {
+		const person = {
+			'@type': 'Person',
+			name: site.name,
+			url: site.url,
+			email: `mailto:${site.email}`,
+			image: absolute('/profile.webp'),
+			sameAs: ['https://github.com/codebam', 'https://mstdn.ca/@codebam']
+		};
+
+		const website = {
+			'@type': 'WebSite',
+			'@id': `${site.url}/#website`,
+			url: site.url,
+			name: site.name,
+			description: site.description,
+			inLanguage: 'en',
+			publisher: person
+		};
+
+		if (!post) {
+			return page.url.pathname === '/'
+				? { '@context': 'https://schema.org', '@graph': [website, person] }
+				: { '@context': 'https://schema.org', ...website };
+		}
+
+		return {
+			'@context': 'https://schema.org',
+			'@type': 'BlogPosting',
+			'@id': canonical,
+			mainEntityOfPage: canonical,
+			url: canonical,
+			headline: post.meta.title,
+			...(post.meta.description ? { description: post.meta.description } : {}),
+			datePublished: post.meta.date,
+			dateModified: post.meta.updated ?? post.meta.date,
+			...(post.meta.tags?.length ? { keywords: post.meta.tags.join(', ') } : {}),
+			...(post.meta.image ? { image: absolute(post.meta.image) } : {}),
+			inLanguage: 'en',
+			author: person,
+			publisher: person,
+			isPartOf: { '@id': `${site.url}/#website` }
+		};
+	});
+
+	// The closing tag is split so it does not end this component's own <script>
+	// block, and every `<` inside the JSON is escaped so no string in the data
+	// can close the element early.
+	let jsonLdScript = $derived(
+		`<script type="application/ld+json">` +
+			JSON.stringify(jsonLd).replace(/</g, '\\u003c') +
+			'<' +
+			'/script>'
+	);
+
 	/** Projects live in a section of the home page rather than a route of their own. */
 	const workHref = `${resolve('/')}#work`;
 
@@ -73,15 +144,29 @@
 </script>
 
 <svelte:head>
-	<meta name="description" content={site.description} />
-	<meta property="og:title" content={site.ogTitle} />
-	<meta property="og:description" content={site.ogDescription} />
-	<meta property="og:type" content="website" />
+	<meta name="description" content={metaDescription} />
+	<meta property="og:title" content={post ? post.meta.title : site.ogTitle} />
+	<meta property="og:description" content={post ? metaDescription : site.ogDescription} />
+	<meta property="og:type" content={post ? 'article' : 'website'} />
 	<meta property="og:url" content={canonical} />
-	<meta property="og:image" content={absolute('/profile.webp')} />
-	<meta property="og:image:alt" content={site.name} />
+	<meta property="og:site_name" content={site.name} />
+	<meta property="og:image" content={ogImage} />
+	<meta property="og:image:alt" content={post ? post.meta.title : site.name} />
 	<meta name="twitter:card" content="summary_large_image" />
-	<meta name="twitter:image" content={absolute('/profile.webp')} />
+	<meta name="twitter:image" content={ogImage} />
+	{#if post}
+		<meta property="article:author" content={site.name} />
+		<meta property="article:published_time" content={post.meta.date} />
+		<meta property="article:modified_time" content={post.meta.updated ?? post.meta.date} />
+		{#each post.meta.tags ?? [] as tag (tag)}
+			<meta property="article:tag" content={tag} />
+		{/each}
+	{/if}
+	<!-- Built above rather than written here: Svelte compiles a literal <script>
+	     in markup as a component script. Its hash is added to the page's CSP by
+	     tools/csp/hash-jsonld.mjs after the build. -->
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+	{@html jsonLdScript}
 	<link rel="canonical" href={canonical} />
 	<link rel="sitemap" type="application/xml" title="Sitemap" href="{base}/sitemap.xml" />
 	<link rel="alternate" type="application/rss+xml" title="RSS Feed" href="{base}/rss.xml" />

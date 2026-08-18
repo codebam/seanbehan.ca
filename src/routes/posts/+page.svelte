@@ -1,13 +1,15 @@
 <script lang="ts">
 	import Posts from '$lib/components/Posts.svelte';
+	import { resolve } from '$app/paths';
 	import { reveal } from '$lib/actions/reveal';
+	import { site } from '$lib/site';
 	import type { PostsPageData } from '$lib/types';
 
 	const { data }: { data: PostsPageData } = $props();
 </script>
 
 <svelte:head>
-	<title>Writing — Sean Behan</title>
+	<title>Writing — {site.name}</title>
 	<meta name="description" content="Posts on Linux, NixOS, Rust, and Cloudflare Workers." />
 </svelte:head>
 
@@ -20,6 +22,12 @@
 		>
 			Notes from whatever I am taking apart — Linux and NixOS, containers and systemd, Rust, and the
 			edge.
+		</p>
+
+		<!-- The tag index used to be reachable only from an individual tag page,
+		     which left it orphaned from the one page a reader starts on. -->
+		<p class="enter link-accent mt-6" style="--enter-delay:120ms">
+			<a href={resolve('/posts/tags')} class="hover:underline">Browse by tag &rarr;</a>
 		</p>
 
 		<div class="mt-12" use:reveal>

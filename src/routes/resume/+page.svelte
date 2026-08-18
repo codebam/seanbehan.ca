@@ -1,10 +1,12 @@
 <script lang="ts">
+	import { site } from '$lib/site';
+
 	const RESUME_URL = 'https://pub-b1fc9705d9cd4b50885284c3ede52d27.r2.dev/resume.pdf';
 </script>
 
 <svelte:head>
-	<title>Résumé — Sean Behan</title>
-	<meta name="description" content="Résumé for Sean Behan, full-stack developer." />
+	<title>Résumé — {site.name}</title>
+	<meta name="description" content="Résumé for {site.name}, full-stack developer." />
 </svelte:head>
 
 <section class="panel shell pt-14 pb-20 md:pt-16">
@@ -33,7 +35,7 @@
 	<object
 		data={RESUME_URL}
 		type="application/pdf"
-		title="Sean Behan résumé"
+		title="{site.name} résumé"
 		class="mt-10 aspect-[8.5/11] w-full rounded border border-[var(--line)] bg-[var(--panel)]"
 	>
 		<div class="p-8 text-[var(--body)]">

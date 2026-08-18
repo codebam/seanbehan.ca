@@ -5,6 +5,13 @@ export interface PostMeta {
 	draft: boolean;
 	description?: string;
 	author?: string;
+	/** ISO date of the last substantive edit, for `article:modified_time`. */
+	updated?: string;
+	/**
+	 * Social card for this post, as a site-absolute path. Posts without one
+	 * fall back to the site's own card, which is the author photo.
+	 */
+	image?: string;
 }
 
 export interface Post {

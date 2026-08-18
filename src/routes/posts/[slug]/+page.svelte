@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { site } from '$lib/site';
 	import { slugifyTag } from '$lib/tags';
 	import type { PostPageData } from '$lib/types';
 
@@ -15,13 +16,11 @@
 	);
 </script>
 
+<!-- Description, og:*, article:* and the BlogPosting JSON-LD all come from the
+     layout, which reads this page's `post` out of page data — emitting them
+     here as well produced two of each tag. -->
 <svelte:head>
-	<title>{meta.title} — Sean Behan</title>
-	<meta name="description" content={meta.description ?? meta.title} />
-	<meta property="og:title" content={meta.title} />
-	<meta property="og:description" content={meta.description ?? meta.title} />
-	<meta property="og:type" content="article" />
-	<meta property="article:published_time" content={meta.date} />
+	<title>{meta.title} — {site.name}</title>
 </svelte:head>
 
 <!-- Reading progress: a 2px accent strip across the top of the viewport, driven

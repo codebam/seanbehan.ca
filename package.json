@@ -5,8 +5,8 @@
 	"type": "module",
 	"scripts": {
 		"dev": "NODE_ENV=development vite dev",
-		"build": "vite build",
-		"build:codebam": "PUBLIC_SITE=codebam vite build",
+		"build": "vite build && node tools/csp/hash-jsonld.mjs",
+		"build:codebam": "PUBLIC_SITE=codebam vite build && node tools/csp/hash-jsonld.mjs",
 		"preview": "npm run build && wrangler pages dev",
 		"prepare": "svelte-kit sync || echo ''; git config core.hooksPath .githooks || true",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
