@@ -1,10 +1,37 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import PostList from '$lib/components/PostList.svelte';
 	import { site } from '$lib/site';
 	import { slugifyTag } from '$lib/tags';
-	import type { PostPageData } from '$lib/types';
+	import type { Post, PostPageData } from '$lib/types';
 
-	const { data }: { data: { post: PostPageData['post'] } } = $props();
+	const {
+		data
+	}: {
+		data: {
+			post: PostPageData['post'];
+			newer: Post | null;
+			older: Post | null;
+			related: Post[];
+		};
+	} = $props();
+
+	const slugOf = (post: Post) => post.path.split('/').pop() ?? '';
+
+	/**
+	 * The contents list, shown only where it earns the space. Four sections is
+	 * the point where a post stops being scannable in one screen — below that
+	 * the list is longer than the scroll it saves.
+	 */
+	const TOC_MIN_SECTIONS = 4;
+	let headings = $derived(data.post.headings ?? []);
+	let toc = $derived(headings.length >= TOC_MIN_SECTIONS ? headings : []);
+	/**
+	 * Indentation is relative, not absolute: most posts here head their sections
+	 * with `###` and never use `##` at all, and those lists would otherwise be
+	 * indented in their entirety with nothing to sit under.
+	 */
+	let topLevel = $derived(Math.min(...headings.map((h) => h.level), 3));
 
 	let meta = $derived(data.post.meta);
 	let published = $derived(
@@ -65,20 +92,131 @@
 			</p>
 		</header>
 
+		{#if toc.length}
+			<!-- Only on a post long enough to need it: a contents list above three
+			     sections is a second copy of what the reader can already see. -->
+			<nav
+				class="enter toc mt-12 max-w-[68ch]"
+				style="--enter-delay:40ms"
+				aria-label="On this page"
+			>
+				<p class="eyebrow">On this page</p>
+				<ol class="mt-4">
+					{#each toc as heading (heading.id)}
+						<li class:sub={heading.level > topLevel}>
+							<a href="#{heading.id}">{heading.text}</a>
+						</li>
+					{/each}
+				</ol>
+			</nav>
+		{/if}
+
 		<div class="enter prose mt-12 max-w-[68ch] text-[1.05rem]" style="--enter-delay:60ms">
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 			{@html data.post.html}
 		</div>
 
+		{#if data.related.length}
+			<!-- Suggested by shared tags, not by recency: a reader who finished this
+			     one is looking for more of the same subject, which is exactly what
+			     the sibling links below cannot offer. -->
+			<aside class="mt-16 border-t border-[var(--line)] pt-8">
+				<h2 class="eyebrow">Related</h2>
+				<div class="mt-6">
+					<PostList posts={data.related} columns={2} headingLevel={3} />
+				</div>
+			</aside>
+		{/if}
+
 		<footer class="mt-16 border-t border-[var(--line)] pt-6 text-sm">
-			<a href={resolve('/posts')} class="link-accent back"
-				><span class="arrow">&larr;</span> All posts</a
+			<!-- The archive is newest first, so the older post is the one further
+			     down it — labelled by direction in time rather than by list order,
+			     which is what a reader is actually choosing between. -->
+			<nav
+				class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between"
+				aria-label="More posts"
 			>
+				{#if data.older}
+					<a
+						href={resolve('/posts/[slug]', { slug: slugOf(data.older) })}
+						class="sibling older max-w-[26ch]"
+					>
+						<span class="eyebrow"><span class="arrow">&larr;</span> Older</span>
+						<span class="title">{data.older.meta.title}</span>
+					</a>
+				{/if}
+				{#if data.newer}
+					<a
+						href={resolve('/posts/[slug]', { slug: slugOf(data.newer) })}
+						class="sibling newer max-w-[26ch] sm:ml-auto sm:text-right"
+					>
+						<span class="eyebrow">Newer <span class="arrow">&rarr;</span></span>
+						<span class="title">{data.newer.meta.title}</span>
+					</a>
+				{/if}
+			</nav>
+
+			<p class="mt-10">
+				<a href={resolve('/posts')} class="link-accent back"
+					><span class="arrow">&larr;</span> All posts</a
+				>
+			</p>
 		</footer>
 	</div>
 </article>
 
 <style>
+	/* The contents list is a quiet block, not a sidebar: the site has one column
+	   and a floating rail would fight the reading measure. */
+	.toc ol {
+		list-style: none;
+		display: flex;
+		flex-direction: column;
+		gap: 0.55rem;
+		border-left: 2px solid var(--line);
+		padding-left: 1.1rem;
+	}
+	.toc li.sub {
+		padding-left: 1.1rem;
+		font-size: 0.95rem;
+	}
+	.toc a {
+		color: var(--body);
+		transition: color 0.2s ease;
+	}
+	.toc a:hover,
+	.toc a:focus-visible {
+		color: var(--accent);
+	}
+
+	/* A sibling link is a two-line block, so the hover lands on the title rather
+	   than the whole thing: the label above it is a direction, not a name. */
+	.sibling {
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+	}
+	.sibling .title {
+		font-size: 1.05rem;
+		color: var(--text);
+		transition: color 0.25s ease;
+	}
+	.sibling:hover .title,
+	.sibling:focus-visible .title {
+		color: var(--accent);
+	}
+	/* Each arrow nudges the way its link travels. Keyed on the class rather than
+	   position, because a post at either end of the archive has only one of the
+	   two links and it would otherwise be nudged as though it were the other. */
+	.sibling.newer:hover :global(.arrow),
+	.sibling.newer:focus-visible :global(.arrow) {
+		transform: translateX(3px);
+	}
+	.sibling.older:hover :global(.arrow),
+	.sibling.older:focus-visible :global(.arrow) {
+		transform: translateX(-3px);
+	}
+
 	/* The back arrow travels the other way, so its nudge has to as well. */
 	.back:hover :global(.arrow),
 	.back:focus-visible :global(.arrow) {

@@ -28,34 +28,48 @@ fixed in the same pass; the rest are still open.
    to what the layout already wrote rather than replacing it, so every post
    shipped two of each.
 
-4. **partly done** — Every post shared the profile photo as its `og:image`.
-   Posts can now declare `image:` in frontmatter, and the post page emits
-   `og:image`/`og:url`/`twitter:*` explicitly instead of inheriting. Still
-   open: generating a per-post OG card at build time so posts without an image
-   get something better than the profile photo.
+4. **done** — Every post shared the profile photo as its `og:image`, so every
+   link to the site looked the same in a timeline. `tools/og/build-cards.mjs`
+   now draws a card per post at build time (satori for layout from bundled font
+   buffers, sharp to rasterize) into the gitignored `static/og`. A post can
+   still opt out by naming its own `image:` in frontmatter.
 5. **done** — Post pages had `article:published_time` but no
    `article:modified_time` (from an optional `updated:` frontmatter field) and
    no `article:tag`.
 6. **done** — `/posts/tags` was linked only from an individual tag page, so the
    tag index was orphaned from the writing index. Linked from `/posts` now.
 
-## UX (open)
+## UX
 
-7. No previous/next post navigation in the post footer — a reader reaching the
-   end of a post has only "All posts".
-8. No related posts by shared tag, though the tag data is already computed in
-   `src/lib/getPosts.ts`.
-9. Search state lives only in the component: no `?q=` deep link, so a query is
-   lost on back-navigation and cannot be shared.
-10. No heading anchors or table of contents on long posts (btrfs, nixos).
+7. **done** — A post footer offered only "All posts". It now links the post
+   either side of it in the archive, labelled older/newer rather than by
+   position in the list.
+8. **done** — A "Related" block above that footer, chosen by shared tags and
+   ranked by how many are shared. A post that shares no tags gets no block:
+   an unrelated suggestion is worse than none.
+9. **done** — The search query lives in the URL as `?q=`, written on the
+   debounced value with `replaceState` so a search takes one history entry
+   rather than one per keystroke.
+10. **done** — h2 and h3 in a post body get an id and a self-link (a `#` in the
+    margin on hover), and a post with four or more sections gets a contents
+    list under its header. Indentation is relative to the shallowest heading
+    the post actually uses, since most posts here start sections at `###`.
 
-## Performance / infrastructure (open)
+## Performance / infrastructure
 
-11. `_headers` gives fonts and raster art 30 days, but the SvelteKit bundles
-    under `/_app/immutable/*` fall through to the blanket
-    `max-age=0, must-revalidate`. Those filenames are content-hashed, so they
-    are the one place `max-age=31536000, immutable` is exactly right — today
-    every visit revalidates them.
-12. The service worker precaches all of `build` + `files`, which includes both
-    profile images and the whole favicon set. Trim to what is actually needed
-    offline.
+11. **done** — `/_app/immutable/*` gets `max-age=31536000, immutable`; it was
+    falling through to the blanket `max-age=0, must-revalidate` even though
+    those filenames are content-hashed.
+12. **done** — The service worker precached all of `build` + `files` — both
+    profile images, every favicon, the post screenshots. The install list is
+    the offline shell now (bundles, fonts, avatar); everything else enters the
+    cache when it is first fetched.
+
+## Still open
+
+- A generated card is one layout for every post. A post can name its own
+  `image:`, but nothing yet renders a card that varies by tag or series.
+- The `_routes.json` exclude list grows by one rule per post, because each post
+  now ships a card in `static/`. Cloudflare's limit is 100 rules and the list
+  is at 58; the adapter starts dropping rules silently past that, so the site
+  would quietly go back to being served by the Worker.

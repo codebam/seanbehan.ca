@@ -14,6 +14,15 @@ export interface PostMeta {
 	image?: string;
 }
 
+/** One linkable section heading within a post body. */
+export interface Heading {
+	/** The id on the heading element, and the fragment that reaches it. */
+	id: string;
+	text: string;
+	/** 2 for a section, 3 for a subsection. Nothing deeper is listed. */
+	level: 2 | 3;
+}
+
 export interface Post {
 	path: string;
 	meta: PostMeta;
@@ -27,6 +36,8 @@ export interface Post {
 
 export interface BlogPost extends Post {
 	html: string;
+	/** Section headings, in document order. Empty for a post with none. */
+	headings?: Heading[];
 }
 
 export interface SearchResult {

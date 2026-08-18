@@ -30,3 +30,7 @@ vite.config.ts.timestamp-*
 # Local git worktrees. One was once committed as a bare gitlink with no
 # .gitmodules entry, which made every fresh clone fail on `git submodule`.
 .worktrees/
+
+# Social cards, generated per build from the post frontmatter
+# (tools/og/build-cards.mjs).
+static/og/

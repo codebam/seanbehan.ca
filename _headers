@@ -6,12 +6,28 @@
   Permissions-Policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), hid=(), idle-detection=(), magnetometer=(), microphone=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), serial=(), usb=(), web-share=(), xr-spatial-tracking=()
   Cache-Control: public, max-age=0, s-maxage=600, must-revalidate
 
+# The one place `immutable` is exactly right: Vite content-hashes these
+# filenames, so a changed file is a changed URL and the cached copy can never
+# go stale. Everything else on the site has a stable filename, which is why it
+# gets a month rather than a year. Without this rule the bundles fell through
+# to the blanket revalidation above and cost a conditional request each per
+# visit.
+/_app/immutable/*
+  ! Cache-Control
+  Cache-Control: public, max-age=31536000, immutable
+
 # Fonts and raster art are byte-stable between deploys, so the blanket
 # revalidation above buys nothing and costs a conditional request per file per
 # visit. A month of caching, not a year with `immutable`, because the filenames
 # are stable rather than content-hashed — a rebuilt font reaches readers within
 # 30 days instead of never.
 /fonts/*
+  ! Cache-Control
+  Cache-Control: public, max-age=2592000
+
+# Social cards are regenerated on every build but only ever fetched by a
+# scraper, which re-reads them when the page changes rather than on a schedule.
+/og/*
   ! Cache-Control
   Cache-Control: public, max-age=2592000
 

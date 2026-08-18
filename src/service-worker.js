@@ -1,6 +1,20 @@
 /// <reference types="@sveltejs/kit" />
 import { build, files, version } from '$service-worker';
 
+/**
+ * What gets installed up front.
+ *
+ * `files` is everything in static/, which includes the whole favicon set, both
+ * profile images, the PGP key and the screenshots a couple of posts embed —
+ * hundreds of kilobytes a reader is made to download before they have asked
+ * for any of it, on the one visit where the browser has the most else to do.
+ * The install list is now the offline shell only: the app bundles, the fonts,
+ * and the avatar in the byline. Everything else still enters the cache the
+ * first time it is actually fetched, via the handler below.
+ */
+const PRECACHE_STATIC = /^\/(fonts\/|avatar\.webp$|favicon\.svg$)/;
+const precache = [...build, ...files.filter((path) => PRECACHE_STATIC.test(path))];
+
 const CACHE_CONFIG = {
 	version: version,
 	timeout: 10000,
@@ -64,7 +78,7 @@ self.addEventListener('install', (event) => {
 		(async () => {
 			try {
 				// CacheManager.addAssets opens the cache itself.
-				await CacheManager.addAssets([...build, ...files]);
+				await CacheManager.addAssets(precache);
 				await self.skipWaiting();
 			} catch (error) {
 				console.error('[Service Worker] Installation failed:', error);
@@ -120,8 +134,10 @@ self.addEventListener('fetch', (event) => {
 			}
 
 			// Static asset handling — build/files paths are content-hashed or
-			// versioned, so cache-first is safe.
-			if ([...build, ...files].includes(url.pathname)) {
+			// versioned, so cache-first is safe. Checked against the full list, not
+			// the install list: an asset that was fetched on demand is just as safe
+			// to serve from cache as one that was precached.
+			if (build.includes(url.pathname) || files.includes(url.pathname)) {
 				const cachedResponse = await cache.match(url.pathname);
 				if (cachedResponse) {
 					if (CACHE_CONFIG.debug)

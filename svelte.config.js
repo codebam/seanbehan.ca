@@ -86,6 +86,11 @@ const config = {
 		// Anything genuinely dynamic must NOT be listed: an excluded path never
 		// reaches the Worker. A future server route under /posts would need the
 		// wildcard below narrowed to match.
+		//
+		// Watch the count: `<files>` expands to one rule per file in static/, and
+		// static/og now holds a generated social card per post, so each new post
+		// costs a rule. The build log says "Dropping N exclude rules" if the list
+		// ever passes Cloudflare's 100.
 		adapter: adapter({
 			routes: {
 				include: ['/*'],

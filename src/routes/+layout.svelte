@@ -73,7 +73,14 @@
 	 */
 	let post = $derived(page.data?.post as BlogPost | undefined);
 	let metaDescription = $derived(post?.meta.description ?? post?.meta.title ?? site.description);
-	let ogImage = $derived(absolute(post?.meta.image ?? '/profile.webp'));
+	/**
+	 * A post gets the card generated for it at build time (tools/og), unless it
+	 * names an image of its own. Everything else gets the author photo, which is
+	 * the right picture for the site itself and the wrong one for an article.
+	 */
+	let ogImage = $derived(
+		absolute(post ? (post.meta.image ?? `/og/${post.path.split('/').pop()}.png`) : '/profile.webp')
+	);
 
 	/**
 	 * Structured data. The home page describes the site and the person behind
@@ -117,7 +124,7 @@
 			datePublished: post.meta.date,
 			dateModified: post.meta.updated ?? post.meta.date,
 			...(post.meta.tags?.length ? { keywords: post.meta.tags.join(', ') } : {}),
-			...(post.meta.image ? { image: absolute(post.meta.image) } : {}),
+			image: ogImage,
 			inLanguage: 'en',
 			author: person,
 			publisher: person,
@@ -152,6 +159,12 @@
 	<meta property="og:site_name" content={site.name} />
 	<meta property="og:image" content={ogImage} />
 	<meta property="og:image:alt" content={post ? post.meta.title : site.name} />
+	{#if post}
+		<!-- The generated cards are all 1200×630; declaring it lets a scraper lay
+		     the preview out before it has fetched the image. -->
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+	{/if}
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:image" content={ogImage} />
 	{#if post}

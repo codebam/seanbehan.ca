@@ -454,6 +454,39 @@
 	letter-spacing: -0.015em;
 }
 
+/* Section headings are wrapped in a link to themselves, so a reader can copy
+   the URL of a section. It must not read as a link: the colour and weight stay
+   the heading's, and only the ¶ mark in the margin appears — on hover, on
+   keyboard focus, and always on touch, where there is no hover to reveal it. */
+.prose :where(h2, h3) > .heading-anchor {
+	color: inherit;
+	text-decoration: none;
+	font-weight: inherit;
+	position: relative;
+}
+.prose :where(h2, h3) > .heading-anchor::before {
+	content: '#';
+	position: absolute;
+	left: -0.85em;
+	color: var(--accent);
+	opacity: 0;
+	transition: opacity 0.2s ease;
+}
+.prose :where(h2, h3):hover > .heading-anchor::before,
+.prose :where(h2, h3) > .heading-anchor:focus-visible::before {
+	opacity: 1;
+}
+@media (hover: none) {
+	.prose :where(h2, h3) > .heading-anchor::before {
+		content: none;
+	}
+}
+/* Landing on an anchor should not put the heading under the top edge — or
+   under the reading-progress strip. */
+.prose :where(h2, h3)[id] {
+	scroll-margin-top: 1.5rem;
+}
+
 .prose :where(code):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
 	font-family: var(--font-mono);
 	font-size: 0.85em;
