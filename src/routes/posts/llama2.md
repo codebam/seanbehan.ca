@@ -2,6 +2,10 @@
 title: 'Using Llama2 on Cloudflare Workers'
 description: 'Wiring Workers AI into a Telegram bot: the AI binding, the model call, and getting a reply back.'
 date: 2023-10-12T14:21:27-04:00
+tags:
+  - typescript
+  - cloudflare
+  - serverless
 draft: false
 ---
 

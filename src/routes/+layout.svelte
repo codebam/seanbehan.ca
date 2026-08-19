@@ -79,11 +79,12 @@
 	let ogTitle = $derived(post ? post.meta.title : (page.data.ogTitle ?? site.ogTitle));
 	/**
 	 * A post gets the card generated for it at build time (tools/og), unless it
-	 * names an image of its own. Everything else gets the author photo, which is
-	 * the right picture for the site itself and the wrong one for an article.
+	 * names an image of its own. Everything else — home, contact, the archive —
+	 * uses the site card, not the author photo: a 460px headshot is the wrong
+	 * aspect for a large-image preview.
 	 */
 	let ogImage = $derived(
-		absolute(post ? (post.meta.image ?? `/og/${post.path.split('/').pop()}.png`) : '/profile.webp')
+		absolute(post ? (post.meta.image ?? `/og/${post.path.split('/').pop()}.png`) : '/og/site.png')
 	);
 
 	/**
@@ -167,12 +168,9 @@
 	<meta property="og:locale" content="en_CA" />
 	<meta property="og:image" content={ogImage} />
 	<meta property="og:image:alt" content={post ? post.meta.title : site.name} />
-	{#if post}
-		<!-- The generated cards are all 1200×630; declaring it lets a scraper lay
-		     the preview out before it has fetched the image. -->
-		<meta property="og:image:width" content="1200" />
-		<meta property="og:image:height" content="630" />
-	{/if}
+	<!-- Generated cards are all 1200×630, including the site card. -->
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content={ogTitle} />
 	<meta

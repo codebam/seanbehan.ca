@@ -69,9 +69,7 @@ const config = {
 	preprocess: [vitePreprocess({}), mdsvex(mdsvexOptions)],
 
 	kit: {
-		// adapter-auto only supports some environments, see https://svelte.dev/docs/kit/adapter-auto for a list.
-		// If your environment is not supported, or you settled on a specific environment, switch out the adapter.
-		// See https://svelte.dev/docs/kit/adapters for more information about adapters.
+		// Cloudflare Pages. See https://svelte.dev/docs/kit/adapters.
 		// The adapter's default exclude list names every prerendered page one by
 		// one, which for a site with 50 posts overflows Cloudflare's 100-rule
 		// limit on _routes.json. The adapter then drops the overflow — "Dropping
@@ -81,22 +79,32 @@ const config = {
 		// `cf-cache-status: DYNAMIC` no matter what Cache Rule the zone carried.
 		//
 		// Wildcards say the same thing in a handful of rules. `<build>` covers
-		// /_app, `<files>` covers static/. Everything else here is prerendered.
+		// /_app. Static files are named by directory / extension below rather
+		// than `<files>`, which expands to one rule per file.
 		//
 		// Anything genuinely dynamic must NOT be listed: an excluded path never
 		// reaches the Worker. A future server route under /posts would need the
 		// wildcard below narrowed to match.
 		//
-		// Watch the count: `<files>` expands to one rule per file in static/, and
-		// static/og now holds a generated social card per post, so each new post
-		// costs a rule. The build log says "Dropping N exclude rules" if the list
-		// ever passes Cloudflare's 100.
+		// Do not use `<files>`: it expands to one rule per file in static/, and
+		// static/og holds a generated card per post. Past Cloudflare's 100 the
+		// adapter drops excludes silently and HTML is served by the Worker.
+		// Directory / extension wildcards stay a fixed handful of rules.
 		adapter: adapter({
 			routes: {
 				include: ['/*'],
 				exclude: [
 					'<build>',
-					'<files>',
+					'/og/*',
+					'/img/*',
+					'/fonts/*',
+					'/*.png',
+					'/*.webp',
+					'/*.svg',
+					'/*.ico',
+					'/ads.txt',
+					'/publickey.txt',
+					'/service-worker.js',
 					'/',
 					'/__data.json',
 					'/contact',
@@ -105,7 +113,7 @@ const config = {
 					'/posts/*',
 					'/resume',
 					// Generated from the site config rather than kept in static/, so it
-					// no longer falls under <files> and needs naming here.
+					// no longer falls under a static-file wildcard.
 					'/robots.txt',
 					'/.well-known/security.txt',
 					'/rss.xml',

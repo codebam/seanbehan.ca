@@ -65,3 +65,17 @@ describe('built site Content-Security-Policy', () => {
 		}
 	);
 });
+
+describe('built _routes.json', () => {
+	it('stays well under Cloudflare’s 100-rule exclude limit', () => {
+		const file = resolve('.svelte-kit/cloudflare/_routes.json');
+		expect(existsSync(file), '_routes.json missing — run the build first').toBe(true);
+		const routes = JSON.parse(readFileSync(file, 'utf8')) as { exclude: string[] };
+		// `<files>` used to expand to one rule per static file (24 OG cards and
+		// counting). Wildcards keep this a fixed handful; 60 is the tripwire
+		// before Cloudflare starts dropping excludes silently.
+		expect(routes.exclude.length).toBeLessThan(60);
+		expect(routes.exclude).toContain('/og/*');
+		expect(routes.exclude.some((rule) => rule.startsWith('/og/') && rule !== '/og/*')).toBe(false);
+	});
+});

@@ -160,8 +160,19 @@ const card = (post) => ({
 const fonts = await loadFonts();
 await mkdir(OUT_DIR, { recursive: true });
 
+const writeCard = async (name, payload) => {
+	const svg = await satori(card(payload), { width: WIDTH, height: HEIGHT, fonts });
+	await sharp(Buffer.from(svg)).png({ compressionLevel: 9 }).toFile(join(OUT_DIR, name));
+};
+
+await writeCard('site.png', {
+	title: site.ogTitle,
+	tagLine: site.ogDescription,
+	host: site.url.replace(/^https?:\/\//, '')
+});
+
 const sources = (await readdir(POSTS_DIR)).filter((name) => name.endsWith('.md'));
-let written = 0;
+let written = 1;
 
 for (const name of sources) {
 	const slug = basename(name, '.md');
@@ -176,18 +187,11 @@ for (const name of sources) {
 	// A post that names its own image opts out of the generated one.
 	if (meta.image) continue;
 
-	const svg = await satori(
-		card({
-			title: meta.title,
-			tagLine: meta.tags.slice(0, 3).join(' · '),
-			host: site.url.replace(/^https?:\/\//, '')
-		}),
-		{ width: WIDTH, height: HEIGHT, fonts }
-	);
-
-	await sharp(Buffer.from(svg))
-		.png({ compressionLevel: 9 })
-		.toFile(join(OUT_DIR, `${slug}.png`));
+	await writeCard(`${slug}.png`, {
+		title: meta.title,
+		tagLine: meta.tags.slice(0, 3).join(' · '),
+		host: site.url.replace(/^https?:\/\//, '')
+	});
 	written++;
 }
 

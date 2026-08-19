@@ -81,4 +81,11 @@ describe('built page metadata', () => {
 		const html = readFileSync(file, 'utf8');
 		expect(html).toContain('name="robots" content="noindex, nofollow"');
 	});
+
+	it('points non-post pages at the generated site card, not the author photo', () => {
+		const html = readFileSync(resolve('.svelte-kit/cloudflare/index.html'), 'utf8');
+		expect(html).toContain('property="og:image" content="https://seanbehan.ca/og/site.png"');
+		expect(html).toContain('property="og:image:width" content="1200"');
+		expect(existsSync(resolve('.svelte-kit/cloudflare/og/site.png'))).toBe(true);
+	});
 });

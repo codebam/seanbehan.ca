@@ -2,6 +2,11 @@
 	import { site } from '$lib/site';
 
 	const RESUME_URL = 'https://pub-b1fc9705d9cd4b50885284c3ede52d27.r2.dev/resume.pdf';
+
+	const CAREER_START = Date.UTC(2014, 0, 1);
+	const MS_PER_YEAR = 365.2425 * 24 * 60 * 60 * 1000;
+	let yearsBuilding = $derived(Math.floor((Date.now() - CAREER_START) / MS_PER_YEAR));
+	let intro = $derived(site.intro.replace('{years}', String(yearsBuilding)));
 </script>
 
 <svelte:head>
@@ -27,6 +32,24 @@
 			rel="noopener noreferrer">GitHub</a
 		>
 	</p>
+
+	<div class="enter mt-10 max-w-[68ch] text-[1.05rem] leading-relaxed text-[var(--body)]">
+		<p>
+			Full-stack developer in Ontario. {intro}
+		</p>
+		<ul class="mt-5 list-disc space-y-2 pl-5">
+			<li>Rust, TypeScript, NixOS. Daily-driver Linux, Cloudflare Workers at the edge.</li>
+			<li>
+				Open source: a Wayland compositor (Viewport), a Telegram bot framework on Workers, an
+				encrypted pastebin.
+			</li>
+			<li>Writing on Linux, containers, NixOS, and building software that ships.</li>
+		</ul>
+		<p class="mt-5 text-sm text-[var(--muted)]">
+			The PDF below is the formatted résumé. This summary is here for search and for browsers that
+			will not render the object.
+		</p>
+	</div>
 
 	<!-- Fixed 8.5×11 ratio so the embed never letterboxes, and it is a plain
 	     <object> rather than <embed> so the fallback link actually renders on

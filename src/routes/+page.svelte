@@ -50,8 +50,8 @@
 		     which leaves the headline the full column width. -->
 		<div class="enter flex items-center gap-3.5">
 			<!-- avatar.webp is the 2x crop of profile.webp at the size this actually
-			     renders (1.4 kB against 13 kB). profile.webp stays as the og:image,
-			     where the full 460px is the point. -->
+			     renders (1.4 kB against 13 kB). The full 460px profile.webp is the
+			     contact photo and the Person image in JSON-LD. -->
 			<img
 				src="/avatar.webp"
 				alt={site.name}

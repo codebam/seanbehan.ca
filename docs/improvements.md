@@ -114,31 +114,28 @@ swap` changes letterforms without moving the line.
     variant. Gated on `showResume`.
 27. **done** — Per-tag RSS inherited the HTML revalidation Cache-Control.
     `_headers` now carves `/posts/tag/*/rss.xml` the same way as `/rss.xml`.
+28. **done** — `_routes.json` no longer expands `<files>` into one rule per
+    static file. Directory / extension wildcards keep the exclude list a
+    fixed handful; `security.test.ts` asserts it stays under 60 and that
+    `/og/*` is one rule.
+29. **done** — Home / contact / archive use `/og/site.png` (1200×630) instead
+    of the 460px author photo.
+30. **done** — `llama2.md` tagged typescript / cloudflare / serverless.
+31. **done** — HSTS in `_headers` and hooks is now
+    `max-age=63072000; includeSubDomains; preload`. Cloudflare may still
+    emit its own 180-day header in front.
+32. **done** — Résumé page has an HTML summary above the PDF object.
+33. **done** — Dropped unused `@sveltejs/adapter-auto` and
+    `@sveltejs/enhanced-img`. `@fontsource-variable/*` stays: the font
+    rebuild scripts read those packages.
 
 ## Still open
 
 - A generated card is one layout for every post. A post can name its own
   `image:`, but nothing yet renders a card that varies by tag or series.
-- The `_routes.json` exclude list grows by one rule per post, because each post
-  now ships a card in `static/`. Cloudflare's limit is 100 rules and the list
-  is at 59; the adapter starts dropping rules silently past that, so the site
-  would quietly go back to being served by the Worker.
-- The résumé PDF is embedded from R2 with no text alternative on the page, so
-  its content is invisible to search and to a reader whose browser will not
-  render the object.
 - `seanbehan.ca/.well-known/security.txt` in production is still the old
-  two-line file (`codebam@riseup.net`, expires 2030). The route in this repo
-  is the RFC 9116 version; production has not picked it up. Worth checking
-  whether an older static copy is winning on that host.
-- Unused deps still in package.json: `@sveltejs/adapter-auto`,
-  `@sveltejs/enhanced-img` (plugin registered, no `<enhanced:img>` in the
-  tree), `@fontsource-variable/*` (fonts are served from `static/fonts`; only
-  the static `@fontsource/*` packages are used by OG cards).
-- `llama2.md` has no tags, so it never appears on a tag page.
-- Home/contact `og:image` is still the author photo at native size, with no
-  1200×630 card the way posts have.
-- HSTS in `_headers` is `max-age=63072000` without `includeSubDomains; preload`.
-  Production currently serves Cloudflare's own
-  `max-age=15552000; includeSubDomains; preload` (180 days). Aligning the
-  repo value with the preload list requirement is a zone + header decision,
-  not a silent edit.
+  two-line file (`codebam@riseup.net`, expires 2030). codebam.ca serves
+  the RFC 9116 route from this repo. The seanbehan response has no
+  Pages headers (`x-frame-options`, `cf-cache-status`) so something in
+  front of Pages — a Cloudflare redirect or a leftover Worker — is
+  answering that path. Not fixable from this checkout.
