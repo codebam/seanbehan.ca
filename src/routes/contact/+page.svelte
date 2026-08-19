@@ -50,11 +50,12 @@
 
 <svelte:head>
 	<title>Contact — {site.name}</title>
-	<meta name="description" content="Get in touch with {site.name} — email, GitHub, Mastodon." />
 </svelte:head>
 
 <section class="panel shell pt-14 pb-20 md:pt-16">
-	<p class="enter eyebrow">Open to work &middot; Ontario, Canada</p>
+	<p class="enter eyebrow">
+		{site.showResume ? 'Open to work · Ontario, Canada' : 'Ontario, Canada'}
+	</p>
 
 	<h1 class="enter display display-xl mt-5 max-w-[18ch]" style="--enter-delay:0ms">
 		Say <em>hello</em>.
@@ -65,8 +66,13 @@
 		style="--enter-delay:80ms"
 	>
 		<p class="max-w-[52ch] text-[1.05rem] leading-relaxed text-[var(--body)]">
-			Email is the surest way to reach me. If you are hiring, contracting, or want to talk about
-			something I built, say what you need and I will get back to you.
+			{#if site.showResume}
+				Email is the surest way to reach me. If you are hiring, contracting, or want to talk about
+				something I built, say what you need and I will get back to you.
+			{:else}
+				Email is the surest way to reach me. Issues and pull requests go to GitHub; everything else
+				can come here.
+			{/if}
 		</p>
 		<img
 			src="/profile.webp"

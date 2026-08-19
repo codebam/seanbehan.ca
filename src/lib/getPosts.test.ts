@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import getPosts, { getAllTags, getPostsByTag } from './getPosts';
-import { slugifyTag } from './tags';
+import { displayTag, slugifyTag } from './tags';
 
 describe('getPosts', () => {
 	it('should return an array of posts', async () => {
@@ -49,6 +49,14 @@ describe('slugifyTag', () => {
 	});
 });
 
+describe('displayTag', () => {
+	it('titles known proper nouns and leaves unknown tags alone', () => {
+		expect(displayTag('nixos')).toBe('NixOS');
+		expect(displayTag('Secure Boot')).toBe('Secure Boot');
+		expect(displayTag('advice')).toBe('advice');
+	});
+});
+
 describe('getAllTags', () => {
 	it('returns distinct tags with a slug and a positive count', async () => {
 		const tags = await getAllTags();
@@ -58,6 +66,7 @@ describe('getAllTags', () => {
 			expect(t.count).toBeGreaterThan(0);
 			expect(t.slug).toBe(t.slug.toLowerCase());
 		});
+		expect(tags.find((t) => t.slug === 'nixos')?.tag).toBe('NixOS');
 	});
 
 	it('sorts most-tagged first', async () => {

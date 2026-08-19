@@ -39,7 +39,9 @@ const render = (posts: Post[], tags: TagInfo[]) => {
 ${staticPaths()
 	.map((path) => entry(path, now))
 	.join('\n')}
-${posts.map((post) => entry(post.path, new Date(post.meta.date).toISOString())).join('\n')}
+${posts
+	.map((post) => entry(post.path, new Date(post.meta.updated ?? post.meta.date).toISOString()))
+	.join('\n')}
 ${tagPages.map((path) => entry(path, now)).join('\n')}
 </urlset>`;
 };

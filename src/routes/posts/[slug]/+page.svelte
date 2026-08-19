@@ -13,6 +13,7 @@
 			newer: Post | null;
 			older: Post | null;
 			related: Post[];
+			publishedTagSlugs: string[];
 		};
 	} = $props();
 
@@ -82,10 +83,14 @@
 					<span class="text-[var(--muted)]">&middot;</span>
 					<span class="flex flex-wrap items-center gap-x-3">
 						{#each meta.tags as tag (tag)}
-							<a
-								href={resolve('/posts/tag/[tag]', { tag: slugifyTag(tag) })}
-								class="hover:underline">{tag}</a
-							>
+							{#if data.publishedTagSlugs.includes(slugifyTag(tag))}
+								<a
+									href={resolve('/posts/tag/[tag]', { tag: slugifyTag(tag) })}
+									class="hover:underline">{tag}</a
+								>
+							{:else}
+								<span>{tag}</span>
+							{/if}
 						{/each}
 					</span>
 				{/if}

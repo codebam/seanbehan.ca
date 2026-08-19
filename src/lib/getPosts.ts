@@ -1,6 +1,6 @@
 import { readSource } from './postSources';
 import { readingMinutes } from './readingTime';
-import { slugifyTag } from './tags';
+import { displayTag, slugifyTag } from './tags';
 import type { Post, PostMeta } from './types';
 
 /**
@@ -72,7 +72,7 @@ export default async function getPosts(): Promise<Post[]> {
 
 /** One topic tag as it appears on the /posts/tags index. */
 export interface TagInfo {
-	/** The display form (first-seen casing, e.g. "Secure Boot"). */
+	/** The display form (known proper nouns titled, otherwise first-seen casing). */
 	tag: string;
 	/** URL-safe form: lowercase, spaces to hyphens ("secure-boot"). */
 	slug: string;
@@ -94,7 +94,7 @@ export const getAllTags = async (): Promise<TagInfo[]> => {
 			const slug = slugifyTag(rawTag);
 			const existing = bySlug.get(slug);
 			if (existing) existing.count += 1;
-			else bySlug.set(slug, { tag: rawTag, slug, count: 1 });
+			else bySlug.set(slug, { tag: displayTag(rawTag), slug, count: 1 });
 		}
 	}
 

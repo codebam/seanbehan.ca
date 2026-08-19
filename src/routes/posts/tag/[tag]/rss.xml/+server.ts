@@ -2,7 +2,7 @@ import { getAllTags, getPostsByTag } from '$lib/getPosts';
 import { generateRSSFeed } from '$lib/rssFeed';
 import { renderPostHtml } from '$lib/renderPost';
 import { site } from '$lib/site';
-import { slugifyTag } from '$lib/tags';
+import { displayTag, slugifyTag } from '$lib/tags';
 import { error } from '@sveltejs/kit';
 
 export const prerender = true;
@@ -32,8 +32,9 @@ export const GET = async ({ params }) => {
 
 	// The display form of the tag, taken from the posts rather than the URL, so
 	// the channel title reads "NixOS" and not "nixos".
-	const label =
-		posts[0].meta.tags?.find((tag) => slugifyTag(tag) === slugifyTag(params.tag)) ?? params.tag;
+	const label = displayTag(
+		posts[0].meta.tags?.find((tag) => slugifyTag(tag) === slugifyTag(params.tag)) ?? params.tag
+	);
 
 	const body = generateRSSFeed(posts, postHtml, {
 		path: `/posts/tag/${params.tag}/rss.xml`,

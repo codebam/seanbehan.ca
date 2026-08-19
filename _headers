@@ -55,3 +55,10 @@
 /rss.xml
   ! Cache-Control
   Cache-Control: public, max-age=3600
+
+# Per-tag feeds set the same max-age in their route handler. Without this they
+# inherit the blanket HTML revalidation, which is what production currently
+# ships for /posts/tag/*/rss.xml.
+/posts/tag/*/rss.xml
+  ! Cache-Control
+  Cache-Control: public, max-age=3600

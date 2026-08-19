@@ -8,9 +8,9 @@ import type { Post } from './types';
  */
 export function escapeXml(value: string): string {
 	return value
-		.replace(/&/g, '&amp;')
-		.replace(/</g, '&lt;')
-		.replace(/>/g, '&gt;')
+		.replace(/&/g, '\u0026amp;')
+		.replace(/</g, '\u0026lt;')
+		.replace(/>/g, '\u0026gt;')
 		.replace(/"/g, '&quot;')
 		.replace(/'/g, '&apos;');
 }
@@ -67,18 +67,18 @@ export function generateRSSFeed(
 	const selfUrl = `${SITE_URL}${options.path ?? RSS_PATH}`;
 	return `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
-\t<channel>
-\t\t<atom:link href="${escapeXml(selfUrl)}" rel="self" type="application/rss+xml" />
-\t\t<title>${escapeXml(options.title ?? SITE_TITLE)}</title>
-\t\t<link>${escapeXml(options.link ? `${SITE_URL}${options.link}` : SITE_URL)}</link>
-\t\t<description>${escapeXml(options.description ?? SITE_DESCRIPTION)}</description>
-\t\t<language>en-US</language>
-\t\t<!-- RSS wants an address here and readers show the name beside it. -->
-\t\t<managingEditor>${escapeXml(`${site.email} (${site.name})`)}</managingEditor>
-\t\t<webMaster>${escapeXml(`${site.email} (${site.name})`)}</webMaster>
-\t\t<lastBuildDate>${escapeXml(new Date().toUTCString())}</lastBuildDate>
-\t\t${posts.map((post) => generateRSSItem(post, postHtml.get(post.path))).join('\n')}
-\t</channel>
+	<channel>
+		<atom:link href="${escapeXml(selfUrl)}" rel="self" type="application/rss+xml" />
+		<title>${escapeXml(options.title ?? SITE_TITLE)}</title>
+		<link>${escapeXml(options.link ? `${SITE_URL}${options.link}` : SITE_URL)}</link>
+		<description>${escapeXml(options.description ?? SITE_DESCRIPTION)}</description>
+		<language>en-CA</language>
+		<!-- RSS wants an address here and readers show the name beside it. -->
+		<managingEditor>${escapeXml(`${site.email} (${site.name})`)}</managingEditor>
+		<webMaster>${escapeXml(`${site.email} (${site.name})`)}</webMaster>
+		<lastBuildDate>${escapeXml(new Date().toUTCString())}</lastBuildDate>
+		${posts.map((post) => generateRSSItem(post, postHtml.get(post.path))).join('\n')}
+	</channel>
 </rss>`;
 }
 
@@ -88,12 +88,12 @@ function generateRSSItem(post: Post, html: string | undefined): string {
 		.map((tag) => `<category>${escapeXml(tag)}</category>`)
 		.join('');
 	return `<item>
-\t\t<guid isPermaLink="true">${escapeXml(url)}</guid>
-\t\t<title><![CDATA[${post.meta.title}]]></title>
-\t\t${post.meta.description ? `<description><![CDATA[${post.meta.description}]]></description>` : ''}
-\t\t<link>${escapeXml(url)}</link>
-\t\t<pubDate>${escapeXml(new Date(post.meta.date).toUTCString())}</pubDate>
-\t\t${categories}
-\t\t${html ? `<content:encoded><![CDATA[${absolutizeUrls(html, SITE_URL)}]]></content:encoded>` : ''}
-\t</item>`;
+		<guid isPermaLink="true">${escapeXml(url)}</guid>
+		<title><![CDATA[${post.meta.title}]]></title>
+		${post.meta.description ? `<description><![CDATA[${post.meta.description}]]></description>` : ''}
+		<link>${escapeXml(url)}</link>
+		<pubDate>${escapeXml(new Date(post.meta.date).toUTCString())}</pubDate>
+		${categories}
+		${html ? `<content:encoded><![CDATA[${absolutizeUrls(html, SITE_URL)}]]></content:encoded>` : ''}
+	</item>`;
 }

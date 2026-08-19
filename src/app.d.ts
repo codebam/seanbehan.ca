@@ -7,7 +7,13 @@ declare global {
 	namespace App {
 		// interface Error {}
 		// interface Locals {}
-		// interface PageData {}
+		// svelte:head appends, so every page's description and social title
+		// are resolved once in the layout from this (or from a post). A page
+		// that also wrote its own <meta name="description"> shipped two of them.
+		interface PageData {
+			description?: string;
+			ogTitle?: string;
+		}
 		// interface Platform {}
 	}
 }

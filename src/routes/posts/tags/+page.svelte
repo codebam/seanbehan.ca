@@ -9,7 +9,6 @@
 
 <svelte:head>
 	<title>Tags — {site.name}</title>
-	<meta name="description" content="Browse every post by topic." />
 </svelte:head>
 
 <section class="panel pt-14 pb-20 md:pt-16 md:pb-24">

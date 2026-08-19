@@ -10,7 +10,6 @@
 
 <svelte:head>
 	<title>Writing — {site.name}</title>
-	<meta name="description" content="Posts on Linux, NixOS, Rust, and Cloudflare Workers." />
 </svelte:head>
 
 <section class="panel pt-14 pb-20 md:pt-16 md:pb-24">

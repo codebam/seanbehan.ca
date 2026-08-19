@@ -1,9 +1,22 @@
-import getPosts from '$lib/getPosts';
+import getPosts, { getAllTags } from '$lib/getPosts';
 import { readSource, sourcePath } from '$lib/postSources';
 import { readingMinutes } from '$lib/readingTime';
 import { renderPostBody } from '$lib/renderPost';
 import { slugifyTag } from '$lib/tags';
 import type { BlogPost, Post, PostMeta } from '$lib/types';
+
+/**
+ * Every markdown file under /posts, including drafts. Drafts stay out of
+ * getPosts() (lists, feed, sitemap) but the route has to name them here or
+ * they are simply not in the build — which is why /posts/website 404'd even
+ * though getPosts claimed a draft could be shared by URL.
+ */
+const postModules = import.meta.glob('/src/routes/posts/*.md');
+
+export const entries = () =>
+	Object.keys(postModules).map((path) => ({
+		slug: path.slice('/src/routes/posts/'.length, -'.md'.length)
+	}));
 
 /** How many "keep reading" entries a post ends with. Two fills the row. */
 const RELATED_LIMIT = 2;
@@ -53,6 +66,7 @@ export async function load({ params }): Promise<{
 	newer: Post | null;
 	older: Post | null;
 	related: Post[];
+	publishedTagSlugs: string[];
 }> {
 	try {
 		const post = await import(`../${params.slug}.md`);
@@ -74,11 +88,13 @@ export async function load({ params }): Promise<{
 		};
 
 		const posts = await getPosts();
+		const publishedTagSlugs = (await getAllTags()).map((t) => t.slug);
 
 		return {
 			post: current,
 			...siblings(posts, path),
-			related: related(posts, current)
+			related: related(posts, current),
+			publishedTagSlugs
 		};
 	} catch (error) {
 		console.error(`Failed to load post ${params.slug}:`, error);

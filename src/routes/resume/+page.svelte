@@ -6,7 +6,6 @@
 
 <svelte:head>
 	<title>Résumé — {site.name}</title>
-	<meta name="description" content="Résumé for {site.name}, full-stack developer." />
 </svelte:head>
 
 <section class="panel shell pt-14 pb-20 md:pt-16">
@@ -20,7 +19,7 @@
 		<!-- Absolute R2 asset, so resolve() does not apply -->
 		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 		<a class="btn" href={RESUME_URL} download="sean-behan-resume.pdf">Download PDF</a>
-		<a class="link-quiet" href="mailto:sean@seanbehan.ca">sean@seanbehan.ca</a>
+		<a class="link-quiet" href="mailto:{site.email}">{site.email}</a>
 		<a
 			class="link-quiet"
 			href="https://github.com/codebam"

@@ -72,7 +72,11 @@
 	 * its metadata down through page data instead.
 	 */
 	let post = $derived(page.data?.post as BlogPost | undefined);
-	let metaDescription = $derived(post?.meta.description ?? post?.meta.title ?? site.description);
+	let metaDescription = $derived(
+		post?.meta.description ?? post?.meta.title ?? page.data.description ?? site.description
+	);
+	/** Inner pages pass their own title so a share of /posts is not just the site name. */
+	let ogTitle = $derived(post ? post.meta.title : (page.data.ogTitle ?? site.ogTitle));
 	/**
 	 * A post gets the card generated for it at build time (tools/og), unless it
 	 * names an image of its own. Everything else gets the author photo, which is
@@ -152,8 +156,11 @@
 
 <svelte:head>
 	<meta name="description" content={metaDescription} />
-	<meta property="og:title" content={post ? post.meta.title : site.ogTitle} />
-	<meta property="og:description" content={post ? metaDescription : site.ogDescription} />
+	<meta property="og:title" content={ogTitle} />
+	<meta
+		property="og:description"
+		content={post ? metaDescription : (page.data.description ?? site.ogDescription)}
+	/>
 	<meta property="og:type" content={post ? 'article' : 'website'} />
 	<meta property="og:url" content={canonical} />
 	<meta property="og:site_name" content={site.name} />
@@ -167,7 +174,17 @@
 		<meta property="og:image:height" content="630" />
 	{/if}
 	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={ogTitle} />
+	<meta
+		name="twitter:description"
+		content={post ? metaDescription : (page.data.description ?? site.ogDescription)}
+	/>
 	<meta name="twitter:image" content={ogImage} />
+	{#if post?.meta.draft}
+		<!-- Drafts are shareable by URL and absent from the sitemap; this keeps
+		     a crawler that stumbles on one from indexing it. -->
+		<meta name="robots" content="noindex, nofollow" />
+	{/if}
 	{#if post}
 		<meta property="article:author" content={site.name} />
 		<meta property="article:published_time" content={post.meta.date} />

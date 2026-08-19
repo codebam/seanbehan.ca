@@ -95,14 +95,50 @@ swap` changes letterforms without moving the line.
     each tag page, plus `<managingEditor>`/`<webMaster>` on the channel and
     `og:locale` on every page.
 
+## Third pass (2026-08-18)
+
+22. **done** — Inner pages shipped two `<meta name="description">` tags because
+    svelte:head appends. Descriptions and og/twitter titles now live on
+    `page.data` and are emitted once from the layout. `src/lib/meta.test.ts`
+    reads the built HTML so a second tag fails the suite.
+23. **done** — `/resume` 200'd on codebam.ca even though the variant hides it
+    from the nav and sitemap. The route now 404s / is not prerendered when
+    `showResume` is false.
+24. **done** — Tag pages titled "nixos" because frontmatter is lowercase.
+    `displayTag()` maps known proper nouns; the chips, heading and tag feed
+    all use it.
+25. **done** — Drafts were documented as shareable by URL but never prerendered
+    (`/posts/website` 404'd). `entries` now names every slug; drafts are
+    noindexed and draft-only tags are not linked (they have no published page).
+26. **done** — Contact still said "Open to work" / hiring copy on the codebam
+    variant. Gated on `showResume`.
+27. **done** — Per-tag RSS inherited the HTML revalidation Cache-Control.
+    `_headers` now carves `/posts/tag/*/rss.xml` the same way as `/rss.xml`.
+
 ## Still open
 
 - A generated card is one layout for every post. A post can name its own
   `image:`, but nothing yet renders a card that varies by tag or series.
 - The `_routes.json` exclude list grows by one rule per post, because each post
   now ships a card in `static/`. Cloudflare's limit is 100 rules and the list
-  is at 58; the adapter starts dropping rules silently past that, so the site
+  is at 59; the adapter starts dropping rules silently past that, so the site
   would quietly go back to being served by the Worker.
 - The résumé PDF is embedded from R2 with no text alternative on the page, so
   its content is invisible to search and to a reader whose browser will not
   render the object.
+- `seanbehan.ca/.well-known/security.txt` in production is still the old
+  two-line file (`codebam@riseup.net`, expires 2030). The route in this repo
+  is the RFC 9116 version; production has not picked it up. Worth checking
+  whether an older static copy is winning on that host.
+- Unused deps still in package.json: `@sveltejs/adapter-auto`,
+  `@sveltejs/enhanced-img` (plugin registered, no `<enhanced:img>` in the
+  tree), `@fontsource-variable/*` (fonts are served from `static/fonts`; only
+  the static `@fontsource/*` packages are used by OG cards).
+- `llama2.md` has no tags, so it never appears on a tag page.
+- Home/contact `og:image` is still the author photo at native size, with no
+  1200×630 card the way posts have.
+- HSTS in `_headers` is `max-age=63072000` without `includeSubDomains; preload`.
+  Production currently serves Cloudflare's own
+  `max-age=15552000; includeSubDomains; preload` (180 days). Aligning the
+  repo value with the preload list requirement is a zone + header decision,
+  not a silent edit.

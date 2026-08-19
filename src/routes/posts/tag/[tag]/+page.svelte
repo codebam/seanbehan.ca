@@ -10,7 +10,6 @@
 
 <svelte:head>
 	<title>{data.tag} — {site.name}</title>
-	<meta name="description" content="{data.posts.length} posts tagged “{data.tag}”." />
 	<!-- This topic's own feed, so a reader's extension offers it in place of the
 	     whole-site one while they are on the tag page. -->
 	<link

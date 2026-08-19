@@ -64,6 +64,10 @@ export interface FeaturedProject {
 // Page data types
 export interface PostsPageData {
 	posts: Post[];
+	/** Page-specific <meta name="description">, resolved once in the layout. */
+	description?: string;
+	/** Page-specific og:title / twitter:title. */
+	ogTitle?: string;
 }
 
 /** The home page shows the post list plus the featured project cards. */

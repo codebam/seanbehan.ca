@@ -1,6 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { getAllTags, getPostsByTag } from '$lib/getPosts';
-import { slugifyTag } from '$lib/tags';
+import { site } from '$lib/site';
+import { displayTag, slugifyTag } from '$lib/tags';
 import type { Post } from '$lib/types';
 
 export const prerender = true;
@@ -18,6 +19,8 @@ export interface TagPageData {
 	/** URL-safe slug, so links and <title> can round-trip cleanly. */
 	slug: string;
 	posts: Post[];
+	description: string;
+	ogTitle: string;
 }
 
 export const load = async ({ params }): Promise<TagPageData> => {
@@ -28,9 +31,17 @@ export const load = async ({ params }): Promise<TagPageData> => {
 		throw error(404, `No posts tagged “${params.tag}”.`);
 	}
 
-	// Prefer the real casing from a post that uses it ("NixOS", "Secure Boot")
-	// over the bare slug for the heading; fall back to the slug if none shows.
-	const display = posts[0].meta.tags?.find((t) => slugifyTag(t) === target) ?? params.tag;
+	// Prefer a known proper-noun label, then the casing a post actually used,
+	// then the slug. Frontmatter is lowercase, so first-seen casing alone
+	// produced headings like "nixos".
+	const fromPost = posts[0].meta.tags?.find((t) => slugifyTag(t) === target) ?? params.tag;
+	const display = displayTag(fromPost);
 
-	return { tag: display, slug: target, posts };
+	return {
+		tag: display,
+		slug: target,
+		posts,
+		description: `${posts.length} posts tagged “${display}”.`,
+		ogTitle: `${display} — ${site.name}`
+	};
 };
