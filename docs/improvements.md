@@ -129,13 +129,11 @@ swap` changes letterforms without moving the line.
     `@sveltejs/enhanced-img`. `@fontsource-variable/*` stays: the font
     rebuild scripts read those packages.
 
+34. **done** — `seanbehan.ca/.well-known/security.txt` was a leftover two-line
+    file in front of Pages. That host now serves the RFC 9116 route
+    (`sean@seanbehan.ca`, Encryption, Canonical), matching codebam.ca.
+
 ## Still open
 
 - A generated card is one layout for every post. A post can name its own
   `image:`, but nothing yet renders a card that varies by tag or series.
-- `seanbehan.ca/.well-known/security.txt` in production is still the old
-  two-line file (`codebam@riseup.net`, expires 2030). codebam.ca serves
-  the RFC 9116 route from this repo. The seanbehan response has no
-  Pages headers (`x-frame-options`, `cf-cache-status`) so something in
-  front of Pages — a Cloudflare redirect or a leftover Worker — is
-  answering that path. Not fixable from this checkout.
