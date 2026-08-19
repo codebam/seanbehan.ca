@@ -101,11 +101,13 @@ const config = {
 					'/__data.json',
 					'/contact',
 					'/posts',
+					// Covers the archive, every post, the tag pages and their feeds.
 					'/posts/*',
 					'/resume',
 					// Generated from the site config rather than kept in static/, so it
 					// no longer falls under <files> and needs naming here.
 					'/robots.txt',
+					'/.well-known/security.txt',
 					'/rss.xml',
 					'/site.webmanifest',
 					'/sitemap.xml'

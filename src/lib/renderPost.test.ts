@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { headingId, withHeadingAnchors } from './renderPost';
+import { annotateImages, headingId, withHeadingAnchors } from './renderPost';
 
 describe('headingId', () => {
 	it('slugifies the way the tag pages do', () => {
@@ -52,5 +52,29 @@ describe('withHeadingAnchors', () => {
 		const source = '<h2 id="mine">Mine</h2>';
 
 		expect(withHeadingAnchors(source)).toEqual({ html: source, headings: [] });
+	});
+});
+
+describe('annotateImages', () => {
+	it('stamps a measured image with its size and defers the fetch', () => {
+		const html = annotateImages('<img src="/img/reactjs-card.webp" alt="react card"/>');
+
+		expect(html).toContain('width="843" height="381"');
+		expect(html).toContain('loading="lazy"');
+		expect(html).toContain('decoding="async"');
+		expect(html).toContain('alt="react card"');
+	});
+
+	it('still defers an image it has no measurement for', () => {
+		const html = annotateImages('<img src="/img/unknown.webp" alt="x"/>');
+
+		expect(html).toContain('loading="lazy"');
+		expect(html).not.toContain('width=');
+	});
+
+	it('leaves an image that already declares its own size or loading', () => {
+		const sized = '<img src="/img/reactjs-card.webp" width="10" height="10"/>';
+
+		expect(annotateImages(sized)).toBe(sized);
 	});
 });

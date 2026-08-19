@@ -1,6 +1,7 @@
 import { render } from 'svelte/server';
 import type { Component } from 'svelte';
 import type { Heading } from './types';
+import imageSizes from './imageSizes.json';
 
 /**
  * Post bodies are authored in markdown, so the anchors come out of the renderer
@@ -18,6 +19,31 @@ export function externalLinksInNewTab(html: string): string {
 			attrs = `${attrs} rel="noopener noreferrer"`;
 		}
 		return `<a ${attrs} target="_blank">`;
+	});
+}
+
+/**
+ * Stamp post-body images with everything markdown cannot express.
+ *
+ * `![alt](/img/x.webp)` renders as `<img src alt>` and nothing else, so the
+ * browser reserves no space for the image and reflows the whole article when it
+ * lands — and every image in a long post is fetched at once, in front of the
+ * text. Dimensions come from src/lib/imageSizes.json, written by
+ * tools/img/measure.mjs; an image with no entry there just keeps the markup it
+ * had. `loading="lazy"` is safe on every one of these because a post body
+ * begins with prose, never with an image above the fold.
+ */
+export function annotateImages(html: string): string {
+	return html.replace(/<img\s+([^>]*?)\s*\/?>/g, (match, attrs: string) => {
+		if (/\bwidth=|\bloading=/.test(attrs)) return match;
+
+		const src = /\bsrc="([^"]+)"/.exec(attrs)?.[1];
+		const size = src
+			? (imageSizes as Record<string, { width: number; height: number }>)[src]
+			: null;
+		const dimensions = size ? ` width="${size.width}" height="${size.height}"` : '';
+
+		return `<img ${attrs}${dimensions} loading="lazy" decoding="async" />`;
 	});
 }
 
@@ -90,7 +116,7 @@ export function withHeadingAnchors(html: string): { html: string; headings: Head
  */
 export function renderPostHtml(postModule: { default: Component }): string {
 	const { html } = render(postModule.default);
-	return externalLinksInNewTab(html);
+	return annotateImages(externalLinksInNewTab(html));
 }
 
 /**

@@ -3,8 +3,8 @@
 	import { browser } from '$app/environment';
 	import { replaceState } from '$app/navigation';
 	import { page } from '$app/state';
-	import Fuse from 'fuse.js';
-	import type { PostsProps } from '$lib/types';
+	import type Fuse from 'fuse.js';
+	import type { Post, PostsProps } from '$lib/types';
 
 	const { posts }: PostsProps = $props();
 
@@ -49,10 +49,23 @@
 		}
 	});
 
-	// Descriptions and tags are searched too, so "wireshark" or "systemd" finds
-	// the post even when the title never says it. Title still outranks both.
-	let fuse = $derived(
-		new Fuse(posts, {
+	/**
+	 * Fuse is ~29 kB of the archive page's bundle and most readers never type a
+	 * character, so it is fetched on the first keystroke rather than shipped
+	 * with the page. Until it arrives the full list stands, which is what an
+	 * empty query shows anyway.
+	 *
+	 * Descriptions and tags are searched too, so "wireshark" or "systemd" finds
+	 * the post even when the title never says it. Title still outranks both.
+	 */
+	let fuse = $state<Fuse<Post> | null>(null);
+	let loading = false;
+
+	async function loadFuse() {
+		if (fuse || loading) return;
+		loading = true;
+		const { default: FuseCtor } = await import('fuse.js');
+		fuse = new FuseCtor(posts, {
 			keys: [
 				{ name: 'meta.title', weight: 3 },
 				{ name: 'meta.description', weight: 1 },
@@ -60,13 +73,33 @@
 			],
 			threshold: 0.4,
 			minMatchCharLength: 2
-		})
-	);
+		});
+		loading = false;
+	}
+
+	// A query in the URL is a search the reader arrived with, so it needs the
+	// index immediately rather than on a keystroke that may never come.
+	$effect(() => {
+		if (query) loadFuse();
+	});
 
 	let results = $derived.by(() => {
-		if (!debouncedQuery) return posts;
+		if (!debouncedQuery || !fuse) return posts;
 		return fuse.search(debouncedQuery).map((result) => result.item);
 	});
+
+	/**
+	 * Announced rather than only drawn: the list swaps out under a screen reader
+	 * with nothing said about it otherwise. Held to the debounced value so it is
+	 * one announcement per search, not one per letter, and left empty when
+	 * nothing matched — the visible empty state below is itself a live region,
+	 * and two of them would say the same thing twice.
+	 */
+	let resultSummary = $derived(
+		!debouncedQuery || results.length === 0
+			? ''
+			: `${results.length} ${results.length === 1 ? 'post matches' : 'posts match'} ${debouncedQuery}`
+	);
 </script>
 
 <div class="relative mb-2">
@@ -87,14 +120,23 @@
 	<input
 		type="search"
 		bind:value={query}
+		onfocus={loadFuse}
 		placeholder="Search posts…"
 		aria-label="Search posts"
 		class="input pl-9"
 	/>
 </div>
 
+<!-- Off-screen rather than hidden: `display: none` would take it out of the
+     accessibility tree and nothing would be announced at all. -->
+<p class="sr-only" role="status" aria-live="polite">{resultSummary}</p>
+
 {#if results.length === 0}
-	<p class="border-t border-[var(--line)] py-10 text-[var(--muted)]">
+	<p
+		class="border-t border-[var(--line)] py-10 text-[var(--muted)]"
+		role="status"
+		aria-live="polite"
+	>
 		No posts match “{debouncedQuery}”.
 	</p>
 {:else}

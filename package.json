@@ -4,9 +4,9 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"dev": "node tools/og/build-cards.mjs && NODE_ENV=development vite dev",
-		"build": "node tools/og/build-cards.mjs && vite build && node tools/csp/hash-jsonld.mjs",
-		"build:codebam": "PUBLIC_SITE=codebam node tools/og/build-cards.mjs && PUBLIC_SITE=codebam vite build && node tools/csp/hash-jsonld.mjs",
+		"dev": "node tools/img/measure.mjs && node tools/og/build-cards.mjs && NODE_ENV=development vite dev",
+		"build": "node tools/img/measure.mjs && node tools/og/build-cards.mjs && vite build && node tools/csp/hash-jsonld.mjs",
+		"build:codebam": "node tools/img/measure.mjs && PUBLIC_SITE=codebam node tools/og/build-cards.mjs && PUBLIC_SITE=codebam vite build && node tools/csp/hash-jsonld.mjs",
 		"preview": "npm run build && wrangler pages dev",
 		"prepare": "svelte-kit sync || echo ''; git config core.hooksPath .githooks || true",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",

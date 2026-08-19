@@ -65,6 +65,36 @@ fixed in the same pass; the rest are still open.
     the offline shell now (bundles, fonts, avatar); everything else enters the
     cache when it is first fetched.
 
+## Second pass (feed, images, bundles, a11y)
+
+13. **done** — RSS `<content:encoded>` carried root-relative `src`/`href`, so
+    the images in a full-text item resolved against the reader's origin and
+    simply did not appear. `absolutizeUrls` rewrites them for the feed only;
+    the site's own pages still want them relative.
+14. **done** — The sitemap listed every tag page but not `/posts/tags`, which
+    is now linked from the writing index.
+15. **done** — Post-body images rendered as `<img src alt>` and nothing else:
+    no reserved space, so the article reflowed when they landed, and no
+    `loading`/`decoding`. `tools/img/measure.mjs` writes the intrinsic sizes to
+    `src/lib/imageSizes.json` and the renderer stamps them on.
+16. **done** — Fuse was ~29 kB of the archive page's bundle whether or not
+    anyone searched. It is imported on first focus (or immediately, if the page
+    was opened with a `?q=`), and is its own chunk now.
+17. **done** — Metric-matched fallback faces for both webfonts, computed from
+    the real files by `tools/fonts/fallback-metrics.py`, so `font-display:
+swap` changes letterforms without moving the line.
+18. **done** — Filtering the archive announced nothing to a screen reader. A
+    `role="status"` line reports the match count, and the visible empty state
+    is a live region itself.
+19. **done** — `src/lib/headers.test.ts` compares the `/*` block of `_headers`
+    with `SECURITY_HEADERS` in `hooks.server.ts`, which both files' comments
+    said had to stay in sync with nothing enforcing it.
+20. **done** — `/.well-known/security.txt` (RFC 9116), pointing at the email
+    and the PGP key that was already published with nothing linking to it.
+21. **done** — Per-tag RSS feeds at `/posts/tag/<tag>/rss.xml`, linked from
+    each tag page, plus `<managingEditor>`/`<webMaster>` on the channel and
+    `og:locale` on every page.
+
 ## Still open
 
 - A generated card is one layout for every post. A post can name its own
@@ -73,3 +103,6 @@ fixed in the same pass; the rest are still open.
   now ships a card in `static/`. Cloudflare's limit is 100 rules and the list
   is at 58; the adapter starts dropping rules silently past that, so the site
   would quietly go back to being served by the Worker.
+- The résumé PDF is embedded from R2 with no text alternative on the page, so
+  its content is invisible to search and to a reader whose browser will not
+  render the object.

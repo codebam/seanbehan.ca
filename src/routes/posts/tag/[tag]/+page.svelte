@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
+	import { base, resolve } from '$app/paths';
 	import PostList from '$lib/components/PostList.svelte';
 	import { reveal } from '$lib/actions/reveal';
 	import { site } from '$lib/site';
@@ -11,6 +11,14 @@
 <svelte:head>
 	<title>{data.tag} — {site.name}</title>
 	<meta name="description" content="{data.posts.length} posts tagged “{data.tag}”." />
+	<!-- This topic's own feed, so a reader's extension offers it in place of the
+	     whole-site one while they are on the tag page. -->
+	<link
+		rel="alternate"
+		type="application/rss+xml"
+		title="{data.tag} — {site.name}"
+		href="{base}/posts/tag/{data.slug}/rss.xml"
+	/>
 </svelte:head>
 
 <section class="panel pt-14 pb-20 md:pt-16 md:pb-24">

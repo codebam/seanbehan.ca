@@ -40,6 +40,27 @@
 	src: url('/fonts/newsreader-latin-italic.woff2') format('woff2-variations');
 }
 
+/* Metric-matched stand-ins for the two webfaces, so the swap does not reflow.
+   The numbers are computed from the real font files against the local face each
+   one names — regenerate them with tools/fonts/fallback-metrics.py if either
+   webfont is rebuilt. */
+@font-face {
+	font-family: 'Inter Variable Fallback';
+	src: local('Arial');
+	size-adjust: 105.31%;
+	ascent-override: 91.99%;
+	descent-override: 22.91%;
+	line-gap-override: 0%;
+}
+@font-face {
+	font-family: 'Newsreader Variable Fallback';
+	src: local('Times New Roman');
+	size-adjust: 93.11%;
+	ascent-override: 78.94%;
+	descent-override: 28.46%;
+	line-gap-override: 0%;
+}
+
 /* ═══════════════════════════════════════════════════════════
    Design tokens
 
@@ -49,9 +70,17 @@
    components only ever reference the tokens.
    ═══════════════════════════════════════════════════════════ */
 @theme {
+	/* The Fallback families are the local ones with the webfont's metrics forced
+	   onto them (see the @font-face rules above): while the real face is still
+	   in flight under `font-display: swap`, text is drawn in a fallback that
+	   occupies the same box, so the swap changes the letterforms and nothing
+	   else. Without them, every page shifted when the fonts landed. */
 	--font-sans:
-		'Inter Variable', Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-	--font-serif: 'Newsreader Variable', Newsreader, Georgia, 'Times New Roman', serif;
+		'Inter Variable', 'Inter Variable Fallback', Inter, ui-sans-serif, system-ui, -apple-system,
+		'Segoe UI', sans-serif;
+	--font-serif:
+		'Newsreader Variable', 'Newsreader Variable Fallback', Newsreader, Georgia, 'Times New Roman',
+		serif;
 	--font-mono:
 		'Fira Code', 'JetBrains Mono', 'Cascadia Code', ui-monospace, SFMono-Regular, Menlo, Monaco,
 		Consolas, 'Liberation Mono', monospace;
@@ -452,6 +481,15 @@
 	font-family: var(--font-serif);
 	font-weight: 500;
 	letter-spacing: -0.015em;
+}
+
+/* Post images now carry their intrinsic width and height, so the box is
+   reserved before the bytes land. Both of these are needed for that not to
+   distort the picture: the width cap fits it to the column, and `height: auto`
+   keeps the aspect ratio the attributes would otherwise pin. */
+.prose :where(img) {
+	max-width: 100%;
+	height: auto;
 }
 
 /* Section headings are wrapped in a link to themselves, so a reader can copy

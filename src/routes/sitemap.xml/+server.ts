@@ -14,7 +14,15 @@ export const GET = async () => {
 };
 
 /** Routes every variant publishes, plus the ones that depend on the variant. */
-const staticPaths = () => ['/', '/contact', '/posts', ...(site.showResume ? ['/resume'] : [])];
+const staticPaths = () => [
+	'/',
+	'/contact',
+	'/posts',
+	// The tag index is linked from the writing page, so it is a page a reader
+	// can land on — it was missing here while every individual tag page was in.
+	'/posts/tags',
+	...(site.showResume ? ['/resume'] : [])
+];
 
 const entry = (path: string, lastmod: string) => `<url>
 <loc>${absolute(path)}</loc>

@@ -157,6 +157,7 @@
 	<meta property="og:type" content={post ? 'article' : 'website'} />
 	<meta property="og:url" content={canonical} />
 	<meta property="og:site_name" content={site.name} />
+	<meta property="og:locale" content="en_CA" />
 	<meta property="og:image" content={ogImage} />
 	<meta property="og:image:alt" content={post ? post.meta.title : site.name} />
 	{#if post}
