@@ -2,9 +2,8 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
 
-// @types/node is not a dependency and tsconfig pins `types` to
-// @cloudflare/workers-types, so declare the one global this file needs instead
-// of pulling in a package for it.
+// tsconfig pins `types` to @cloudflare/workers-types, so declare the one
+// global this file needs instead of widening the project to Node's types.
 declare const process: { env: Record<string, string | undefined> };
 
 // Which identity to build (see src/lib/site.ts). A define rather than

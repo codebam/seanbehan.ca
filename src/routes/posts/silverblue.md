@@ -41,7 +41,7 @@ entire system on different base images or Fedora versions. Now instead of
 installing your new desktop environment and risk breaking your operating system
 you can do an `rpm-ostree rebase` and rebase on another desktop environment. I
 used this to rebase on an image from
-[Kinoite](https://fcos.siosm.fr/kinoite/refs/heads/fedora/33/x86_64/) called
+[Kinoite](https://fedoraproject.org/atomic-desktops/kinoite/) called
 base which just includes all the base packages and no desktop environment. Then
 I installed my window manager of choice and it's dependencies. Now I have a
 fully modular Fedora installation along with [Sway](https://swaywm.org/) and

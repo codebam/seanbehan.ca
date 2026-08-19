@@ -31,6 +31,6 @@ export default ts.config(
 		}
 	},
 	{
-		ignores: ['src/lib/cactus.js', 'src/lib/cactus.js.map', 'src/service-worker.js']
+		ignores: ['src/service-worker.js']
 	}
 );

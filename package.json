@@ -17,6 +17,7 @@
 		"test:run": "vitest run",
 		"test:coverage": "vitest run --coverage",
 		"deploy": "npm run build && wrangler pages deploy && npm run purge",
+		"deploy:codebam": "npm run build:codebam && wrangler pages deploy --project-name=codebam-ca && npm run purge -- codebam.ca",
 		"purge": "bash tools/cloudflare/purge.sh",
 		"cf-typegen": "wrangler types && mv worker-configuration.d.ts src/"
 	},
@@ -55,13 +56,11 @@
 		"svelte": "^5.56.8",
 		"svelte-check": "^4.7.6",
 		"tailwindcss": "^4.3.3",
+		"typescript": "^6.0.3",
 		"typescript-eslint": "^8.67.0",
 		"vite": "^8.2.1",
 		"vitest": "^4.1.10",
 		"wrangler": "^4.123.0"
-	},
-	"dependencies": {
-		"typescript": "^6.0.3"
 	},
 	"overrides": {
 		"cookie": "^0.7.2",

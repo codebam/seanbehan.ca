@@ -9,7 +9,7 @@ export interface PostMeta {
 	updated?: string;
 	/**
 	 * Social card for this post, as a site-absolute path. Posts without one
-	 * fall back to the site's own card, which is the author photo.
+	 * use the generated `/og/<slug>.png` card from tools/og.
 	 */
 	image?: string;
 }
@@ -38,12 +38,6 @@ export interface BlogPost extends Post {
 	html: string;
 	/** Section headings, in document order. Empty for a post with none. */
 	headings?: Heading[];
-}
-
-export interface SearchResult {
-	item: Post;
-	refIndex: number;
-	score: number;
 }
 
 export interface FeaturedProject {
@@ -79,18 +73,6 @@ export interface PostPageData {
 	post: BlogPost;
 }
 
-// API response types
-export interface ApiResponse<T = unknown> {
-	success: boolean;
-	data?: T;
-	error?: string;
-}
-
-// Component prop types
 export interface PostsProps {
 	posts: Post[];
-}
-
-export interface PostProps {
-	post: Post;
 }

@@ -20,6 +20,10 @@ export const GET = async () => {
 		],
 		theme_color: '#a8391f',
 		background_color: '#faf8f4',
+		theme_colors: [
+			{ color: '#faf8f4', media: '(prefers-color-scheme: light)' },
+			{ color: '#111110', media: '(prefers-color-scheme: dark)' }
+		],
 		display: 'standalone',
 		scope: '/'
 	};

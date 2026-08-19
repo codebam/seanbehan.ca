@@ -1,12 +1,9 @@
 <script lang="ts">
-	import { site } from '$lib/site';
+	import { site, yearsBuilding } from '$lib/site';
 
 	const RESUME_URL = 'https://pub-b1fc9705d9cd4b50885284c3ede52d27.r2.dev/resume.pdf';
 
-	const CAREER_START = Date.UTC(2014, 0, 1);
-	const MS_PER_YEAR = 365.2425 * 24 * 60 * 60 * 1000;
-	let yearsBuilding = $derived(Math.floor((Date.now() - CAREER_START) / MS_PER_YEAR));
-	let intro = $derived(site.intro.replace('{years}', String(yearsBuilding)));
+	let intro = $derived(site.intro.replace('{years}', String(yearsBuilding())));
 </script>
 
 <svelte:head>
@@ -15,7 +12,7 @@
 
 <section class="panel shell pt-14 pb-20 md:pt-16">
 	<p class="enter eyebrow">Full-stack developer &middot; Ontario, Canada</p>
-	<h1 class="enter display display-xl mt-5" style="--enter-delay:0ms">Résumé</h1>
+	<h1 class="display display-xl mt-5">Résumé</h1>
 
 	<p
 		class="enter mt-4 flex flex-wrap items-center gap-x-6 gap-y-3 text-[0.95rem]"
@@ -23,7 +20,7 @@
 	>
 		<!-- Absolute R2 asset, so resolve() does not apply -->
 		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-		<a class="btn" href={RESUME_URL} download="sean-behan-resume.pdf">Download PDF</a>
+		<a class="btn" href={RESUME_URL}>Download PDF</a>
 		<a class="link-quiet" href="mailto:{site.email}">{site.email}</a>
 		<a
 			class="link-quiet"

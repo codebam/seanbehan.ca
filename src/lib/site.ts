@@ -43,6 +43,15 @@ export interface SiteConfig {
 	showResume: boolean;
 }
 
+export const LEGAL_NAME = 'Sean Behan';
+export const HANDLE = 'codebam';
+export const LINKEDIN_URL = 'https://www.linkedin.com/in/sean-behan';
+
+/** Started building software in January 2014. Whole elapsed years from that month. */
+const CAREER_START = Date.UTC(2014, 0, 1);
+const MS_PER_YEAR = 365.2425 * 24 * 60 * 60 * 1000;
+export const yearsBuilding = (now = Date.now()) => Math.floor((now - CAREER_START) / MS_PER_YEAR);
+
 /**
  * The variant this build is for. The values live in site.data.js, which is
  * plain JavaScript so build tooling can read them with node — see the note at
@@ -57,3 +66,22 @@ export { SITES };
 
 /** Absolute URL for a path on this site, for canonical tags and feeds. */
 export const absolute = (path: string) => `${site.url}${path === '/' ? '' : path}`;
+
+/** The other origin this repo publishes. */
+export const sibling = site.id === 'seanbehan' ? SITES.codebam : SITES.seanbehan;
+
+/**
+ * Posts are identical on both origins. seanbehan.ca is the canonical copy so
+ * the two builds do not split ranking. Everything else — home copy, contact,
+ * the résumé — differs per variant and stays self-canonical.
+ */
+export const canonicalUrl = (path: string, opts?: { post?: boolean; draft?: boolean }) => {
+	if (opts?.post && !opts.draft) return `${SITES.seanbehan.url}${path === '/' ? '' : path}`;
+	return absolute(path);
+};
+
+/** Sibling URL for a published post, so crawlers can find the other origin. */
+export const alternateUrl = (path: string, opts?: { post?: boolean; draft?: boolean }) => {
+	if (!opts?.post || opts.draft) return undefined;
+	return `${sibling.url}${path}`;
+};

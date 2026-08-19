@@ -5,7 +5,16 @@
 	import { page } from '$app/state';
 	import { onNavigate } from '$app/navigation';
 	import { base, resolve } from '$app/paths';
-	import { site, absolute } from '$lib/site';
+	import {
+		site,
+		absolute,
+		sibling,
+		canonicalUrl,
+		alternateUrl,
+		LEGAL_NAME,
+		HANDLE,
+		LINKEDIN_URL
+	} from '$lib/site';
 	import type { BlogPost } from '$lib/types';
 	// app.css pulls in Tailwind, both fonts, and the light/dark token set.
 	import '../app.css';
@@ -58,20 +67,23 @@
 		: ([{ href: '/posts', label: 'Writing' }] as const);
 
 	/**
-	 * Self-canonical, per page. The two sites publish the same posts, so each
-	 * one claiming its own URLs is a decision rather than an oversight — it was
-	 * previously a single hardcoded link to the seanbehan.ca home page, which
-	 * pointed every post at the wrong place.
-	 */
-	let canonical = $derived(absolute(page.url.pathname));
-
-	/**
 	 * Social metadata is resolved here rather than per page, because a page that
 	 * emitted its own og:title got two of them — svelte:head appends, it does
 	 * not replace what an ancestor layout already wrote. The post page passes
 	 * its metadata down through page data instead.
 	 */
 	let post = $derived(page.data?.post as BlogPost | undefined);
+
+	/**
+	 * Posts are identical on both origins, so they canonical to seanbehan.ca.
+	 * Home, contact, and the rest differ per variant and stay self-canonical.
+	 */
+	let canonical = $derived(
+		canonicalUrl(page.url.pathname, { post: Boolean(post), draft: post?.meta.draft })
+	);
+	let alternate = $derived(
+		alternateUrl(page.url.pathname, { post: Boolean(post), draft: post?.meta.draft })
+	);
 	let metaDescription = $derived(
 		post?.meta.description ?? post?.meta.title ?? page.data.description ?? site.description
 	);
@@ -93,13 +105,20 @@
 	 * WebSite node, which is what carries the name a search result shows.
 	 */
 	let jsonLd = $derived.by(() => {
+		const sameAs = [
+			sibling.url,
+			'https://github.com/codebam',
+			'https://mstdn.ca/@codebam',
+			...(site.showResume ? [LINKEDIN_URL] : [])
+		];
 		const person = {
 			'@type': 'Person',
-			name: site.name,
+			name: LEGAL_NAME,
+			alternateName: HANDLE,
 			url: site.url,
 			email: `mailto:${site.email}`,
 			image: absolute('/profile.webp'),
-			sameAs: ['https://github.com/codebam', 'https://mstdn.ca/@codebam']
+			sameAs
 		};
 
 		const website = {
@@ -127,7 +146,7 @@
 			headline: post.meta.title,
 			...(post.meta.description ? { description: post.meta.description } : {}),
 			datePublished: post.meta.date,
-			dateModified: post.meta.updated ?? post.meta.date,
+			...(post.meta.updated ? { dateModified: post.meta.updated } : {}),
 			...(post.meta.tags?.length ? { keywords: post.meta.tags.join(', ') } : {}),
 			image: ogImage,
 			inLanguage: 'en',
@@ -186,7 +205,9 @@
 	{#if post}
 		<meta property="article:author" content={site.name} />
 		<meta property="article:published_time" content={post.meta.date} />
-		<meta property="article:modified_time" content={post.meta.updated ?? post.meta.date} />
+		{#if post.meta.updated}
+			<meta property="article:modified_time" content={post.meta.updated} />
+		{/if}
 		{#each post.meta.tags ?? [] as tag (tag)}
 			<meta property="article:tag" content={tag} />
 		{/each}
@@ -197,6 +218,9 @@
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 	{@html jsonLdScript}
 	<link rel="canonical" href={canonical} />
+	{#if alternate}
+		<link rel="alternate" href={alternate} />
+	{/if}
 	<link rel="sitemap" type="application/xml" title="Sitemap" href="{base}/sitemap.xml" />
 	<link rel="alternate" type="application/rss+xml" title="RSS Feed" href="{base}/rss.xml" />
 </svelte:head>
@@ -337,21 +361,37 @@
 		transform: scale(1);
 	}
 
-	/* Visible only once focused, so keyboard users get the jump and nobody else
-	   sees a stray link above the header. */
+	/* Clipped rather than parked off-left: some screen readers still announce
+	   content at left: -9999px, and overflow:hidden parents can clip the focus
+	   target. Visible only once focused. */
 	.skip-link {
 		position: absolute;
-		left: -9999px;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		clip-path: inset(50%);
+		white-space: nowrap;
+		border: 0;
+	}
+	.skip-link:focus {
+		left: 0;
 		top: 0;
 		z-index: 50;
+		width: auto;
+		height: auto;
+		margin: 0;
+		overflow: visible;
+		clip: auto;
+		clip-path: none;
+		white-space: normal;
 		background: var(--panel);
 		color: var(--text);
 		border: 1px solid var(--line-strong);
 		border-radius: 0 0 8px 0;
 		padding: 0.6rem 1rem;
 		font-size: 0.9rem;
-	}
-	.skip-link:focus {
-		left: 0;
 	}
 </style>

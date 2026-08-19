@@ -137,3 +137,25 @@ swap` changes letterforms without moving the line.
 
 - A generated card is one layout for every post. A post can name its own
   `image:`, but nothing yet renders a card that varies by tag or series.
+- No `twitter:site` / `twitter:creator`. There is no Twitter/X handle to put
+  there.
+
+## Fourth pass (2026-08-19)
+
+35. **done** — Published posts on both origins now canonical to seanbehan.ca,
+    with `rel=alternate` to the sibling. Person JSON-LD uses the legal name,
+    `alternateName` for the handle, and `sameAs` for the sibling, GitHub,
+    Mastodon, and LinkedIn when the résumé is shown.
+36. **done** — CI on push/PR: lint, check, seanbehan build, tests, codebam
+    build. `deploy:codebam` plus purge by zone. Docs match Node 26 and npm.
+37. **done** — Hero `h1` no longer uses `.enter`, so LCP is not faded in.
+38. **done** — Sitemap static/tag `lastmod` is the newest post date, not build
+    time. `article:modified_time` / `dateModified` only when `updated:` is set.
+39. **done** — Dropped leftover `ads.txt`, unused rasters, `.eslintrc.cjs`,
+    cactus ignores, and unused types. `typescript` is a devDependency.
+40. **done** — Archive tags are links. Tag pages have a visible RSS control.
+    Skip-link uses the clip pattern. Manifest lists light/dark theme colours.
+    Cross-origin résumé `download` attribute removed.
+41. **done** — Broken/stale post links: rust book dest, react.dev Fragment,
+    official Kinoite page, svelte-auth demo (repo only).
+42. **done** — `flake.nix` declares a `nixpkgs` input.

@@ -26,9 +26,12 @@
 			<a href={resolve('/posts')} class="hover:underline">Writing</a> · {data.posts.length}
 			{data.posts.length === 1 ? 'post' : 'posts'}
 		</p>
-		<h1 class="enter display display-xl mt-5" style="--enter-delay:0ms">{data.tag}</h1>
-		<p class="enter link-accent mt-6" style="--enter-delay:80ms">
-			<a href={resolve('/posts/tags')} class="hover:underline">All tags &rarr;</a>
+		<h1 class="display display-xl mt-5">{data.tag}</h1>
+		<p class="enter mt-6 flex flex-wrap gap-x-6 gap-y-2" style="--enter-delay:80ms">
+			<a href={resolve('/posts/tags')} class="link-accent">All tags &rarr;</a>
+			<!-- Prerendered endpoint, not a route resolve() knows about -->
+			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+			<a class="link-quiet" href="{base}/posts/tag/{data.slug}/rss.xml">Subscribe via RSS</a>
 		</p>
 
 		<div class="mt-12" use:reveal>

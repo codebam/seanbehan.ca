@@ -12,6 +12,8 @@
 set -euo pipefail
 
 ZONE_NAME="${1:-seanbehan.ca}"
+# An explicit zone wins over CF_ZONE_ID so `purge.sh codebam.ca` cannot
+# accidentally purge the other origin when that env var is set.
 
 if [ -z "${CF_API_TOKEN:-}" ]; then
 	echo "CF_API_TOKEN not set — skipping edge purge." >&2
@@ -30,7 +32,10 @@ api() {
 
 json() { python3 -c "import json,sys; d=json.load(sys.stdin); $1"; }
 
-ZONE_ID="${CF_ZONE_ID:-}"
+ZONE_ID=""
+if [ -z "${1:-}" ]; then
+	ZONE_ID="${CF_ZONE_ID:-}"
+fi
 if [ -z "$ZONE_ID" ]; then
 	ZONE_ID="$(api GET "/zones?name=$ZONE_NAME" | json "print(d['result'][0]['id'] if d.get('success') and d['result'] else '')")"
 	[ -n "$ZONE_ID" ] || {

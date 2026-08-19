@@ -15,7 +15,7 @@ Today I'll show you how you can write incredibly fast code in Rust. This is
 part one of a tutorial series.
 
 This is an intermediate tutorial, if you are unfamiliar with Rust basics I
-would suggest reading the Rust book for free at [https://doc.rust-lang.org/stable/book/].
+would suggest reading the Rust book for free at [https://doc.rust-lang.org/stable/book/](https://doc.rust-lang.org/stable/book/).
 
 ### Project Setup
 

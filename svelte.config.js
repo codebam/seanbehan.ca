@@ -102,7 +102,6 @@ const config = {
 					'/*.webp',
 					'/*.svg',
 					'/*.ico',
-					'/ads.txt',
 					'/publickey.txt',
 					'/service-worker.js',
 					'/',

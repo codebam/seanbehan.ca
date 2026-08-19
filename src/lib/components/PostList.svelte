@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import SpotlightCard from '$lib/components/svelte-bits/SpotlightCard.svelte';
+	import { displayTag, slugifyTag } from '$lib/tags';
 	import type { Post } from '$lib/types';
 
 	interface Props {
@@ -31,22 +32,28 @@
 
 <div class="list" class:paired={columns === 2}>
 	{#each posts as post (post.path)}
-		<!-- The spotlight is the anchor itself rather than a wrapper around it:
-		     the whole row is one click target, and the paired grid keeps taking
-		     the entries as its direct children. -->
-		<SpotlightCard as="a" class="entry" href={resolve('/posts/[slug]', { slug: slugOf(post) })}>
-			<time datetime={post.meta.date}>{monthYear(post.meta.date)}</time>
-			{#if post.readingMinutes}
-				<span class="read">&middot; {post.readingMinutes} min</span>
-			{/if}
-			<svelte:element this={heading} class="title">{post.meta.title}</svelte:element>
-			{#if post.meta.description}
-				<p>{post.meta.description}</p>
-			{/if}
+		<!-- Tags sit outside the card so they can be links without nesting
+		     anchors. The paired grid still takes these wrappers as children. -->
+		<div class="item">
+			<SpotlightCard as="a" class="entry" href={resolve('/posts/[slug]', { slug: slugOf(post) })}>
+				<time datetime={post.meta.date}>{monthYear(post.meta.date)}</time>
+				{#if post.readingMinutes}
+					<span class="read">&middot; {post.readingMinutes} min</span>
+				{/if}
+				<svelte:element this={heading} class="title">{post.meta.title}</svelte:element>
+				{#if post.meta.description}
+					<p>{post.meta.description}</p>
+				{/if}
+			</SpotlightCard>
 			{#if showTags && post.meta.tags?.length}
-				<p class="tags">{post.meta.tags.join(' · ')}</p>
+				<p class="tags">
+					{#each post.meta.tags as tag, i (tag)}
+						{#if i > 0}<span aria-hidden="true"> · </span>{/if}
+						<a href={resolve('/posts/tag/[tag]', { tag: slugifyTag(tag) })}>{displayTag(tag)}</a>
+					{/each}
+				</p>
 			{/if}
-		</SpotlightCard>
+		</div>
 	{/each}
 </div>
 
@@ -120,9 +127,17 @@
 		max-width: 62ch;
 	}
 
-	.list :global(.entry .tags) {
-		margin-top: 0.5rem;
+	.tags {
+		margin: -0.35rem 0 0;
+		padding-bottom: 1.1rem;
 		font-size: 0.82rem;
 		color: var(--muted);
+	}
+	.tags a {
+		color: inherit;
+	}
+	.tags a:hover,
+	.tags a:focus-visible {
+		color: var(--accent);
 	}
 </style>

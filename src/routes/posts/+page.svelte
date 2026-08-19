@@ -15,7 +15,7 @@
 <section class="panel pt-14 pb-20 md:pt-16 md:pb-24">
 	<div class="shell">
 		<p class="enter eyebrow">{data.posts.length} posts</p>
-		<h1 class="enter display display-xl mt-5" style="--enter-delay:0ms">Writing</h1>
+		<h1 class="display display-xl mt-5">Writing</h1>
 		<p
 			class="enter mt-6 max-w-[52ch] text-[1.15rem] leading-[1.55] text-[var(--body)] md:text-[1.3rem]"
 		>

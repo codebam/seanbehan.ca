@@ -88,4 +88,19 @@ describe('built page metadata', () => {
 		expect(html).toContain('property="og:image:width" content="1200"');
 		expect(existsSync(resolve('.svelte-kit/cloudflare/og/site.png'))).toBe(true);
 	});
+
+	it('canonicals published posts to seanbehan.ca and names the sibling', () => {
+		const html = readFileSync(resolve('.svelte-kit/cloudflare/posts/nixos.html'), 'utf8');
+		expect(html).toContain('rel="canonical" href="https://seanbehan.ca/posts/nixos"');
+		expect(html).toContain('rel="alternate" href="https://codebam.ca/posts/nixos"');
+		expect(html).not.toContain('property="article:modified_time"');
+		expect(html).toContain('"name":"Sean Behan"');
+		expect(html).toContain('"alternateName":"codebam"');
+	});
+
+	it('keeps drafts self-canonical', () => {
+		const html = readFileSync(resolve('.svelte-kit/cloudflare/posts/website.html'), 'utf8');
+		expect(html).toContain('rel="canonical" href="https://seanbehan.ca/posts/website"');
+		expect(html).not.toContain('rel="alternate" href="https://codebam.ca/posts/website"');
+	});
 });

@@ -33,7 +33,7 @@ jobs:
       # Ahead of the tests, not after them: security.test.ts asserts against the
       # CSP in the real built output, and on a clean checkout it would otherwise
       # have to run the build itself, from inside a test timeout.
-      - name: Build
+      - name: Build seanbehan
         # The home page pulls project star counts from the GitHub API during
         # prerender. Passing a token avoids the shared-runner rate limit; the
         # build falls back to committed values if it fails either way.
@@ -43,3 +43,8 @@ jobs:
 
       - name: Test
         run: npm run test:run
+
+      - name: Build codebam
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run build:codebam

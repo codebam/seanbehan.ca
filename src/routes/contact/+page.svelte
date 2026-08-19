@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { reveal } from '$lib/actions/reveal';
-	import { site } from '$lib/site';
+	import { site, LINKEDIN_URL } from '$lib/site';
 
 	const channels = [
 		{
@@ -34,7 +34,7 @@
 					{
 						label: 'LinkedIn',
 						value: 'Sean Behan',
-						href: 'https://www.linkedin.com/in/sean-behan',
+						href: LINKEDIN_URL,
 						note: 'For the recruiters'
 					}
 				]
@@ -57,7 +57,7 @@
 		{site.showResume ? 'Open to work · Ontario, Canada' : 'Ontario, Canada'}
 	</p>
 
-	<h1 class="enter display display-xl mt-5 max-w-[18ch]" style="--enter-delay:0ms">
+	<h1 class="display display-xl mt-5 max-w-[18ch]">
 		Say <em>hello</em>.
 	</h1>
 
@@ -91,7 +91,7 @@
 				<a
 					href={channel.href}
 					target={channel.href.startsWith('http') ? '_blank' : null}
-					rel="noopener noreferrer"
+					rel={channel.href.startsWith('http') ? 'noopener noreferrer' : undefined}
 					class="channel grid gap-x-6 gap-y-1 py-5 md:grid-cols-[110px_1fr_auto] md:items-baseline"
 				>
 					<span class="text-sm tracking-wide text-[var(--muted)] uppercase">{channel.label}</span>

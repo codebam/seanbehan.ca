@@ -1,6 +1,7 @@
 import getPosts, { getAllTags } from '$lib/getPosts';
 import type { TagInfo } from '$lib/getPosts';
 import { site, absolute } from '$lib/site';
+import { slugifyTag } from '$lib/tags';
 import type { Post } from '$lib/types';
 
 export const prerender = true;
@@ -29,19 +30,28 @@ const entry = (path: string, lastmod: string) => `<url>
 <lastmod>${lastmod}</lastmod>
 </url>`;
 
+const iso = (value: string) => new Date(value).toISOString();
+
+const postStamp = (post: Post) => iso(post.meta.updated ?? post.meta.date);
+
+const newestStamp = (list: Post[]) =>
+	list.reduce((latest, post) => {
+		const stamp = postStamp(post);
+		return stamp > latest ? stamp : latest;
+	}, '');
+
 const render = (posts: Post[], tags: TagInfo[]) => {
-	const now = new Date().toISOString();
-	// Tag pages are lastmod'd to build time: a tag's recency is the newest post
-	// beneath it, and recomputing that per tag is not worth the crawl math.
-	const tagPages = tags.map((t) => `/posts/tag/${t.slug}`);
+	const newest = newestStamp(posts) || new Date().toISOString();
+	const tagPages = tags.map((t) => {
+		const tagged = posts.filter((p) => p.meta.tags?.some((tag) => slugifyTag(tag) === t.slug));
+		return { path: `/posts/tag/${t.slug}`, lastmod: newestStamp(tagged) || newest };
+	});
 	return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${staticPaths()
-	.map((path) => entry(path, now))
+	.map((path) => entry(path, newest))
 	.join('\n')}
-${posts
-	.map((post) => entry(post.path, new Date(post.meta.updated ?? post.meta.date).toISOString()))
-	.join('\n')}
-${tagPages.map((path) => entry(path, now)).join('\n')}
+${posts.map((post) => entry(post.path, postStamp(post))).join('\n')}
+${tagPages.map(({ path, lastmod }) => entry(path, lastmod)).join('\n')}
 </urlset>`;
 };

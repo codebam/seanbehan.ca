@@ -6,20 +6,12 @@
 	import Grainient from '$lib/components/svelte-bits/Grainient.svelte';
 	import StarBorder from '$lib/components/svelte-bits/StarBorder.svelte';
 	import { reveal } from '$lib/actions/reveal';
-	import { site } from '$lib/site';
+	import { site, yearsBuilding as yearsSinceStart } from '$lib/site';
 	import type { HomePageData } from '$lib/types';
 
 	const { data }: { data: HomePageData } = $props();
 
-	/**
-	 * Started building software in January 2014. Counted in whole elapsed years
-	 * from that month rather than by subtracting calendar years, so the number
-	 * only ticks over in January instead of every January 1st being wrong until
-	 * then.
-	 */
-	const CAREER_START = Date.UTC(2014, 0, 1);
-	const MS_PER_YEAR = 365.2425 * 24 * 60 * 60 * 1000;
-	let yearsBuilding = $derived(Math.floor((Date.now() - CAREER_START) / MS_PER_YEAR));
+	let yearsBuilding = $derived(yearsSinceStart());
 
 	/** Stars across the featured repos, rounded down to a round number. */
 	let starTotal = $derived(data.projects.reduce((sum, p) => sum + p.stars, 0));
@@ -66,7 +58,7 @@
 			</div>
 		</div>
 
-		<h1 class="enter display display-xl mt-9 max-w-[20ch]" style="--enter-delay:0ms">
+		<h1 class="display display-xl mt-9 max-w-[20ch]">
 			{site.headline.before}<em>{site.headline.emphasis}</em>{site.headline.after}
 		</h1>
 

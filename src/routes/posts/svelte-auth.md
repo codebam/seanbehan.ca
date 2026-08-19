@@ -44,8 +44,8 @@ npm run build && wrangler pages dev .svelte-kit/cloudflare
 ```
 
 My final schema looks like this. Yours might be a bit different, but mine
-allows for adding songs to a playlist which will be the purpose of my
-[website](https://music.seanbehan.ca).
+allows for adding songs to a playlist, which was the purpose of
+[that project](https://github.com/codebam/svelte-auth).
 
 ```sql
 CREATE TABLE IF NOT EXISTS Users (id TEXT PRIMARY KEY, password TEXT);
@@ -245,6 +245,5 @@ to allow logged in users to submit songs.
 
 ### Conclusion
 
-If you have any problems or you want to see the entire repo. The code is
-[here](https://github.com/codebam/svelte-auth) and the live demo is
-[here](https://music.seanbehan.ca).
+If you have any problems or you want to see the entire repo, the code is
+[here](https://github.com/codebam/svelte-auth).

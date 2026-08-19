@@ -42,7 +42,7 @@ return (
 ```
 
 Here we wrapped our text and button in a [React
-Fragment](https://reactjs.org/docs/fragments.html). Since components can only
+Fragment](https://react.dev/reference/react/Fragment). Since components can only
 return one DOM parent element, Fragments allow us to return more than one
 without creating more divs in our markup.
 
