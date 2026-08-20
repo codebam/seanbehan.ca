@@ -120,6 +120,37 @@ file list, because the site is small and a hardcoded list of URLs drifts out of
 step with the routes. The hashed assets do not care either way — their URLs
 changed with the deployment.
 
+### Automatically, from CI
+
+`.github/workflows/purge.yml` runs on every push to `master` and purges both
+zones, so a deploy from the dashboard-driven git integration is followed by a
+purge without anyone remembering to run one.
+
+The ordering is the whole difficulty. Cloudflare Pages builds this repo through
+its own git integration, which does not report back to GitHub — the repo has no
+GitHub deployments, so there is no `deployment_status` event to trigger on, and
+a workflow that fires on `push` starts while the Pages build is still running.
+Purging there purges the _old_ deployment, moments before the new one replaces
+it, which is worse than not purging at all: it refills the cache with the page
+you were trying to evict.
+
+So the workflow waits first, via `tools/cloudflare/await-deploy.sh`, which polls
+the Pages API until the deployment whose `commit_hash` matches `github.sha`
+reports `success`. A failed or cancelled build fails the job instead of purging.
+
+Secrets, set on the repo (Settings → Secrets and variables → Actions):
+
+| Secret          | Needed for              | Token permission                                                          |
+| --------------- | ----------------------- | ------------------------------------------------------------------------- |
+| `CF_API_TOKEN`  | the purge, and the wait | Zone → Cache Purge, Zone → Zone → Read, Account → Cloudflare Pages → Read |
+| `CF_ACCOUNT_ID` | the wait only           | — (it is an id, not a credential)                                         |
+
+`CF_ACCOUNT_ID` is optional and the workflow still works without it: the script
+falls back to a fixed sleep and says so in the log, which is what a purge-only
+token gets you. The same fallback covers a token that can purge but cannot read
+Pages. Both are a timer rather than a signal — worth upgrading when you next
+touch the token.
+
 Shorten `s-maxage` if a purge step is not wired up yet: at `s-maxage=60` the
 worst case is a minute of broken hydration for a reader who happened to load
 during the deploy, which is a very different thing from ten.
