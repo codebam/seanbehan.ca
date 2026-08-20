@@ -47,15 +47,15 @@ export const featuredProjects: FeaturedProject[] = [
 		tags: ['cloudflare', 'discord', 'workers-ai']
 	},
 	{
-		repo: 'pastebin-worker',
+		repo: 'pastebin-r2',
 		since: '2023',
-		title: 'Pastebin Worker',
+		title: 'Pastebin R2',
 		description:
-			'An encrypted pastebin API on Workers: ChaCha20-Poly1305 encryption, LZ4 compression, MIME type detection and syntax highlighting.',
-		language: 'Rust',
-		stars: 6,
-		homepage: 'https://pastebin.seanbehan.ca',
+			'A pastebin on Cloudflare Workers backed by R2 object storage: Hono routes the API and web UI, pastes render with syntax highlighting and expire on their own after 48 hours.',
+		language: 'TypeScript',
+		stars: 4,
+		homepage: 'https://paste.codebam.ca',
 		homepageLabel: 'Open pastebin',
-		tags: ['cloudflare', 'encryption', 'rust']
+		tags: ['cloudflare', 'r2', 'hono']
 	}
 ];

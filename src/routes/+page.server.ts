@@ -7,7 +7,7 @@ import type { FeaturedProject } from '$lib/types';
  * Refresh star counts and creation years from GitHub.
  *
  * Not `language` — that stays curated, because linguist reports
- * pastebin-worker as HTML when the interesting part is the Rust worker.
+ * pastebin-r2 as HTML when the interesting part is the TypeScript worker.
  *
  * The site is prerendered, so in a real build this runs once per deploy and
  * visitors never pay for these requests. Any failure — rate limit, outage,

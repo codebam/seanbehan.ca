@@ -24,7 +24,7 @@ const seanbehan = {
 		after: ' and ships to the edge.'
 	},
 	intro:
-		'{years} years of web applications, from database to frontend. I daily-drive NixOS, write Rust and TypeScript, and build everything in the open — a Wayland compositor, bots on Cloudflare Workers, and an encrypted pastebin.',
+		'{years} years of web applications, from database to frontend. I daily-drive NixOS, write Rust and TypeScript, and build everything in the open — a Wayland compositor, bots on Cloudflare Workers, and a pastebin on R2.',
 	email: 'sean@seanbehan.ca',
 	description:
 		'Sean Behan — full-stack developer working in Rust, TypeScript and NixOS. Writing about Linux, Cloudflare Workers, and building software.',
@@ -53,7 +53,7 @@ const codebam = {
 		after: ' — compositors, workers, and the odd bot.'
 	},
 	intro:
-		'{years} years of building software, most of it public. I daily-drive NixOS, write Rust and TypeScript, and put the results on GitHub — a Wayland compositor, bots on Cloudflare Workers, and an encrypted pastebin.',
+		'{years} years of building software, most of it public. I daily-drive NixOS, write Rust and TypeScript, and put the results on GitHub — a Wayland compositor, bots on Cloudflare Workers, and a pastebin on R2.',
 	email: 'codebam@codebam.ca',
 	description:
 		'codebam — open source in Rust, TypeScript and NixOS. A Wayland compositor, Cloudflare Workers, and writing about Linux.',

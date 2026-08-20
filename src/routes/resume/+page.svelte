@@ -37,8 +37,8 @@
 		<ul class="mt-5 list-disc space-y-2 pl-5">
 			<li>Rust, TypeScript, NixOS. Daily-driver Linux, Cloudflare Workers at the edge.</li>
 			<li>
-				Open source: a Wayland compositor (Viewport), a Telegram bot framework on Workers, an
-				encrypted pastebin.
+				Open source: a Wayland compositor (Viewport), a Telegram bot framework on Workers, a
+				pastebin on R2.
 			</li>
 			<li>Writing on Linux, containers, NixOS, and building software that ships.</li>
 		</ul>
