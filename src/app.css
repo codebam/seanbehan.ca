@@ -574,6 +574,58 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
+   Code-copy button
+   Injected after hydration on the post page (not SSR'd): a button
+   that cannot work is worse than none, so without JS the block is
+   a plain <pre>. Parked in the corner of the block it copies and
+   revealed only by the reader's intent — the pointer already over
+   this block, or a tab key that has arrived at the button. On
+   touch, where there is no pointer to reveal it, it is always up.
+   ═══════════════════════════════════════════════════════════ */
+.code-block {
+	position: relative;
+}
+.code-copy {
+	position: absolute;
+	top: 0.5rem;
+	right: 0.5rem;
+	z-index: 1;
+	font-family: var(--font-sans);
+	font-size: 0.75rem;
+	font-weight: 500;
+	line-height: 1;
+	color: var(--muted);
+	background: var(--surface-alt);
+	border: 1px solid var(--line);
+	border-radius: 6px;
+	padding: 0.3rem 0.6rem;
+	opacity: 0;
+	pointer-events: none;
+	transition:
+		opacity 0.15s ease,
+		color 0.15s ease,
+		border-color 0.15s ease;
+}
+.code-block:hover .code-copy,
+.code-block:focus-within .code-copy {
+	opacity: 1;
+	pointer-events: auto;
+}
+.code-copy:hover {
+	color: var(--accent);
+	border-color: var(--accent);
+}
+.code-copy.is-failed {
+	color: var(--accent);
+}
+@media (hover: none) {
+	.code-copy {
+		opacity: 1;
+		pointer-events: auto;
+	}
+}
+
+/* ═══════════════════════════════════════════════════════════
    Motion
 
    House rules for everything below: nothing moves more than a
@@ -702,5 +754,152 @@
 		animation-iteration-count: 1 !important;
 		transition-duration: 0.01ms !important;
 		scroll-behavior: auto !important;
+	}
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Print
+   Paper is the one surface the site never lays out for: every rule
+   above assumes pixels, hover, and a palette the OS may still have
+   set to dark when the print dialog opens. Nothing here moves
+   anything — it only pins the light palette, strips the
+   screen-only chrome, and keeps a long article from breaking
+   inside its own paragraphs.
+   ═══════════════════════════════════════════════════════════ */
+@media print {
+	:root {
+		color-scheme: light;
+
+		--bg: #ffffff;
+		--surface-alt: #ffffff;
+		--panel: #ffffff;
+		--line: #ddd9d0;
+		--line-strong: #ccc7bb;
+
+		--text: #17181a;
+		--body: #26272a;
+		--muted: #4a4b4f;
+		--dim: #6c6a66;
+
+		--accent: #a8391f;
+		--accent-hover: #8c2d16;
+		--accent-wash: transparent;
+
+		--invert-bg: #17181a;
+		--invert-text: #ffffff;
+	}
+
+	/* The inverted band swaps its own tokens on prefers-color-scheme, which a
+	   dark machine still reports at print time — pin it to the same paper. */
+	.panel-invert {
+		--bg: #ffffff;
+		--surface-alt: #ffffff;
+		--panel: #ffffff;
+		--line: #ddd9d0;
+		--line-strong: #ccc7bb;
+		--text: #17181a;
+		--body: #26272a;
+		--muted: #4a4b4f;
+		--dim: #6c6a66;
+		--accent: #a8391f;
+		--accent-hover: #8c2d16;
+		--invert-bg: #17181a;
+		--invert-text: #ffffff;
+		background: #ffffff;
+	}
+
+	* {
+		animation: none !important;
+		transition: none !important;
+	}
+	/* The entrance and reveal styles start hidden; a print taken before a
+	   reveal fired would ship half the page invisible. */
+	.enter,
+	.reveal-in,
+	.reveal-pending {
+		opacity: 1 !important;
+		transform: none !important;
+	}
+
+	/* Screen chrome. The TOC stays — it is the article's map, not the header's.
+	   The search field goes with the wrapper that holds its icon. */
+	header,
+	footer,
+	.read-progress,
+	nav[aria-label='Primary'],
+	.star-border,
+	.dot-grid,
+	.grainient,
+	.code-copy,
+	.btn,
+	.btn-outline,
+	div:has(> input[type='search']) {
+		display: none !important;
+	}
+
+	body {
+		background: #ffffff;
+		color: #17181a;
+		min-height: 0;
+	}
+	.panel,
+	.panel-alt {
+		background: #ffffff;
+		color: #17181a;
+	}
+
+	/* Shiki bakes both palettes into every token and this machine may still be
+	   on dark, whose half is light-on-dark — invisible on paper. Keep the light
+	   half only, and the block's own inline background with it. */
+	.shiki,
+	.shiki span {
+		color: var(--shiki-light) !important;
+	}
+	pre.shiki {
+		background: #ffffff !important;
+		border: 1px solid var(--line);
+	}
+
+	/* No hover for a reader to discover the section links; the ¶ is noise. */
+	.prose :where(h2, h3) > .heading-anchor::before {
+		content: none;
+	}
+
+	/* A link prints its destination: on paper the URL is the value, and there
+	   is no following to expect. Internal links stay quiet — the page next to
+	   this one is already in the same paper. */
+	a {
+		color: var(--text);
+		text-decoration: none;
+	}
+	.prose a[href^='http']::after {
+		content: ' (' attr(href) ')';
+		font-size: 0.85em;
+		color: var(--muted);
+		word-break: break-all;
+	}
+
+	/* Long fences would otherwise run off the page edge. */
+	pre,
+	code {
+		white-space: pre-wrap !important;
+		overflow-wrap: anywhere;
+	}
+	.prose code {
+		background: transparent;
+		border: none;
+		padding: 0;
+	}
+
+	/* Keep a heading with its content and a block with itself. */
+	h1,
+	h2,
+	h3 {
+		break-after: avoid;
+	}
+	pre,
+	img,
+	li {
+		break-inside: avoid;
 	}
 }

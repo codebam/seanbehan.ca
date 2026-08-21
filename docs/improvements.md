@@ -159,3 +159,31 @@ swap` changes letterforms without moving the line.
 41. **done** — Broken/stale post links: rust book dest, react.dev Fragment,
     official Kinoite page, svelte-auth demo (repo only).
 42. **done** — `flake.nix` declares a `nixpkgs` input.
+
+## Fifth pass (2026-08-21)
+
+43. **done** — No way to copy a code block. The post page now injects a
+    `Copy` button into each `<pre>` after hydration (with JS off the block
+    simply stays a plain `<pre>` — a dead button is worse than none), copies
+    via the clipboard API with an `execCommand` fallback, announces the
+    outcome in a `role="status"` live region, and reverts to `Copy` so a
+    second press still reads as an action. One delegated listener on the
+    article container, attached in JS rather than as an `onclick` attribute,
+    so the container stays non-interactive in the accessibility tree.
+    `src/lib/tests/post-page-copy-button.test.ts` covers the injection, the
+    copy, and the announcement.
+44. **done** — No print stylesheet; long posts printed panels, dot grids, and
+    whatever palette the OS was on. `app.css` now pins the light palette for
+    `@media print` (including the inverted band, whose swap is keyed on
+    `prefers-color-scheme` — still dark on a dark machine), forces the light
+    half of Shiki's dual themes, hides the screen chrome (header, footer,
+    nav, hero wash, dot grid, star border, buttons, search field) while
+    keeping the TOC, reverts unrevealed entrance/reveal blocks to visible,
+    prints external link URLs after the link, and keeps headings with their
+    content and blocks with themselves.
+45. **done** — `tsconfig.json` carried `"types": ["@cloudflare/workers-types"]`,
+    which replaced the standard DOM globals project-wide: `Element` resolved
+    to Workers' HTMLRewriter interface, so `Node.before`, `Node.append` and
+    friends mis-typed in checked files. Nothing in scope actually needs the
+    Workers types (the service worker is excluded from this tsconfig and
+    carries its own triple-slash reference), so the line goes.
