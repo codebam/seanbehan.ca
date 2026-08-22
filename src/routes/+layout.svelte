@@ -238,9 +238,16 @@
 		</a>
 
 		<nav aria-label="Primary" class="flex items-center gap-5 md:gap-6">
-			<!-- Hash link into the home page, which resolve() cannot express -->
-			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-			<a href={workHref} class="nav-link text-sm md:text-[0.95rem]">Work</a>
+			<!-- Hash link into the home page, which resolve() cannot express.
+			     aria-current is "true" rather than "page": the link's destination is
+			     a section of the current page, not the page itself. -->
+			<!-- eslint-disable svelte/no-navigation-without-resolve -->
+			<a
+				href={workHref}
+				class="nav-link text-sm md:text-[0.95rem]"
+				aria-current={page.url.pathname === '/' ? 'true' : undefined}>Work</a
+			>
+			<!-- eslint-enable svelte/no-navigation-without-resolve -->
 			{#each nav as item (item.href)}
 				<a
 					href={resolve(item.href)}
@@ -322,12 +329,14 @@
 		transform: scaleX(1);
 	}
 	/* Current section stays legible without a heavier weight shifting layout */
-	.nav-link[aria-current='page'] {
+	.nav-link[aria-current='page'],
+	.nav-link[aria-current='true'] {
 		color: var(--text);
 	}
 	/* The current page keeps its rule up permanently, in the accent, so hover
 	   state and location state never look like the same thing. */
-	.nav-link[aria-current='page']::after {
+	.nav-link[aria-current='page']::after,
+	.nav-link[aria-current='true']::after {
 		background: var(--accent);
 		transform: scaleX(1);
 	}

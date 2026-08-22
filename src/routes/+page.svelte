@@ -34,7 +34,9 @@
 	site where something moves on its own; every reading surface stays still. -->
 <section class="hero panel relative overflow-hidden pt-14 pb-20 md:pt-16 md:pb-24">
 	<div class="wash" aria-hidden="true">
-		<Grainient />
+		<!-- Desaturated and low-contrast: at full strength the accent blob reads
+		     as a stain behind the headline instead of an ambient wash. -->
+		<Grainient saturation={0.7} contrast={1.05} zoom={1.1} />
 	</div>
 
 	<div class="shell relative">
@@ -140,13 +142,28 @@
 
 			<div class="mt-12">
 				{#each data.projects as project, i (project.repo)}
+					<!-- Grid areas rather than utility columns: on a phone the star
+					     count shares the year's line instead of landing under the links,
+					     where it read as a stray. Source order matches the phone (year,
+					     stars, body); the desktop column order is set by the areas. -->
 					<article
-						class="work-row grid gap-x-8 gap-y-2 border-t border-[var(--line)] py-8 md:grid-cols-[110px_1fr_auto]"
+						class="work-row border-t border-[var(--line)] py-8"
 						use:reveal={{ delay: Math.min(i, 4) * 70 }}
 					>
-						<div class="text-[0.95rem] text-[var(--muted)] md:pt-1.5">{project.since} &mdash;</div>
+						<div class="row-head text-[0.95rem] text-[var(--muted)] md:pt-1.5">
+							{project.since} &mdash;
+						</div>
 
-						<div>
+						{#if project.stars > 0}
+							<div
+								class="row-stars text-[0.95rem] text-[var(--muted)] md:text-right"
+								title="{project.stars} {project.stars === 1 ? 'star' : 'stars'} on GitHub"
+							>
+								&#9733; {project.stars}
+							</div>
+						{/if}
+
+						<div class="row-body">
 							<h3 class="title text-[1.45rem] font-medium tracking-tight">{project.title}</h3>
 							<p class="mt-2.5 max-w-[58ch] text-[1.05rem] leading-relaxed text-[var(--body)]">
 								{project.description}
@@ -177,15 +194,6 @@
 								{/if}
 							</p>
 						</div>
-
-						{#if project.stars > 0}
-							<div
-								class="text-[0.95rem] text-[var(--muted)] md:pt-1.5 md:text-right"
-								title="{project.stars} {project.stars === 1 ? 'star' : 'stars'} on GitHub"
-							>
-								&#9733; {project.stars}
-							</div>
-						{/if}
 					</article>
 				{/each}
 			</div>
@@ -210,21 +218,21 @@
 </section>
 
 <style>
-	/* The wash is held at low opacity and faded out over the last third of the
-	   hero, so the headline sits on something close to paper and the boundary
-	   with the band below is a colour change rather than a visible edge. The
+	/* The wash is held at low opacity and faded out from under the intro, so
+	   the headline and body copy sit on something close to paper and the
+	   boundary with the band below is a colour change rather than an edge. The
 	   mask is what keeps it ambient instead of a hero image. */
 	.hero .wash {
 		position: absolute;
 		inset: 0;
-		opacity: 0.5;
-		mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 100%);
+		opacity: 0.32;
+		mask-image: linear-gradient(180deg, #000 0%, #000 40%, transparent 100%);
 	}
 	@media (prefers-color-scheme: dark) {
 		/* The dark palette has far less headroom between the accent and the page,
 		   so the same opacity that reads as a wash in light reads as a wall here. */
 		.hero .wash {
-			opacity: 0.32;
+			opacity: 0.2;
 		}
 	}
 
@@ -232,7 +240,31 @@
 	   rule above it warms to the accent and the title follows. No lift, no
 	   shadow — the row is a reading surface first. */
 	.work-row {
+		display: grid;
+		column-gap: 2rem;
+		row-gap: 0.5rem;
+		grid-template-columns: minmax(0, 1fr) auto;
+		grid-template-areas:
+			'head stars'
+			'body body';
 		transition: border-color 0.3s ease;
+	}
+	.row-head {
+		grid-area: head;
+	}
+	/* Right-aligned on the year's line; the column track sizes to it. */
+	.row-stars {
+		grid-area: stars;
+		justify-self: end;
+	}
+	.row-body {
+		grid-area: body;
+	}
+	@media (width >= 48rem) {
+		.work-row {
+			grid-template-columns: 110px minmax(0, 1fr) auto;
+			grid-template-areas: 'head body stars';
+		}
 	}
 	.work-row:hover {
 		border-color: color-mix(in srgb, var(--accent) 55%, var(--line));

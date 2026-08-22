@@ -101,6 +101,7 @@
 		--palette-light-dim: #8b8880;
 		--palette-light-accent: #a8391f;
 		--palette-light-accent-hover: #8c2d16;
+		--palette-light-accent-on: #ffffff;
 
 		--palette-dark-bg: #111110;
 		--palette-dark-alt: #191817;
@@ -113,6 +114,7 @@
 		--palette-dark-dim: #6b665e;
 		--palette-dark-accent: #e2724f;
 		--palette-dark-accent-hover: #f08a6a;
+		--palette-dark-accent-on: #16150f;
 	}
 }
 
@@ -140,6 +142,10 @@
 		/* Accent */
 		--accent: #a8391f;
 		--accent-hover: #8c2d16;
+		/* Text that sits on an accent surface. White clears 4.5:1 on the rust;
+		   on the coral it does not, so the dark palette puts its near-black
+		   behind it instead. */
+		--accent-on: var(--palette-light-accent-on);
 		/* Accent at low alpha, for tints that survive both themes */
 		--accent-wash: color-mix(in srgb, var(--accent) 8%, transparent);
 
@@ -164,6 +170,7 @@
 
 			--accent: #e2724f;
 			--accent-hover: #f08a6a;
+			--accent-on: var(--palette-dark-accent-on);
 			--accent-wash: color-mix(in srgb, var(--accent) 14%, transparent);
 
 			--invert-bg: #f0eae0;
@@ -289,6 +296,7 @@
 		--dim: var(--palette-dark-dim);
 		--accent: var(--palette-dark-accent);
 		--accent-hover: var(--palette-dark-accent-hover);
+		--accent-on: var(--palette-dark-accent-on);
 		--invert-bg: var(--palette-dark-text);
 		--invert-text: var(--palette-dark-bg);
 		background: var(--bg);
@@ -307,6 +315,7 @@
 			--dim: var(--palette-light-dim);
 			--accent: var(--palette-light-accent);
 			--accent-hover: var(--palette-light-accent-hover);
+			--accent-on: var(--palette-light-accent-on);
 			--invert-bg: var(--palette-light-text);
 			--invert-text: var(--palette-light-bg);
 		}
@@ -345,7 +354,7 @@
 	}
 	.btn:hover {
 		background: var(--accent);
-		color: #fff;
+		color: var(--accent-on);
 		transform: translateY(-1px);
 	}
 	.btn:active {
@@ -783,6 +792,7 @@
 
 		--accent: #a8391f;
 		--accent-hover: #8c2d16;
+		--accent-on: #ffffff;
 		--accent-wash: transparent;
 
 		--invert-bg: #17181a;
@@ -803,6 +813,7 @@
 		--dim: #6c6a66;
 		--accent: #a8391f;
 		--accent-hover: #8c2d16;
+		--accent-on: #ffffff;
 		--invert-bg: #17181a;
 		--invert-text: #ffffff;
 		background: #ffffff;

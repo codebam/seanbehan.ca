@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
 	import { resolve } from '$app/paths';
 	import PostList from '$lib/components/PostList.svelte';
 	import { site } from '$lib/site';
@@ -36,6 +37,28 @@
 	let topLevel = $derived(Math.min(...headings.map((h) => h.level), 3));
 
 	let meta = $derived(data.post.meta);
+
+	// ── Collapsible contents on small screens ──
+	// A nine-item list above the first paragraph is a screen of navigation
+	// before a single word of the article, so under 48rem the contents start
+	// folded. The `open` attribute is in the server HTML: without JS the list
+	// stays permanently open (today's behaviour) on every screen, and the
+	// effect below is what folds it on a JS phone. Desktop is forced open —
+	// and re-forced if the window grows across the breakpoint.
+	let tocOpen = $state(true);
+	$effect(() => {
+		// jsdom (and a genuinely old browser) has no matchMedia; without JS the
+		// server-rendered `open` attribute simply stands.
+		if (!browser || !window.matchMedia) return;
+		const wide = window.matchMedia('(min-width: 48rem)');
+		const sync = () => {
+			if (wide.matches) tocOpen = true;
+		};
+		if (!wide.matches) tocOpen = false;
+		wide.addEventListener('change', sync);
+		return () => wide.removeEventListener('change', sync);
+	});
+
 	let published = $derived(
 		new Date(meta.date).toLocaleDateString('en-CA', {
 			year: 'numeric',
@@ -206,20 +229,24 @@
 
 		{#if toc.length}
 			<!-- Only on a post long enough to need it: a contents list above three
-			     sections is a second copy of what the reader can already see. -->
+			     sections is a second copy of what the reader can already see. On a
+			     phone it is folded until tapped (see tocOpen); the summary keeps the
+			     same eyebrow look the list label always had. -->
 			<nav
 				class="enter toc mt-12 max-w-[68ch]"
 				style="--enter-delay:40ms"
 				aria-label="On this page"
 			>
-				<p class="eyebrow">On this page</p>
-				<ol class="mt-4">
-					{#each toc as heading (heading.id)}
-						<li class:sub={heading.level > topLevel}>
-							<a href="#{heading.id}">{heading.text}</a>
-						</li>
-					{/each}
-				</ol>
+				<details bind:open={tocOpen}>
+					<summary class="eyebrow">On this page</summary>
+					<ol class="mt-4">
+						{#each toc as heading (heading.id)}
+							<li class:sub={heading.level > topLevel}>
+								<a href="#{heading.id}">{heading.text}</a>
+							</li>
+						{/each}
+					</ol>
+				</details>
 			</nav>
 		{/if}
 
@@ -284,6 +311,16 @@
 <style>
 	/* The contents list is a quiet block, not a sidebar: the site has one column
 	   and a floating rail would fight the reading measure. */
+	.toc details summary {
+		list-style: none;
+		cursor: pointer;
+	}
+	/* The disclosure triangle is browser chrome in the wrong voice here; on
+	   touch, where the fold matters, the eyebrow text alone is the affordance.
+	   (list-style: none covers most engines; ::-webkit-details-marker the rest.) */
+	.toc details summary::-webkit-details-marker {
+		display: none;
+	}
 	.toc ol {
 		list-style: none;
 		display: flex;

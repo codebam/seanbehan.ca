@@ -140,5 +140,8 @@
 		No posts match “{debouncedQuery}”.
 	</p>
 {:else}
-	<PostList posts={results} showTags headingLevel={2} />
+	<!-- Paired columns on desktop, like the home page's list: a single column
+	     hugging the left of the shell leaves the right half of a wide window
+	     dead, and the component already collapses to one column under 48rem. -->
+	<PostList posts={results} columns={2} showTags headingLevel={2} />
 {/if}
