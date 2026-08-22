@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import PostList from '$lib/components/PostList.svelte';
-	import CountUp from '$lib/components/svelte-bits/CountUp.svelte';
 	import DotGrid from '$lib/components/svelte-bits/DotGrid.svelte';
+
 	import Grainient from '$lib/components/svelte-bits/Grainient.svelte';
 	import StarBorder from '$lib/components/svelte-bits/StarBorder.svelte';
 	import { reveal } from '$lib/actions/reveal';
@@ -11,15 +11,14 @@
 
 	const { data }: { data: HomePageData } = $props();
 
-	let yearsBuilding = $derived(yearsSinceStart());
-
 	/** Stars across the featured repos, rounded down to a round number. */
-	let starTotal = $derived(data.projects.reduce((sum, p) => sum + p.stars, 0));
+	const starTotal = $derived(data.projects.reduce((sum, p) => sum + p.stars, 0));
 	let starCount = $derived(starTotal >= 100 ? Math.floor(starTotal / 50) * 50 : starTotal);
 	let starSuffix = $derived(starTotal >= 100 ? '+' : '');
 
 	let latest = $derived(data.posts.slice(0, 6));
 
+	let yearsBuilding = $derived(yearsSinceStart());
 	let intro = $derived(site.intro.replace('{years}', String(yearsBuilding)));
 </script>
 
@@ -113,7 +112,7 @@
 				<div use:reveal={{ delay: i * 60 }}>
 					<div class="display text-[2.4rem] tabular-nums md:text-[2.9rem]">
 						{#if typeof fact.n === 'number'}
-							<CountUp to={fact.n} suffix={fact.suffix} duration={1.2 + i * 0.15} />
+							{fact.n}{fact.suffix}
 						{:else}
 							{fact.n}
 						{/if}

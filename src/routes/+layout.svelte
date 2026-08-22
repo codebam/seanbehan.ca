@@ -191,6 +191,10 @@
 	<meta property="og:image:width" content="1200" />
 	<meta property="og:image:height" content="630" />
 	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:site" content="@seanwbehan" />
+	{#if post}
+		<meta name="twitter:creator" content="@seanwbehan" />
+	{/if}
 	<meta name="twitter:title" content={ogTitle} />
 	<meta
 		name="twitter:description"
