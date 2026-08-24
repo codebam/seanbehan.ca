@@ -50,7 +50,7 @@
 		"prettier": "^3.9.6",
 		"prettier-plugin-svelte": "^4.1.1",
 		"prettier-plugin-tailwindcss": "^0.8.1",
-		"satori": "^0.29.0",
+		"satori": "^0.33.0",
 		"sharp": "^0.35.3",
 		"shiki": "^4.4.3",
 		"svelte": "^5.56.10",
