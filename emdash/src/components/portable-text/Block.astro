@@ -1,0 +1,54 @@
+---
+/**
+ * Paragraphs, headings and blockquotes in a post body.
+ *
+ * The only reason to override EmDash's version is the heading id: the table of
+ * contents links to `#some-section`, and both sides have to agree on every id.
+ * They are computed once by `prepareBody` in lib/posts.ts and travel on the
+ * block as `headingId`, so nothing here has to count duplicates or depend on
+ * the order blocks happen to render in.
+ */
+import type { BlockProps } from 'astro-portabletext/types';
+
+type Props = Omit<BlockProps, 'node'> & { node: BlockProps['node'] & { headingId?: string } };
+
+const { node, index: _index, isInline: _isInline, ...attrs } = Astro.props as Props;
+const style = node.style ?? 'normal';
+const id = node.headingId;
+---
+
+{
+	style === 'h1' ? (
+		<h1 {...attrs}>
+			<slot />
+		</h1>
+	) : style === 'h2' ? (
+		<h2 id={id} {...attrs}>
+			<slot />
+		</h2>
+	) : style === 'h3' ? (
+		<h3 id={id} {...attrs}>
+			<slot />
+		</h3>
+	) : style === 'h4' ? (
+		<h4 {...attrs}>
+			<slot />
+		</h4>
+	) : style === 'h5' ? (
+		<h5 {...attrs}>
+			<slot />
+		</h5>
+	) : style === 'h6' ? (
+		<h6 {...attrs}>
+			<slot />
+		</h6>
+	) : style === 'blockquote' ? (
+		<blockquote {...attrs}>
+			<slot />
+		</blockquote>
+	) : (
+		<p {...attrs}>
+			<slot />
+		</p>
+	)
+}

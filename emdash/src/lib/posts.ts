@@ -18,7 +18,7 @@
 import { getEmDashCollection, getTermsForEntries } from 'emdash';
 import { readingMinutes } from './readingTime';
 import { slugifyTag } from './tags';
-import type { PostSummary } from './types';
+import type { Heading, PostSummary } from './types';
 
 /** A Portable Text block, as much of it as this module has to know about. */
 interface PTBlock {
@@ -46,30 +46,42 @@ export function plainText(value: unknown): string {
 	return out.join(' ');
 }
 
-/** Every heading in a body, in document order, for the table of contents. */
-export function headings(value: unknown) {
-	if (!Array.isArray(value)) return [];
-	const seen = new Map<string, number>();
+/**
+ * A body with anchor ids attached to its section headings, and the list of
+ * those headings for the table of contents.
+ *
+ * The ids are computed here, once, rather than in the component that renders a
+ * heading: the contents list and the headings themselves have to agree on
+ * every id, and a renderer that numbered duplicates as it went would depend on
+ * render order and on nothing else having rendered first.
+ */
+export function prepareBody(value: unknown) {
+	if (!Array.isArray(value)) return { blocks: [] as PTBlock[], headings: [] as Heading[] };
 
-	return (value as PTBlock[])
-		.filter((block) => block?._type === 'block' && (block.style === 'h2' || block.style === 'h3'))
-		.map((block) => {
-			const text = (block.children ?? [])
-				.map((child) => child?.text ?? '')
-				.join('')
-				.trim();
-			const base = slugifyHeading(text);
-			// Two sections called "Conclusion" would otherwise share a fragment and
-			// the second would be unreachable.
-			const count = seen.get(base) ?? 0;
-			seen.set(base, count + 1);
-			return {
-				id: count === 0 ? base : `${base}-${count}`,
-				text,
-				level: block.style === 'h3' ? (3 as const) : (2 as const)
-			};
-		})
-		.filter((heading) => heading.text.length > 0);
+	const seen = new Map<string, number>();
+	const list: Heading[] = [];
+
+	const blocks = (value as PTBlock[]).map((block) => {
+		if (block?._type !== 'block' || (block.style !== 'h2' && block.style !== 'h3')) return block;
+
+		const text = (block.children ?? [])
+			.map((child) => child?.text ?? '')
+			.join('')
+			.trim();
+		if (!text) return block;
+
+		const base = slugifyHeading(text);
+		// Two sections called "Conclusion" would otherwise share a fragment and
+		// the second would be unreachable.
+		const count = seen.get(base) ?? 0;
+		seen.set(base, count + 1);
+		const id = count === 0 ? base : `${base}-${count}`;
+
+		list.push({ id, text, level: block.style === 'h3' ? 3 : 2 });
+		return { ...block, headingId: id };
+	});
+
+	return { blocks, headings: list };
 }
 
 /**

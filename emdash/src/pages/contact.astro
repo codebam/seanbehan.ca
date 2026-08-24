@@ -1,0 +1,115 @@
+---
+import Base from '../layouts/Base.astro';
+import { site, LINKEDIN_URL } from '../lib/site';
+
+const channels = [
+	{
+		label: 'Email',
+		value: site.email,
+		href: `mailto:${site.email}`,
+		note: 'Best for anything that needs a reply'
+	},
+	{
+		label: 'GitHub',
+		value: '@codebam',
+		href: 'https://github.com/codebam',
+		note: 'Issues and pull requests welcome'
+	},
+	{
+		label: 'Mastodon',
+		value: '@codebam@mstdn.ca',
+		href: 'https://mstdn.ca/@codebam',
+		note: 'Where I post the small stuff'
+	},
+	{
+		label: 'Matrix',
+		value: '@codebam:mozilla.org',
+		href: 'https://matrix.to/#/@codebam:mozilla.org',
+		note: 'End-to-end encrypted chat'
+	},
+	// Same reasoning as the résumé: a recruiter channel does not belong on the
+	// variant that leads with the code.
+	...(site.showResume
+		? [
+				{
+					label: 'LinkedIn',
+					value: 'Sean Behan',
+					href: LINKEDIN_URL,
+					note: 'For the recruiters'
+				}
+			]
+		: []),
+	{
+		label: 'PGP',
+		value: 'publickey.txt',
+		href: '/publickey.txt',
+		note: 'Encrypt anything sensitive'
+	}
+];
+---
+
+<Base
+	title="Contact"
+	description={`Get in touch with ${site.name} — email, GitHub, Mastodon.`}
+	ogTitle={`Contact — ${site.name}`}
+>
+	<section class="panel shell pt-14 pb-20 md:pt-16">
+		<p class="enter eyebrow">
+			{site.showResume ? 'Open to work · Ontario, Canada' : 'Ontario, Canada'}
+		</p>
+
+		<h1 class="display display-xl mt-5 max-w-[18ch]">
+			Say <em>hello</em>.
+		</h1>
+
+		<div
+			class="enter mt-10 grid items-start gap-8 md:grid-cols-[1fr_180px] md:gap-12"
+			style="--enter-delay:80ms"
+		>
+			<p class="max-w-[52ch] text-[1.05rem] leading-relaxed text-[var(--body)]">
+				{
+					site.showResume
+						? 'Email is the surest way to reach me. If you are hiring, contracting, or want to talk about something I built, say what you need and I will get back to you.'
+						: 'Email is the surest way to reach me. Issues and pull requests go to GitHub; everything else can come here.'
+				}
+			</p>
+			<img
+				src="/profile.webp"
+				alt={site.name}
+				width="180"
+				height="180"
+				class="order-first aspect-square w-32 rounded object-cover md:order-none md:w-full"
+			/>
+		</div>
+
+		<ul class="mt-12">
+			{
+				channels.map((channel, i) => (
+					<li class="border-t border-[var(--line)]" data-reveal data-reveal-delay={i * 55}>
+						<a
+							href={channel.href}
+							target={channel.href.startsWith('http') ? '_blank' : undefined}
+							rel={channel.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+							class="channel grid gap-x-6 gap-y-1 py-5 md:grid-cols-[110px_1fr_auto] md:items-baseline"
+						>
+							<span class="text-sm tracking-wide text-[var(--muted)] uppercase">
+								{channel.label}
+							</span>
+							<span class="value text-[1.05rem]">{channel.value}</span>
+							<span class="text-sm text-[var(--muted)] md:text-right">{channel.note}</span>
+						</a>
+					</li>
+				))
+			}
+		</ul>
+	</section>
+</Base>
+
+<style>
+	.channel .value {
+		transition: color 0.2s ease;
+	}
+	.channel:hover .value {
+		color: var(--accent);
+	}
+</style>

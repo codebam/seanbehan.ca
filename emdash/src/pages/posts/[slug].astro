@@ -1,966 +1,301 @@
 ---
-import {
-	getEmDashEntry,
-	getEmDashCollection,
-	getTermsForEntries,
-	getSeoMeta,
-	decodeSlug,
-	getSiteSettings,
-} from "emdash";
-import {
-	Image,
-	PortableText,
-	Comments,
-	CommentForm,
-	WidgetArea,
-} from "emdash/ui";
-import Base from "../../layouts/Base.astro";
-import PostCard from "../../components/PostCard.astro";
-import { getReadingTime } from "../../utils/reading-time";
-import { resolveBlogSiteIdentity } from "../../utils/site-identity";
+/**
+ * One post.
+ *
+ * Drafts render here — they are absent from every list, the feed and the
+ * sitemap, but a draft URL can still be shared, and the layout marks it
+ * noindex.
+ */
+import { getEmDashEntry, getEntryTerms } from 'emdash';
+import { PortableText } from 'emdash/ui';
+import Base from '../../layouts/Base.astro';
+import PostList from '../../components/PostList.astro';
+import Block from '../../components/portable-text/Block.astro';
+import Code from '../../components/portable-text/Code.astro';
+import { getPosts, prepareBody, toSummary } from '../../lib/posts';
+import { slugifyTag } from '../../lib/tags';
+import type { PostSummary } from '../../lib/types';
 
-const slug = decodeSlug(Astro.params.slug);
+/** How many "keep reading" entries a post ends with. Two fills the row. */
+const RELATED_LIMIT = 2;
 
-if (!slug) {
-	return Astro.redirect("/404");
-}
+/**
+ * The contents list, shown only where it earns the space. Four sections is the
+ * point where a post stops being scannable in one screen — below that the list
+ * is longer than the scroll it saves.
+ */
+const TOC_MIN_SECTIONS = 4;
 
-const { entry: post, cacheHint } = await getEmDashEntry("posts", slug);
-
-if (!post) {
-	return Astro.redirect("/404");
-}
-
+const slug = Astro.params.slug!;
+const { entry, cacheHint } = await getEmDashEntry('posts', slug);
+if (!entry) return Astro.rewrite('/404');
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
-// Get featured image URL for OG fallback
-// The image may have src (external) or meta.storageKey (local)
-function getImageUrl(img: unknown): string | undefined {
-	if (!img || typeof img !== "object") return undefined;
-	const image = img as Record<string, unknown>;
-	// Check for direct src
-	if (typeof image.src === "string" && image.src) {
-		return image.src.startsWith("http")
-			? image.src
-			: `${Astro.url.origin}${image.src}`;
-	}
-	// Build from storageKey for local images
-	const meta = image.meta as Record<string, unknown> | undefined;
-	const storageKey =
-		(typeof meta?.storageKey === "string" ? meta.storageKey : undefined) ||
-		(typeof image.id === "string" ? image.id : undefined);
-	if (storageKey) {
-		return `${Astro.url.origin}/_emdash/api/media/file/${storageKey}`;
-	}
-	return undefined;
-}
-const featuredImageUrl = getImageUrl(post.data.featured_image);
-const { siteTitle } = resolveBlogSiteIdentity(await getSiteSettings());
+const tags = (await getEntryTerms('posts', entry.data.id, 'tag')).map((term) => term.slug);
+const post = toSummary(entry as never, tags);
+const { blocks, headings } = prepareBody(entry.data.content);
 
-// Generate SEO meta from content
-const seo = getSeoMeta(post, {
-	siteTitle,
-	siteUrl: Astro.url.origin,
-	path: `/posts/${slug}`,
-	defaultOgImage: featuredImageUrl,
+const { posts } = await getPosts();
+
+/**
+ * The posts either side of this one in the archive's order — newest first, so
+ * `newer` is the entry above it and `older` the entry below. A draft is not in
+ * the list at all, which is why the lookup can miss and both come back null.
+ */
+const index = posts.findIndex((entry) => entry.slug === slug);
+const newer = index === -1 ? null : (posts[index - 1] ?? null);
+const older = index === -1 ? null : (posts[index + 1] ?? null);
+
+/**
+ * Posts sharing the most tags with this one, the newest first within a tie.
+ * Sharing nothing means not being suggested — a "related" row of unrelated
+ * posts is worse than no row, and the sibling links already cover "what else
+ * is there".
+ */
+const tagSet = new Set(tags.map(slugifyTag));
+const related: PostSummary[] = tagSet.size
+	? posts
+			.filter((other) => other.slug !== slug)
+			.map((other) => ({
+				post: other,
+				shared: other.meta.tags.filter((tag) => tagSet.has(slugifyTag(tag))).length
+			}))
+			.filter((candidate) => candidate.shared > 0)
+			.sort(
+				(a, b) =>
+					b.shared - a.shared ||
+					new Date(b.post.meta.date).getTime() - new Date(a.post.meta.date).getTime()
+			)
+			.slice(0, RELATED_LIMIT)
+			.map((candidate) => candidate.post)
+	: [];
+
+/** Only tags that some published post carries get a link; the rest are text. */
+const publishedTagSlugs = new Set(posts.flatMap((other) => other.meta.tags.map(slugifyTag)));
+
+const toc = headings.length >= TOC_MIN_SECTIONS ? headings : [];
+/**
+ * Indentation is relative, not absolute: most posts here head their sections
+ * with `###` and never use `##` at all, and those lists would otherwise be
+ * indented in their entirety with nothing to sit under.
+ */
+const topLevel = Math.min(...headings.map((heading) => heading.level), 3);
+
+const published = new Date(post.meta.date).toLocaleDateString('en-CA', {
+	year: 'numeric',
+	month: 'long',
+	day: 'numeric',
+	timeZone: 'UTC'
 });
-
-// Bylines are already hydrated by getEmDashEntry
-const bylines = post.data.bylines ?? [];
-
-// Get reading time
-const readingTime = getReadingTime(post.data.content);
-
-// This post's tags are already hydrated onto the entry by getEmDashEntry —
-// no extra query needed.
-const tags = post.data.terms?.tag ?? [];
-
-// Fetch a few extra recent posts in case the current post is among them.
-const { entries: recentPosts } = await getEmDashCollection("posts", {
-	orderBy: { published_at: "desc" },
-	limit: 4,
-});
-const otherPosts = recentPosts.filter((p) => p.id !== post.id).slice(0, 3);
-
-// Single batched query for related-posts tags, rather than one
-// getEntryTerms() call per related post.
-const otherTagsByEntry = await getTermsForEntries(
-	"posts",
-	otherPosts.map((p) => p.data.id),
-	"tag",
-);
-const otherPostsWithTags = otherPosts.map((p) => ({
-	post: p,
-	tags: otherTagsByEntry.get(p.data.id) ?? [],
-	bylines: p.data.bylines ?? [],
-}));
-
-const publishDate =
-	post.data.publishedAt?.toLocaleDateString("en-US", {
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-	}) ?? null;
 ---
 
+{/* Description, og:*, article:* and the BlogPosting JSON-LD all come from the
+    layout, which reads the post it is passed. */}
 <Base
-	title={seo.title}
-	pageTitle={seo.ogTitle}
-	description={seo.description}
-	image={seo.ogImage}
-	canonical={seo.canonical}
-	robots={seo.robots}
-	type="article"
-	publishedTime={post.data.publishedAt?.toISOString() ?? null}
-	modifiedTime={post.data.updatedAt.toISOString()}
-	content={{ collection: "posts", id: post.data.id, slug }}
+	title={post.meta.title}
+	post={post}
+	content={{ collection: 'posts', id: entry.data.id, slug }}
 >
-	<article class="article">
-		{/* Hero: Full-width featured image */}
-		{
-			post.data.featured_image && (
-				<div class="article-hero" {...post.edit.featured_image}>
-					<Image image={post.data.featured_image} />
-				</div>
-			)
-		}
+	<!-- Reading progress: a 2px accent strip across the top of the viewport,
+	     driven entirely by a scroll timeline in app.css. No scroll listener, and
+	     it is hidden outright for reduced-motion readers. -->
+	<div class="read-progress" aria-hidden="true"></div>
 
-		{/* Three-column layout */}
-		<div class="article-grid">
-			{/* Left gutter: Meta information */}
-			<aside class="article-meta-col">
-				<div class="meta-sticky">
+	<article class="panel pt-14 pb-20 md:pt-16">
+		<div class="shell">
+			<header class="enter border-b border-[var(--line)] pb-10">
+				<p class="eyebrow">
+					<a href="/posts" class="hover:underline">Writing</a>
+				</p>
+
+				<h1 class="display mt-5 max-w-[24ch] text-[2.4rem] md:text-[3.4rem]">{post.meta.title}</h1>
+
+				{
+					post.meta.description && (
+						<p class="mt-5 max-w-[54ch] text-[1.15rem] leading-[1.55] text-[var(--body)] md:text-[1.3rem]">
+							{post.meta.description}
+						</p>
+					)
+				}
+
+				<p class="mt-7 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[var(--muted)]">
+					<time datetime={post.meta.date}>{published}</time>
 					{
-						bylines.length > 0 && (
-							<div class="meta-block byline-block">
-								<span class="meta-label">
-									{bylines.length === 1 ? "Author" : "Authors"}
+						post.readingMinutes && (
+							<>
+								<span class="text-[var(--muted)]">&middot;</span>
+								<span>{post.readingMinutes} min read</span>
+							</>
+						)
+					}
+					{
+						post.meta.tags.length > 0 && (
+							<>
+								<span class="text-[var(--muted)]">&middot;</span>
+								<span class="flex flex-wrap items-center gap-x-3">
+									{post.meta.tags.map((tag) =>
+										publishedTagSlugs.has(slugifyTag(tag)) ? (
+											<a href={`/posts/tag/${slugifyTag(tag)}`} class="hover:underline">
+												{tag}
+											</a>
+										) : (
+											<span>{tag}</span>
+										)
+									)}
 								</span>
-								<div class="bylines">
-									{bylines.map((credit) => (
-										<div class="byline">
-											{credit.byline.avatarMediaId && (
-												<img
-													src={`/_emdash/api/media/file/${credit.byline.avatarMediaId}`}
-													alt={credit.byline.displayName}
-													class="byline-avatar"
-												/>
-											)}
-											<div class="byline-info">
-												<span class="byline-name">
-													{credit.byline.displayName}
-												</span>
-												{credit.roleLabel && (
-													<span class="byline-role">{credit.roleLabel}</span>
-												)}
-											</div>
-										</div>
-									))}
-								</div>
-							</div>
+							</>
 						)
 					}
-					{
-						publishDate && (
-							<div class="meta-block">
-								<span class="meta-label">Published</span>
-								<time class="meta-value">{publishDate}</time>
-							</div>
-						)
-					}
-					<div class="meta-block">
-						<span class="meta-label">Reading time</span>
-						<span class="meta-value">{readingTime} min</span>
-					</div>
-					{
-						tags.length > 0 && (
-							<div class="meta-block">
-								<span class="meta-label">Tags</span>
-								<div class="meta-tags">
-									{tags.map((t) => (
-										<a href={`/tag/${t.slug}`} class="meta-tag">
-											{t.label}
-										</a>
-									))}
-								</div>
-							</div>
-						)
-					}
-				</div>
-			</aside>
+				</p>
+			</header>
 
-			{/* Main content */}
-			<div class="article-main">
-				<header class="article-header">
-					<div class="article-meta">
-						{
-							bylines.length > 0 && (
-								<>
-									<span class="article-meta-byline">
-										{bylines.map((credit, i) => (
-											<>
-												{i > 0 && ", "}
-												{credit.byline.displayName}
-											</>
-										))}
-									</span>
-									<span class="meta-dot" />
-								</>
-							)
-						}
-						{
-							publishDate && (
-								<>
-									<time>{publishDate}</time>
-									<span class="meta-dot" />
-								</>
-							)
-						}
-						<span>{readingTime} min read</span>
-					</div>
-					<h1 class="article-title" {...post.edit.title}>{post.data.title}</h1>
-					{
-						post.data.excerpt && (
-							<p class="article-excerpt" {...post.edit.excerpt}>{post.data.excerpt}</p>
-						)
-					}
-				</header>
+			{
+				toc.length > 0 && (
+					/* Only on a post long enough to need it: a contents list above three
+					   sections is a second copy of what the reader can already see. On a
+					   phone it is folded until tapped (see scripts/toc.ts); the summary
+					   keeps the same eyebrow look the list label always had. */
+					<nav class="enter toc mt-12 max-w-[68ch]" style="--enter-delay:40ms" aria-label="On this page">
+						<details open data-toc>
+							<summary class="eyebrow">On this page</summary>
+							<ol class="mt-4">
+								{toc.map((heading) => (
+									<li class={heading.level > topLevel ? 'sub' : undefined}>
+										<a href={`#${heading.id}`}>{heading.text}</a>
+									</li>
+								))}
+							</ol>
+						</details>
+					</nav>
+				)
+			}
 
-				<div class="article-content">
-					<PortableText value={post.data.content} />
-				</div>
-
-				<div class="article-comments">
-					<Comments collection="posts" contentId={post.data.id} threaded />
-					<CommentForm collection="posts" contentId={post.data.id} />
-				</div>
+			<div class="enter prose mt-12 max-w-[68ch] text-[1.05rem]" style="--enter-delay:60ms" data-prose>
+				<PortableText value={blocks} components={{ block: Block, type: { code: Code } }} />
 			</div>
 
-			{/* Right gutter: TOC + Sidebar widgets */}
-			<aside class="article-sidebar">
-				<div class="sidebar-sticky">
-					<nav class="toc" aria-label="Table of contents">
-						<h4 class="toc-title">On this page</h4>
-						<div class="toc-content" id="toc-content">
-							<!-- Populated by JS -->
+			{
+				related.length > 0 && (
+					/* Suggested by shared tags, not by recency: a reader who finished this
+					   one is looking for more of the same subject, which is exactly what
+					   the sibling links below cannot offer. */
+					<aside class="mt-16 border-t border-[var(--line)] pt-8">
+						<h2 class="eyebrow">Related</h2>
+						<div class="mt-6">
+							<PostList posts={related} columns={2} headingLevel={3} />
 						</div>
-					</nav>
-					<div class="sidebar-widgets">
-						<WidgetArea name="sidebar" />
-					</div>
-				</div>
-			</aside>
+					</aside>
+				)
+			}
+
+			<footer class="mt-16 border-t border-[var(--line)] pt-6 text-sm">
+				<!-- The archive is newest first, so the older post is the one further
+				     down it — labelled by direction in time rather than by list order,
+				     which is what a reader is actually choosing between. -->
+				<nav
+					class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between"
+					aria-label="More posts"
+				>
+					{
+						older && (
+							<a href={older.path} class="sibling older max-w-[26ch]">
+								<span class="eyebrow">
+									<span class="arrow">&larr;</span> Older
+								</span>
+								<span class="title">{older.meta.title}</span>
+							</a>
+						)
+					}
+					{
+						newer && (
+							<a href={newer.path} class="sibling newer max-w-[26ch] sm:ml-auto sm:text-right">
+								<span class="eyebrow">
+									Newer <span class="arrow">&rarr;</span>
+								</span>
+								<span class="title">{newer.meta.title}</span>
+							</a>
+						)
+					}
+				</nav>
+
+				<p class="mt-10">
+					<a href="/posts" class="link-accent back"><span class="arrow">&larr;</span> All posts</a>
+				</p>
+			</footer>
 		</div>
 	</article>
 
-	{
-		otherPostsWithTags.length > 0 && (
-			<section class="more-posts">
-				<div class="more-inner">
-					<h2 class="more-title">Continue reading</h2>
-					<div class="more-grid">
-						{otherPostsWithTags.map(
-							({ post: p, tags: postTags, bylines: postBylines }) => (
-								<PostCard
-									title={p.data.title}
-									excerpt={p.data.excerpt}
-									featuredImage={p.data.featured_image}
-									href={`/posts/${p.id}`}
-									date={p.data.publishedAt ?? undefined}
-									readingTime={getReadingTime(p.data.content)}
-									tags={postTags.map((t) => ({ slug: t.slug, label: t.label }))}
-									bylines={postBylines}
-								/>
-							)
-						)}
-					</div>
-				</div>
-			</section>
-		)
-	}
-
 	<script>
-		// Build table of contents from h2/h3 headings
-		function buildToc() {
-			const content = document.querySelector(".article-content");
-			const tocContainer = document.getElementById("toc-content");
-			if (!content || !tocContainer) return;
-
-			const headings = content.querySelectorAll("h2, h3");
-			if (headings.length === 0) {
-				// Hide TOC if no headings
-				const toc = document.querySelector(".toc") as HTMLElement | null;
-				if (toc) toc.style.display = "none";
-				return;
-			}
-
-			const list = document.createElement("ul");
-			list.className = "toc-list";
-
-			headings.forEach((heading, index) => {
-				// Add ID if missing
-				if (!heading.id) {
-					heading.id = `heading-${index}`;
-				}
-
-				const li = document.createElement("li");
-				li.className =
-					heading.tagName === "H3" ? "toc-item toc-item--nested" : "toc-item";
-
-				const link = document.createElement("a");
-				link.href = `#${heading.id}`;
-				link.className = "toc-link";
-				link.textContent = heading.textContent;
-
-				li.appendChild(link);
-				list.appendChild(li);
-			});
-
-			tocContainer.appendChild(list);
-
-			// Highlight current section on scroll
-			const observer = new IntersectionObserver(
-				(entries) => {
-					entries.forEach((entry) => {
-						const id = entry.target.id;
-						const link = tocContainer.querySelector(`a[href="#${id}"]`);
-						if (link) {
-							if (entry.isIntersecting) {
-								tocContainer
-									.querySelectorAll(".toc-link")
-									.forEach((l) => l.classList.remove("active"));
-								link.classList.add("active");
-							}
-						}
-					});
-				},
-				{ rootMargin: "-80px 0px -80% 0px" }
-			);
-
-			headings.forEach((heading) => observer.observe(heading));
-		}
-
-		buildToc();
+		import '../../scripts/copy-code';
+		import '../../scripts/toc';
 	</script>
 </Base>
 
 <style>
-	/* Article container */
-	.article {
-		max-width: var(--wide-width);
-		margin: 0 auto;
-	}
-
-	/* Hero image - full width within container */
-	.article-hero {
-		margin: var(--spacing-16) var(--spacing-6);
-		border-radius: var(--radius-lg);
-		overflow: hidden;
-		background: var(--color-surface);
-	}
-
-	.article-hero img {
-		width: 100%;
-		height: auto;
-		max-height: 500px;
-		object-fit: cover;
-	}
-
-	/* Three-column grid */
-	.article-grid {
-		display: grid;
-		grid-template-columns:
-			var(--meta-col-width) minmax(0, var(--content-width))
-			var(--gutter-width);
-		gap: var(--spacing-10);
-		justify-content: center;
-		padding: 0 var(--spacing-6);
-		margin: var(--spacing-16) 0;
-	}
-
-	/* Left column: Meta */
-	.article-meta-col {
-		display: block;
-	}
-
-	.meta-sticky {
-		position: sticky;
-		top: calc(var(--nav-height) + var(--spacing-8));
-	}
-
-	.meta-block {
-		margin-bottom: var(--spacing-6);
-	}
-
-	.meta-label {
-		display: block;
-		font-size: var(--font-size-xs);
-		font-weight: 500;
-		text-transform: uppercase;
-		letter-spacing: var(--tracking-wide);
-		color: var(--color-muted);
-		margin-bottom: var(--spacing-1);
-	}
-
-	.meta-value {
-		display: block;
-		font-size: var(--font-size-sm);
-		color: var(--color-text-secondary);
-	}
-
-	.meta-tags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--spacing-1);
-	}
-
-	.meta-tag {
-		display: inline-block;
-		padding: var(--tag-padding-y) var(--spacing-2);
-		font-size: var(--font-size-xs);
-		color: var(--color-text-secondary);
-		background: var(--color-surface);
-		border-radius: var(--radius);
-		text-decoration: none;
-		transition:
-			color var(--transition-fast),
-			background var(--transition-fast);
-	}
-
-	.meta-tag:hover {
-		color: var(--color-text);
-		background: var(--color-border);
-	}
-
-	/* Byline styles */
-	.bylines {
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacing-1);
-	}
-
-	.byline {
-		display: flex;
-		align-items: center;
-		gap: var(--spacing-2);
-	}
-
-	.byline-avatar {
-		width: var(--avatar-size-lg);
-		height: var(--avatar-size-lg);
-		border-radius: 50%;
-		object-fit: cover;
-	}
-
-	.byline-info {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.byline-name {
-		font-size: var(--font-size-sm);
-		font-weight: 500;
-		color: var(--color-text);
-	}
-
-	.byline-role {
-		font-size: var(--font-size-xs);
-		color: var(--color-muted);
-	}
-
-	/* Main content column */
-	.article-main {
-		min-width: 0;
-	}
-
-	.article-header {
-		margin-bottom: var(--spacing-10);
-	}
-
-	.article-header .article-meta {
-		display: none;
-		align-items: center;
-		flex-wrap: wrap;
-		column-gap: var(--spacing-3);
-		row-gap: var(--spacing-1);
-		font-size: var(--font-size-sm);
-		color: var(--color-muted);
-		margin-bottom: var(--spacing-4);
-	}
-
-	.article-meta-byline {
-		font-weight: 500;
-		color: var(--color-text-secondary);
-	}
-
-	.article-title {
-		font-size: clamp(2rem, 5vw, var(--font-size-5xl));
-		font-weight: var(--font-weight-display);
-		line-height: var(--leading-tight);
-		letter-spacing: var(--tracking-tight);
-		margin-bottom: var(--spacing-4);
-	}
-
-	.article-excerpt {
-		font-size: var(--font-size-xl);
-		line-height: var(--leading-relaxed);
-		color: var(--color-text-secondary);
-	}
-
-	/* Article content typography */
-	.article-content {
-		font-size: var(--font-size-lg);
-		line-height: var(--leading-relaxed);
-	}
-
-	.article-content :global(p) {
-		margin-bottom: 1.5em;
-	}
-
-	.article-content :global(h2) {
-		font-size: var(--font-size-2xl);
-		margin-top: 2.5em;
-		margin-bottom: 0.75em;
-		scroll-margin-top: calc(var(--nav-height) + var(--spacing-4));
-	}
-
-	.article-content :global(h3) {
-		font-size: var(--font-size-xl);
-		margin-top: 2em;
-		margin-bottom: 0.5em;
-		scroll-margin-top: calc(var(--nav-height) + var(--spacing-4));
-	}
-
-	.article-content :global(blockquote) {
-		margin: 2em 0;
-		padding: var(--spacing-4) var(--spacing-6);
-		border-left: 3px solid var(--color-border);
-		background: var(--color-bg-subtle);
-		border-radius: 0 var(--radius) var(--radius) 0;
-		color: var(--color-text-secondary);
-		font-style: italic;
-	}
-
-	.article-content :global(pre) {
-		margin: 2em 0;
-		padding: var(--spacing-5);
-		background: var(--color-surface);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-lg);
-		overflow-x: auto;
-		font-family: var(--font-mono);
-		font-size: var(--font-size-sm);
-		line-height: 1.6;
-	}
-
-	.article-content :global(code) {
-		font-family: var(--font-mono);
-		font-size: 0.9em;
-		background: var(--color-surface);
-		padding: 0.2em 0.4em;
-		border-radius: var(--radius);
-	}
-
-	.article-content :global(pre code) {
-		background: none;
-		padding: 0;
-	}
-
-	.article-content :global(ul),
-	.article-content :global(ol) {
-		margin-bottom: 1.5em;
-		padding-left: 1.5em;
-	}
-
-	.article-content :global(li) {
-		margin-bottom: 0.5em;
-	}
-
-	.article-content :global(img) {
-		margin: 2em 0;
-		border-radius: var(--radius-lg);
-	}
-
-	.article-content :global(hr) {
-		margin: 3em 0;
-		border: none;
-		border-top: 1px solid var(--color-border);
-	}
-
-	.article-content :global(a) {
-		color: var(--color-brand);
-		text-decoration: underline;
-		text-underline-offset: 3px;
-		text-decoration-thickness: 1px;
-	}
-
-	.article-content :global(a:hover) {
-		text-decoration-thickness: 2px;
-	}
-
-	/* Right column: TOC + Sidebar */
-	.article-sidebar {
-		display: block;
-	}
-
-	.sidebar-sticky {
-		position: sticky;
-		top: calc(var(--nav-height) + var(--spacing-8));
-	}
-
-	.toc {
-		margin-bottom: var(--spacing-8);
-		padding-bottom: var(--spacing-6);
-		border-bottom: 1px solid var(--color-border-subtle);
-	}
-
-	.toc-title {
-		font-size: var(--font-size-xs);
-		font-weight: 500;
-		text-transform: uppercase;
-		letter-spacing: var(--tracking-wide);
-		color: var(--color-muted);
-		margin-bottom: var(--spacing-3);
-	}
-
-	.toc-content :global(.toc-list) {
+	/* The contents list is a quiet block, not a sidebar: the site has one column
+	   and a floating rail would fight the reading measure. */
+	.toc details summary {
 		list-style: none;
-		padding: 0;
-		margin: 0;
+		cursor: pointer;
 	}
-
-	.toc-content :global(.toc-item) {
-		margin-bottom: var(--spacing-1);
-	}
-
-	.toc-content :global(.toc-item--nested) {
-		padding-left: var(--spacing-3);
-	}
-
-	.toc-content :global(.toc-link) {
-		display: block;
-		font-size: var(--font-size-sm);
-		color: var(--color-muted);
-		text-decoration: none;
-		padding: var(--spacing-1) 0;
-		transition: color var(--transition-fast);
-		line-height: var(--leading-snug);
-	}
-
-	.toc-content :global(.toc-link:hover),
-	.toc-content :global(.toc-link.active) {
-		color: var(--color-text);
-	}
-
-	/* Sidebar widgets */
-	.sidebar-widgets :global(.widget-area) {
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacing-6);
-	}
-
-	.sidebar-widgets :global(.widget) {
-		font-size: var(--font-size-sm);
-	}
-
-	.sidebar-widgets :global(.widget__title) {
-		font-size: var(--font-size-xs);
-		font-weight: 500;
-		text-transform: uppercase;
-		letter-spacing: var(--tracking-wide);
-		color: var(--color-muted);
-		margin-bottom: var(--spacing-3);
-	}
-
-	.sidebar-widgets :global(.widget__content) {
-		color: var(--color-text-secondary);
-		line-height: var(--leading-relaxed);
-	}
-
-	/* Sidebar search widget */
-	.sidebar-widgets :global(.widget-search) {
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacing-2);
-	}
-
-	.sidebar-widgets :global(.widget-search__input) {
-		width: 100%;
-		padding: var(--spacing-2) var(--spacing-3);
-		font-family: var(--font-body);
-		font-size: var(--font-size-sm);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius);
-		background: var(--color-bg);
-		color: var(--color-text);
-		transition:
-			border-color var(--transition-fast),
-			box-shadow var(--transition-fast);
-	}
-
-	.sidebar-widgets :global(.widget-search__input)::placeholder {
-		color: var(--color-muted);
-	}
-
-	.sidebar-widgets :global(.widget-search__input):focus,
-	.sidebar-widgets :global(.widget-search__input):focus-visible {
-		outline: none;
-		border-color: var(--color-brand);
-		box-shadow: 0 0 0 3px var(--color-brand-ring);
-	}
-
-	.sidebar-widgets :global(.widget-search__button) {
+	/* The disclosure triangle is browser chrome in the wrong voice here; on
+	   touch, where the fold matters, the eyebrow text alone is the affordance.
+	   (list-style: none covers most engines; ::-webkit-details-marker the rest.) */
+	.toc details summary::-webkit-details-marker {
 		display: none;
 	}
-
-	/* Sidebar categories widget */
-	.sidebar-widgets :global(.widget-categories) {
+	.toc ol {
 		list-style: none;
-		padding: 0;
-		margin: 0;
-	}
-
-	.sidebar-widgets :global(.widget-categories li) {
 		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: var(--spacing-2) 0;
-		border-bottom: 1px solid var(--color-border-subtle);
+		flex-direction: column;
+		gap: 0.55rem;
+		border-left: 2px solid var(--line);
+		padding-left: 1.1rem;
+	}
+	.toc li.sub {
+		padding-left: 1.1rem;
+		font-size: 0.95rem;
+	}
+	.toc a {
+		color: var(--body);
+		transition: color 0.2s ease;
+	}
+	.toc a:hover,
+	.toc a:focus-visible {
+		color: var(--accent);
 	}
 
-	.sidebar-widgets :global(.widget-categories li:last-child) {
-		border-bottom: none;
-	}
-
-	.sidebar-widgets :global(.widget-categories__link) {
-		color: var(--color-text-secondary);
-		text-decoration: none;
-		transition: color var(--transition-fast);
-	}
-
-	.sidebar-widgets :global(.widget-categories__link:hover) {
-		color: var(--color-text);
-	}
-
-	.sidebar-widgets :global(.widget-categories__count) {
-		font-size: var(--font-size-xs);
-		color: var(--color-muted);
-		background: var(--color-surface);
-		padding: var(--tag-padding-y) var(--spacing-2);
-		border-radius: var(--radius);
-	}
-
-	/* Sidebar tags widget - pill style */
-	.sidebar-widgets :global(.widget-tags__cloud) {
-		list-style: none;
-		padding: 0;
-		margin: 0;
+	/* A sibling link is a two-line block, so the hover lands on the title rather
+	   than the whole thing: the label above it is a direction, not a name. */
+	.sibling {
 		display: flex;
-		flex-wrap: wrap;
-		gap: var(--spacing-2);
+		flex-direction: column;
+		gap: 0.4rem;
+	}
+	.sibling .title {
+		font-size: 1.05rem;
+		color: var(--text);
+		transition: color 0.25s ease;
+	}
+	.sibling:hover .title,
+	.sibling:focus-visible .title {
+		color: var(--accent);
+	}
+	/* Each arrow nudges the way its link travels. Keyed on the class rather than
+	   position, because a post at either end of the archive has only one of the
+	   two links and it would otherwise be nudged as though it were the other. */
+	.sibling.newer:hover :global(.arrow),
+	.sibling.newer:focus-visible :global(.arrow) {
+		transform: translateX(3px);
+	}
+	.sibling.older:hover :global(.arrow),
+	.sibling.older:focus-visible :global(.arrow) {
+		transform: translateX(-3px);
 	}
 
-	.sidebar-widgets :global(.widget-tags__cloud li) {
-		margin: 0;
-	}
-
-	.sidebar-widgets :global(.widget-tags__link) {
-		display: inline-block;
-		padding: var(--tag-padding-y) var(--spacing-2);
-		font-size: var(--font-size-xs);
-		color: var(--color-text-secondary);
-		background: var(--color-surface);
-		border-radius: var(--radius);
-		text-decoration: none;
-		transition:
-			color var(--transition-fast),
-			background var(--transition-fast);
-	}
-
-	.sidebar-widgets :global(.widget-tags__link:hover) {
-		color: var(--color-text);
-		background: var(--color-border);
-	}
-
-	.sidebar-widgets :global(.widget-tags__count) {
-		display: none;
-	}
-
-	/* Sidebar recent posts widget */
-	.sidebar-widgets :global(.widget-recent-posts) {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-	}
-
-	.sidebar-widgets :global(.widget-recent-posts li) {
-		padding: var(--spacing-2) 0;
-		border-bottom: 1px solid var(--color-border-subtle);
-	}
-
-	.sidebar-widgets :global(.widget-recent-posts li:last-child) {
-		border-bottom: none;
-	}
-
-	.sidebar-widgets :global(.widget-recent-posts a) {
-		color: var(--color-text-secondary);
-		text-decoration: none;
-		transition: color var(--transition-fast);
-		line-height: var(--leading-snug);
-	}
-
-	.sidebar-widgets :global(.widget-recent-posts a:hover) {
-		color: var(--color-text);
-	}
-
-	/* Sidebar archives widget */
-	.sidebar-widgets :global(.widget-archives) {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-	}
-
-	.sidebar-widgets :global(.widget-archives li) {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: var(--spacing-2) 0;
-		border-bottom: 1px solid var(--color-border-subtle);
-	}
-
-	.sidebar-widgets :global(.widget-archives li:last-child) {
-		border-bottom: none;
-	}
-
-	.sidebar-widgets :global(.widget-archives__link) {
-		color: var(--color-text-secondary);
-		text-decoration: none;
-		transition: color var(--transition-fast);
-	}
-
-	.sidebar-widgets :global(.widget-archives__link:hover) {
-		color: var(--color-text);
-	}
-
-	.sidebar-widgets :global(.widget-archives__count) {
-		font-size: var(--font-size-xs);
-		color: var(--color-muted);
-		background: var(--color-surface);
-		padding: var(--tag-padding-y) var(--spacing-2);
-		border-radius: var(--radius);
-	}
-
-	/* Comments section */
-	.article-comments {
-		margin-top: var(--spacing-16);
-		padding-top: var(--spacing-10);
-		border-top: 1px solid var(--color-border);
-	}
-
-	.article-comments :global(.ec-comments) {
-		--ec-comment-border: 1px solid var(--color-border);
-	}
-
-	.article-comments :global(.ec-comments-heading) {
-		font-size: var(--font-size-2xl);
-		font-weight: var(--font-weight-heading);
-		margin-bottom: var(--spacing-8);
-	}
-
-	.article-comments :global(.ec-comment-author) {
-		color: var(--color-text);
-	}
-
-	.article-comments :global(.ec-comment-date) {
-		font-family: var(--font-mono);
-		color: var(--color-muted);
-	}
-
-	.article-comments :global(.ec-comment-body) {
-		color: var(--color-text);
-	}
-
-	.article-comments :global(.ec-comment-form-field input),
-	.article-comments :global(.ec-comment-form-field textarea) {
-		background: var(--color-surface) !important;
-		border-color: var(--color-border) !important;
-		color: var(--color-text) !important;
-	}
-
-	.article-comments :global(.ec-comment-user-info) {
-		background: var(--color-surface) !important;
-		border-color: var(--color-border) !important;
-	}
-
-	.article-comments :global(.ec-comment-form-submit) {
-		background: var(--color-brand) !important;
-		color: var(--color-on-brand) !important;
-	}
-
-	/* More posts section */
-	.more-posts {
-		background: var(--color-bg-subtle);
-		padding: var(--spacing-16) 0;
-		margin-top: var(--spacing-16);
-	}
-
-	.more-inner {
-		max-width: var(--wide-width);
-		margin: 0 auto;
-		padding: 0 var(--spacing-6);
-	}
-
-	.more-title {
-		font-size: var(--font-size-2xl);
-		font-weight: var(--font-weight-heading);
-		margin-bottom: var(--spacing-10);
-	}
-
-	.more-grid {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: var(--spacing-8);
-	}
-
-	/* Responsive */
-	@media (max-width: 1100px) {
-		.article-grid {
-			grid-template-columns: minmax(0, var(--content-width));
-			gap: 0;
-		}
-
-		.article-meta-col,
-		.article-sidebar {
-			display: none;
-		}
-
-		.article-header .article-meta {
-			display: flex;
-		}
-	}
-
-	@media (max-width: 900px) {
-		.article-hero {
-			margin: var(--spacing-4) var(--spacing-4) var(--spacing-8);
-			border-radius: var(--radius);
-		}
-
-		.article-grid {
-			padding: 0 var(--spacing-4);
-		}
-
-		.more-grid {
-			grid-template-columns: repeat(2, 1fr);
-		}
-	}
-
-	@media (max-width: 600px) {
-		.article-title {
-			font-size: var(--font-size-3xl);
-		}
-
-		.more-grid {
-			grid-template-columns: 1fr;
-		}
+	/* The back arrow travels the other way, so its nudge has to as well. */
+	.back:hover :global(.arrow),
+	.back:focus-visible :global(.arrow) {
+		transform: translateX(-3px);
 	}
 </style>

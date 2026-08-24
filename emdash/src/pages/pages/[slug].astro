@@ -1,108 +1,49 @@
 ---
-import { getEmDashEntry, decodeSlug } from "emdash";
-import { PortableText } from "emdash/ui";
-import Base from "../../layouts/Base.astro";
+/**
+ * A CMS page: anything written in the admin that is not a post.
+ *
+ * The site's own pages — home, contact, the résumé — are templates, because
+ * they are layout more than they are prose. This route is what makes it
+ * possible to add a page without a deploy, and it renders in the same reading
+ * column a post does.
+ */
+import { getEmDashEntry, decodeSlug } from 'emdash';
+import { PortableText } from 'emdash/ui';
+import Base from '../../layouts/Base.astro';
+import Block from '../../components/portable-text/Block.astro';
+import Code from '../../components/portable-text/Code.astro';
+import { prepareBody } from '../../lib/posts';
 
 const slug = decodeSlug(Astro.params.slug);
+if (!slug) return Astro.rewrite('/404');
 
-if (!slug) {
-	return Astro.redirect("/404");
-}
-
-const { entry: page, cacheHint } = await getEmDashEntry("pages", slug);
-
-if (!page) {
-	return Astro.redirect("/404");
-}
-
+const { entry: page, cacheHint } = await getEmDashEntry('pages', slug);
+if (!page) return Astro.rewrite('/404');
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+
+const { blocks } = prepareBody(page.data.content);
 ---
 
-<Base
-	title={page.data.title}
-	content={{ collection: "pages", id: page.data.id, slug }}
->
-	<article class="page-article">
-		<header class="page-header">
-			<h1 class="page-title" {...page.edit.title}>{page.data.title}</h1>
-		</header>
+<Base title={page.data.title} content={{ collection: 'pages', id: page.data.id, slug }}>
+	<article class="panel pt-14 pb-20 md:pt-16">
+		<div class="shell">
+			<header class="enter border-b border-[var(--line)] pb-10">
+				<h1 class="display mt-5 max-w-[24ch] text-[2.4rem] md:text-[3.4rem]" {...page.edit.title}>
+					{page.data.title}
+				</h1>
+			</header>
 
-		<div class="page-content">
-			<PortableText value={page.data.content} />
+			<div
+				class="enter prose mt-12 max-w-[68ch] text-[1.05rem]"
+				style="--enter-delay:60ms"
+				data-prose
+			>
+				<PortableText value={blocks} components={{ block: Block, type: { code: Code } }} />
+			</div>
 		</div>
 	</article>
+
+	<script>
+		import '../../scripts/copy-code';
+	</script>
 </Base>
-
-<style>
-	.page-article {
-		max-width: var(--max-width);
-		margin: 0 auto;
-		padding: var(--spacing-16) var(--spacing-6) var(--spacing-16);
-	}
-
-	.page-header {
-		margin-bottom: var(--spacing-8);
-	}
-
-	.page-title {
-		font-size: clamp(var(--font-size-2xl), 4vw, var(--font-size-4xl));
-		font-weight: var(--font-weight-display);
-		line-height: var(--leading-tight);
-	}
-
-	.page-content :global(p) {
-		margin-bottom: 1.5em;
-	}
-
-	.page-content :global(h2) {
-		font-size: var(--font-size-2xl);
-		margin-top: 2em;
-		margin-bottom: 0.75em;
-	}
-
-	.page-content :global(h3) {
-		font-size: var(--font-size-xl);
-		margin-top: 1.75em;
-		margin-bottom: 0.5em;
-	}
-
-	.page-content :global(blockquote) {
-		margin: 1.5em 0;
-		padding-left: var(--spacing-6);
-		border-left: 3px solid var(--color-border);
-		color: var(--color-muted);
-	}
-
-	.page-content :global(pre) {
-		margin: 1.5em 0;
-		padding: var(--spacing-4);
-		background: var(--color-surface);
-		border-radius: var(--radius);
-		overflow-x: auto;
-		font-family: var(--font-mono);
-		font-size: var(--font-size-sm);
-	}
-
-	.page-content :global(code) {
-		font-family: var(--font-mono);
-		font-size: 0.9em;
-		background: var(--color-surface);
-		padding: 0.15em 0.3em;
-		border-radius: var(--radius);
-	}
-
-	.page-content :global(pre code) {
-		background: none;
-		padding: 0;
-	}
-
-	.page-content :global(ul),
-	.page-content :global(ol) {
-		margin-bottom: 1.5em;
-		padding-left: var(--spacing-5);
-	}
-
-	.page-content :global(li) {
-		margin-bottom: 0.5em;
-	}
-</style>

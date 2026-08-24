@@ -1,0 +1,155 @@
+---
+/**
+ * Search over the archive.
+ *
+ * The list itself is rendered by the server and this only reorders it: a
+ * reader with no JS, and any crawler, still gets all twenty-odd posts. That is
+ * the main difference from the SvelteKit version, where the component owned
+ * the list and rendered the results.
+ *
+ * Fuse is ~29 kB and most readers never type a character, so it is fetched on
+ * the first keystroke rather than shipped with the page. Until it arrives the
+ * full list stands, which is what an empty query shows anyway.
+ */
+---
+
+<div class="relative mb-2">
+	<svg
+		class="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[var(--dim)]"
+		fill="none"
+		viewBox="0 0 24 24"
+		stroke="currentColor"
+		stroke-width="2"
+		aria-hidden="true"
+	>
+		<path
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"></path>
+	</svg>
+	<input
+		type="search"
+		id="post-search"
+		placeholder="Search posts…"
+		aria-label="Search posts"
+		class="input pl-9"
+	/>
+</div>
+
+<!-- Off-screen rather than hidden: `display: none` would take it out of the
+     accessibility tree and nothing would be announced at all. -->
+<p class="sr-only" role="status" aria-live="polite" id="post-search-status"></p>
+
+<p
+	class="border-t border-[var(--line)] py-10 text-[var(--muted)]"
+	role="status"
+	aria-live="polite"
+	id="post-search-empty"
+	hidden
+>
+</p>
+
+<script>
+	import type Fuse from 'fuse.js';
+
+	interface Row {
+		el: HTMLElement;
+		title: string;
+		description: string;
+		tags: string[];
+	}
+
+	const input = document.querySelector<HTMLInputElement>('#post-search');
+	const status = document.querySelector<HTMLElement>('#post-search-status');
+	const empty = document.querySelector<HTMLElement>('#post-search-empty');
+	const list = document.querySelector<HTMLElement>('[data-post-list]');
+
+	if (input && status && empty && list) {
+		const rows: Row[] = [...list.querySelectorAll<HTMLElement>('[data-post]')].map((el) => ({
+			el,
+			title: el.dataset.title ?? '',
+			description: el.dataset.description ?? '',
+			tags: (el.dataset.tags ?? '').split(',').filter(Boolean)
+		}));
+
+		let fuse: Fuse<Row> | null = null;
+		let loading = false;
+
+		async function loadFuse() {
+			if (fuse || loading) return;
+			loading = true;
+			const { default: FuseCtor } = await import('fuse.js');
+			// Descriptions and tags are searched too, so "wireshark" or "systemd"
+			// finds the post even when the title never says it. Title still outranks
+			// both.
+			fuse = new FuseCtor(rows, {
+				keys: [
+					{ name: 'title', weight: 3 },
+					{ name: 'description', weight: 1 },
+					{ name: 'tags', weight: 1 }
+				],
+				threshold: 0.4,
+				minMatchCharLength: 2
+			});
+			loading = false;
+		}
+
+		function render(query: string) {
+			const matches = query && fuse ? fuse.search(query).map((result) => result.item) : rows;
+
+			for (const row of rows) row.el.hidden = !matches.includes(row);
+			// Rank order, not publication order, once a query narrows the list.
+			if (query && fuse) for (const row of matches) list!.append(row.el);
+
+			empty!.hidden = matches.length > 0;
+			empty!.textContent = matches.length > 0 ? '' : `No posts match “${query}”.`;
+
+			/*
+			 * Announced rather than only drawn: the list swaps out under a screen
+			 * reader with nothing said about it otherwise. Left empty when nothing
+			 * matched — the visible empty state above is itself a live region, and
+			 * two of them would say the same thing twice.
+			 */
+			status!.textContent =
+				!query || matches.length === 0
+					? ''
+					: `${matches.length} ${matches.length === 1 ? 'post matches' : 'posts match'} ${query}`;
+		}
+
+		/**
+		 * The query lives in the URL as `?q=`, so a search survives a reload, can
+		 * be linked to, and comes back when a reader follows a result and returns.
+		 * Written on the debounced value with replaceState rather than pushState: a
+		 * search is one destination that keeps changing, so it should take one
+		 * history entry, not one per letter.
+		 */
+		function syncUrl(query: string) {
+			const url = new URL(location.href);
+			if ((url.searchParams.get('q') ?? '') === query) return;
+			if (query) url.searchParams.set('q', query);
+			else url.searchParams.delete('q');
+			history.replaceState(history.state, '', url);
+		}
+
+		let timer: ReturnType<typeof setTimeout>;
+		input.addEventListener('input', () => {
+			clearTimeout(timer);
+			loadFuse();
+			timer = setTimeout(async () => {
+				await loadFuse();
+				const query = input.value.trim();
+				syncUrl(query);
+				render(query);
+			}, 300);
+		});
+		input.addEventListener('focus', loadFuse);
+
+		// A query in the URL is a search the reader arrived with, so it needs the
+		// index immediately rather than on a keystroke that may never come.
+		const initial = new URL(location.href).searchParams.get('q') ?? '';
+		if (initial) {
+			input.value = initial;
+			loadFuse().then(() => render(initial));
+		}
+	}
+</script>

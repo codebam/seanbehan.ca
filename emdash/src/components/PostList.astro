@@ -1,0 +1,181 @@
+---
+/**
+ * The list of posts, shared by the home page, the archive and the tag pages.
+ *
+ * Same markup and styling as the SvelteKit component it replaces; the pointer
+ * spotlight is now a class the delegated script in scripts/spotlight.ts picks
+ * up, rather than a component instance per row.
+ */
+import { displayTag, slugifyTag } from '../lib/tags';
+import type { PostSummary } from '../lib/types';
+
+interface Props {
+	posts: PostSummary[];
+	/** 2 for the home page's paired grid, 1 for the full archive list */
+	columns?: 1 | 2;
+	/** Topic tags are noise next to six posts, useful across twenty-four */
+	showTags?: boolean;
+	/**
+	 * Heading level for an entry title. The default suits the home page, where
+	 * the list sits under an h2 section heading. A page whose list is the
+	 * content itself — the archive, a tag — follows its h1 directly and must
+	 * pass 2, or the document skips a level.
+	 */
+	headingLevel?: 2 | 3;
+}
+
+const { posts, columns = 1, showTags = false, headingLevel = 3 } = Astro.props;
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
+
+/** "Apr 2026" — the day is never what a reader is after in a list. */
+const monthYear = (date: string) =>
+	new Date(date).toLocaleDateString('en-CA', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+---
+
+<div class:list={['list', columns === 2 && 'paired']} data-post-list>
+	{
+		posts.map((post) => (
+			<div
+				class="item"
+				data-post
+				data-title={post.meta.title}
+				data-description={post.meta.description}
+				data-tags={post.meta.tags.join(',')}
+			>
+				{/* Tags sit outside the card so they can be links without nesting
+				    anchors. The paired grid still takes these wrappers as children. */}
+				<a class="spotlight entry" href={post.path}>
+					<span class="pool" aria-hidden="true" />
+					<time datetime={post.meta.date}>{monthYear(post.meta.date)}</time>
+					{post.readingMinutes && <span class="read">&middot; {post.readingMinutes} min</span>}
+					<Heading class="title">{post.meta.title}</Heading>
+					{post.meta.description && <p>{post.meta.description}</p>}
+				</a>
+				{showTags && post.meta.tags.length > 0 && (
+					<p class="tags">
+						{post.meta.tags.map((tag, i) => (
+							<>
+								{i > 0 && <span aria-hidden="true"> · </span>}
+								<a href={`/posts/tag/${slugifyTag(tag)}`}>{displayTag(tag)}</a>
+							</>
+						))}
+					</p>
+				)}
+			</div>
+		))
+	}
+</div>
+
+<style>
+	.paired {
+		display: grid;
+		gap: 0 3rem;
+	}
+	@media (width >= 48rem) {
+		.paired {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	/* Whole-card hover: the rule warms to the accent and the block slides a
+	   couple of pixels toward the reader's click. Two pixels is enough to feel
+	   live and small enough that a column of entries does not visibly reflow. */
+	.entry {
+		position: relative;
+		isolation: isolate;
+		display: block;
+		padding: 1.25rem 0;
+		border-top: 1px solid var(--line);
+		transition:
+			border-color 0.3s ease,
+			transform 0.3s var(--ease-out-soft);
+	}
+	.entry:hover,
+	.entry:focus-visible {
+		border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+		transform: translateX(2px);
+	}
+
+	/* The light itself. Position comes from the pointer via --spot-x/--spot-y;
+	   with no pointer over the card it stays at zero opacity and costs nothing. */
+	.pool {
+		position: absolute;
+		/* Bleeds past the row's own padding, so the light looks like it falls on
+		   the page rather than being clipped to a box the reader cannot see. */
+		inset: 0 -1rem;
+		z-index: -1;
+		pointer-events: none;
+		border-radius: 10px;
+		opacity: 0;
+		transition: opacity 0.35s ease;
+		background: radial-gradient(
+			260px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+			color-mix(in srgb, var(--accent) 12%, transparent),
+			transparent 72%
+		);
+	}
+	.entry[data-lit] .pool {
+		opacity: 1;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.pool {
+			display: none;
+		}
+	}
+
+	.entry time {
+		font-size: 0.78rem;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--muted);
+		transition: color 0.25s ease;
+	}
+	.entry:hover time {
+		color: var(--accent);
+	}
+
+	/* Same eyebrow treatment as the date. It reads as the secondary fact on the
+	   line through size and tracking rather than colour: at 0.78rem it needs
+	   4.5:1, and --dim only reaches 3.3:1 on any of our surfaces. */
+	.entry .read {
+		font-size: 0.78rem;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
+
+	/* Selector is the class, not the tag: the level varies with where the list
+	   sits in the document outline, the styling does not. */
+	.entry .title {
+		margin-top: 0.35rem;
+		font-size: 1.2rem;
+		font-weight: 500;
+		letter-spacing: -0.01em;
+		transition: color 0.2s ease;
+	}
+	.entry:hover .title {
+		color: var(--accent);
+	}
+
+	.entry p {
+		margin-top: 0.3rem;
+		color: var(--body);
+		font-size: 0.95rem;
+		line-height: 1.6;
+		max-width: 62ch;
+	}
+
+	.tags {
+		margin: -0.35rem 0 0;
+		padding-bottom: 1.1rem;
+		font-size: 0.82rem;
+		color: var(--muted);
+	}
+	.tags a {
+		color: inherit;
+	}
+	.tags a:hover,
+	.tags a:focus-visible {
+		color: var(--accent);
+	}
+</style>

@@ -1,33 +1,17 @@
 ---
-import Base from "../layouts/Base.astro";
+import Base from '../layouts/Base.astro';
 ---
 
-<Base title="Page not found">
-	<div class="not-found">
-		<h1>404</h1>
-		<p>The page you're looking for doesn't exist.</p>
-		<a href="/">Go back home</a>
-	</div>
+<Base title="404" description="That page is not here.">
+	<section class="panel shell flex min-h-[55vh] flex-col justify-center py-20">
+		<p class="eyebrow">Error 404</p>
+		<h1 class="display display-xl mt-5 max-w-[18ch]">That page is not here.</h1>
+		<p class="mt-4 max-w-[50ch] text-[1.05rem] text-[var(--body)]">
+			The link may be old, or the page may never have existed.
+		</p>
+		<p class="mt-8 flex flex-wrap gap-x-6 gap-y-3">
+			<a href="/" class="btn">Back home</a>
+			<a href="/posts" class="link-quiet self-center">Read the writing</a>
+		</p>
+	</section>
 </Base>
-
-<style>
-	.not-found {
-		text-align: center;
-		padding: var(--spacing-24) var(--spacing-6);
-	}
-
-	.not-found h1 {
-		font-size: var(--font-size-5xl);
-		margin-bottom: var(--spacing-2);
-		color: var(--color-border);
-	}
-
-	.not-found p {
-		color: var(--color-muted);
-		margin-bottom: var(--spacing-6);
-	}
-
-	.not-found a {
-		color: var(--color-text);
-	}
-</style>

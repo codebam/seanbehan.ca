@@ -1,0 +1,45 @@
+---
+/**
+ * A fenced code block in a post.
+ *
+ * Replaces EmDash's own code component, which ships a dark box with hardcoded
+ * colours — this site themes code with the rest of the page and highlights it
+ * with shiki (see lib/highlight.ts).
+ *
+ * The copy button is not here: it is injected by scripts/copy-code.ts after
+ * load. A button that cannot work is worse than none, so with JS off the block
+ * stays a plain `<pre>`.
+ */
+import { highlight } from '../../lib/highlight';
+
+export interface Props {
+	node: {
+		_type: 'code';
+		_key: string;
+		code: string;
+		language?: string;
+		filename?: string;
+	};
+}
+
+const { node } = Astro.props;
+const html = node?.code ? await highlight(node.code, node.language) : '';
+---
+
+{
+	node?.code && (
+		<>
+			{node.filename && <p class="code-filename">{node.filename}</p>}
+			<Fragment set:html={html} />
+		</>
+	)
+}
+
+<style>
+	.code-filename {
+		margin-bottom: -0.75rem;
+		font-family: var(--font-mono, monospace);
+		font-size: 0.8rem;
+		color: var(--muted);
+	}
+</style>

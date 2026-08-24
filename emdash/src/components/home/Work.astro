@@ -1,0 +1,128 @@
+---
+/** SELECTED WORK — inverted panel, one row per featured repository. */
+import type { FeaturedProject } from '../../lib/types';
+
+interface Props {
+	projects: FeaturedProject[];
+}
+
+const { projects } = Astro.props;
+---
+
+<section id="work" class="panel-invert scroll-mt-4 py-20 md:py-24">
+	<div class="shell">
+		<div class="flex items-baseline justify-between gap-4" data-reveal>
+			<h2 class="display display-lg">Selected work</h2>
+			<a
+				href="https://github.com/codebam?tab=repositories"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="link-accent whitespace-nowrap">All repositories <span class="arrow">&rarr;</span></a
+			>
+		</div>
+
+		<div class="mt-12">
+			{
+				projects.map((project, i) => (
+					/* Grid areas rather than utility columns: on a phone the star count
+					   shares the year's line instead of landing under the links, where it
+					   read as a stray. Source order matches the phone (year, stars, body);
+					   the desktop column order is set by the areas. */
+					<article
+						class="work-row border-t border-[var(--line)] py-8"
+						data-reveal
+						data-reveal-delay={Math.min(i, 4) * 70}
+					>
+						<div class="row-head text-[0.95rem] text-[var(--muted)] md:pt-1.5">
+							{project.since} &mdash;
+						</div>
+
+						{project.stars > 0 && (
+							<div
+								class="row-stars text-[0.95rem] text-[var(--muted)] md:text-right"
+								title={`${project.stars} ${project.stars === 1 ? 'star' : 'stars'} on GitHub`}
+							>
+								&#9733; {project.stars}
+							</div>
+						)}
+
+						<div class="row-body">
+							<h3 class="title text-[1.45rem] font-medium tracking-tight">{project.title}</h3>
+							<p class="mt-2.5 max-w-[58ch] text-[1.05rem] leading-relaxed text-[var(--body)]">
+								{project.description}
+							</p>
+
+							<p class="mt-3.5 text-[0.92rem]">
+								<span class="tag-lang">{project.language}</span>
+								<span class="tag">&nbsp;&middot; {project.tags.join(' · ')}</span>
+							</p>
+
+							<p class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-[0.98rem]">
+								<a
+									href={`https://github.com/codebam/${project.repo}`}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="link-quiet"
+								>
+									Source
+								</a>
+								{project.homepage && (
+									<a
+										href={project.homepage}
+										target="_blank"
+										rel="noopener noreferrer"
+										class="link-accent"
+									>
+										{project.homepageLabel} <span class="arrow">&rarr;</span>
+									</a>
+								)}
+							</p>
+						</div>
+					</article>
+				))
+			}
+		</div>
+	</div>
+</section>
+
+<style>
+	/* A work row is not a link, so it gets the lightest possible hover: the
+	   rule above it warms to the accent and the title follows. No lift, no
+	   shadow — the row is a reading surface first. */
+	.work-row {
+		display: grid;
+		column-gap: 2rem;
+		row-gap: 0.5rem;
+		grid-template-columns: minmax(0, 1fr) auto;
+		grid-template-areas:
+			'head stars'
+			'body body';
+		transition: border-color 0.3s ease;
+	}
+	.row-head {
+		grid-area: head;
+	}
+	/* Right-aligned on the year's line; the column track sizes to it. */
+	.row-stars {
+		grid-area: stars;
+		justify-self: end;
+	}
+	.row-body {
+		grid-area: body;
+	}
+	@media (width >= 48rem) {
+		.work-row {
+			grid-template-columns: 110px minmax(0, 1fr) auto;
+			grid-template-areas: 'head body stars';
+		}
+	}
+	.work-row:hover {
+		border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+	}
+	.work-row .title {
+		transition: color 0.25s ease;
+	}
+	.work-row:hover .title {
+		color: var(--accent);
+	}
+</style>

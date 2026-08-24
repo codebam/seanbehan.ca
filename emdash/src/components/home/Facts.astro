@@ -1,0 +1,45 @@
+---
+/**
+ * FACTS — tinted band over a dot field that answers the pointer.
+ *
+ * The fourth cell is a word rather than a number, so it is spelled out instead
+ * of being forced into the same shape as the three counts beside it.
+ */
+import DotGrid from '../svelte-bits/DotGrid.svelte';
+import type { FeaturedProject } from '../../lib/types';
+
+interface Props {
+	postCount: number;
+	projects: FeaturedProject[];
+	yearsBuilding: number;
+}
+
+const { postCount, projects, yearsBuilding } = Astro.props;
+
+/** Stars across the featured repos, rounded down to a round number. */
+const starTotal = projects.reduce((sum, project) => sum + project.stars, 0);
+const starCount = starTotal >= 100 ? Math.floor(starTotal / 50) * 50 : starTotal;
+const starSuffix = starTotal >= 100 ? '+' : '';
+
+const facts = [
+	{ value: `${yearsBuilding}+`, label: 'years building software' },
+	{ value: String(postCount), label: 'technical posts' },
+	{ value: `${starCount}${starSuffix}`, label: 'GitHub stars' },
+	{ value: 'Rust', label: '+ TypeScript, Nix' }
+];
+---
+
+<section class="facts panel-alt relative overflow-hidden py-12 md:py-14">
+	<DotGrid client:visible />
+
+	<div class="shell relative grid grid-cols-2 gap-x-8 gap-y-8 md:grid-cols-4">
+		{
+			facts.map((fact, i) => (
+				<div data-reveal data-reveal-delay={i * 60}>
+					<div class="display text-[2.4rem] tabular-nums md:text-[2.9rem]">{fact.value}</div>
+					<div class="mt-1 text-sm text-[var(--muted)]">{fact.label}</div>
+				</div>
+			))
+		}
+	</div>
+</section>

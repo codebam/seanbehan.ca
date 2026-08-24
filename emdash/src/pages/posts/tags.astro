@@ -1,0 +1,72 @@
+---
+/** The tag index: every topic, with how many posts sit under it. */
+import Base from '../../layouts/Base.astro';
+import { getPosts, tagCounts } from '../../lib/posts';
+import { displayTag } from '../../lib/tags';
+import { site } from '../../lib/site';
+
+const { posts, cacheHint } = await getPosts();
+if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+
+const tags = tagCounts(posts);
+---
+
+<Base
+	title="Tags"
+	description="Browse every post by topic."
+	ogTitle={`Tags — ${site.name}`}
+>
+	<section class="panel pt-14 pb-20 md:pt-16 md:pb-24">
+		<div class="shell">
+			<p class="enter eyebrow">
+				<a href="/posts" class="hover:underline">Writing</a> · {tags.length} tags
+			</p>
+			<h1 class="display display-xl mt-5">Tags</h1>
+			<p
+				class="enter mt-6 max-w-[52ch] text-[1.15rem] leading-[1.55] text-[var(--body)] md:text-[1.3rem]"
+				style="--enter-delay:80ms"
+			>
+				Every topic I write about, with how many posts sit under each heading.
+			</p>
+
+			<div class="mt-12 flex flex-wrap gap-3" data-reveal>
+				{
+					tags.map((tag) => (
+						<a href={`/posts/tag/${tag.slug}`} class="chip">
+							{displayTag(tag.slug)}
+							<span class="count">{tag.count}</span>
+						</a>
+					))
+				}
+			</div>
+		</div>
+	</section>
+</Base>
+
+<style>
+	/* A stackable topic chip: quiet until hovered, with the post count tucked
+	   in as the secondary value. The pill reads as a grouping affordance, so
+	   the whole thing is the link rather than the word alone. */
+	.chip {
+		display: inline-flex;
+		align-items: baseline;
+		gap: 0.5rem;
+		border: 1px solid var(--line);
+		border-radius: 999px;
+		padding: 0.4rem 0.95rem;
+		font-size: 0.92rem;
+		color: var(--text);
+		transition:
+			border-color 0.2s ease,
+			color 0.2s ease;
+	}
+	.chip:hover,
+	.chip:focus-visible {
+		border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+		color: var(--accent);
+	}
+	.chip .count {
+		font-size: 0.78rem;
+		color: var(--muted);
+	}
+</style>
