@@ -19,6 +19,7 @@
 
 import type { APIRoute } from 'astro';
 import { ImageResponse } from '@cf-wasm/og';
+import { env } from 'cloudflare:workers';
 import { getEmDashEntry } from 'emdash';
 import { site } from '../../lib/site';
 import { displayTag } from '../../lib/tags';
@@ -120,8 +121,19 @@ const card = (post: Card) => ({
  * `.woff2` because satori reads ttf, otf and woff.
  */
 async function fonts(origin: string) {
+	/*
+	 * Read through the ASSETS binding, not by fetching the site's own URL. A
+	 * deployed Worker asking for its own hostname leaves the datacentre and comes
+	 * back through the edge, which Cloudflare refuses as a subrequest loop — the
+	 * cards worked in dev and 500'd in production for exactly that reason. The
+	 * binding hands back the same file without a network hop.
+	 *
+	 * The binding comes from `cloudflare:workers` rather than
+	 * `Astro.locals.runtime.env`, which Astro 6 removed.
+	 */
 	const load = async (file: string) => {
-		const res = await fetch(new URL(`/fonts/${file}`, origin));
+		const url = new URL(`/fonts/${file}`, origin);
+		const res = await env.ASSETS.fetch(url);
 		if (!res.ok) throw new Error(`og: ${file} is not being served (${res.status})`);
 		return res.arrayBuffer();
 	};

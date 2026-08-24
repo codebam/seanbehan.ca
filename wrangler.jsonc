@@ -1,13 +1,19 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "seanbehan-ca-emdash",
+	"name": "seanbehan-ca",
 	"main": "./src/worker.ts",
 	"compatibility_date": "2026-02-24",
 	"compatibility_flags": ["nodejs_compat"],
+
+	// One database, both origins. codebam.ca is deployed from this same file
+	// with `--name codebam-ca`, so it binds the same D1 and the same bucket: the
+	// two sites are one body of writing behind two front doors, and a post
+	// published from either admin panel is live on both.
 	"d1_databases": [
 		{
 			"binding": "DB",
-			"database_name": "seanbehan-ca"
+			"database_name": "seanbehan-ca",
+			"database_id": "39e5ca60-d101-4b0e-856b-85fa5d986cb0"
 		}
 	],
 	"r2_buckets": [
@@ -16,14 +22,20 @@
 			"bucket_name": "seanbehan-ca-media"
 		}
 	],
+
 	// Worker Loader for plugin sandboxing
 	"worker_loaders": [
 		{
 			"binding": "LOADER"
 		}
 	],
+
 	// Drives scheduled publishing, plugin cron, and maintenance (see src/worker.ts)
 	"triggers": {
 		"crons": ["* * * * *"]
+	},
+
+	"observability": {
+		"enabled": true
 	}
 }
