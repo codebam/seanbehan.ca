@@ -16,35 +16,26 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          # One source of truth, shared with Cloudflare Pages, which reads the
-          # same file. CI was on 24 while production built on 26, so the checks
-          # gating a deploy were not running on the runtime that served it.
+          # One source of truth, shared with the deploy workflow, so the checks
+          # gating a deploy run on the runtime that serves it.
           node-version-file: .node-version
           cache: npm
 
       - run: npm ci
 
-      - name: Lint
+      - name: Format check
         run: npm run lint
 
       - name: Type check
         run: npm run check
 
-      # Ahead of the tests, not after them: security.test.ts asserts against the
-      # CSP in the real built output, and on a clean checkout it would otherwise
-      # have to run the build itself, from inside a test timeout.
-      - name: Build seanbehan
-        # The home page pulls project star counts from the GitHub API during
-        # prerender. Passing a token avoids the shared-runner rate limit; the
-        # build falls back to committed values if it fails either way.
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run build
-
       - name: Test
         run: npm run test:run
 
+      # Both variants, because the identity is chosen at build time and a
+      # change that breaks only codebam.ca would otherwise reach master green.
+      - name: Build seanbehan
+        run: npm run build
+
       - name: Build codebam
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run build:codebam

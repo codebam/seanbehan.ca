@@ -1,5 +1,5 @@
 import { site } from './site';
-import type { Post } from './types';
+import type { PostSummary } from './types';
 
 /**
  * Escape a string for safe interpolation into XML text or an attribute value.
@@ -60,7 +60,7 @@ export interface FeedOptions {
  * — the items, the escaping, the editor fields — is identical to the main one.
  */
 export function generateRSSFeed(
-	posts: Post[],
+	posts: PostSummary[],
 	postHtml: Map<string, string>,
 	options: FeedOptions = {}
 ): string {
@@ -82,11 +82,9 @@ export function generateRSSFeed(
 </rss>`;
 }
 
-function generateRSSItem(post: Post, html: string | undefined): string {
+function generateRSSItem(post: PostSummary, html: string | undefined): string {
 	const url = `${SITE_URL}${post.path}`;
-	const categories = (post.meta.tags ?? [])
-		.map((tag) => `<category>${escapeXml(tag)}</category>`)
-		.join('');
+	const categories = post.meta.tags.map((tag) => `<category>${escapeXml(tag)}</category>`).join('');
 	return `<item>
 		<guid isPermaLink="true">${escapeXml(url)}</guid>
 		<title><![CDATA[${post.meta.title}]]></title>

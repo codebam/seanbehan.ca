@@ -1,63 +1,29 @@
-/**
- * For more details on how to configure Wrangler, refer to:
- * https://developers.cloudflare.com/workers/wrangler/configuration/
- */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "seanbehan-ca",
-	"pages_build_output_dir": ".svelte-kit/cloudflare",
-	"compatibility_date": "2025-06-04",
+	"name": "seanbehan-ca-emdash",
+	"main": "./src/worker.ts",
+	"compatibility_date": "2026-02-24",
 	"compatibility_flags": ["nodejs_compat"],
-	"observability": {
-		"enabled": true
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "seanbehan-ca"
+		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "MEDIA",
+			"bucket_name": "seanbehan-ca-media"
+		}
+	],
+	// Worker Loader for plugin sandboxing
+	"worker_loaders": [
+		{
+			"binding": "LOADER"
+		}
+	],
+	// Drives scheduled publishing, plugin cron, and maintenance (see src/worker.ts)
+	"triggers": {
+		"crons": ["* * * * *"]
 	}
-	/**
-	 * No "vars" block, and do not add one for PUBLIC_SITE.
-	 *
-	 * The existence of this file makes it the source of truth for the Pages
-	 * project's configuration — the dashboard reports "environment variables for
-	 * this project are being managed through wrangler.toml" and goes read-only,
-	 * and a dashboard variable would be overwritten on the next deploy anyway.
-	 *
-	 * That leaves nowhere here to express a per-site value: seanbehan.ca and
-	 * codebam.ca are two Pages projects built from this one repo, so they read
-	 * this same file and would get the same PUBLIC_SITE. Variables declared here
-	 * are also runtime bindings for Pages Functions, and the site is prerendered
-	 * — the identity is baked in during `vite build`, before any binding exists.
-	 *
-	 * The variant is selected by the build command instead, which is per-project
-	 * and not governed by this file: codebam.ca runs `npm run build:codebam`.
-	 * The Node version that used to live here is in .node-version, which Pages
-	 * and CI both read.
-	 */
-	/**
-	 * Smart Placement
-	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
-	 */
-	// "placement": { "mode": "smart" },
-	/**
-	 * Bindings
-	 * Bindings allow your Worker to interact with resources on the Cloudflare Developer Platform, including
-	 * databases, object storage, AI inference, real-time communication and more.
-	 * https://developers.cloudflare.com/workers/runtime-apis/bindings/
-	 */
-	/**
-	 * Environment Variables
-	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
-	 */
-	// "vars": { "MY_VARIABLE": "production_value" },
-	/**
-	 * Note: Use secrets to store sensitive data.
-	 * https://developers.cloudflare.com/workers/configuration/secrets/
-	 */
-	/**
-	 * Static Assets
-	 * https://developers.cloudflare.com/workers/static-assets/binding/
-	 */
-	// "assets": { "directory": "./public/", "binding": "ASSETS" },
-	/**
-	 * Service Bindings (communicate between multiple Workers)
-	 * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
-	 */
-	// "services": [{ "binding": "MY_SERVICE", "service": "my-service" }]
 }

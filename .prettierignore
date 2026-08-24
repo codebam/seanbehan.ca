@@ -2,3 +2,13 @@
 package-lock.json
 pnpm-lock.yaml
 yarn.lock
+
+# Generated
+.astro/
+dist/
+emdash-env.d.ts
+worker-configuration.d.ts
+
+# Vendored: the EmDash template ships these and they are updated by upgrading
+# the package, not by editing them here.
+.agents/

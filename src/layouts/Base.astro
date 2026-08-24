@@ -1,0 +1,416 @@
+---
+/**
+ * The frame every page renders into: head metadata, header, footer.
+ *
+ * Ported from the SvelteKit layout, and it keeps that file's decisions. Social
+ * metadata is resolved in one place rather than per page, so nothing emits a
+ * second og:title. Posts canonical to seanbehan.ca because both origins serve
+ * the same words; everything else stays self-canonical.
+ *
+ * The EmDash pieces — EmDashHead, EmDashBodyStart, EmDashBodyEnd — carry the
+ * admin bar, visual editing and whatever the installed plugins contribute.
+ * They stay, and the site's own <meta> tags are written alongside them.
+ */
+import { EmDashHead, EmDashBodyStart, EmDashBodyEnd } from 'emdash/ui';
+import { createPublicPageContext } from 'emdash/page';
+import {
+	site,
+	absolute,
+	sibling,
+	canonicalUrl,
+	alternateUrl,
+	LEGAL_NAME,
+	HANDLE,
+	LINKEDIN_URL
+} from '../lib/site';
+import type { PostSummary } from '../lib/types';
+import '../styles/app.css';
+
+interface Props {
+	/** Page <title>. The site name is appended unless it is already there. */
+	title?: string;
+	description?: string;
+	/** og:title / twitter:title, where it differs from the page title. */
+	ogTitle?: string;
+	ogDescription?: string;
+	/** Set on a post page; drives the article metadata and the canonical rule. */
+	post?: PostSummary;
+	/** Content reference, so plugins and visual editing can find the entry. */
+	content?: { collection: string; id: string; slug?: string | null };
+}
+
+const { title, description, ogTitle, ogDescription, post, content } = Astro.props;
+
+const path = Astro.url.pathname;
+const currentYear = new Date().getFullYear();
+
+const fullTitle = title
+	? title.includes(site.name)
+		? title
+		: `${title} — ${site.name}`
+	: site.title;
+
+const canonical = canonicalUrl(path, { post: Boolean(post), draft: post?.meta.draft });
+const alternate = alternateUrl(path, { post: Boolean(post), draft: post?.meta.draft });
+const metaDescription =
+	post?.meta.description ?? post?.meta.title ?? description ?? site.description;
+const socialTitle = post ? post.meta.title : (ogTitle ?? site.ogTitle);
+const socialDescription = post
+	? metaDescription
+	: (ogDescription ?? description ?? site.ogDescription);
+
+/**
+ * A post gets the card generated for it by tools/og, unless it names an image
+ * of its own. Everything else uses the site card, not the author photo: a
+ * 460px headshot is the wrong aspect for a large-image preview.
+ */
+const ogImage = absolute(post ? (post.meta.image ?? `/og/${post.slug}.png`) : '/og/site.png');
+
+/**
+ * Structured data. The home page describes the site and the person behind it;
+ * a post describes itself as a BlogPosting. Everything else inherits the
+ * WebSite node, which is what carries the name a search result shows.
+ */
+const person = {
+	'@type': 'Person',
+	name: LEGAL_NAME,
+	alternateName: HANDLE,
+	url: site.url,
+	email: `mailto:${site.email}`,
+	image: absolute('/profile.webp'),
+	sameAs: [
+		sibling.url,
+		'https://github.com/codebam',
+		'https://mstdn.ca/@codebam',
+		...(site.showResume ? [LINKEDIN_URL] : [])
+	]
+};
+
+const website = {
+	'@type': 'WebSite',
+	'@id': `${site.url}/#website`,
+	url: site.url,
+	name: site.name,
+	description: site.description,
+	inLanguage: 'en',
+	publisher: person
+};
+
+const jsonLd = post
+	? {
+			'@context': 'https://schema.org',
+			'@type': 'BlogPosting',
+			'@id': canonical,
+			mainEntityOfPage: canonical,
+			url: canonical,
+			headline: post.meta.title,
+			...(post.meta.description ? { description: post.meta.description } : {}),
+			datePublished: post.meta.date,
+			...(post.meta.updated ? { dateModified: post.meta.updated } : {}),
+			...(post.meta.tags.length ? { keywords: post.meta.tags.join(', ') } : {}),
+			image: ogImage,
+			inLanguage: 'en',
+			author: person,
+			publisher: person,
+			isPartOf: { '@id': `${site.url}/#website` }
+		}
+	: path === '/'
+		? { '@context': 'https://schema.org', '@graph': [website, person] }
+		: { '@context': 'https://schema.org', ...website };
+
+/** Every `<` escaped, so no string in the data can close the element early. */
+const jsonLdText = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
+
+const pageCtx = createPublicPageContext({
+	Astro,
+	kind: content ? 'content' : 'custom',
+	pageType: post ? 'article' : 'website',
+	title: fullTitle,
+	pageTitle: socialTitle,
+	description: metaDescription,
+	canonical,
+	image: ogImage,
+	content,
+	seo: { ogImage, robots: post?.meta.draft ? 'noindex, nofollow' : undefined },
+	articleMeta: post
+		? {
+				publishedTime: post.meta.date,
+				modifiedTime: post.meta.updated ?? null,
+				author: site.name
+			}
+		: undefined,
+	siteName: site.name
+});
+
+/** Projects live in a section of the home page rather than a route of their own. */
+const nav = site.showResume
+	? [
+			{ href: '/posts', label: 'Writing' },
+			{ href: '/resume', label: 'Résumé' }
+		]
+	: [{ href: '/posts', label: 'Writing' }];
+
+/** A nav item is current for its own page and anything beneath it. */
+const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{fullTitle}</title>
+
+		<!-- The three faces the page can paint with, ahead of the stylesheet that
+		     names them: app.css is inlined into the document, but a preload still
+		     starts the fetch before the parser reaches the @font-face rules. -->
+		<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+		<link
+			rel="preload"
+			href="/fonts/newsreader-latin.woff2"
+			as="font"
+			type="font/woff2"
+			crossorigin
+		/>
+
+		<meta name="description" content={metaDescription} />
+		<meta property="og:title" content={socialTitle} />
+		<meta property="og:description" content={socialDescription} />
+		<meta property="og:type" content={post ? 'article' : 'website'} />
+		<meta property="og:url" content={canonical} />
+		<meta property="og:site_name" content={site.name} />
+		<meta property="og:locale" content="en_CA" />
+		<meta property="og:image" content={ogImage} />
+		<meta property="og:image:alt" content={post ? post.meta.title : site.name} />
+		<!-- Generated cards are all 1200×630, including the site card. -->
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:site" content="@seanwbehan" />
+		{post && <meta name="twitter:creator" content="@seanwbehan" />}
+		<meta name="twitter:title" content={socialTitle} />
+		<meta name="twitter:description" content={socialDescription} />
+		<meta name="twitter:image" content={ogImage} />
+		{
+			/* Drafts are shareable by URL and absent from the sitemap; this keeps a
+		    crawler that stumbles on one from indexing it. */
+		}
+		{post?.meta.draft && <meta name="robots" content="noindex, nofollow" />}
+		{
+			post && (
+				<>
+					<meta property="article:author" content={site.name} />
+					<meta property="article:published_time" content={post.meta.date} />
+					{post.meta.updated && (
+						<meta property="article:modified_time" content={post.meta.updated} />
+					)}
+					{post.meta.tags.map((tag) => (
+						<meta property="article:tag" content={tag} />
+					))}
+				</>
+			)
+		}
+		<script type="application/ld+json" is:inline set:html={jsonLdText} />
+		<link rel="canonical" href={canonical} />
+		{alternate && <link rel="alternate" href={alternate} />}
+		<link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+		<link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml" />
+		<link rel="icon" href="/favicon.ico" sizes="32x32" />
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<link rel="manifest" href="/site.webmanifest" />
+
+		<!-- A page with head markup of its own — a tag's feed link, say — puts it here. -->
+		<slot name="head" />
+
+		<EmDashHead page={pageCtx} />
+	</head>
+	<body>
+		<EmDashBodyStart page={pageCtx} />
+
+		<a href="#main" class="skip-link">Skip to content</a>
+
+		<header class="border-b border-[var(--line)]">
+			<div class="shell flex items-center gap-6 py-5 md:py-6">
+				<a
+					href="/"
+					class="wordmark display mr-auto text-[1.2rem] whitespace-nowrap"
+					aria-current={path === '/' ? 'page' : undefined}
+				>
+					{site.name}
+				</a>
+
+				<nav aria-label="Primary" class="flex items-center gap-5 md:gap-6">
+					<!-- Hash link into the home page. aria-current is "true" rather than
+					     "page": the destination is a section of the current page, not the
+					     page itself. -->
+					<a
+						href="/#work"
+						class="nav-link text-sm md:text-[0.95rem]"
+						aria-current={path === '/' ? 'true' : undefined}>Work</a
+					>
+					{
+						nav.map((item) => (
+							<a
+								href={item.href}
+								class="nav-link text-sm md:text-[0.95rem]"
+								aria-current={isCurrent(item.href) ? 'page' : undefined}
+							>
+								{item.label}
+							</a>
+						))
+					}
+					<a href="/contact" class="btn-outline shrink-0 max-sm:hidden">Get in touch</a>
+					<a href="/contact" class="nav-link text-sm sm:hidden">Contact</a>
+				</nav>
+			</div>
+		</header>
+
+		<!-- Full-bleed: each page owns its own panels and .shell columns, so a
+		     section can run edge to edge on its own background. -->
+		<main id="main">
+			<slot />
+		</main>
+
+		<footer class="panel-invert">
+			<div
+				class="shell flex flex-wrap items-center gap-x-6 gap-y-3 py-10 text-sm text-[var(--muted)] md:py-12"
+			>
+				<span>&copy; {currentYear} {site.name}</span>
+				<a class="footer-link" href="/rss.xml">RSS</a>
+				<a
+					class="footer-link"
+					href="https://github.com/codebam"
+					target="_blank"
+					rel="me noopener noreferrer">GitHub</a
+				>
+				<a
+					class="footer-link"
+					href="https://mstdn.ca/@codebam"
+					target="_blank"
+					rel="me noopener noreferrer">Mastodon</a
+				>
+				<a class="footer-link" href={`mailto:${site.email}`}>{site.email}</a>
+				<!-- Colour inherited from the row: --dim failed AA here (3.3:1 against
+				     the inverted panel) and is no longer used for type. -->
+				<span class="ml-auto">Built with EmDash, hosted on Cloudflare</span>
+			</div>
+		</footer>
+
+		<EmDashBodyEnd page={pageCtx} />
+
+		<script>
+			import '../scripts/reveal';
+			import '../scripts/spotlight';
+		</script>
+	</body>
+</html>
+
+<style>
+	/* Nav and footer links carry the same underline wipe as `.link-quiet`: it
+	   grows from the left on hover and retracts to the left on the way out, so
+	   the label itself never shifts and the row height never changes. */
+	.nav-link {
+		position: relative;
+		color: var(--muted);
+		transition: color 0.2s ease;
+	}
+	.nav-link::after,
+	.footer-link::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: -4px;
+		height: 1px;
+		background: currentColor;
+		transform: scaleX(0);
+		transform-origin: left;
+		transition: transform 0.28s var(--ease-out-soft);
+	}
+	.nav-link:hover,
+	.footer-link:hover {
+		color: var(--accent);
+	}
+	.nav-link:hover::after,
+	.nav-link:focus-visible::after,
+	.footer-link:hover::after,
+	.footer-link:focus-visible::after {
+		transform: scaleX(1);
+	}
+	/* Current section stays legible without a heavier weight shifting layout */
+	.nav-link[aria-current='page'],
+	.nav-link[aria-current='true'] {
+		color: var(--text);
+	}
+	/* The current page keeps its rule up permanently, in the accent, so hover
+	   state and location state never look like the same thing. */
+	.nav-link[aria-current='page']::after,
+	.nav-link[aria-current='true']::after {
+		background: var(--accent);
+		transform: scaleX(1);
+	}
+
+	.footer-link {
+		position: relative;
+		color: var(--muted);
+		transition: color 0.2s ease;
+	}
+
+	/* The wordmark's own small flourish: the accent dot after the name grows in
+	   on hover. Cheap, and it makes the home link feel like a target. */
+	.wordmark {
+		position: relative;
+		transition: color 0.2s ease;
+	}
+	.wordmark::after {
+		content: '';
+		display: inline-block;
+		width: 5px;
+		height: 5px;
+		margin-left: 4px;
+		border-radius: 999px;
+		background: var(--accent);
+		transform: scale(0);
+		transition: transform 0.3s var(--ease-out-soft);
+	}
+	.wordmark:hover::after,
+	.wordmark:focus-visible::after,
+	.wordmark[aria-current='page']::after {
+		transform: scale(1);
+	}
+
+	/* Clipped rather than parked off-left: some screen readers still announce
+	   content at left: -9999px, and overflow:hidden parents can clip the focus
+	   target. Visible only once focused. */
+	.skip-link {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		clip-path: inset(50%);
+		white-space: nowrap;
+		border: 0;
+	}
+	.skip-link:focus {
+		left: 0;
+		top: 0;
+		z-index: 50;
+		width: auto;
+		height: auto;
+		margin: 0;
+		overflow: visible;
+		clip: auto;
+		clip-path: none;
+		white-space: normal;
+		background: var(--panel);
+		color: var(--text);
+		border: 1px solid var(--line-strong);
+		border-radius: 0 0 8px 0;
+		padding: 0.6rem 1rem;
+		font-size: 0.9rem;
+	}
+</style>

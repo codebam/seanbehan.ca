@@ -1,11 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { generateRSSFeed, absolutizeUrls, escapeXml, RSS_URL } from './rssFeed';
-import type { Post } from './types';
+import type { PostSummary } from './types';
 
 // A representative post; its tags deliberately carry the two characters that
 // would break the feed if they were interpolated unescaped.
-const post: Post = {
+const post: PostSummary = {
 	path: '/posts/example',
+	slug: 'example',
 	meta: {
 		title: 'Example Post',
 		date: '2026-01-01',

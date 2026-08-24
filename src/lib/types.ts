@@ -1,44 +1,12 @@
-export interface PostMeta {
-	title: string;
-	date: string;
-	tags?: string[];
-	draft: boolean;
-	description?: string;
-	author?: string;
-	/** ISO date of the last substantive edit, for `article:modified_time`. */
-	updated?: string;
-	/**
-	 * Social card for this post, as a site-absolute path. Posts without one
-	 * use the generated `/og/<slug>.png` card from tools/og.
-	 */
-	image?: string;
-}
-
-/** One linkable section heading within a post body. */
-export interface Heading {
-	/** The id on the heading element, and the fragment that reaches it. */
-	id: string;
-	text: string;
-	/** 2 for a section, 3 for a subsection. Nothing deeper is listed. */
-	level: 2 | 3;
-}
-
-export interface Post {
-	path: string;
-	meta: PostMeta;
-	/**
-	 * Estimated minutes to read the body, from src/lib/readingTime.ts. Optional
-	 * because it needs the raw markdown, which not every caller that builds a
-	 * Post has to hand; the display sites omit the line rather than guess.
-	 */
-	readingMinutes?: number;
-}
-
-export interface BlogPost extends Post {
-	html: string;
-	/** Section headings, in document order. Empty for a post with none. */
-	headings?: Heading[];
-}
+/**
+ * Types shared across the site's own code.
+ *
+ * The content types the CMS owns — posts, pages, taxonomy terms — are
+ * generated into `.emdash/types.ts` from the live schema and imported from
+ * `emdash` itself, so nothing here restates them. What is left is the handful
+ * of things the site defines outside the database: the featured projects, and
+ * the shape the post views pass around.
+ */
 
 export interface FeaturedProject {
 	/** Repository name under github.com/codebam */
@@ -55,24 +23,35 @@ export interface FeaturedProject {
 	tags: string[];
 }
 
-// Page data types
-export interface PostsPageData {
-	posts: Post[];
-	/** Page-specific <meta name="description">, resolved once in the layout. */
-	description?: string;
-	/** Page-specific og:title / twitter:title. */
-	ogTitle?: string;
+/** One linkable section heading within a post body. */
+export interface Heading {
+	/** The id on the heading element, and the fragment that reaches it. */
+	id: string;
+	text: string;
+	/** 2 for a section, 3 for a subsection. Nothing deeper is listed. */
+	level: 2 | 3;
 }
 
-/** The home page shows the post list plus the featured project cards. */
-export interface HomePageData extends PostsPageData {
-	projects: FeaturedProject[];
-}
-
-export interface PostPageData {
-	post: BlogPost;
-}
-
-export interface PostsProps {
-	posts: Post[];
+/**
+ * A post as the list views need it: enough to draw a row, without the body.
+ *
+ * Built from an EmDash entry in `src/lib/posts.ts` rather than passed straight
+ * through, so the templates keep reading `meta.date` and `meta.tags` the way
+ * they did when the posts were markdown files.
+ */
+export interface PostSummary {
+	/** Site path, e.g. `/posts/nixos`. */
+	path: string;
+	slug: string;
+	meta: {
+		title: string;
+		date: string;
+		updated?: string;
+		description?: string;
+		tags: string[];
+		draft: boolean;
+		image?: string;
+	};
+	/** Estimated minutes to read the body. */
+	readingMinutes?: number;
 }

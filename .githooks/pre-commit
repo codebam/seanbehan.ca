@@ -1,6 +1,6 @@
 #!/bin/sh
-# Runs ESLint, Prettier, and svelte-check over staged files before they're
-# committed.
+# Runs Prettier over staged files, and astro check over the project, before
+# they're committed.
 #
 # CI runs lint, check, test, and build on every push, and it went red for five
 # commits straight before anyone noticed. Doing the first two at commit time
@@ -12,11 +12,11 @@
 #
 # --concurrent false runs the configured tasks one at a time in the order they
 # appear in lint-staged.config.js. lint-staged is concurrent by default, which
-# would let Prettier rewrite a file while svelte-check is reading it.
+# would let Prettier rewrite a file while astro check is reading it.
 #
-# ESLint and Prettier see staged files only, so pre-existing drift in files you
-# didn't touch stays out of your commit. svelte-check is the exception: it
-# type-checks the whole project, so an error anywhere will block the commit.
+# Prettier sees staged files only, so pre-existing drift in files you didn't
+# touch stays out of your commit. astro check is the exception: it type-checks
+# the whole project, so an error anywhere will block the commit.
 #
 # Note that the commit records the fixed version, which is not byte-for-byte
 # what you staged. Run `git diff HEAD` after committing to see what changed.
@@ -27,10 +27,10 @@
 if ! npx lint-staged --concurrent false; then
 	echo
 	echo "Pre-commit checks failed. Either a fixer hit something it cannot"
-	echo "autofix (syntax error, lint rule with no fix) or svelte-check found"
+	echo "autofix (a syntax error, say) or astro check found"
 	echo "a type error. Fix what it reported above and commit again."
 	echo
-	echo "svelte-check covers the whole project — run 'npm run check' to see"
+	echo "astro check covers the whole project — run 'npm run check' to see"
 	echo "every error, including ones outside the files you staged."
 	echo
 	echo "To bypass this check: git commit --no-verify"

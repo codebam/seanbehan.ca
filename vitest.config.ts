@@ -1,23 +1,14 @@
 import { defineConfig } from 'vitest/config';
-import { sveltekit } from '@sveltejs/kit/vite';
 
+/**
+ * The unit tests cover the plain modules under src/lib — the post adapter, the
+ * feed, the identity table, reading time. The pages themselves are exercised by
+ * the smoke test in scripts/smoke.mjs against a running server, which is a
+ * truer check for templates that render on a Worker out of D1.
+ */
 export default defineConfig({
-	plugins: [sveltekit()],
-	// The build inlines __SITE_ID__ from vite.config.ts's define; vitest has its
-	// own config, so repeat it here (defaulting to the seanbehan.ca variant)
-	// rather than leaving a bare identifier that throws on import of $lib/site.
-	define: {
-		__SITE_ID__: JSON.stringify('seanbehan')
-	},
-	// Without the browser condition, importing a component pulls in Svelte's
-	// server build and mount() throws, so components cannot be rendered in tests.
-	resolve: {
-		conditions: ['browser']
-	},
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}'],
-		environment: 'jsdom',
-		setupFiles: ['src/test-setup.ts'],
-		globals: true
+		environment: 'node'
 	}
 });

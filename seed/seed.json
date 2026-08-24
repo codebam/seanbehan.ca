@@ -1,0 +1,250 @@
+{
+	"$schema": "https://emdashcms.com/seed.schema.json",
+	"version": "1",
+	"meta": {
+		"name": "seanbehan.ca",
+		"description": "Posts, pages and tags for seanbehan.ca / codebam.ca",
+		"author": "Sean Behan"
+	},
+	"settings": {
+		"title": "Sean Behan",
+		"tagline": "Full-stack developer · Linux"
+	},
+	"collections": [
+		{
+			"slug": "posts",
+			"label": "Posts",
+			"labelSingular": "Post",
+			"supports": ["drafts", "revisions", "search", "seo"],
+			"commentsEnabled": false,
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Title",
+					"type": "string",
+					"required": true,
+					"searchable": true
+				},
+				{
+					"slug": "excerpt",
+					"label": "Description",
+					"type": "text",
+					"description": "Meta description and archive blurb; the old frontmatter `description`."
+				},
+				{
+					"slug": "content",
+					"label": "Content",
+					"type": "portableText",
+					"searchable": true
+				},
+				{
+					"slug": "featured_image",
+					"label": "Social card",
+					"type": "image",
+					"description": "Overrides the generated /og card for this post."
+				}
+			]
+		},
+		{
+			"slug": "pages",
+			"label": "Pages",
+			"labelSingular": "Page",
+			"supports": ["drafts", "revisions", "search", "seo"],
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Title",
+					"type": "string",
+					"required": true,
+					"searchable": true
+				},
+				{
+					"slug": "content",
+					"label": "Content",
+					"type": "portableText",
+					"searchable": true
+				}
+			]
+		}
+	],
+	"taxonomies": [
+		{
+			"name": "tag",
+			"label": "Tags",
+			"labelSingular": "Tag",
+			"hierarchical": false,
+			"collections": ["posts"],
+			"terms": [
+				{
+					"slug": "advice",
+					"label": "advice"
+				},
+				{
+					"slug": "alpine",
+					"label": "Alpine"
+				},
+				{
+					"slug": "backup",
+					"label": "backup"
+				},
+				{
+					"slug": "cloudflare",
+					"label": "Cloudflare"
+				},
+				{
+					"slug": "containers",
+					"label": "containers"
+				},
+				{
+					"slug": "css",
+					"label": "CSS"
+				},
+				{
+					"slug": "development",
+					"label": "development"
+				},
+				{
+					"slug": "docker",
+					"label": "Docker"
+				},
+				{
+					"slug": "graphics",
+					"label": "graphics"
+				},
+				{
+					"slug": "javascript",
+					"label": "JavaScript"
+				},
+				{
+					"slug": "kernel",
+					"label": "kernel"
+				},
+				{
+					"slug": "linux",
+					"label": "Linux"
+				},
+				{
+					"slug": "nixos",
+					"label": "NixOS"
+				},
+				{
+					"slug": "ostree",
+					"label": "OSTree"
+				},
+				{
+					"slug": "podman",
+					"label": "Podman"
+				},
+				{
+					"slug": "programming",
+					"label": "programming"
+				},
+				{
+					"slug": "quadlet",
+					"label": "Quadlet"
+				},
+				{
+					"slug": "raid",
+					"label": "RAID"
+				},
+				{
+					"slug": "react",
+					"label": "React"
+				},
+				{
+					"slug": "rust",
+					"label": "Rust"
+				},
+				{
+					"slug": "secure-boot",
+					"label": "Secure Boot"
+				},
+				{
+					"slug": "security",
+					"label": "security"
+				},
+				{
+					"slug": "serverless",
+					"label": "serverless"
+				},
+				{
+					"slug": "steam-deck",
+					"label": "Steam Deck"
+				},
+				{
+					"slug": "svelte",
+					"label": "Svelte"
+				},
+				{
+					"slug": "sveltekit",
+					"label": "SvelteKit"
+				},
+				{
+					"slug": "systemd",
+					"label": "systemd"
+				},
+				{
+					"slug": "test",
+					"label": "test"
+				},
+				{
+					"slug": "typescript",
+					"label": "TypeScript"
+				},
+				{
+					"slug": "usb",
+					"label": "USB"
+				},
+				{
+					"slug": "websocket",
+					"label": "WebSocket"
+				},
+				{
+					"slug": "wireshark",
+					"label": "Wireshark"
+				}
+			]
+		}
+	],
+	"bylines": [
+		{
+			"id": "byline-sean",
+			"slug": "sean-behan",
+			"displayName": "Sean Behan"
+		}
+	],
+	"menus": [
+		{
+			"name": "primary",
+			"label": "Primary Navigation",
+			"items": [
+				{
+					"type": "custom",
+					"label": "Home",
+					"url": "/"
+				},
+				{
+					"type": "custom",
+					"label": "Posts",
+					"url": "/posts"
+				},
+				{
+					"type": "custom",
+					"label": "Résumé",
+					"url": "/resume"
+				},
+				{
+					"type": "custom",
+					"label": "Contact",
+					"url": "/contact"
+				}
+			]
+		}
+	],
+	"widgetAreas": [],
+	"sections": [],
+	"content": {
+		"posts": [],
+		"pages": []
+	}
+}

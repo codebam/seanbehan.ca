@@ -3,11 +3,9 @@ import { SITES, siteFor } from './site.data.js';
 /**
  * Which identity this build is for.
  *
- * One repo, one set of posts, two Cloudflare Pages projects. The variant is
- * chosen at build time by the PUBLIC_SITE environment variable, which Vite
- * inlines as __SITE_ID__ (see vite.config.ts) — so nothing about it reaches
- * the browser as a runtime lookup, and an unset variable keeps the build it
- * has always produced.
+ * One repo, one set of posts, two Cloudflare Workers. The variant is chosen
+ * by the PUBLIC_SITE environment variable at build time; an unset variable
+ * keeps the build it has always produced.
  *
  * Everything that differs between the two sites belongs in this file. If a
  * component needs a name, a domain, or an email, it reads it from here rather
@@ -58,8 +56,13 @@ export const yearsBuilding = (now = Date.now()) => Math.floor((now - CAREER_STAR
  * the top of that file. Falling back rather than throwing is deliberate: an
  * unset or mistyped PUBLIC_SITE should produce the original site, not a failed
  * deploy.
+ *
+ * Read straight from `import.meta.env` rather than through a Vite `define`:
+ * Astro exposes PUBLIC_-prefixed variables itself, and the pages that need the
+ * identity render on the Worker, where a build-time constant would freeze the
+ * value for both projects deployed from this repo.
  */
-export const site: SiteConfig = siteFor(__SITE_ID__);
+export const site: SiteConfig = siteFor(import.meta.env.PUBLIC_SITE);
 
 /** Every variant, for the places that need to reason about both. */
 export { SITES };
