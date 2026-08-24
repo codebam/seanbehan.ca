@@ -118,6 +118,16 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	}
 
 	if (pathname.startsWith('/_emdash')) {
+		// The CSP above describes the site's own pages, and the admin is not one:
+		// it is a React application EmDash ships and updates, and under a policy
+		// written for a static-rendered blog it loaded as far as "Loading
+		// EmDash..." and stopped. Pinning it here would mean chasing the CMS's
+		// bundle from one release to the next; the panel is behind authentication
+		// and sends its own policy.
+		//
+		// The rest of the headers stay: nothing about an admin panel wants MIME
+		// sniffing, a leaked referrer, or the option of being framed.
+		response.headers.delete('Content-Security-Policy');
 		response.headers.set('Cache-Control', 'private, no-store');
 		return response;
 	}
