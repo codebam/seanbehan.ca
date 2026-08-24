@@ -14,3 +14,12 @@ declare module 'cloudflare:workers' {
 		ASSETS: { fetch(input: URL | Request | string): Promise<Response> };
 	};
 }
+
+/**
+ * `caches.default` is Cloudflare's unnamed per-datacentre cache, which the
+ * middleware stores rendered pages in. It is not in the DOM's CacheStorage,
+ * and the full Workers types cannot be pulled in here for the reason above.
+ */
+interface CacheStorage {
+	readonly default: Cache;
+}

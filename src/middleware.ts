@@ -71,11 +71,47 @@ const LONG_LIVED = /^\/(fonts|og|img|optimized)\/|\.(webp|png|svg|ico)$/;
  * keeps a popular post from hitting the database on every visit; EmDash
  * purges the tag when content changes.
  */
-const HTML_CACHE = 'public, max-age=0, s-maxage=600, must-revalidate';
+const EDGE_SECONDS = 600;
+
+const HTML_CACHE = `public, max-age=0, s-maxage=${EDGE_SECONDS}, must-revalidate`;
+
+/**
+ * A response the Worker made is not cached by a Cache Rule.
+ *
+ * This cost a production outage's worth of confusion, so it is written down: a
+ * Cache Rule matches requests to an *origin*, and on a Workers custom domain
+ * the Worker is the origin. `s-maxage` on a rendered page is therefore inert —
+ * the rule that made HTML cacheable when this site was prerendered on Pages
+ * does nothing here, and every page view went to D1.
+ *
+ * So the Worker caches its own output. The Cache API stores a copy keyed by
+ * URL and honours the `s-maxage` below for its TTL, which puts the ten-minute
+ * window back where the documentation says it is.
+ *
+ * Only anonymous GETs. A signed-in editor carries an EmDash session cookie and
+ * gets the admin bar and edit affordances in the markup, and storing that copy
+ * under the page's URL would serve one reader's session furniture to everyone.
+ */
+const isCacheable = (request: Request, pathname: string) =>
+	request.method === 'GET' &&
+	!pathname.startsWith('/_emdash') &&
+	!/(^|;\s*)(emdash|ec)[_-]/i.test(request.headers.get('Cookie') ?? '');
 
 export const onRequest = defineMiddleware(async (context, next) => {
-	const response = await next();
 	const { pathname } = context.url;
+	const cache = caches.default;
+	const cacheable = isCacheable(context.request, pathname);
+
+	if (cacheable) {
+		const hit = await cache.match(context.request);
+		if (hit) {
+			const response = new Response(hit.body, hit);
+			response.headers.set('X-Edge-Cache', 'HIT');
+			return response;
+		}
+	}
+
+	const response = await next();
 
 	for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
 		response.headers.set(name, value);
@@ -94,6 +130,21 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		} else {
 			response.headers.set('Cache-Control', HTML_CACHE);
 		}
+	}
+
+	if (cacheable && response.status === 200) {
+		// The stored copy is read by `cache.match` above and never by a browser,
+		// so it is put away without the `max-age=0, must-revalidate` half of the
+		// policy — those two are instructions to the reader's own cache, and the
+		// Cache API would honour the zero and store nothing.
+		const stored = new Response(response.clone().body, response);
+		stored.headers.set('Cache-Control', `public, max-age=${EDGE_SECONDS}`);
+		stored.headers.delete('X-Edge-Cache');
+		// Awaited rather than handed to waitUntil: Astro 6 removed the runtime
+		// context from locals, and a put of an already-rendered response costs
+		// about a millisecond.
+		await cache.put(context.request, stored);
+		response.headers.set('X-Edge-Cache', 'MISS');
 	}
 
 	return response;

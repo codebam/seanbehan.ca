@@ -17,8 +17,28 @@ browser revalidates on every visit, so nobody is served a stale page from their
 disk cache. `s-maxage=600` is the shared-cache half, which only a shared cache
 reads — it tells Cloudflare it may hold the response for ten minutes.
 
-Until the Cache Rule below exists, that directive is inert: Cloudflare does not
-cache HTML by default, whatever the origin says.
+That directive alone does nothing here, and the reason is worth stating plainly
+because it looks like it should work.
+
+## Why a Cache Rule is not enough
+
+A Cache Rule matches requests to an **origin**. On a Workers custom domain the
+Worker _is_ the origin, so a response it renders never passes through the cache
+the rule configures. The rule below was written when this site was prerendered
+HTML served by Pages, where it did the whole job; after the move to a Worker it
+was still in place, still looked correct, and every single page view went to
+D1.
+
+So the Worker caches its own output, in `src/middleware.ts`, through the Cache
+API: an anonymous `GET` is looked up in `caches.default` before anything
+renders, and a rendered page is put back into it for the ten minutes
+`s-maxage` describes. `X-Edge-Cache: HIT` or `MISS` on the response says which
+happened — a second request for the same page should say HIT.
+
+Requests carrying an EmDash session cookie skip the cache in both directions. A
+signed-in editor gets the admin bar and the edit affordances in the markup, and
+storing that copy under the page's URL would serve one person's session
+furniture to everyone.
 
 ## The rule
 
@@ -33,7 +53,9 @@ Dashboard → **Caching** → **Cache Rules** → **Create rule**, on the
 | Edge TTL          | **Use cache-control header if present, use default otherwise**, default `10 minutes`   |
 | Browser TTL       | **Respect origin**                                                                     |
 
-Or, the same rule without the dashboard:
+It is still worth having — it governs the static assets Cloudflare serves ahead
+of the Worker — but it is not what caches a post. Or, the same rule without the
+dashboard:
 
 ```sh
 CF_API_TOKEN=… bash tools/cloudflare/cache-rule.sh          # seanbehan.ca
@@ -56,9 +78,10 @@ Notes on the shape of it:
   and JS bundles under this TTL too, which is strictly worse for them.
   Extensionless paths (`/`, `/posts`, `/posts/some-slug`) and `.html` are
   exactly the rendered pages.
-- **Respect origin, both TTLs.** The TTL then lives in `src/middleware.ts`, in
-  this repo, next to the comment explaining it — rather than as a number in a
-  dashboard nobody diffs. Changing the cache window is a commit, not a click.
+- **Respect origin, both TTLs.** The TTL lives in `src/middleware.ts`, in this
+  repo, next to the comment explaining it — rather than as a number in a
+  dashboard nobody diffs. Changing the cache window is a commit, not a click,
+  and `EDGE_SECONDS` there is the one place it is written down.
 - **The admin is excluded by its own headers.** Everything under `/_emdash` is
   sent `private, no-store` by the middleware, so the rule above can never hold
   a signed-in view of the CMS at the edge.

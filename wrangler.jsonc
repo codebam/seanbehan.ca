@@ -5,10 +5,9 @@
 	"compatibility_date": "2026-02-24",
 	"compatibility_flags": ["nodejs_compat"],
 
-	// One database, both origins. codebam.ca is deployed from this same file
-	// with `--name codebam-ca`, so it binds the same D1 and the same bucket: the
-	// two sites are one body of writing behind two front doors, and a post
-	// published from either admin panel is live on both.
+	// One database, both origins. The `codebam` environment below binds the same
+	// D1 and the same bucket: the two sites are one body of writing behind two
+	// front doors, and a post published from either admin panel is live on both.
 	"d1_databases": [
 		{
 			"binding": "DB",
@@ -37,5 +36,54 @@
 
 	"observability": {
 		"enabled": true
+	},
+
+	// `custom_domain` rather than a route pattern: Cloudflare then owns the DNS
+	// record and the certificate for each hostname, which is what the Pages
+	// project used to do. www is attached to the same Worker rather than
+	// redirected, as it was before.
+	"routes": [
+		{ "pattern": "seanbehan.ca", "custom_domain": true },
+		{ "pattern": "www.seanbehan.ca", "custom_domain": true }
+	],
+
+	/*
+	 * The second origin. Deployed with `wrangler deploy --env codebam`, which is
+	 * what `npm run deploy:codebam` runs after building with PUBLIC_SITE=codebam.
+	 *
+	 * Bindings are repeated rather than inherited: wrangler does not carry
+	 * d1_databases, r2_buckets or worker_loaders into a named environment, and a
+	 * codebam.ca deployed without them would answer every page with a database
+	 * error. The values are deliberately identical to the ones above.
+	 */
+	"env": {
+		"codebam": {
+			"name": "codebam-ca",
+			"d1_databases": [
+				{
+					"binding": "DB",
+					"database_name": "seanbehan-ca",
+					"database_id": "39e5ca60-d101-4b0e-856b-85fa5d986cb0"
+				}
+			],
+			"r2_buckets": [
+				{
+					"binding": "MEDIA",
+					"bucket_name": "seanbehan-ca-media"
+				}
+			],
+			"worker_loaders": [
+				{
+					"binding": "LOADER"
+				}
+			],
+			"triggers": {
+				"crons": ["* * * * *"]
+			},
+			"observability": {
+				"enabled": true
+			},
+			"routes": [{ "pattern": "codebam.ca", "custom_domain": true }]
+		}
 	}
 }

@@ -10,10 +10,10 @@
 	"scripts": {
 		"dev": "emdash dev",
 		"build": "astro build",
-		"build:codebam": "PUBLIC_SITE=codebam astro build",
+		"build:codebam": "CLOUDFLARE_ENV=codebam PUBLIC_SITE=codebam astro build",
 		"preview": "astro build && wrangler dev",
 		"deploy": "astro build && wrangler deploy",
-		"deploy:codebam": "PUBLIC_SITE=codebam astro build && wrangler deploy --name codebam-ca",
+		"deploy:codebam": "npm run build:codebam && wrangler deploy",
 		"check": "astro check",
 		"test": "vitest",
 		"test:run": "vitest run",
