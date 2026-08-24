@@ -19,10 +19,21 @@ import type { FeaturedProject } from './types';
 
 const CACHE_SECONDS = 6 * 60 * 60;
 
+/**
+ * How long the home page will wait for GitHub before drawing the rows with the
+ * committed numbers. A star count is decoration; the page is the product.
+ */
+const TIMEOUT_MS = 1500;
+
 let memo: { at: number; projects: FeaturedProject[] } | null = null;
 
 export async function withLiveStats(projects: FeaturedProject[]): Promise<FeaturedProject[]> {
 	if (memo && Date.now() - memo.at < CACHE_SECONDS * 1000) return memo.projects;
+
+	// Claim the memo before the requests, not after: the page renders per
+	// request now, and a cold isolate serving several at once would otherwise
+	// send four GitHub calls per visitor rather than four in total.
+	memo = { at: Date.now(), projects };
 
 	const withStats = await Promise.all(
 		projects.map(async (project) => {
@@ -34,7 +45,8 @@ export async function withLiveStats(projects: FeaturedProject[]): Promise<Featur
 					},
 					// Read by the Workers runtime; ignored elsewhere, which is why the
 					// memo above exists as well.
-					cf: { cacheTtl: CACHE_SECONDS, cacheEverything: true }
+					cf: { cacheTtl: CACHE_SECONDS, cacheEverything: true },
+					signal: AbortSignal.timeout(TIMEOUT_MS)
 				} as RequestInit);
 				if (!res.ok) return project;
 
@@ -45,6 +57,9 @@ export async function withLiveStats(projects: FeaturedProject[]): Promise<Featur
 					since: repo.created_at?.slice(0, 4) ?? project.since
 				};
 			} catch {
+				// A rate limit, an outage, a timeout, or a runtime with no trusted
+				// CA store (which is every local `astro dev`). The committed values
+				// are what the rows were drawn with before this function existed.
 				return project;
 			}
 		})
