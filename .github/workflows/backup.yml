@@ -1,0 +1,69 @@
+name: Back up the database
+
+# The posts used to be files in this repo, so every clone was a backup and
+# every deploy was a restore. They live in D1 now, which means the writing has
+# exactly one copy and it is not in version control. This is the copy.
+#
+# It runs from Actions rather than from the Worker's own cron: D1 has no export
+# API reachable from inside a Worker, so a job there would have to hand-roll a
+# SQL dump. `wrangler d1 export` does it properly from outside.
+on:
+  schedule:
+    # 04:12 UTC daily — a few minutes off the hour, where the shared runners are
+    # less contended, and overnight in Ontario either way.
+    - cron: '12 4 * * *'
+  # For a backup taken before doing something alarming.
+  workflow_dispatch:
+
+concurrency:
+  group: backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - run: npm ci
+
+      # Not `wrangler d1 export` directly: it refuses a database holding FTS5
+      # virtual tables, and EmDash builds one per searchable collection. The
+      # script names the tables it can export instead.
+      - name: Export D1
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+        run: |
+          node scripts/backup-d1.mjs seanbehan-ca backup.sql
+          gzip -9 backup.sql
+
+      # Dated key, no overwriting: a backup that replaces yesterday's is no
+      # defence against a bad edit noticed a week later. The bucket expires
+      # objects after 90 days, so the set does not grow without bound.
+      - name: Upload to R2
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+        run: |
+          KEY="d1/seanbehan-ca-$(date -u +%Y-%m-%d).sql.gz"
+          npx wrangler r2 object put "seanbehan-ca-backups/$KEY" \
+            --file backup.sql.gz \
+            --content-type application/gzip \
+            --remote
+          echo "Wrote $KEY ($(du -h backup.sql.gz | cut -f1))" >> "$GITHUB_STEP_SUMMARY"
+
+      # A backup nobody has ever restored is a hypothesis. This does not restore
+      # it, but it does check the dump is a dump: gzip integrity, and the posts
+      # table present with rows in it.
+      - name: Sanity-check the dump
+        run: |
+          gzip -t backup.sql.gz
+          POSTS=$(zcat backup.sql.gz | grep -c '^INSERT INTO "\?ec_posts' || true)
+          echo "ec_posts insert statements: $POSTS"
+          test "$POSTS" -gt 0

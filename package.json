@@ -22,7 +22,8 @@
 		"import:markdown": "node scripts/import-markdown.mjs",
 		"lint": "prettier --check .",
 		"format": "prettier --write .",
-		"prepare": "git config core.hooksPath .githooks || true"
+		"prepare": "git config core.hooksPath .githooks || true",
+		"backup": "node scripts/backup-d1.mjs"
 	},
 	"dependencies": {
 		"@astrojs/cloudflare": "^14.0.0",

@@ -64,6 +64,24 @@ HTML is served with `s-maxage` so Cloudflare can hold it at the edge, but that o
 
 Published posts on both origins canonical to `seanbehan.ca`. Homes stay self-canonical.
 
+## Backups
+
+The posts used to be files in this repo, so every clone was a backup. They live
+in D1 now, and `.github/workflows/backup.yml` runs nightly to keep that from
+meaning "one copy": it exports the database and writes it to the
+`seanbehan-ca-backups` bucket under a dated key, which the bucket expires after
+90 days.
+
+```bash
+npm run backup                        # writes backup.sql from the deployed database
+```
+
+`wrangler d1 export` refuses a database containing FTS5 virtual tables, and
+EmDash builds one per searchable collection, so `scripts/backup-d1.mjs` asks the
+database for its table list and exports everything that is not virtual. The
+search indexes are derived data — after a restore, rebuild each with
+`INSERT INTO <fts_table>(<fts_table>) VALUES('rebuild')`.
+
 ## Checks
 
 ```bash
