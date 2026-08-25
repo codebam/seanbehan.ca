@@ -16,36 +16,15 @@
 import { defineMiddleware } from 'astro:middleware';
 
 /**
- * Content-Security-Policy.
- *
- * `unsafe-inline` for styles is inherited from the SvelteKit site and for the
- * same reason: shiki bakes per-token `--shiki-light` / `--shiki-dark` custom
- * properties into inline style attributes, and the enter animations set their
- * delay the same way.
- *
  * The admin panel is a React application EmDash ships and updates; it is
  * excluded rather than pinned to a policy this file would have to chase.
+ *
+ * Content-Security-Policy is not here any more: Astro writes it, one source
+ * aware of the build, from `security.csp` in astro.config.mjs, and this file
+ * used to overwrite it with a policy that refused the page's own inline
+ * scripts.
  */
-const CSP = [
-	"default-src 'self'",
-	"script-src 'self'",
-	"style-src 'self' 'unsafe-inline'",
-	// Media uploaded through the CMS is served from this origin; data: covers
-	// the inline SVG icons.
-	"img-src 'self' data:",
-	"font-src 'self'",
-	"connect-src 'self'",
-	// The résumé is embedded as an <object> from a Cloudflare R2 bucket.
-	"object-src 'self' https://pub-b1fc9705d9cd4b50885284c3ede52d27.r2.dev",
-	"frame-src 'none'",
-	"frame-ancestors 'none'",
-	"base-uri 'self'",
-	"form-action 'self'",
-	"manifest-src 'self'"
-].join('; ');
-
 const SECURITY_HEADERS: Record<string, string> = {
-	'Content-Security-Policy': CSP,
 	'X-Content-Type-Options': 'nosniff',
 	'Referrer-Policy': 'strict-origin-when-cross-origin',
 	'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
