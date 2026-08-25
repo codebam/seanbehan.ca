@@ -146,9 +146,13 @@ const pageCtx = createPublicPageContext({
 const nav = site.showResume
 	? [
 			{ href: '/posts', label: 'Writing' },
+			{ href: '/links', label: 'Links' },
 			{ href: '/resume', label: 'Résumé' }
 		]
-	: [{ href: '/posts', label: 'Writing' }];
+	: [
+			{ href: '/posts', label: 'Writing' },
+			{ href: '/links', label: 'Links' }
+		];
 
 /** A nav item is current for its own page and anything beneath it. */
 const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`);

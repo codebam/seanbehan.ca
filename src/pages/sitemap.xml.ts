@@ -10,6 +10,7 @@ const staticPaths = () => [
 	'/',
 	'/contact',
 	'/posts',
+	'/links',
 	// The tag index is linked from the writing page, so it is a page a reader
 	// can land on — it was missing here while every individual tag page was in.
 	'/posts/tags',

@@ -65,6 +65,33 @@
 					"searchable": true
 				}
 			]
+		},
+		{
+			"slug": "links",
+			"label": "Links",
+			"labelSingular": "Link",
+			"supports": ["drafts", "revisions"],
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Title",
+					"type": "string",
+					"required": true,
+					"description": "What it is, in the way its own page says it."
+				},
+				{
+					"slug": "url",
+					"label": "URL",
+					"type": "string",
+					"required": true
+				},
+				{
+					"slug": "note",
+					"label": "Note",
+					"type": "text",
+					"description": "Why it is worth a reader's time, in a sentence or two. Optional."
+				}
+			]
 		}
 	],
 	"taxonomies": [
