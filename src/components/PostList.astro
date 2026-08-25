@@ -38,6 +38,7 @@ const monthYear = (date: string) =>
 			<div
 				class="item"
 				data-post
+				data-slug={post.slug}
 				data-title={post.meta.title}
 				data-description={post.meta.description}
 				data-tags={post.meta.tags.join(',')}

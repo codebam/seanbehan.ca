@@ -113,7 +113,7 @@ interface PostEntry {
 }
 
 /** One entry as the list and detail views read it. */
-export function toSummary(entry: PostEntry, tags: string[] = []): PostSummary {
+export function toSummary(entry: PostEntry, tags: string[] = [], body?: string): PostSummary {
 	const published = entry.data.publishedAt ?? entry.data.createdAt ?? null;
 	const updated = entry.data.updatedAt ?? null;
 
@@ -135,7 +135,7 @@ export function toSummary(entry: PostEntry, tags: string[] = []): PostSummary {
 			draft: entry.data.status !== 'published',
 			image: entry.data.featured_image?.src ?? undefined
 		},
-		readingMinutes: readingMinutes(plainText(entry.data.content))
+		readingMinutes: readingMinutes(body ?? plainText(entry.data.content))
 	};
 }
 
@@ -144,6 +144,9 @@ export function toSummary(entry: PostEntry, tags: string[] = []): PostSummary {
  *
  * Tags come from one batched lookup rather than a query per post: the archive
  * draws 20-odd rows, and a round trip each would be the page's whole budget.
+ *
+ * `bodies` hands back the plain prose per slug: reading time already walks the
+ * Portable Text, and search wants the very same words without a second query.
  */
 export async function getPosts() {
 	const { entries, cacheHint } = await getEmDashCollection('posts', {
@@ -159,16 +162,20 @@ export async function getPosts() {
 		'tag'
 	);
 
+	const bodies = new Map<string, string>();
 	const posts = list
-		.map((entry) =>
-			toSummary(
+		.map((entry) => {
+			const body = plainText(entry.data.content);
+			bodies.set(entry.id, body);
+			return toSummary(
 				entry,
-				(termsByEntry.get(entry.data.id) ?? []).map((term) => term.slug)
-			)
-		)
+				(termsByEntry.get(entry.data.id) ?? []).map((term) => term.slug),
+				body
+			);
+		})
 		.sort((a, b) => new Date(b.meta.date).getTime() - new Date(a.meta.date).getTime());
 
-	return { posts, cacheHint };
+	return { posts, cacheHint, bodies };
 }
 
 /** Tag counts across the published posts, most used first. */

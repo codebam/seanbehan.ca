@@ -3,13 +3,12 @@
  * Search over the archive.
  *
  * The list itself is rendered by the server and this only reorders it: a
- * reader with no JS, and any crawler, still gets all twenty-odd posts. That is
- * the main difference from the SvelteKit version, where the component owned
- * the list and rendered the results.
+ * reader with no JS, and any crawler, still gets all twenty-odd posts.
  *
- * Fuse is ~29 kB and most readers never type a character, so it is fetched on
- * the first keystroke rather than shipped with the page. Until it arrives the
- * full list stands, which is what an empty query shows anyway.
+ * The matching now happens on the server, at /search.json: the ranking wants
+ * the post bodies, and those should not be downloaded just to be searched.
+ * What the browser keeps is the list, the input and the act of reordering —
+ * and an archive it can read in full without any of it.
  */
 ---
 
@@ -30,7 +29,7 @@
 	<input
 		type="search"
 		id="post-search"
-		placeholder="Search posts…"
+		placeholder="Search titles, tags and full text…"
 		aria-label="Search posts"
 		class="input pl-9"
 	/>
@@ -50,13 +49,9 @@
 </p>
 
 <script>
-	import type Fuse from 'fuse.js';
-
 	interface Row {
 		el: HTMLElement;
-		title: string;
-		description: string;
-		tags: string[];
+		slug: string;
 	}
 
 	const input = document.querySelector<HTMLInputElement>('#post-search');
@@ -67,42 +62,60 @@
 	if (input && status && empty && list) {
 		const rows: Row[] = [...list.querySelectorAll<HTMLElement>('[data-post]')].map((el) => ({
 			el,
-			title: el.dataset.title ?? '',
-			description: el.dataset.description ?? '',
-			tags: (el.dataset.tags ?? '').split(',').filter(Boolean)
+			slug: el.dataset.slug ?? ''
 		}));
+		const bySlug = new Map(rows.map((row) => [row.slug, row]));
 
-		let fuse: Fuse<Row> | null = null;
-		let loading = false;
-
-		async function loadFuse() {
-			if (fuse || loading) return;
-			loading = true;
-			const { default: FuseCtor } = await import('fuse.js');
-			// Descriptions and tags are searched too, so "wireshark" or "systemd"
-			// finds the post even when the title never says it. Title still outranks
-			// both.
-			fuse = new FuseCtor(rows, {
-				keys: [
-					{ name: 'title', weight: 3 },
-					{ name: 'description', weight: 1 },
-					{ name: 'tags', weight: 1 }
-				],
-				threshold: 0.4,
-				minMatchCharLength: 2
-			});
-			loading = false;
+		/** The unsearched list: everything visible, in the order the server drew it. */
+		function showAll() {
+			for (const row of rows) row.el.hidden = false;
+			empty!.hidden = true;
+			status!.textContent = '';
 		}
 
-		function render(query: string) {
-			const matches = query && fuse ? fuse.search(query).map((result) => result.item) : rows;
+		/**
+		 * Ask the server for the surviving order.
+		 *
+		 * Returns null rather than throwing when the request itself failed,
+		 * because that is not the same as "no posts match": the empty state
+		 * must not claim the archive is empty on account of the network being
+		 * down. An empty query needs no round trip at all — the unsearched
+		 * archive is precisely the whole list — so it is answered locally.
+		 */
+		async function fetchOrder(query: string): Promise<string[] | null> {
+			if (!query) {
+				showAll();
+				return null;
+			}
+			try {
+				const response = await fetch(`/search.json?q=${encodeURIComponent(query)}`, {
+					headers: { Accept: 'application/json' }
+				});
+				if (!response.ok) throw new Error(`search answered ${response.status}`);
+				const body: { slugs: string[] } = await response.json();
+				return body.slugs;
+			} catch {
+				return null;
+			}
+		}
 
-			for (const row of rows) row.el.hidden = !matches.includes(row);
+		function commit(query: string, slugs: string[] | null) {
+			if (slugs === null) {
+				showAll();
+				if (query) {
+					status!.textContent = `Search is not reachable right now; showing all ${rows.length} posts.`;
+				}
+				return;
+			}
+
+			const kept = slugs.map((slug) => bySlug.get(slug)).filter((row): row is Row => Boolean(row));
+
+			for (const row of rows) row.el.hidden = !kept.includes(row);
 			// Rank order, not publication order, once a query narrows the list.
-			if (query && fuse) for (const row of matches) list!.append(row.el);
+			for (const row of kept) list!.append(row.el);
 
-			empty!.hidden = matches.length > 0;
-			empty!.textContent = matches.length > 0 ? '' : `No posts match “${query}”.`;
+			empty!.hidden = kept.length > 0;
+			empty!.textContent = kept.length > 0 ? '' : `No posts match “${query}”.`;
 
 			/*
 			 * Announced rather than only drawn: the list swaps out under a screen
@@ -111,9 +124,9 @@
 			 * two of them would say the same thing twice.
 			 */
 			status!.textContent =
-				!query || matches.length === 0
+				!query || kept.length === 0
 					? ''
-					: `${matches.length} ${matches.length === 1 ? 'post matches' : 'posts match'} ${query}`;
+					: `${kept.length} ${kept.length === 1 ? 'post matches' : 'posts match'} ${query}`;
 		}
 
 		/**
@@ -131,25 +144,34 @@
 			history.replaceState(history.state, '', url);
 		}
 
+		// A burst of keystrokes has more requests in flight than there are
+		// answers, and a slow answer for the older query can land after the
+		// fast one for the newer. The ticket numbers them so only the newest
+		// is allowed to arrange the list.
+		let latest = 0;
+		const search = (query: string) => {
+			const ticket = ++latest;
+			fetchOrder(query).then((slugs) => {
+				if (ticket === latest) commit(query, slugs);
+			});
+		};
+
 		let timer: ReturnType<typeof setTimeout>;
 		input.addEventListener('input', () => {
 			clearTimeout(timer);
-			loadFuse();
-			timer = setTimeout(async () => {
-				await loadFuse();
-				const query = input.value.trim();
+			timer = setTimeout(() => {
+				const query = input!.value.trim();
 				syncUrl(query);
-				render(query);
+				search(query);
 			}, 300);
 		});
-		input.addEventListener('focus', loadFuse);
 
-		// A query in the URL is a search the reader arrived with, so it needs the
-		// index immediately rather than on a keystroke that may never come.
+		// A query in the URL is a search the reader arrived with, so run it
+		// immediately rather than waiting for a keystroke that may never come.
 		const initial = new URL(location.href).searchParams.get('q') ?? '';
 		if (initial) {
 			input.value = initial;
-			loadFuse().then(() => render(initial));
+			search(initial);
 		}
 	}
 </script>
