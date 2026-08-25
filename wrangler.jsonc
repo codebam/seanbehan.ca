@@ -34,6 +34,12 @@
 		"crons": ["* * * * *"]
 	},
 
+	// Cloudflare Email Sending: transport for EmDash's mail-dependent auth flows
+	// (magic-link login, invites, password recovery), consumed by the
+	// cloudflareEmail() provider in astro.config.mjs. The sending domain has to
+	// be verified in the dashboard (Email → Email Sending) before anything sends.
+	"send_email": [{ "name": "EMAIL" }],
+
 	"observability": {
 		"enabled": true
 	},
@@ -80,6 +86,7 @@
 			"triggers": {
 				"crons": ["* * * * *"]
 			},
+			"send_email": [{ "name": "EMAIL" }],
 			"observability": {
 				"enabled": true
 			},

@@ -2,6 +2,7 @@ import cloudflare from '@astrojs/cloudflare';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import { d1, r2, sandbox } from '@emdash-cms/cloudflare';
+import { cloudflareEmail } from '@emdash-cms/cloudflare/plugins';
 import { formsPlugin } from '@emdash-cms/plugin-forms';
 import { defineConfig } from 'astro/config';
 import emdash from 'emdash/astro';
@@ -62,7 +63,20 @@ export default defineConfig({
 		emdash({
 			database: d1({ binding: 'DB', session: 'auto' }),
 			storage: r2({ binding: 'MEDIA' }),
-			plugins: [formsPlugin()],
+			plugins: [
+				formsPlugin(),
+				// Email transport: EmDash on Workers ships only a dev-console stub, so every
+				// mail-dependent auth flow (magic-link login, invites, password recovery) failed
+				// in production. This delivers them through Cloudflare Email Sending via the
+				// EMAIL binding in wrangler.jsonc — no API key — and replies are routed to the
+				// real inbox rather than the from address.
+				// The sending domain must still be onboarded in the Cloudflare dashboard
+				// (Email → Email Sending); until then, selects in Settings are inactive.
+				cloudflareEmail({
+					from: { email: 'cms@seanbehan.ca', name: 'seanbehan.ca' },
+					replyTo: 'codebam@riseup.net'
+				})
+			],
 			sandboxRunner: sandbox(),
 			marketplace: 'https://marketplace.emdashcms.com'
 		}),
