@@ -10,8 +10,8 @@ import Base from '../layouts/Base.astro';
 import PostList from '../components/PostList.astro';
 import Facts from '../components/home/Facts.astro';
 import Work from '../components/home/Work.astro';
-import Grainient from '../components/svelte-bits/Grainient.svelte';
-import StarBorder from '../components/svelte-bits/StarBorder.svelte';
+import Grainient from '../components/effects/Grainient.astro';
+import StarBorder from '../components/effects/StarBorder.astro';
 import { getPosts } from '../lib/posts';
 import { withLiveStats } from '../lib/github';
 import { featuredProjects } from '../lib/projects';
@@ -39,7 +39,7 @@ const latest = posts.slice(0, 6);
 		<div class="wash" aria-hidden="true">
 			<!-- Desaturated and low-contrast: at full strength the accent blob reads
 			     as a stain behind the headline instead of an ambient wash. -->
-			<Grainient client:idle saturation={0.7} contrast={1.05} zoom={1.1} />
+			<Grainient saturation={0.7} contrast={1.05} zoom={1.1} />
 		</div>
 
 		<div class="shell relative">
@@ -78,7 +78,7 @@ const latest = posts.slice(0, 6);
 				class="enter mt-9 flex flex-wrap items-center gap-x-7 gap-y-4"
 				style="--enter-delay:140ms"
 			>
-				<StarBorder client:visible>
+				<StarBorder>
 					<a href="/posts" class="btn">Read the writing</a>
 				</StarBorder>
 				<a

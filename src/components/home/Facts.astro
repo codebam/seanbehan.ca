@@ -5,7 +5,7 @@
  * The fourth cell is a word rather than a number, so it is spelled out instead
  * of being forced into the same shape as the three counts beside it.
  */
-import DotGrid from '../svelte-bits/DotGrid.svelte';
+import DotGrid from '../effects/DotGrid.astro';
 import type { FeaturedProject } from '../../lib/types';
 
 interface Props {
@@ -30,7 +30,7 @@ const facts = [
 ---
 
 <section class="facts panel-alt relative overflow-hidden py-12 md:py-14">
-	<DotGrid client:visible />
+	<DotGrid />
 
 	<div class="shell relative grid grid-cols-2 gap-x-8 gap-y-8 md:grid-cols-4">
 		{

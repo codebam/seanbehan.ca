@@ -7,8 +7,6 @@ import { formsPlugin } from '@emdash-cms/plugin-forms';
 import { defineConfig } from 'astro/config';
 import emdash from 'emdash/astro';
 
-import svelte from '@astrojs/svelte';
-
 /**
  * The admin panel is React; the site itself is plain Astro templates.
  *
@@ -79,8 +77,7 @@ export default defineConfig({
 			],
 			sandboxRunner: sandbox(),
 			marketplace: 'https://marketplace.emdashcms.com'
-		}),
-		svelte()
+		})
 	],
 	vite: {
 		plugins: [tailwindcss()]

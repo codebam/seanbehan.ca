@@ -1,0 +1,78 @@
+---
+/** Two CSS radial sweeps that trace the top and bottom edge of a pill. */
+interface Props {
+	class?: string;
+	/** Any CSS colour; the accent by default. */
+	color?: string;
+	/** One full pass of a sweep. Slow is the point — this is ambient. */
+	speed?: string;
+	thickness?: number;
+}
+
+const { class: className, color = 'var(--accent)', speed = '7s', thickness = 1 } = Astro.props;
+const style = `--star-color:${color};--star-speed:${speed};padding:${thickness}px 0`;
+---
+
+<span class:list={['star-border', className]} style={style}>
+	<span class="sweep bottom" aria-hidden="true"></span>
+	<span class="sweep top" aria-hidden="true"></span>
+	<slot />
+</span>
+
+<style>
+	.star-border {
+		position: relative;
+		display: inline-block;
+		overflow: hidden;
+		border-radius: 999px;
+		isolation: isolate;
+	}
+	.sweep {
+		position: absolute;
+		width: 300%;
+		height: 50%;
+		opacity: 0.7;
+		border-radius: 999px;
+		z-index: -1;
+		background: radial-gradient(circle, var(--star-color), transparent 10%);
+		animation-duration: var(--star-speed);
+		animation-timing-function: linear;
+		animation-iteration-count: infinite;
+		animation-direction: alternate;
+	}
+	.sweep.bottom {
+		bottom: -11px;
+		right: -250%;
+		animation-name: sweep-bottom;
+	}
+	.sweep.top {
+		top: -10px;
+		left: -250%;
+		animation-name: sweep-top;
+	}
+	@keyframes sweep-bottom {
+		0% {
+			transform: translate(0%, 0%);
+			opacity: 1;
+		}
+		100% {
+			transform: translate(-100%, 0%);
+			opacity: 0;
+		}
+	}
+	@keyframes sweep-top {
+		0% {
+			transform: translate(0%, 0%);
+			opacity: 1;
+		}
+		100% {
+			transform: translate(100%, 0%);
+			opacity: 0;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.sweep {
+			display: none;
+		}
+	}
+</style>

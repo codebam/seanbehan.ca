@@ -85,7 +85,7 @@ search indexes are derived data — after a restore, rebuild each with
 ## Checks
 
 ```bash
-npm run check              # astro check (types across .astro, .ts, .svelte)
+npm run check              # astro check (types across .astro and .ts)
 npm run test:run           # unit tests over src/lib
 npm run smoke              # ask a running site for one of everything
 ```
@@ -108,8 +108,8 @@ GitHub Actions runs the formatter check, `astro check`, the tests and both build
 | `src/pages`              | Routes. Every page is server-rendered.                            |
 | `src/layouts/Base.astro` | Head metadata, header, footer — the frame every page renders into |
 | `src/lib`                | The site's own logic: post adapter, identity, feed, highlighter   |
-| `src/components`         | Templates, plus the Svelte islands for the moving parts           |
-| `src/scripts`            | Small client scripts: reveal, spotlight, copy buttons, contents   |
+| `src/components`         | Plain Astro templates, including the decorative canvas markup     |
+| `src/scripts`            | Canvas effects and small delegated client behaviours              |
 | `src/middleware.ts`      | Security headers and the cache policy                             |
 | `seed/seed.json`         | Schema a fresh database is built from                             |
 | `scripts/`               | The markdown import, its backfill, and the smoke test             |

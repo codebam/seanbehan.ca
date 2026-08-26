@@ -6,6 +6,6 @@
  * file while astro check reads it produced spurious failures.
  */
 export default {
-	'*.{js,ts,mjs,astro,svelte,css,json,md}': ['prettier --write'],
-	'*.{ts,astro,svelte}': [() => 'astro check']
+	'*.{js,ts,mjs,astro,css,json,md}': ['prettier --write'],
+	'*.{ts,astro}': [() => 'astro check']
 };

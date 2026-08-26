@@ -562,7 +562,7 @@
 	padding: 0;
 }
 
-/* ── Shiki (see svelte.config.js) ──
+/* ── Shiki ──
    Every token carries both a --shiki-light and a --shiki-dark value, so the
    theme swap is one custom-property pick with no second stylesheet and no JS. */
 .shiki,
@@ -717,9 +717,8 @@
 }
 
 /* ── Cross-page transition ──
-   Paired with the `onNavigate` hook in +layout.svelte. A cross-fade with a
-   couple of pixels of travel: enough to register as a page change, short
-   enough that it never sits between a click and the content. */
+   A short cross-fade for browsers whose navigation layer starts a view
+   transition; browsers without one simply ignore these pseudo-elements. */
 @keyframes vtFadeOut {
 	to {
 		opacity: 0;

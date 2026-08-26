@@ -37,7 +37,7 @@ The admin UI is at `http://localhost:4321/_emdash/admin`; localhost signs you in
 - Call `Astro.cache.set(cacheHint)` on any page that queries content.
 - The taxonomy is named `tag`, singular, matching the seed.
 - Heading ids come from `prepareBody`, so the contents list and the headings cannot disagree. Do not derive them anywhere else.
-- Client behaviour goes in `src/scripts` as a delegated listener, not a Svelte island per element. The islands that remain (Grainient, DotGrid, StarBorder) are there because they animate.
+- The public site is plain Astro. Client behaviour goes in `src/scripts`; prefer delegated listeners, and keep decorative canvas markup in Astro components. React remains only because the EmDash admin UI requires it.
 - The page must work with JS off: search filters a server-rendered list, the copy buttons are injected rather than shipped, the contents list starts open.
 
 ## Writing style
