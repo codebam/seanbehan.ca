@@ -20,20 +20,23 @@ reads — it tells Cloudflare it may hold the response for ten minutes.
 That directive alone does nothing here, and the reason is worth stating plainly
 because it looks like it should work.
 
-## Why a Cache Rule is not enough
+## Why the middleware does the caching
 
-A Cache Rule matches requests to an **origin**. On a Workers custom domain the
-Worker _is_ the origin, so a response it renders never passes through the cache
-the rule configures. The rule below was written when this site was prerendered
-HTML served by Pages, where it did the whole job; after the move to a Worker it
-was still in place, still looked correct, and every single page view went to
-D1.
+The rule below was written when this site was prerendered HTML served by Pages, where it did the whole job. After the move to a Worker it was still in place and still looked correct — but rendered pages stopped getting the window, because `s-maxage` only counts once something _stores_ the response, and a response rendered inside a Worker does not pass through the rule's cache by itself. During that stretch every page view went to D1; it cost a production outage's worth of confusion, which is why this page exists. Live check on 2026-08 (both zones): first GET answers `X-Edge-Cache: MISS`, second answers `cf-cache-status: HIT` — on a Workers custom domain `caches.default` _is_ the shared edge cache, so the rule (eligibility) and the Cache API (store/read) cooperate. Keep both; neither alone gives a rendered page its ten-minute window.
 
 So the Worker caches its own output, in `src/middleware.ts`, through the Cache
-API: an anonymous `GET` is looked up in `caches.default` before anything
+API: a cacheable `GET` is looked up in `caches.default` before anything
 renders, and a rendered page is put back into it for the ten minutes
 `s-maxage` describes. `X-Edge-Cache: HIT` or `MISS` on the response says which
 happened — a second request for the same page should say HIT.
+
+Two rules in that middleware exist for DDoS reasons, not caching tidiness:
+the cache key drops the query string on every route except `search.json`
+(a `?nonce=1..N` flood must not manufacture an unlimited supply of fresh
+anonymous keys), and a request leaves the cache only when a **real** session
+is attached to it, never on the mere presence of a cookie
+(a `Cookie: emdash=fake` flood must not buy itself an uncached render per
+request). The full rationale is in the comments where the rules live.
 
 Requests carrying an EmDash session cookie skip the cache in both directions. A
 signed-in editor gets the admin bar and the edit affordances in the markup, and

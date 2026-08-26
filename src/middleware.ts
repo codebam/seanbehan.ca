@@ -55,34 +55,98 @@ const EDGE_SECONDS = 600;
 const HTML_CACHE = `public, max-age=0, s-maxage=${EDGE_SECONDS}, must-revalidate`;
 
 /**
- * A response the Worker made is not cached by a Cache Rule.
+ * "Is this per-user?" is the whole caching policy, and the hardest question
+ * in the file. A cached copy is shared: whoever renders it first, everyone
+ * gets. So the rule in one line is: cache only anonymous renders, and never
+ * let a header turn an anonymous request into an uncached one on demand.
  *
- * This cost a production outage's worth of confusion, so it is written down: a
- * Cache Rule matches requests to an *origin*, and on a Workers custom domain
- * the Worker is the origin. `s-maxage` on a rendered page is therefore inert —
- * the rule that made HTML cacheable when this site was prerendered on Pages
- * does nothing here, and every page view went to D1.
+ * The previous rule pattern-matched cookie *names* (any `emdash*` or `ec*`
+ * cookie counted as signed in) and failed in both directions at once. A real
+ * editor carries the session in `astro-session`, which the pattern missed —
+ * so a personalised render could be stored under the page's URL and the admin
+ * bar reach readers. And a stranger needed nothing: `Cookie: emdash=fake`
+ * carried every request past the cache into a full render, which is
+ * DDoS as a feature (verified live: that one header flipped the page from
+ * HIT to MISS).
  *
- * So the Worker caches its own output. The Cache API stores a copy keyed by
- * URL and honours the `s-maxage` below for its TTL, which puts the ten-minute
- * window back where the documentation says it is.
+ * The signal is whether the session resolves, not the cookie's name:
  *
- * Only anonymous GETs. A signed-in editor carries an EmDash session cookie and
- * gets the admin bar and edit affordances in the markup, and storing that copy
- * under the page's URL would serve one reader's session furniture to everyone.
+ *  - no `astro-session` → nobody is claiming one → no session read at all
+ *    (EmDash #733: reading on every anonymous request turns normal traffic
+ *    into a flood of store misses).
+ *  - a bogus `astro-session` → no such session in the store → EmDash renders
+ *    a plain anonymous page → safe to share, and a repeat of the same shape
+ *    is a cache hit rather than a render.
+ *  - a real `astro-session` → the render carries an editor's context →
+ *    never stored, never served from a stored copy to anyone.
+ *
+ * The read mirrors EmDash's own `resolveSessionUser`: fail-closed with the
+ * same 3 s backstop, so a stalled store read can neither hang the request
+ * nor grant editor context — it can only drop it.
  */
-const isCacheable = (request: Request, pathname: string) =>
-	request.method === 'GET' &&
-	!pathname.startsWith('/_emdash') &&
-	!/(^|;\s*)(emdash|ec)[_-]/i.test(request.headers.get('Cookie') ?? '');
+type MaybeSession = { get(key: string): Promise<unknown> } | undefined;
+
+async function hasLiveSession(request: Request, session: MaybeSession): Promise<boolean> {
+	const cookie = request.headers.get('Cookie') ?? '';
+	if (!/(^|;\s*)astro-session=/.test(cookie) || !session) return false;
+	const read = Promise.resolve(session.get('user')).catch(() => undefined);
+	const timeout = new Promise<undefined>((resolve) => setTimeout(() => resolve(undefined), 3000));
+	const user = await Promise.race([read, timeout]);
+	return user !== undefined && user !== null;
+}
+
+/**
+ * Two request shapes carry per-person content that no session can explain
+ * away: previews (`?_preview=<token>`) and Bearer credentials. Both stay out
+ * of the cache. Everything else that is a plain GET of a public path is
+ * cacheable unless a live session is attached to it.
+ */
+const isCacheable = async (context: {
+	request: Request;
+	url: URL;
+	session?: MaybeSession;
+}): Promise<boolean> => {
+	const { request, url } = context;
+	if (request.method !== 'GET' || url.pathname.startsWith('/_emdash')) return false;
+	if (url.searchParams.has('_preview')) return false;
+	if (request.headers.get('Authorization')?.toLowerCase().startsWith('bearer ')) return false;
+	return !(await hasLiveSession(request, context.session));
+};
+
+/**
+ * The cache key drops the query string, except where a route reads it:
+ * /search.json ranks by ?q=.
+ *
+ * Dropping it is the DDoS fix, not an optimisation: with the full URL as the
+ * key, ?nonce=1..N manufactures an unlimited supply of fresh anonymous keys
+ * and each one costs a render (verified live: ?x=1 and ?x=2 both MISS). One
+ * key per page turns that flood into hits.
+ *
+ * The archive's ?q= is not one of the routes that reads it — PostSearch.astro
+ * only mirrors the input box into the address bar; the HTML is unchanged. So
+ * search.json is the sole entry here.
+ *
+ * A new route that reads query parameters into its response MUST add its
+ * path to QUERY_SENSITIVE, or the cache serves one reader's results to the
+ * next.
+ */
+const QUERY_SENSITIVE = /(^|\/)search\.json$/;
+
+function cacheKey(url: URL): Request {
+	const search = QUERY_SENSITIVE.test(url.pathname) ? url.search : '';
+	return new Request(`${url.origin}${url.pathname}${search}`, { method: 'GET' });
+}
 
 export const onRequest = defineMiddleware(async (context, next) => {
 	const { pathname } = context.url;
 	const cache = caches.default;
-	const cacheable = isCacheable(context.request, pathname);
+	const cacheable = await isCacheable(context);
+	// The match and the put must use this one key, or the second misses the
+	// first.
+	const key = cacheable ? cacheKey(context.url) : null;
 
-	if (cacheable) {
-		const hit = await cache.match(context.request);
+	if (key) {
+		const hit = await cache.match(key);
 		if (hit) {
 			const response = new Response(hit.body, hit);
 			response.headers.set('X-Edge-Cache', 'HIT');
@@ -121,7 +185,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		}
 	}
 
-	if (cacheable && response.status === 200) {
+	if (key && response.status === 200) {
 		// The stored copy is read by `cache.match` above and never by a browser,
 		// so it is put away without the `max-age=0, must-revalidate` half of the
 		// policy — those two are instructions to the reader's own cache, and the
@@ -132,7 +196,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		// Awaited rather than handed to waitUntil: Astro 6 removed the runtime
 		// context from locals, and a put of an already-rendered response costs
 		// about a millisecond.
-		await cache.put(context.request, stored);
+		await cache.put(key, stored);
 		response.headers.set('X-Edge-Cache', 'MISS');
 	}
 
