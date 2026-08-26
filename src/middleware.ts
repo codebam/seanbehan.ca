@@ -107,6 +107,10 @@ const isCacheable = async (context: {
 	session?: MaybeSession;
 }): Promise<boolean> => {
 	const { request, url } = context;
+	// Miniflare persists Cache API entries across restarts. Using the production
+	// edge policy in development made template edits look unchanged for ten
+	// minutes, which defeats Astro's file watcher and HMR.
+	if (import.meta.env.DEV) return false;
 	if (request.method !== 'GET' || url.pathname.startsWith('/_emdash')) return false;
 	if (url.searchParams.has('_preview')) return false;
 	if (request.headers.get('Authorization')?.toLowerCase().startsWith('bearer ')) return false;

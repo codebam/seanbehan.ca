@@ -35,11 +35,40 @@ const facts = [
 	<div class="shell relative grid grid-cols-2 gap-x-8 gap-y-8 md:grid-cols-4">
 		{
 			facts.map((fact, i) => (
-				<div data-reveal data-reveal-delay={i * 60}>
-					<div class="display text-[2.4rem] tabular-nums md:text-[2.9rem]">{fact.value}</div>
+				<div class="fact" data-reveal data-reveal-delay={i * 60}>
+					<div class="fact-value display text-[2.4rem] tabular-nums md:text-[2.9rem]">
+						{fact.value}
+					</div>
 					<div class="mt-1 text-sm text-[var(--muted)]">{fact.label}</div>
 				</div>
 			))
 		}
 	</div>
 </section>
+
+<style>
+	.fact {
+		transition: transform 0.35s var(--ease-out-soft);
+	}
+	.fact-value {
+		transition:
+			color 0.25s ease,
+			transform 0.35s var(--ease-out-soft),
+			text-shadow 0.35s ease;
+	}
+	.fact:hover {
+		transform: translateY(-3px);
+	}
+	.fact:hover .fact-value {
+		color: var(--accent);
+		transform: scale(1.035);
+		transform-origin: left bottom;
+		text-shadow: 0 8px 22px color-mix(in srgb, var(--accent) 18%, transparent);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.fact:hover,
+		.fact:hover .fact-value {
+			transform: none;
+		}
+	}
+</style>

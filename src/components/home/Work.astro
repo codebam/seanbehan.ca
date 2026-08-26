@@ -30,6 +30,7 @@ const { projects } = Astro.props;
 					   the desktop column order is set by the areas. */
 					<article
 						class="work-row border-t border-[var(--line)] py-8"
+						data-pointer-glow
 						data-reveal
 						data-reveal-delay={Math.min(i, 4) * 70}
 					>
@@ -86,10 +87,12 @@ const { projects } = Astro.props;
 </section>
 
 <style>
-	/* A work row is not a link, so it gets the lightest possible hover: the
-	   rule above it warms to the accent and the title follows. No lift, no
-	   shadow — the row is a reading surface first. */
+	/* The pointer light stays within the row and never changes its surface or
+	   layout. It adds depth without turning a reading row into a floating card. */
 	.work-row {
+		position: relative;
+		isolation: isolate;
+		overflow: clip;
 		display: grid;
 		column-gap: 2rem;
 		row-gap: 0.5rem;
@@ -99,6 +102,24 @@ const { projects } = Astro.props;
 			'body body';
 		transition: border-color 0.3s ease;
 	}
+	.work-row::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		pointer-events: none;
+		opacity: 0;
+		background: radial-gradient(
+			340px circle at var(--glow-x, 50%) var(--glow-y, 50%),
+			color-mix(in srgb, var(--accent) 11%, transparent),
+			transparent 72%
+		);
+		transition: opacity 0.35s ease;
+	}
+	.work-row[data-glow-active]::before,
+	.work-row:focus-within::before {
+		opacity: 1;
+	}
 	.row-head {
 		grid-area: head;
 	}
@@ -106,9 +127,13 @@ const { projects } = Astro.props;
 	.row-stars {
 		grid-area: stars;
 		justify-self: end;
+		transition:
+			color 0.25s ease,
+			transform 0.3s var(--ease-out-soft);
 	}
 	.row-body {
 		grid-area: body;
+		transition: transform 0.35s var(--ease-out-soft);
 	}
 	@media (width >= 48rem) {
 		.work-row {
@@ -116,13 +141,35 @@ const { projects } = Astro.props;
 			grid-template-areas: 'head body stars';
 		}
 	}
-	.work-row:hover {
+	.work-row:hover,
+	.work-row:focus-within {
 		border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+	}
+	.work-row:hover .row-body,
+	.work-row:focus-within .row-body {
+		transform: translateX(4px);
+	}
+	.work-row:hover .row-stars,
+	.work-row:focus-within .row-stars {
+		color: var(--accent);
+		transform: translateY(-2px) rotate(-3deg);
 	}
 	.work-row .title {
 		transition: color 0.25s ease;
 	}
-	.work-row:hover .title {
+	.work-row:hover .title,
+	.work-row:focus-within .title {
 		color: var(--accent);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.work-row::before {
+			display: none;
+		}
+		.work-row:hover .row-body,
+		.work-row:focus-within .row-body,
+		.work-row:hover .row-stars,
+		.work-row:focus-within .row-stars {
+			transform: none;
+		}
 	}
 </style>
