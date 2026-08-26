@@ -22,12 +22,14 @@ if (posts.length === 0) return Astro.rewrite('/404');
 // produced headings like "nixos".
 const fromPost = posts[0].meta.tags.find((tag) => slugifyTag(tag) === target) ?? target;
 const display = displayTag(fromPost);
+const robots = posts.length < 2 ? 'noindex, follow' : undefined;
 ---
 
 <Base
 	title={display}
-	description={`${posts.length} posts tagged “${display}”.`}
+	description={`${posts.length} ${posts.length === 1 ? 'post' : 'posts'} tagged “${display}”.`}
 	ogTitle={`${display} — ${site.name}`}
+	robots={robots}
 >
 	<!-- This topic's own feed, so a reader's extension offers it in place of the
 	     whole-site one while they are on the tag page. -->

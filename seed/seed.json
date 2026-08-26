@@ -59,6 +59,12 @@
 					"searchable": true
 				},
 				{
+					"slug": "excerpt",
+					"label": "Description",
+					"type": "text",
+					"description": "Meta description used when the SEO panel has no override."
+				},
+				{
 					"slug": "content",
 					"label": "Content",
 					"type": "portableText",

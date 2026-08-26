@@ -39,6 +39,11 @@ export interface SiteConfig {
 	leadWith: 'work' | 'facts';
 	/** Whether the résumé is linked in the nav and listed in the sitemap. */
 	showResume: boolean;
+	about: {
+		eyebrow: string;
+		headline: string;
+		intro: string;
+	};
 }
 
 export const LEGAL_NAME = 'Sean Behan';
@@ -68,23 +73,30 @@ export const site: SiteConfig = siteFor(import.meta.env.PUBLIC_SITE);
 export { SITES };
 
 /** Absolute URL for a path on this site, for canonical tags and feeds. */
-export const absolute = (path: string) => `${site.url}${path === '/' ? '' : path}`;
+export const absolute = (path: string) => {
+	if (/^https?:\/\//.test(path)) return path;
+	const normalized = path === '/' ? '' : path.replace(/\/+$/, '');
+	return `${site.url}${normalized}`;
+};
 
 /** The other origin this repo publishes. */
 export const sibling = site.id === 'seanbehan' ? SITES.codebam : SITES.seanbehan;
 
 /**
- * Posts are identical on both origins. seanbehan.ca is the canonical copy so
- * the two builds do not split ranking. Everything else — home copy, contact,
- * the résumé — differs per variant and stays self-canonical.
+ * seanbehan.ca is the publishing origin. The codebam Worker redirects writing
+ * there, but this remains the fallback canonical for previews and any response
+ * rendered before that redirect policy runs.
  */
 export const canonicalUrl = (path: string, opts?: { post?: boolean; draft?: boolean }) => {
-	if (opts?.post && !opts.draft) return `${SITES.seanbehan.url}${path === '/' ? '' : path}`;
-	return absolute(path);
+	const normalized = path === '/' ? '' : path.replace(/\/+$/, '');
+	if (opts?.post && !opts.draft) return `${SITES.seanbehan.url}${normalized}`;
+	return absolute(normalized || '/');
 };
 
-/** Sibling URL for a published post, so crawlers can find the other origin. */
-export const alternateUrl = (path: string, opts?: { post?: boolean; draft?: boolean }) => {
-	if (!opts?.post || opts.draft) return undefined;
-	return `${sibling.url}${path}`;
-};
+/** Writing has one home even though both front doors advertise it. */
+export const writingHref = (path: string) =>
+	site.id === 'codebam' ? `${SITES.seanbehan.url}${path}` : path;
+
+/** Project case studies belong to the code-first origin. */
+export const projectHref = (path: string) =>
+	site.id === 'seanbehan' ? `${SITES.codebam.url}${path}` : path;

@@ -1,0 +1,60 @@
+---
+import Base from '../layouts/Base.astro';
+import { site, LEGAL_NAME, LINKEDIN_URL, writingHref } from '../lib/site';
+---
+
+<Base
+	title="About"
+	description={`About ${LEGAL_NAME}, the developer behind ${site.name} and @codebam.`}
+	ogTitle={`About — ${site.name}`}
+>
+	<article class="panel pt-14 pb-20 md:pt-16 md:pb-24">
+		<div class="shell">
+			<p class="enter eyebrow">{site.about.eyebrow}</p>
+			<h1 class="display display-xl mt-5 max-w-[20ch]">{site.about.headline}</h1>
+			<p
+				class="enter mt-7 max-w-[58ch] text-[1.15rem] leading-[1.65] text-[var(--body)] md:text-[1.3rem]"
+				style="--enter-delay:80ms"
+			>
+				{site.about.intro}
+			</p>
+
+			<div class="prose enter mt-12 max-w-[68ch]" style="--enter-delay:120ms">
+				<h2>What I work on</h2>
+				<p>
+					My public work sits where application code meets infrastructure: Linux graphics,
+					serverless systems, storage, deployment and the tools around them. I prefer small systems
+					with explicit failure modes, reproducible environments and source a reader can inspect.
+				</p>
+
+				<h2>Writing</h2>
+				<p>
+					The articles document things I have built, repaired or had to understand closely enough to
+					explain. Technical posts include commands and examples that worked when published;
+					meaningful later changes are recorded with an updated date.
+				</p>
+
+				<h2>Elsewhere</h2>
+				<ul>
+					<li><a href="https://github.com/codebam">GitHub projects and source code</a></li>
+					<li><a href={writingHref('/posts')}>Technical writing</a></li>
+					{
+						site.showResume && (
+							<li>
+								<a href="/resume">Résumé and work history</a>
+							</li>
+						)
+					}
+					{
+						site.showResume && (
+							<li>
+								<a href={LINKEDIN_URL}>LinkedIn</a>
+							</li>
+						)
+					}
+					<li><a href="/contact">Contact</a></li>
+				</ul>
+			</div>
+		</div>
+	</article>
+</Base>

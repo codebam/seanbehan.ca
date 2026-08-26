@@ -13,6 +13,7 @@ import PostList from '../../components/PostList.astro';
 import Block from '../../components/portable-text/Block.astro';
 import Code from '../../components/portable-text/Code.astro';
 import { getPosts, prepareBody, toSummary } from '../../lib/posts';
+import { LEGAL_NAME } from '../../lib/site';
 import { slugifyTag } from '../../lib/tags';
 import type { PostSummary } from '../../lib/types';
 
@@ -81,12 +82,11 @@ const toc = headings.length >= TOC_MIN_SECTIONS ? headings : [];
  */
 const topLevel = Math.min(...headings.map((heading) => heading.level), 3);
 
-const published = new Date(post.meta.date).toLocaleDateString('en-CA', {
-	year: 'numeric',
-	month: 'long',
-	day: 'numeric',
-	timeZone: 'UTC'
-});
+const dateFormat = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' } as const;
+const published = new Date(post.meta.date).toLocaleDateString('en-CA', dateFormat);
+const updated = post.meta.updated
+	? new Date(post.meta.updated).toLocaleDateString('en-CA', dateFormat)
+	: null;
 ---
 
 {
@@ -121,7 +121,17 @@ const published = new Date(post.meta.date).toLocaleDateString('en-CA', {
 				}
 
 				<p class="mt-7 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[var(--muted)]">
-					<time datetime={post.meta.date}>{published}</time>
+					<span>By <a href="/about" rel="author" class="hover:underline">{LEGAL_NAME}</a></span>
+					<span class="text-[var(--muted)]">&middot;</span>
+					<time datetime={post.meta.date}>Published {published}</time>
+					{
+						updated && (
+							<>
+								<span class="text-[var(--muted)]">&middot;</span>
+								<time datetime={post.meta.updated}>Updated {updated}</time>
+							</>
+						)
+					}
 					{
 						post.readingMinutes && (
 							<>

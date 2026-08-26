@@ -14,6 +14,7 @@
  */
 
 import { defineMiddleware } from 'astro:middleware';
+import { SITES, site } from './lib/site';
 
 /**
  * The admin panel is a React application EmDash ships and updates; it is
@@ -143,6 +144,50 @@ function cacheKey(url: URL): Request {
 
 export const onRequest = defineMiddleware(async (context, next) => {
 	const { pathname } = context.url;
+
+	if (!import.meta.env.DEV) {
+		const target = new URL(context.url);
+		let redirect = false;
+
+		if (target.protocol !== 'https:') {
+			target.protocol = 'https:';
+			redirect = true;
+		}
+		if (target.hostname === 'www.seanbehan.ca' || target.hostname === 'www.codebam.ca') {
+			target.hostname = target.hostname.slice(4);
+			redirect = true;
+		}
+		if (
+			!target.pathname.startsWith('/_emdash') &&
+			target.pathname.length > 1 &&
+			target.pathname.endsWith('/')
+		) {
+			target.pathname = target.pathname.replace(/\/+$/, '');
+			redirect = true;
+		}
+
+		// The shared database does not imply two indexed copies. Writing belongs
+		// to Sean's domain; project case studies belong to the code-first domain.
+		if (
+			site.id === 'codebam' &&
+			(target.pathname === '/posts' ||
+				target.pathname.startsWith('/posts/') ||
+				target.pathname.startsWith('/pages/') ||
+				target.pathname === '/rss.xml')
+		) {
+			target.host = new URL(SITES.seanbehan.url).host;
+			redirect = true;
+		}
+		if (
+			site.id === 'seanbehan' &&
+			(target.pathname === '/projects' || target.pathname.startsWith('/projects/'))
+		) {
+			target.host = new URL(SITES.codebam.url).host;
+			redirect = true;
+		}
+
+		if (redirect) return Response.redirect(target, 301);
+	}
 	const cache = caches.default;
 	const cacheable = await isCacheable(context);
 	// The match and the put must use this one key, or the second misses the

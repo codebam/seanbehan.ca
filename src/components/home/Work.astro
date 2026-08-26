@@ -1,5 +1,6 @@
 ---
 /** SELECTED WORK — inverted panel, one row per featured repository. */
+import { projectHref } from '../../lib/site';
 import type { FeaturedProject } from '../../lib/types';
 
 interface Props {
@@ -48,7 +49,9 @@ const { projects } = Astro.props;
 						)}
 
 						<div class="row-body">
-							<h3 class="title text-[1.45rem] font-medium tracking-tight">{project.title}</h3>
+							<h3 class="title text-[1.45rem] font-medium tracking-tight">
+								<a href={projectHref(`/projects/${project.slug}`)}>{project.title}</a>
+							</h3>
 							<p class="mt-2.5 max-w-[58ch] text-[1.05rem] leading-relaxed text-[var(--body)]">
 								{project.description}
 							</p>

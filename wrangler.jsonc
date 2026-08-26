@@ -6,8 +6,8 @@
 	"compatibility_flags": ["nodejs_compat"],
 
 	// One database, both origins. The `codebam` environment below binds the same
-	// D1 and the same bucket: the two sites are one body of writing behind two
-	// front doors, and a post published from either admin panel is live on both.
+	// D1 and bucket so either admin can manage the site; public writing redirects
+	// to seanbehan.ca rather than publishing a second indexable copy.
 	"d1_databases": [
 		{
 			"binding": "DB",
@@ -45,9 +45,8 @@
 	},
 
 	// `custom_domain` rather than a route pattern: Cloudflare then owns the DNS
-	// record and the certificate for each hostname, which is what the Pages
-	// project used to do. www is attached to the same Worker rather than
-	// redirected, as it was before.
+	// record and certificate. The middleware permanently redirects www to the
+	// apex, but both hostnames have to reach the Worker for it to do so.
 	"routes": [
 		{ "pattern": "seanbehan.ca", "custom_domain": true },
 		{ "pattern": "www.seanbehan.ca", "custom_domain": true }
@@ -90,7 +89,10 @@
 			"observability": {
 				"enabled": true
 			},
-			"routes": [{ "pattern": "codebam.ca", "custom_domain": true }]
+			"routes": [
+				{ "pattern": "codebam.ca", "custom_domain": true },
+				{ "pattern": "www.codebam.ca", "custom_domain": true }
+			]
 		}
 	}
 }

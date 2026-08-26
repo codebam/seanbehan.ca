@@ -1,10 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { SITES } from './site.data.js';
-import { alternateUrl, canonicalUrl, yearsBuilding } from './site';
+import { canonicalUrl, projectHref, writingHref, yearsBuilding } from './site';
 
 describe('canonicalUrl', () => {
 	it('points published posts at seanbehan.ca from either variant', () => {
 		expect(canonicalUrl('/posts/nixos', { post: true })).toBe('https://seanbehan.ca/posts/nixos');
+	});
+
+	it('normalizes trailing slashes', () => {
+		expect(canonicalUrl('/posts/')).toBe(`${SITES.seanbehan.url}/posts`);
 	});
 
 	it('leaves drafts and non-posts on this origin', () => {
@@ -16,14 +20,13 @@ describe('canonicalUrl', () => {
 	});
 });
 
-describe('alternateUrl', () => {
-	it('names the sibling origin for a published post', () => {
-		expect(alternateUrl('/posts/nixos', { post: true })).toBe('https://codebam.ca/posts/nixos');
+describe('content origins', () => {
+	it('keeps writing on the Sean variant', () => {
+		expect(writingHref('/posts/nixos')).toBe('/posts/nixos');
 	});
 
-	it('is absent for drafts and non-posts', () => {
-		expect(alternateUrl('/posts/website', { post: true, draft: true })).toBeUndefined();
-		expect(alternateUrl('/')).toBeUndefined();
+	it('sends project case studies to codebam.ca', () => {
+		expect(projectHref('/projects/viewport')).toBe('https://codebam.ca/projects/viewport');
 	});
 });
 

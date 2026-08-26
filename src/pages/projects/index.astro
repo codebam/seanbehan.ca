@@ -1,0 +1,29 @@
+---
+import Base from '../../layouts/Base.astro';
+import Work from '../../components/home/Work.astro';
+import { withLiveStats } from '../../lib/github';
+import { featuredProjects } from '../../lib/projects';
+import { SITES } from '../../lib/site.data.js';
+
+const projects = await withLiveStats(featuredProjects);
+---
+
+<Base
+	title="Open-source projects"
+	description="Open-source projects by codebam in Rust, TypeScript, Wayland and Cloudflare Workers."
+	ogTitle="Open-source projects — codebam"
+	canonical={`${SITES.codebam.url}/projects`}
+>
+	<section class="panel pt-14 pb-12 md:pt-16">
+		<div class="shell">
+			<p class="enter eyebrow">Rust · TypeScript · Linux</p>
+			<h1 class="display display-xl mt-5">Open-source projects</h1>
+			<p
+				class="enter mt-6 max-w-[52ch] text-[1.15rem] leading-[1.55] text-[var(--body)] md:text-[1.3rem]"
+			>
+				Architecture notes and source for the systems I build in the open.
+			</p>
+		</div>
+	</section>
+	<Work projects={projects} />
+</Base>

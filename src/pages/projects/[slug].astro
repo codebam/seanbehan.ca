@@ -1,0 +1,78 @@
+---
+import Base from '../../layouts/Base.astro';
+import { featuredProjects } from '../../lib/projects';
+import { SITES } from '../../lib/site.data.js';
+
+const project = featuredProjects.find((candidate) => candidate.slug === Astro.params.slug);
+if (!project) return Astro.rewrite('/404');
+
+const canonical = `${SITES.codebam.url}/projects/${project.slug}`;
+const source = `https://github.com/codebam/${project.repo}`;
+const schema = JSON.stringify({
+	'@context': 'https://schema.org',
+	'@type': 'SoftwareSourceCode',
+	'@id': `${canonical}#software`,
+	name: project.title,
+	description: project.description,
+	url: canonical,
+	codeRepository: source,
+	programmingLanguage: project.language,
+	dateCreated: project.since,
+	author: { '@id': 'https://seanbehan.ca/#person' },
+	keywords: project.tags.join(', ')
+}).replace(/</g, '\\u003c');
+---
+
+<Base
+	title={project.title}
+	description={project.description}
+	ogTitle={`${project.title} — codebam`}
+	canonical={canonical}
+>
+	<script slot="head" type="application/ld+json" is:inline set:html={schema} />
+
+	<article class="panel pt-14 pb-20 md:pt-16 md:pb-24">
+		<div class="shell">
+			<p class="enter eyebrow">{project.language} · {project.since}</p>
+			<h1 class="display display-xl mt-5 max-w-[20ch]">{project.title}</h1>
+			<p
+				class="enter mt-7 max-w-[58ch] text-[1.15rem] leading-[1.65] text-[var(--body)] md:text-[1.3rem]"
+			>
+				{project.description}
+			</p>
+
+			<p class="enter mt-8 flex flex-wrap gap-6" style="--enter-delay:100ms">
+				<a class="btn" href={source}>View source</a>
+				{
+					project.homepage && (
+						<a class="link-quiet self-center" href={project.homepage}>
+							{project.homepageLabel}
+						</a>
+					)
+				}
+			</p>
+
+			<div class="prose enter mt-14 max-w-[68ch]" style="--enter-delay:140ms">
+				<h2>The problem</h2>
+				<p>{project.challenge}</p>
+
+				<h2>Architecture</h2>
+				<ul>
+					{project.architecture.map((item) => <li>{item}</li>)}
+				</ul>
+
+				<h2>Highlights</h2>
+				<ul>
+					{project.highlights.map((item) => <li>{item}</li>)}
+				</ul>
+
+				<h2>Technology</h2>
+				<p>{[project.language, ...project.tags].join(' · ')}</p>
+			</div>
+
+			<p class="mt-14 border-t border-[var(--line)] pt-7">
+				<a class="link-accent" href="/#work">&larr; All selected work</a>
+			</p>
+		</div>
+	</article>
+</Base>

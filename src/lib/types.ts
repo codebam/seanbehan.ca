@@ -9,6 +9,8 @@
  */
 
 export interface FeaturedProject {
+	/** Stable URL segment under /projects. */
+	slug: string;
 	/** Repository name under github.com/codebam */
 	repo: string;
 	/** Year the repo was created; refreshed from GitHub at build time */
@@ -21,6 +23,9 @@ export interface FeaturedProject {
 	homepage?: string;
 	homepageLabel?: string;
 	tags: string[];
+	challenge: string;
+	architecture: string[];
+	highlights: string[];
 }
 
 /** One linkable section heading within a post body. */

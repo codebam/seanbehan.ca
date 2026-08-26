@@ -6,6 +6,7 @@
  * spotlight is now a class the delegated script in scripts/spotlight.ts picks
  * up, rather than a component instance per row.
  */
+import { writingHref } from '../lib/site';
 import { displayTag, slugifyTag } from '../lib/tags';
 import type { PostSummary } from '../lib/types';
 
@@ -45,7 +46,7 @@ const monthYear = (date: string) =>
 			>
 				{/* Tags sit outside the card so they can be links without nesting
 				    anchors. The paired grid still takes these wrappers as children. */}
-				<a class="spotlight entry" href={post.path}>
+				<a class="spotlight entry" href={writingHref(post.path)}>
 					<span class="pool" aria-hidden="true" />
 					<time datetime={post.meta.date}>{monthYear(post.meta.date)}</time>
 					{post.readingMinutes && <span class="read">&middot; {post.readingMinutes} min</span>}
@@ -57,7 +58,7 @@ const monthYear = (date: string) =>
 						{post.meta.tags.map((tag, i) => (
 							<>
 								{i > 0 && <span aria-hidden="true"> · </span>}
-								<a href={`/posts/tag/${slugifyTag(tag)}`}>{displayTag(tag)}</a>
+								<a href={writingHref(`/posts/tag/${slugifyTag(tag)}`)}>{displayTag(tag)}</a>
 							</>
 						))}
 					</p>

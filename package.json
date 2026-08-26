@@ -13,7 +13,7 @@
 		"build:codebam": "CLOUDFLARE_ENV=codebam PUBLIC_SITE=codebam astro build",
 		"preview": "astro build && wrangler dev",
 		"deploy": "astro build && wrangler deploy",
-		"deploy:codebam": "npm run build:codebam && wrangler deploy",
+		"deploy:codebam": "npm run build:codebam && wrangler deploy --env codebam",
 		"check": "astro check",
 		"test": "vitest",
 		"test:run": "vitest run",

@@ -2,10 +2,9 @@
 /**
  * The frame every page renders into: head metadata, header, footer.
  *
- * Ported from the SvelteKit layout, and it keeps that file's decisions. Social
- * metadata is resolved in one place rather than per page, so nothing emits a
- * second og:title. Posts canonical to seanbehan.ca because both origins serve
- * the same words; everything else stays self-canonical.
+ * Ported from the SvelteKit layout, and it keeps that file's decisions. EmDash
+ * owns canonical, social and structured metadata so plugin contributions and
+ * the site's defaults are deduplicated before they reach the document.
  *
  * The EmDash pieces — EmDashHead, EmDashBodyStart, EmDashBodyEnd — carry the
  * admin bar, visual editing and whatever the installed plugins contribute.
@@ -13,16 +12,7 @@
  */
 import { EmDashHead, EmDashBodyStart, EmDashBodyEnd } from 'emdash/ui';
 import { createPublicPageContext } from 'emdash/page';
-import {
-	site,
-	absolute,
-	sibling,
-	canonicalUrl,
-	alternateUrl,
-	LEGAL_NAME,
-	HANDLE,
-	LINKEDIN_URL
-} from '../lib/site';
+import { site, absolute, canonicalUrl, writingHref } from '../lib/site';
 import type { PostSummary } from '../lib/types';
 import '../styles/app.css';
 
@@ -35,11 +25,24 @@ interface Props {
 	ogDescription?: string;
 	/** Set on a post page; drives the article metadata and the canonical rule. */
 	post?: PostSummary;
+	image?: string;
+	robots?: string;
+	canonical?: string;
 	/** Content reference, so plugins and visual editing can find the entry. */
 	content?: { collection: string; id: string; slug?: string | null };
 }
 
-const { title, description, ogTitle, ogDescription, post, content } = Astro.props;
+const {
+	title,
+	description,
+	ogTitle,
+	ogDescription,
+	post,
+	image,
+	robots,
+	canonical: canonicalOverride,
+	content
+} = Astro.props;
 
 const path = Astro.url.pathname;
 const currentYear = new Date().getFullYear();
@@ -50,11 +53,11 @@ const fullTitle = title
 		: `${title} — ${site.name}`
 	: site.title;
 
-const canonical = canonicalUrl(path, { post: Boolean(post), draft: post?.meta.draft });
-const alternate = alternateUrl(path, { post: Boolean(post), draft: post?.meta.draft });
+const canonical =
+	canonicalOverride ?? canonicalUrl(path, { post: Boolean(post), draft: post?.meta.draft });
 const metaDescription =
 	post?.meta.description ?? post?.meta.title ?? description ?? site.description;
-const socialTitle = post ? post.meta.title : (ogTitle ?? site.ogTitle);
+const socialTitle = post ? post.meta.title : (ogTitle ?? title ?? site.ogTitle);
 const socialDescription = post
 	? metaDescription
 	: (ogDescription ?? description ?? site.ogDescription);
@@ -64,62 +67,9 @@ const socialDescription = post
  * of its own. Everything else uses the site card, not the author photo: a
  * 460px headshot is the wrong aspect for a large-image preview.
  */
-const ogImage = absolute(post ? (post.meta.image ?? `/og/${post.slug}.png`) : '/og/site.png');
-
-/**
- * Structured data. The home page describes the site and the person behind it;
- * a post describes itself as a BlogPosting. Everything else inherits the
- * WebSite node, which is what carries the name a search result shows.
- */
-const person = {
-	'@type': 'Person',
-	name: LEGAL_NAME,
-	alternateName: HANDLE,
-	url: site.url,
-	email: `mailto:${site.email}`,
-	image: absolute('/profile.webp'),
-	sameAs: [
-		sibling.url,
-		'https://github.com/codebam',
-		'https://mstdn.ca/@codebam',
-		...(site.showResume ? [LINKEDIN_URL] : [])
-	]
-};
-
-const website = {
-	'@type': 'WebSite',
-	'@id': `${site.url}/#website`,
-	url: site.url,
-	name: site.name,
-	description: site.description,
-	inLanguage: 'en',
-	publisher: person
-};
-
-const jsonLd = post
-	? {
-			'@context': 'https://schema.org',
-			'@type': 'BlogPosting',
-			'@id': canonical,
-			mainEntityOfPage: canonical,
-			url: canonical,
-			headline: post.meta.title,
-			...(post.meta.description ? { description: post.meta.description } : {}),
-			datePublished: post.meta.date,
-			...(post.meta.updated ? { dateModified: post.meta.updated } : {}),
-			...(post.meta.tags.length ? { keywords: post.meta.tags.join(', ') } : {}),
-			image: ogImage,
-			inLanguage: 'en',
-			author: person,
-			publisher: person,
-			isPartOf: { '@id': `${site.url}/#website` }
-		}
-	: path === '/'
-		? { '@context': 'https://schema.org', '@graph': [website, person] }
-		: { '@context': 'https://schema.org', ...website };
-
-/** Every `<` escaped, so no string in the data can close the element early. */
-const jsonLdText = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
+const ogImage = image
+	? absolute(image)
+	: absolute(post ? (post.meta.image ?? `/og/${post.slug}.png`) : '/og/site.png');
 
 const pageCtx = createPublicPageContext({
 	Astro,
@@ -131,7 +81,12 @@ const pageCtx = createPublicPageContext({
 	canonical,
 	image: ogImage,
 	content,
-	seo: { ogImage, robots: post?.meta.draft ? 'noindex, nofollow' : undefined },
+	seo: {
+		ogTitle: socialTitle,
+		ogDescription: socialDescription,
+		ogImage,
+		robots: robots ?? (post?.meta.draft ? 'noindex, nofollow' : undefined)
+	},
 	articleMeta: post
 		? {
 				publishedTime: post.meta.date,
@@ -139,23 +94,25 @@ const pageCtx = createPublicPageContext({
 				author: site.name
 			}
 		: undefined,
-	siteName: site.name
+	siteName: site.name,
+	siteUrl: site.url
 });
 
-/** Projects live in a section of the home page rather than a route of their own. */
+/** The two variants share a frame but send writing to its canonical origin. */
 const nav = site.showResume
 	? [
-			{ href: '/posts', label: 'Writing' },
+			{ href: writingHref('/posts'), label: 'Writing' },
 			{ href: '/links', label: 'Links' },
 			{ href: '/resume', label: 'Résumé' }
 		]
 	: [
-			{ href: '/posts', label: 'Writing' },
+			{ href: writingHref('/posts'), label: 'Writing' },
 			{ href: '/links', label: 'Links' }
 		];
 
-/** A nav item is current for its own page and anything beneath it. */
-const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`);
+/** A cross-origin nav item cannot be current on this page. */
+const isCurrent = (href: string) =>
+	href.startsWith('/') && (path === href || path.startsWith(`${href}/`));
 ---
 
 <!doctype html>
@@ -177,48 +134,23 @@ const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`)
 			crossorigin
 		/>
 
-		<meta name="description" content={metaDescription} />
-		<meta property="og:title" content={socialTitle} />
-		<meta property="og:description" content={socialDescription} />
-		<meta property="og:type" content={post ? 'article' : 'website'} />
-		<meta property="og:url" content={canonical} />
-		<meta property="og:site_name" content={site.name} />
+		<!-- EmDashHead owns canonical, description, social metadata and the
+		     primary JSON-LD graph. The fields below supplement rather than repeat it. -->
 		<meta property="og:locale" content="en_CA" />
-		<meta property="og:image" content={ogImage} />
 		<meta property="og:image:alt" content={post ? post.meta.title : site.name} />
 		<!-- Generated cards are all 1200×630, including the site card. -->
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="630" />
-		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:site" content="@seanwbehan" />
 		{post && <meta name="twitter:creator" content="@seanwbehan" />}
-		<meta name="twitter:title" content={socialTitle} />
-		<meta name="twitter:description" content={socialDescription} />
-		<meta name="twitter:image" content={ogImage} />
-		{
-			/* Drafts are shareable by URL and absent from the sitemap; this keeps a
-		    crawler that stumbles on one from indexing it. */
-		}
-		{post?.meta.draft && <meta name="robots" content="noindex, nofollow" />}
-		{
-			post && (
-				<>
-					<meta property="article:author" content={site.name} />
-					<meta property="article:published_time" content={post.meta.date} />
-					{post.meta.updated && (
-						<meta property="article:modified_time" content={post.meta.updated} />
-					)}
-					{post.meta.tags.map((tag) => (
-						<meta property="article:tag" content={tag} />
-					))}
-				</>
-			)
-		}
-		<script type="application/ld+json" is:inline set:html={jsonLdText} />
-		<link rel="canonical" href={canonical} />
-		{alternate && <link rel="alternate" href={alternate} />}
+		{post?.meta.tags.map((tag) => <meta property="article:tag" content={tag} />)}
 		<link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
-		<link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml" />
+		<link
+			rel="alternate"
+			type="application/rss+xml"
+			title="RSS Feed"
+			href={writingHref('/rss.xml')}
+		/>
 		<link rel="icon" href="/favicon.ico" sizes="32x32" />
 		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -281,7 +213,8 @@ const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`)
 				class="shell flex flex-wrap items-center gap-x-6 gap-y-3 py-10 text-sm text-[var(--muted)] md:py-12"
 			>
 				<span>&copy; {currentYear} {site.name}</span>
-				<a class="footer-link" href="/rss.xml">RSS</a>
+				<a class="footer-link" href="/about">About</a>
+				<a class="footer-link" href={writingHref('/rss.xml')}>RSS</a>
 				<a
 					class="footer-link"
 					href="https://github.com/codebam"

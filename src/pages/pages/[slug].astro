@@ -7,12 +7,13 @@
  * possible to add a page without a deploy, and it renders in the same reading
  * column a post does.
  */
-import { getEmDashEntry, decodeSlug } from 'emdash';
+import { getEmDashEntry, decodeSlug, getSeoMeta } from 'emdash';
 import { PortableText } from 'emdash/ui';
 import Base from '../../layouts/Base.astro';
 import Block from '../../components/portable-text/Block.astro';
 import Code from '../../components/portable-text/Code.astro';
 import { prepareBody } from '../../lib/posts';
+import { site } from '../../lib/site';
 
 const slug = decodeSlug(Astro.params.slug);
 if (!slug) return Astro.rewrite('/404');
@@ -22,9 +23,24 @@ if (!page) return Astro.rewrite('/404');
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
 const { blocks } = prepareBody(page.data.content);
+const seo = getSeoMeta(page, {
+	siteTitle: site.name,
+	siteUrl: site.url,
+	path: `/pages/${slug}`,
+	defaultTitle: page.data.title
+});
 ---
 
-<Base title={page.data.title} content={{ collection: 'pages', id: page.data.id, slug }}>
+<Base
+	title={seo.ogTitle}
+	description={seo.description ?? undefined}
+	ogTitle={seo.ogTitle}
+	ogDescription={seo.ogDescription ?? undefined}
+	image={seo.ogImage ?? undefined}
+	robots={seo.robots ?? undefined}
+	canonical={seo.canonical ?? undefined}
+	content={{ collection: 'pages', id: page.data.id, slug }}
+>
 	<article class="panel pt-14 pb-20 md:pt-16">
 		<div class="shell">
 			<header class="enter border-b border-[var(--line)] pb-10">

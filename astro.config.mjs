@@ -6,6 +6,7 @@ import { cloudflareEmail } from '@emdash-cms/cloudflare/plugins';
 import { formsPlugin } from '@emdash-cms/plugin-forms';
 import { defineConfig } from 'astro/config';
 import emdash from 'emdash/astro';
+import { siteSeo } from './src/plugins/site-seo';
 
 /**
  * The admin panel is React; the site itself is plain Astro templates.
@@ -62,6 +63,14 @@ export default defineConfig({
 			database: d1({ binding: 'DB', session: 'auto' }),
 			storage: r2({ binding: 'MEDIA' }),
 			plugins: [
+				siteSeo({
+					authorName: 'Sean Behan',
+					authorHandle: 'codebam',
+					authorUrl: 'https://seanbehan.ca',
+					githubUrl: 'https://github.com/codebam',
+					mastodonUrl: 'https://mstdn.ca/@codebam',
+					linkedinUrl: 'https://www.linkedin.com/in/sean-behan'
+				}),
 				formsPlugin(),
 				// Email transport: EmDash on Workers ships only a dev-console stub, so every
 				// mail-dependent auth flow (magic-link login, invites, password recovery) failed

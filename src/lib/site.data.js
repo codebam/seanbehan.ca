@@ -31,7 +31,13 @@ const seanbehan = {
 	ogTitle: 'Sean Behan',
 	ogDescription: 'Full-stack developer. Rust, TypeScript, NixOS, and open source.',
 	leadWith: 'facts',
-	showResume: true
+	showResume: true,
+	about: {
+		eyebrow: 'Sean Behan · codebam',
+		headline: 'I build systems from the database to the display server.',
+		intro:
+			'I am a full-stack developer in Ontario, Canada. Since 2014 I have worked across web applications, Linux infrastructure and open source, with a current focus on Rust, TypeScript, NixOS and Cloudflare Workers.'
+	}
 };
 
 /**
@@ -60,7 +66,13 @@ const codebam = {
 	ogTitle: 'codebam',
 	ogDescription: 'Open source in Rust, TypeScript and NixOS.',
 	leadWith: 'work',
-	showResume: false
+	showResume: false,
+	about: {
+		eyebrow: '@codebam · Ontario, Canada',
+		headline: 'The handle behind the repositories.',
+		intro:
+			'codebam is Sean Behan: a developer building open-source software in Rust and TypeScript. The work ranges from a Wayland compositor to small services designed around Cloudflare Workers, D1 and R2.'
+	}
 };
 
 /**
