@@ -89,7 +89,13 @@ export default defineConfig({
 		})
 	],
 	vite: {
-		plugins: [tailwindcss()]
+		plugins: [tailwindcss()],
+		resolve: {
+			dedupe: ['react', 'react-dom']
+		},
+		ssr: {
+			noExternal: ['@cloudflare/kumo']
+		}
 	},
 	devToolbar: { enabled: false }
 });

@@ -16,6 +16,7 @@ import { getPosts, prepareBody, toSummary } from '../../lib/posts';
 import { LEGAL_NAME } from '../../lib/site';
 import { slugifyTag } from '../../lib/tags';
 import type { PostSummary } from '../../lib/types';
+import { Badge } from '@cloudflare/kumo/components/badge';
 
 /** How many "keep reading" entries a post ends with. Two fills the row. */
 const RELATED_LIMIT = 2;
@@ -147,11 +148,11 @@ const updated = post.meta.updated
 								<span class="flex flex-wrap items-center gap-x-3">
 									{post.meta.tags.map((tag) =>
 										publishedTagSlugs.has(slugifyTag(tag)) ? (
-											<a href={`/posts/tag/${slugifyTag(tag)}`} class="hover:underline">
-												{tag}
+											<a href={`/posts/tag/${slugifyTag(tag)}`}>
+												<Badge variant="outline">{tag}</Badge>
 											</a>
 										) : (
-											<span>{tag}</span>
+											<Badge variant="secondary">{tag}</Badge>
 										)
 									)}
 								</span>

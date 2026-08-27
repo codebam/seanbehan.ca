@@ -1,3 +1,5 @@
+@source '../../node_modules/@cloudflare/kumo/dist/**/*.{js,jsx,ts,tsx}';
+@import '@cloudflare/kumo/styles/tailwind';
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 @plugin '@tailwindcss/forms';
@@ -121,6 +123,8 @@
 @layer base {
 	:root {
 		color-scheme: light dark;
+		--kumo-button-emphasis-bg: var(--accent);
+		--kumo-button-emphasis-ring: var(--accent-hover);
 
 		/* Surfaces */
 		--bg: #faf8f4;

@@ -12,6 +12,7 @@ import Facts from '../components/home/Facts.astro';
 import Work from '../components/home/Work.astro';
 import Grainient from '../components/effects/Grainient.astro';
 import StarBorder from '../components/effects/StarBorder.astro';
+import { LinkButton } from '@cloudflare/kumo/components/button';
 import { getPosts } from '../lib/posts';
 import { withLiveStats } from '../lib/github';
 import { featuredProjects } from '../lib/projects';
@@ -82,7 +83,14 @@ const latest = posts.slice(0, 6);
 				style="--enter-delay:140ms"
 			>
 				<StarBorder>
-					<a href={writingHref('/posts')} class="btn" data-magnetic>Read the writing</a>
+					<LinkButton
+						href={writingHref('/posts')}
+						variant="primary"
+						size="lg"
+						className="rounded-full"
+					>
+						Read the writing
+					</LinkButton>
 				</StarBorder>
 				<a
 					href="https://github.com/codebam"

@@ -10,6 +10,7 @@
  * What the browser keeps is the list, the input and the act of reordering —
  * and an archive it can read in full without any of it.
  */
+import { Input } from '@cloudflare/kumo/components/input';
 ---
 
 <div class="relative mb-2">
@@ -26,12 +27,13 @@
 			stroke-linejoin="round"
 			d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"></path>
 	</svg>
-	<input
+	<Input
 		type="search"
 		id="post-search"
 		placeholder="Search titles, tags and full text…"
 		aria-label="Search posts"
-		class="input pl-9"
+		size="lg"
+		className="w-full pl-9"
 	/>
 </div>
 

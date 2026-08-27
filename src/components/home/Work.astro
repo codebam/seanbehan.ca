@@ -2,6 +2,7 @@
 /** SELECTED WORK — inverted panel, one row per featured repository. */
 import { projectHref } from '../../lib/site';
 import type { FeaturedProject } from '../../lib/types';
+import { Badge } from '@cloudflare/kumo/components/badge';
 
 interface Props {
 	projects: FeaturedProject[];
@@ -56,9 +57,11 @@ const { projects } = Astro.props;
 								{project.description}
 							</p>
 
-							<p class="mt-3.5 text-[0.92rem]">
-								<span class="tag-lang">{project.language}</span>
-								<span class="tag">&nbsp;&middot; {project.tags.join(' · ')}</span>
+							<p class="mt-3.5 flex flex-wrap gap-1.5">
+								<Badge variant="orange">{project.language}</Badge>
+								{project.tags.map((tag) => (
+									<Badge variant="outline">{tag}</Badge>
+								))}
 							</p>
 
 							<p class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-[0.98rem]">

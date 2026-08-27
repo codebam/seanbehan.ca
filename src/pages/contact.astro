@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import { site, LINKEDIN_URL } from '../lib/site';
+import { LayerCard } from '@cloudflare/kumo/components/layer-card';
 
 const channels = [
 	{
@@ -82,22 +83,24 @@ const channels = [
 			/>
 		</div>
 
-		<ul class="mt-12">
+		<ul class="mt-12 grid gap-3 md:grid-cols-2">
 			{
 				channels.map((channel, i) => (
-					<li class="border-t border-[var(--line)]" data-reveal data-reveal-delay={i * 55}>
-						<a
-							href={channel.href}
-							target={channel.href.startsWith('http') ? '_blank' : undefined}
-							rel={channel.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-							class="channel grid gap-x-6 gap-y-1 py-5 md:grid-cols-[110px_1fr_auto] md:items-baseline"
-						>
-							<span class="text-sm tracking-wide text-[var(--muted)] uppercase">
-								{channel.label}
-							</span>
-							<span class="value text-[1.05rem]">{channel.value}</span>
-							<span class="text-sm text-[var(--muted)] md:text-right">{channel.note}</span>
-						</a>
+					<li data-reveal data-reveal-delay={i * 55}>
+						<LayerCard className="h-full p-0">
+							<a
+								href={channel.href}
+								target={channel.href.startsWith('http') ? '_blank' : undefined}
+								rel={channel.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+								class="channel grid h-full gap-x-6 gap-y-1 p-5"
+							>
+								<span class="text-sm tracking-wide text-[var(--muted)] uppercase">
+									{channel.label}
+								</span>
+								<span class="value text-[1.05rem]">{channel.value}</span>
+								<span class="text-sm text-[var(--muted)] md:text-right">{channel.note}</span>
+							</a>
+						</LayerCard>
 					</li>
 				))
 			}

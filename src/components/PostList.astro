@@ -9,6 +9,8 @@
 import { writingHref } from '../lib/site';
 import { displayTag, slugifyTag } from '../lib/tags';
 import type { PostSummary } from '../lib/types';
+import { Badge } from '@cloudflare/kumo/components/badge';
+import { LayerCard } from '@cloudflare/kumo/components/layer-card';
 
 interface Props {
 	posts: PostSummary[];
@@ -36,8 +38,8 @@ const monthYear = (date: string) =>
 <div class:list={['list', columns === 2 && 'paired']} data-post-list>
 	{
 		posts.map((post) => (
-			<div
-				class="item"
+			<LayerCard
+				className="item post-card"
 				data-post
 				data-slug={post.slug}
 				data-title={post.meta.title}
@@ -58,12 +60,14 @@ const monthYear = (date: string) =>
 						{post.meta.tags.map((tag, i) => (
 							<>
 								{i > 0 && <span aria-hidden="true"> · </span>}
-								<a href={writingHref(`/posts/tag/${slugifyTag(tag)}`)}>{displayTag(tag)}</a>
+								<a href={writingHref(`/posts/tag/${slugifyTag(tag)}`)}>
+									<Badge variant="outline">{displayTag(tag)}</Badge>
+								</a>
 							</>
 						))}
 					</p>
 				)}
-			</div>
+			</LayerCard>
 		))
 	}
 </div>
@@ -72,6 +76,11 @@ const monthYear = (date: string) =>
 	.paired {
 		display: grid;
 		gap: 0 3rem;
+	}
+	.post-card {
+		border: 0;
+		box-shadow: none;
+		background: transparent;
 	}
 	@media (width >= 48rem) {
 		.paired {
@@ -168,10 +177,14 @@ const monthYear = (date: string) =>
 	}
 
 	.tags {
-		margin: -0.35rem 0 0;
+		margin: -0.25rem 0 0;
 		padding-bottom: 1.1rem;
-		font-size: 0.82rem;
-		color: var(--muted);
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+	}
+	.tags > span {
+		display: none;
 	}
 	.tags a {
 		color: inherit;
