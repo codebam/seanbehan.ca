@@ -289,6 +289,7 @@
 	}
 
 	.panel-invert {
+		color-scheme: dark;
 		--bg: var(--palette-dark-bg);
 		--surface-alt: var(--palette-dark-alt);
 		--panel: var(--palette-dark-panel);
@@ -308,6 +309,7 @@
 	}
 	@media (prefers-color-scheme: dark) {
 		.panel-invert {
+			color-scheme: light;
 			--bg: var(--palette-light-bg);
 			--surface-alt: var(--palette-light-alt);
 			--panel: var(--palette-light-panel);
