@@ -289,7 +289,6 @@
 	}
 
 	.panel-invert {
-		color-scheme: dark;
 		--bg: var(--palette-dark-bg);
 		--surface-alt: var(--palette-dark-alt);
 		--panel: var(--palette-dark-panel);
@@ -304,12 +303,13 @@
 		--accent-on: var(--palette-dark-accent-on);
 		--invert-bg: var(--palette-dark-text);
 		--invert-text: var(--palette-dark-bg);
+		--text-color-kumo-default: var(--text);
+		--color-kumo-fill: var(--line-strong);
 		background: var(--bg);
 		color: var(--text);
 	}
 	@media (prefers-color-scheme: dark) {
 		.panel-invert {
-			color-scheme: light;
 			--bg: var(--palette-light-bg);
 			--surface-alt: var(--palette-light-alt);
 			--panel: var(--palette-light-panel);
