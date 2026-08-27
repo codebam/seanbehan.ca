@@ -66,9 +66,9 @@
 /* ═══════════════════════════════════════════════════════════
    Design tokens
 
-   One set of names, two palettes. Light is the warm editorial
-   cream; dark is the same layout on near-black with a coral
-   accent. Nothing outside this block knows which is active —
+   One set of names, two palettes. Light uses cool paper greys;
+   dark carries the same blue accent onto a deep slate surface.
+   Nothing outside this block knows which is active —
    components only ever reference the tokens.
    ═══════════════════════════════════════════════════════════ */
 @theme {
@@ -92,31 +92,31 @@
    section the palette it is not currently in. */
 @layer base {
 	:root {
-		--palette-light-bg: #faf8f4;
-		--palette-light-alt: #f2eee6;
+		--palette-light-bg: #f7f8fa;
+		--palette-light-alt: #eef1f5;
 		--palette-light-panel: #ffffff;
-		--palette-light-line: #e3ded4;
-		--palette-light-line-strong: #d3ccbe;
-		--palette-light-text: #17181a;
-		--palette-light-body: #4a4b4f;
-		--palette-light-muted: #6c6a66;
-		--palette-light-dim: #8b8880;
-		--palette-light-accent: #a8391f;
-		--palette-light-accent-hover: #8c2d16;
+		--palette-light-line: #dce1e8;
+		--palette-light-line-strong: #c7ced8;
+		--palette-light-text: #172033;
+		--palette-light-body: #445066;
+		--palette-light-muted: #5f6b7d;
+		--palette-light-dim: #8791a1;
+		--palette-light-accent: #2563eb;
+		--palette-light-accent-hover: #1d4ed8;
 		--palette-light-accent-on: #ffffff;
 
-		--palette-dark-bg: #111110;
-		--palette-dark-alt: #191817;
-		--palette-dark-panel: #191817;
-		--palette-dark-line: #2b2825;
-		--palette-dark-line-strong: #3c3833;
-		--palette-dark-text: #f0eae0;
-		--palette-dark-body: #b8b2a8;
-		--palette-dark-muted: #948e85;
-		--palette-dark-dim: #6b665e;
-		--palette-dark-accent: #e2724f;
-		--palette-dark-accent-hover: #f08a6a;
-		--palette-dark-accent-on: #16150f;
+		--palette-dark-bg: #0f141c;
+		--palette-dark-alt: #171e29;
+		--palette-dark-panel: #171e29;
+		--palette-dark-line: #293241;
+		--palette-dark-line-strong: #3b4658;
+		--palette-dark-text: #e7edf6;
+		--palette-dark-body: #b6c0ce;
+		--palette-dark-muted: #929eae;
+		--palette-dark-dim: #687487;
+		--palette-dark-accent: #60a5fa;
+		--palette-dark-accent-hover: #93c5fd;
+		--palette-dark-accent-on: #08111f;
 	}
 }
 
@@ -127,58 +127,56 @@
 		--kumo-button-emphasis-ring: var(--accent-hover);
 
 		/* Surfaces */
-		--bg: #faf8f4;
-		--surface-alt: #f2eee6;
+		--bg: #f7f8fa;
+		--surface-alt: #eef1f5;
 		--panel: #ffffff;
-		--line: #e3ded4;
-		--line-strong: #d3ccbe;
+		--line: #dce1e8;
+		--line-strong: #c7ced8;
 
 		/* Text */
-		--text: #17181a;
-		--body: #4a4b4f;
-		--muted: #6c6a66;
+		--text: #172033;
+		--body: #445066;
+		--muted: #5f6b7d;
 		/* Non-text only — scrollbar thumb, the search icon. It sits at 3.3:1 on
 		   every surface here, which clears the 3:1 bar for UI marks but not the
 		   4.5:1 one for type, and it fails hardest in the inverted footer where
 		   Lighthouse caught it. The faintest *text* tier is --muted. */
-		--dim: #8b8880;
+		--dim: #8791a1;
 
 		/* Accent */
-		--accent: #a8391f;
-		--accent-hover: #8c2d16;
-		/* Text that sits on an accent surface. White clears 4.5:1 on the rust;
-		   on the coral it does not, so the dark palette puts its near-black
-		   behind it instead. */
+		--accent: #2563eb;
+		--accent-hover: #1d4ed8;
+		/* Text that sits on an accent surface. */
 		--accent-on: var(--palette-light-accent-on);
 		/* Accent at low alpha, for tints that survive both themes */
 		--accent-wash: color-mix(in srgb, var(--accent) 8%, transparent);
 
 		/* Inverted pair, used by the primary button: a dark pill on a
 		   light page, a light pill on a dark one. */
-		--invert-bg: #17181a;
-		--invert-text: #faf8f4;
+		--invert-bg: #172033;
+		--invert-text: #f7f8fa;
 	}
 
 	@media (prefers-color-scheme: dark) {
 		:root {
-			--bg: #111110;
-			--surface-alt: #191817;
-			--panel: #191817;
-			--line: #2b2825;
-			--line-strong: #3c3833;
+			--bg: #0f141c;
+			--surface-alt: #171e29;
+			--panel: #171e29;
+			--line: #293241;
+			--line-strong: #3b4658;
 
-			--text: #f0eae0;
-			--body: #b8b2a8;
-			--muted: #948e85;
-			--dim: #6b665e;
+			--text: #e7edf6;
+			--body: #b6c0ce;
+			--muted: #929eae;
+			--dim: #687487;
 
-			--accent: #e2724f;
-			--accent-hover: #f08a6a;
+			--accent: #60a5fa;
+			--accent-hover: #93c5fd;
 			--accent-on: var(--palette-dark-accent-on);
 			--accent-wash: color-mix(in srgb, var(--accent) 14%, transparent);
 
-			--invert-bg: #f0eae0;
-			--invert-text: #16150f;
+			--invert-bg: #e7edf6;
+			--invert-text: #0f141c;
 		}
 	}
 
@@ -799,8 +797,8 @@
 		--muted: #4a4b4f;
 		--dim: #6c6a66;
 
-		--accent: #a8391f;
-		--accent-hover: #8c2d16;
+		--accent: #2563eb;
+		--accent-hover: #1d4ed8;
 		--accent-on: #ffffff;
 		--accent-wash: transparent;
 
@@ -820,8 +818,8 @@
 		--body: #26272a;
 		--muted: #4a4b4f;
 		--dim: #6c6a66;
-		--accent: #a8391f;
-		--accent-hover: #8c2d16;
+		--accent: #2563eb;
+		--accent-hover: #1d4ed8;
 		--accent-on: #ffffff;
 		--invert-bg: #17181a;
 		--invert-text: #ffffff;

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Renders the f1 favicon (cream serif SB on rust) at every size we ship.
+# Renders the favicon (grey serif SB on blue) at every size we ship.
 #
 # Each size is rendered natively by Chromium rather than downscaled from one
 # master, so the small sizes get their own hinting pass instead of inheriting
@@ -22,9 +22,9 @@ html,body{margin:0;padding:0;background:transparent}
 svg{display:block;width:100vw;height:100vw}
 </style></head><body>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="$5" fill="#a8391f"/>
+  <rect width="64" height="64" rx="$5" fill="#2563eb"/>
   <text x="32" y="$6" text-anchor="middle" font-family="Newsreader" font-weight="$3"
-    font-size="$2" fill="#faf8f4" letter-spacing="$4">SB</text>
+    font-size="$2" fill="#f7f8fa" letter-spacing="$4">SB</text>
 </svg></body></html>
 EOF
 }

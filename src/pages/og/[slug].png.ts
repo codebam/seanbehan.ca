@@ -29,11 +29,11 @@ const HEIGHT = 630;
 
 // The light palette from app.css. The cards are a fixed surface — a social
 // preview has no reader theme to follow — so the light values are the values.
-const BG = '#faf8f4';
-const TEXT = '#17181a';
-const MUTED = '#6c6a66';
-const ACCENT = '#a8391f';
-const LINE = '#e3ded4';
+const BG = '#f7f8fa';
+const TEXT = '#172033';
+const MUTED = '#5f6b7d';
+const ACCENT = '#2563eb';
+const LINE = '#dce1e8';
 
 /**
  * Long titles step down a size rather than wrapping into a fourth line, which
