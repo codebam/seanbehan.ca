@@ -113,6 +113,18 @@ const monthYear = (date: string) =>
 		padding: 1.75rem 1.5rem 2.5rem;
 		border-top: 0;
 	}
+	.raised .post-card:has(.tags) {
+		display: flex;
+		flex-direction: column;
+	}
+	.raised .post-card:has(.tags) .entry {
+		height: auto;
+		flex: 1;
+	}
+	.raised .tags {
+		margin: -1rem 0 0;
+		padding: 0 1.5rem 1.75rem;
+	}
 	.raised .entry-number {
 		display: block;
 		margin-bottom: 3.5rem;

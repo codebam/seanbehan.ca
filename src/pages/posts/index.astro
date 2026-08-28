@@ -1,6 +1,7 @@
 ---
 /** The archive: every published post, with search over the rendered list. */
 import Base from '../../layouts/Base.astro';
+import BlueprintMasthead from '../../components/BlueprintMasthead.astro';
 import PostList from '../../components/PostList.astro';
 import PostSearch from '../../components/PostSearch.astro';
 import { getPosts } from '../../lib/posts';
@@ -15,31 +16,80 @@ if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 	description="Posts on Linux, NixOS, Rust, and Cloudflare Workers."
 	ogTitle={`Writing — ${site.name}`}
 >
-	<section class="panel pt-14 pb-20 md:pt-16 md:pb-24">
-		<div class="shell">
-			<p class="enter eyebrow">{posts.length} posts</p>
-			<h1 class="display display-xl mt-5">Writing</h1>
-			<p
-				class="enter mt-6 max-w-[52ch] text-[1.15rem] leading-[1.55] text-[var(--body)] md:text-[1.3rem]"
-			>
-				Notes from whatever I am taking apart — Linux and NixOS, containers and systemd, Rust, and
-				the edge.
-			</p>
+	<BlueprintMasthead
+		label="Writing archive"
+		meta={`${String(posts.length).padStart(2, '0')} published`}
+	>
+		<Fragment slot="title">Writing from <em>underneath the stack.</em></Fragment>
+		<p>
+			Notes from whatever I am taking apart: Linux and NixOS, containers and systemd, Rust, and the
+			edge.
+		</p>
+		<p class="masthead-actions">
+			<a href="/posts/tags" class="link-accent">Browse by tag <span class="arrow">&rarr;</span></a>
+		</p>
+	</BlueprintMasthead>
 
-			<!-- The tag index used to be reachable only from an individual tag page,
-			     which left it orphaned from the one page a reader starts on. -->
-			<p class="enter link-accent mt-6" style="--enter-delay:120ms">
-				<a href="/posts/tags" class="hover:underline">Browse by tag &rarr;</a>
-			</p>
+	<section id="archive" class="archive panel">
+		<div class="archive-shell shell">
+			<div class="archive-heading" data-reveal>
+				<h2 class="display display-lg"><span class="section-number">02 /</span> All posts</h2>
+				<p>{posts.length} entries, newest first</p>
+			</div>
 
-			<div class="mt-12" data-reveal>
+			<div class="archive-search" data-reveal data-reveal-delay="60">
 				<PostSearch />
-				<!-- Paired columns on desktop, like the home page's list: a single
-				     column hugging the left of the shell leaves the right half of a wide
-				     window dead, and the component already collapses to one column under
-				     48rem. -->
-				<PostList posts={posts} columns={2} showTags headingLevel={2} />
+			</div>
+
+			<div class="archive-list" data-reveal data-reveal-delay="100">
+				<PostList posts={posts} columns={2} showTags raised headingLevel={2} />
 			</div>
 		</div>
 	</section>
 </Base>
+
+<style>
+	.archive-shell {
+		position: relative;
+		max-width: 1240px;
+		z-index: 1;
+	}
+	.section-number {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		font-weight: 500;
+		letter-spacing: 0.08em;
+		color: var(--accent-warm);
+		vertical-align: middle;
+	}
+	.archive {
+		padding-block: clamp(6rem, 11vw, 10rem);
+		border-top: 1px solid var(--line);
+	}
+	.archive-heading {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 2rem;
+	}
+	.archive-heading p {
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
+	.archive-search {
+		margin-top: clamp(2.5rem, 5vw, 4rem);
+	}
+	.archive-list {
+		margin-top: 1.5rem;
+	}
+	@media (width < 48rem) {
+		.archive-heading {
+			align-items: flex-start;
+			flex-direction: column;
+			gap: 0.75rem;
+		}
+	}
+</style>

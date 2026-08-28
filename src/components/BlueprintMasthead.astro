@@ -1,0 +1,113 @@
+---
+interface Props {
+	label: string;
+	meta: string;
+}
+
+const { label, meta } = Astro.props;
+---
+
+<section class="masthead panel">
+	<div class="masthead-shell shell">
+		<p class="masthead-kicker enter">
+			<span class="section-number">01 /</span>
+			{label}
+			<span class="masthead-meta">{meta}</span>
+		</p>
+
+		<div class="masthead-grid">
+			<h1 class="masthead-title display display-xl"><slot name="title" /></h1>
+			<div class="masthead-copy enter" style="--enter-delay:100ms">
+				<slot />
+			</div>
+		</div>
+	</div>
+</section>
+
+<style>
+	.masthead {
+		position: relative;
+		overflow: hidden;
+		padding-block: clamp(6rem, 12vw, 10rem);
+	}
+	.masthead::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		background-image:
+			linear-gradient(color-mix(in srgb, var(--accent) 10%, transparent) 1px, transparent 1px),
+			linear-gradient(
+				90deg,
+				color-mix(in srgb, var(--accent) 10%, transparent) 1px,
+				transparent 1px
+			);
+		background-size: 32px 32px;
+		mask-image: linear-gradient(to bottom, transparent, #000 20%, #000 80%, transparent);
+	}
+	.masthead-shell {
+		position: relative;
+		max-width: 1240px;
+		z-index: 1;
+	}
+	.masthead-kicker {
+		display: flex;
+		align-items: baseline;
+		gap: 0.75rem;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
+	.section-number {
+		font-weight: 500;
+		color: var(--accent-warm);
+	}
+	.masthead-meta {
+		margin-left: auto;
+	}
+	.masthead-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1.6fr) minmax(18rem, 0.55fr);
+		align-items: end;
+		gap: clamp(3rem, 8vw, 8rem);
+		margin-top: clamp(4rem, 9vw, 8rem);
+	}
+	.masthead-title {
+		max-width: 12ch;
+		font-size: clamp(3.4rem, 7vw, 6.8rem);
+	}
+	.masthead-title :global(em) {
+		color: var(--accent-warm);
+		font-style: italic;
+	}
+	.masthead-copy {
+		padding-top: 1.25rem;
+		border-top: 1px solid var(--line-strong);
+		font-size: clamp(1rem, 1.4vw, 1.2rem);
+		line-height: 1.65;
+		color: var(--body);
+	}
+	.masthead-copy :global(.masthead-actions) {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.75rem 1.5rem;
+		margin-top: 1.75rem;
+		font-size: 0.95rem;
+	}
+	@media (width < 48rem) {
+		.masthead {
+			padding-block: 4.5rem 6rem;
+		}
+		.masthead-grid {
+			grid-template-columns: 1fr;
+			gap: 3rem;
+			margin-top: 4rem;
+		}
+		.masthead-title {
+			font-size: clamp(2.9rem, 14vw, 4.5rem);
+		}
+	}
+</style>

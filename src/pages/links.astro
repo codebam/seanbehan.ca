@@ -7,6 +7,7 @@
  * which PostList's rows are not.
  */
 import Base from '../layouts/Base.astro';
+import BlueprintMasthead from '../components/BlueprintMasthead.astro';
 import { getEmDashCollection } from 'emdash';
 
 interface LinkEntry {
@@ -59,40 +60,48 @@ const added = (date: Date | null | undefined) =>
 ---
 
 <Base title="Links" description="Pages and writing worth finding again." ogTitle="Links">
-	<section class="panel pt-14 pb-20 md:pt-16 md:pb-24">
-		<div class="shell">
-			<p class="enter eyebrow">Elsewhere</p>
-			<h1 class="display display-xl mt-5">Links</h1>
-			<p
-				class="enter mt-6 max-w-[52ch] text-[1.15rem] leading-[1.55] text-[var(--body)] md:text-[1.3rem]"
-				style="--enter-delay:80ms"
-			>
-				Places and writing worth finding again — the ones I have actually come back to.
-			</p>
+	<BlueprintMasthead
+		label="Elsewhere index"
+		meta={`${String(links.length).padStart(2, '0')} saved`}
+	>
+		<Fragment slot="title">Good things, <em>filed for later.</em></Fragment>
+		<p>Places and writing worth finding again: the ones I have actually come back to.</p>
+	</BlueprintMasthead>
+
+	<section class="link-archive panel">
+		<div class="archive-shell shell">
+			<div class="archive-heading" data-reveal>
+				<h2 class="display display-lg"><span class="section-number">02 /</span> Filed links</h2>
+				<p>Newest additions first</p>
+			</div>
 
 			{
 				links.length === 0 ? (
-					<p class="mt-12 border-t border-[var(--line)] pt-10 text-[var(--muted)]">
+					<p class="empty" data-reveal>
 						Nothing has been filed here yet.
 					</p>
 				) : (
-					<ol class="list mt-12">
-						{links.map((entry) => (
-							<li class="item">
-								<p class="facts">
-									{added(entry.data.createdAt) && (
-										<time datetime={entry.data.createdAt?.toISOString()}>
-											{added(entry.data.createdAt)}
-										</time>
-									)}
-									<span class="domain" data-domain={domainOf(entry.data.url)}>
-										{domainOf(entry.data.url)}
+					<ol class="link-grid" data-reveal data-reveal-delay="60">
+						{links.map((entry, i) => (
+							<li>
+								<a class="link-entry" href={entry.data.url} target="_blank" rel="noopener">
+									<span class="entry-number" aria-hidden="true">
+										{String(i + 1).padStart(2, '0')}
 									</span>
-								</p>
-								<a class="title" href={entry.data.url} target="_blank" rel="noopener">
-									{entry.data.title}
+									<p class="facts">
+										{added(entry.data.createdAt) && (
+											<time datetime={entry.data.createdAt?.toISOString()}>
+												{added(entry.data.createdAt)}
+											</time>
+										)}
+										<span class="domain">{domainOf(entry.data.url)}</span>
+									</p>
+									<h3>{entry.data.title}</h3>
+									{entry.data.note && <p class="note">{entry.data.note}</p>}
+									<span class="external" aria-hidden="true">
+										Open &nearr;
+									</span>
 								</a>
-								{entry.data.note && <p class="note">{entry.data.note}</p>}
 							</li>
 						))}
 					</ol>
@@ -103,11 +112,65 @@ const added = (date: Date | null | undefined) =>
 </Base>
 
 <style>
-	.list {
+	.link-archive {
+		padding-block: clamp(6rem, 11vw, 10rem);
+		border-top: 1px solid var(--line);
+	}
+	.archive-shell {
+		max-width: 1240px;
+	}
+	.archive-heading {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 2rem;
+	}
+	.section-number,
+	.entry-number {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		font-weight: 500;
+		letter-spacing: 0.08em;
+		color: var(--accent-warm);
+		vertical-align: middle;
+	}
+	.archive-heading > p,
+	.external {
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
+	.link-grid {
+		display: grid;
+		margin-top: clamp(2.5rem, 5vw, 4rem);
+		border-bottom: 1px solid var(--line);
 		list-style: none;
 	}
-
-	.item .facts {
+	.link-grid li {
+		min-width: 0;
+		border-top: 1px solid var(--line);
+	}
+	.link-entry {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		min-height: 18rem;
+		padding: 1.75rem;
+		transition:
+			background-color 0.25s ease,
+			color 0.25s ease;
+	}
+	.link-entry:hover,
+	.link-entry:focus-visible {
+		background: color-mix(in srgb, var(--accent) 4%, transparent);
+	}
+	.entry-number {
+		display: block;
+		margin-bottom: 3rem;
+	}
+	.facts {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.6rem;
@@ -116,39 +179,52 @@ const added = (date: Date | null | undefined) =>
 		text-transform: uppercase;
 		color: var(--muted);
 	}
-
-	/* The domain is metadata, not a second headline: same voice as the date. */
-	.item .domain {
+	.domain {
 		color: var(--muted);
 		word-break: break-all;
 	}
-
-	.item .title {
-		display: inline;
-		margin-top: 0.35rem;
-		font-size: 1.2rem;
+	.link-entry h3 {
+		margin-top: 0.5rem;
+		font-size: clamp(1.35rem, 2vw, 1.8rem);
+		line-height: 1.15;
 		font-weight: 500;
-		letter-spacing: -0.01em;
-		color: var(--text);
-		text-decoration: underline;
-		text-decoration-color: var(--line-strong);
-		text-underline-offset: 4px;
-		transition:
-			color 0.2s ease,
-			text-decoration-color 0.2s ease;
+		letter-spacing: -0.025em;
+		transition: color 0.2s ease;
 	}
-
-	.item .title:hover,
-	.item .title:focus-visible {
+	.link-entry:hover h3,
+	.link-entry:focus-visible h3 {
 		color: var(--accent);
-		text-decoration-color: var(--accent);
 	}
-
-	.item .note {
-		margin-top: 0.3rem;
+	.note {
+		margin-top: 0.6rem;
 		max-width: 62ch;
 		color: var(--body);
 		font-size: 0.95rem;
 		line-height: 1.6;
+	}
+	.external {
+		margin-top: auto;
+		padding-top: 2rem;
+	}
+	.empty {
+		margin-top: 4rem;
+		padding-block: 3rem;
+		border-block: 1px solid var(--line);
+		color: var(--muted);
+	}
+	@media (width >= 48rem) {
+		.link-grid {
+			grid-template-columns: 1fr 1fr;
+		}
+		.link-grid li:nth-child(even) {
+			border-left: 1px solid var(--line);
+		}
+	}
+	@media (width < 48rem) {
+		.archive-heading {
+			align-items: flex-start;
+			flex-direction: column;
+			gap: 0.75rem;
+		}
 	}
 </style>

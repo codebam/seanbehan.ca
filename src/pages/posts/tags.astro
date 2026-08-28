@@ -1,6 +1,7 @@
 ---
 /** The tag index: every topic, with how many posts sit under it. */
 import Base from '../../layouts/Base.astro';
+import BlueprintMasthead from '../../components/BlueprintMasthead.astro';
 import { getPosts, tagCounts } from '../../lib/posts';
 import { displayTag } from '../../lib/tags';
 import { site } from '../../lib/site';
@@ -12,57 +13,170 @@ const tags = tagCounts(posts);
 ---
 
 <Base title="Tags" description="Browse every post by topic." ogTitle={`Tags — ${site.name}`}>
-	<section class="panel pt-14 pb-20 md:pt-16 md:pb-24">
-		<div class="shell">
-			<p class="enter eyebrow">
-				<a href="/posts" class="hover:underline">Writing</a> · {tags.length} tags
-			</p>
-			<h1 class="display display-xl mt-5">Tags</h1>
-			<p
-				class="enter mt-6 max-w-[52ch] text-[1.15rem] leading-[1.55] text-[var(--body)] md:text-[1.3rem]"
-				style="--enter-delay:80ms"
-			>
-				Every topic I write about, with how many posts sit under each heading.
-			</p>
+	<BlueprintMasthead label="Taxonomy index" meta={`${String(tags.length).padStart(2, '0')} topics`}>
+		<Fragment slot="title">Writing, sorted <em>by subject.</em></Fragment>
+		<p>Every topic I write about, ordered by how much has been filed under it.</p>
+		<p class="masthead-actions">
+			<a href="/posts" class="link-accent">All writing <span class="arrow">&rarr;</span></a>
+		</p>
+	</BlueprintMasthead>
 
-			<div class="mt-12 flex flex-wrap gap-3" data-reveal>
-				{
-					tags.map((tag) => (
-						<a href={`/posts/tag/${tag.slug}`} class="chip">
-							{displayTag(tag.slug)}
-							<span class="count">{tag.count}</span>
-						</a>
-					))
-				}
+	<section class="tag-archive panel">
+		<div class="archive-shell shell">
+			<div class="archive-heading" data-reveal>
+				<h2 class="display display-lg"><span class="section-number">02 /</span> All tags</h2>
+				<p>Most used first</p>
 			</div>
+
+			{
+				tags.length > 0 ? (
+					<nav class="tag-nav" aria-label="Post tags" data-reveal data-reveal-delay="60">
+						<ol class="tag-grid">
+							{tags.map((tag, i) => (
+								<li>
+									<a href={`/posts/tag/${tag.slug}`}>
+										<span class="tag-index" aria-hidden="true">
+											{String(i + 1).padStart(2, '0')}
+										</span>
+										<strong>{displayTag(tag.slug)}</strong>
+										<span class="tag-count">
+											{String(tag.count).padStart(2, '0')} {tag.count === 1 ? 'post' : 'posts'}
+										</span>
+										<span class="tag-arrow" aria-hidden="true">
+											&rarr;
+										</span>
+									</a>
+								</li>
+							))}
+						</ol>
+					</nav>
+				) : (
+					<p class="empty" data-reveal>
+						No topics have been filed yet.
+					</p>
+				)
+			}
 		</div>
 	</section>
 </Base>
 
 <style>
-	/* A stackable topic chip: quiet until hovered, with the post count tucked
-	   in as the secondary value. The pill reads as a grouping affordance, so
-	   the whole thing is the link rather than the word alone. */
-	.chip {
-		display: inline-flex;
-		align-items: baseline;
-		gap: 0.5rem;
-		border: 1px solid var(--line);
-		border-radius: 999px;
-		padding: 0.4rem 0.95rem;
-		font-size: 0.92rem;
-		color: var(--text);
-		transition:
-			border-color 0.2s ease,
-			color 0.2s ease;
+	.tag-archive {
+		padding-block: clamp(6rem, 11vw, 10rem);
+		border-top: 1px solid var(--line);
 	}
-	.chip:hover,
-	.chip:focus-visible {
-		border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+	.archive-shell {
+		max-width: 1240px;
+	}
+	.archive-heading {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 2rem;
+	}
+	.section-number,
+	.tag-index {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		font-weight: 500;
+		letter-spacing: 0.08em;
+		color: var(--accent-warm);
+		vertical-align: middle;
+	}
+	.archive-heading p,
+	.tag-count {
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
+	.tag-nav {
+		margin-top: clamp(2.5rem, 5vw, 4rem);
+	}
+	.empty {
+		margin-top: 4rem;
+		padding-block: 3rem;
+		border-block: 1px solid var(--line);
+		color: var(--muted);
+	}
+	.tag-grid {
+		display: grid;
+		border-bottom: 1px solid var(--line);
+		list-style: none;
+	}
+	.tag-grid li {
+		min-width: 0;
+		border-top: 1px solid var(--line);
+	}
+	.tag-grid a {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		grid-template-rows: auto 1fr auto;
+		gap: 1rem;
+		min-height: 14rem;
+		padding: 1.5rem;
+		transition:
+			background-color 0.25s ease,
+			color 0.25s ease;
+	}
+	.tag-grid a:hover,
+	.tag-grid a:focus-visible {
+		background: color-mix(in srgb, var(--accent) 4%, transparent);
+	}
+	.tag-index {
+		grid-column: 1;
+	}
+	.tag-count {
+		grid-column: 2;
+		text-align: right;
+	}
+	.tag-grid strong {
+		grid-column: 1 / -1;
+		align-self: center;
+		font-size: clamp(1.45rem, 2.5vw, 2rem);
+		font-weight: 500;
+		letter-spacing: -0.03em;
+		transition: color 0.2s ease;
+	}
+	.tag-grid a:hover strong,
+	.tag-grid a:focus-visible strong {
 		color: var(--accent);
 	}
-	.chip .count {
-		font-size: 0.78rem;
-		color: var(--muted);
+	.tag-arrow {
+		grid-column: 2;
+		justify-self: end;
+		color: var(--accent-warm);
+		transition: transform 0.2s ease;
+	}
+	.tag-grid a:hover .tag-arrow,
+	.tag-grid a:focus-visible .tag-arrow {
+		transform: translateX(3px);
+	}
+	@media (width >= 48rem) {
+		.tag-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+		.tag-grid li:not(:nth-child(2n + 1)) {
+			border-left: 1px solid var(--line);
+		}
+	}
+	@media (width >= 64rem) {
+		.tag-grid {
+			grid-template-columns: repeat(3, 1fr);
+		}
+		.tag-grid li:not(:nth-child(2n + 1)) {
+			border-left: 0;
+		}
+		.tag-grid li:not(:nth-child(3n + 1)) {
+			border-left: 1px solid var(--line);
+		}
+	}
+	@media (width < 48rem) {
+		.archive-heading {
+			align-items: flex-start;
+			flex-direction: column;
+			gap: 0.75rem;
+		}
 	}
 </style>

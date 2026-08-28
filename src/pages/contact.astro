@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
+import BlueprintMasthead from '../components/BlueprintMasthead.astro';
 import { site, LINKEDIN_URL } from '../lib/site';
-import { LayerCard } from '@cloudflare/kumo/components/layer-card';
 
 const channels = [
 	{
@@ -54,65 +54,182 @@ const channels = [
 	description={`Get in touch with ${site.name} — email, GitHub, Mastodon.`}
 	ogTitle={`Contact — ${site.name}`}
 >
-	<section class="panel shell pt-14 pb-20 md:pt-16">
-		<p class="enter eyebrow">
-			{site.showResume ? 'Open to work · Ontario, Canada' : 'Ontario, Canada'}
-		</p>
-
-		<h1 class="display display-xl mt-5 max-w-[18ch]">
-			Say <em>hello</em>.
-		</h1>
-
-		<div
-			class="enter mt-10 grid items-start gap-8 md:grid-cols-[1fr_180px] md:gap-12"
-			style="--enter-delay:80ms"
-		>
-			<p class="max-w-[52ch] text-[1.05rem] leading-relaxed text-[var(--body)]">
+	<BlueprintMasthead
+		label={site.showResume ? 'Open to work / Ontario' : 'Ontario / Canada'}
+		meta="Replies by email"
+	>
+		<Fragment slot="title">Say <em>hello.</em></Fragment>
+		<div class="masthead-profile">
+			<img src="/profile.webp" alt={site.name} width="180" height="180" />
+			<p>
 				{
 					site.showResume
 						? 'Email is the surest way to reach me. If you are hiring, contracting, or want to talk about something I built, say what you need and I will get back to you.'
 						: 'Email is the surest way to reach me. Issues and pull requests go to GitHub; everything else can come here.'
 				}
 			</p>
-			<img
-				src="/profile.webp"
-				alt={site.name}
-				width="180"
-				height="180"
-				class="order-first aspect-square w-32 rounded object-cover md:order-none md:w-full"
-			/>
 		</div>
+		<p class="masthead-actions">
+			<a class="link-accent" href={`mailto:${site.email}`}>{site.email}</a>
+		</p>
+	</BlueprintMasthead>
 
-		<ul class="mt-12 grid gap-3 md:grid-cols-2">
-			{
-				channels.map((channel, i) => (
-					<li data-reveal data-reveal-delay={i * 55}>
-						<LayerCard className="blueprint-card h-full p-0">
+	<section class="channels panel">
+		<div class="contact-shell shell">
+			<div class="section-heading" data-reveal>
+				<h2 class="display display-lg"><span class="section-number">02 /</span> Open channels</h2>
+				<p>{channels.length} ways to reach me</p>
+			</div>
+
+			<ul class="channel-grid">
+				{
+					channels.map((channel, i) => (
+						<li data-reveal data-reveal-delay={i * 55}>
 							<a
 								href={channel.href}
 								target={channel.href.startsWith('http') ? '_blank' : undefined}
 								rel={channel.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-								class="channel grid h-full gap-x-6 gap-y-1 p-5"
 							>
-								<span class="text-sm tracking-wide text-[var(--muted)] uppercase">
-									{channel.label}
+								<span class="channel-index" aria-hidden="true">
+									{String(i + 1).padStart(2, '0')}
 								</span>
-								<span class="value text-[1.05rem]">{channel.value}</span>
-								<span class="text-sm text-[var(--muted)] md:text-right">{channel.note}</span>
+								<span class="channel-label">{channel.label}</span>
+								<strong>{channel.value}</strong>
+								<span class="channel-note">{channel.note}</span>
+								<span class="channel-arrow" aria-hidden="true">
+									&rarr;
+								</span>
 							</a>
-						</LayerCard>
-					</li>
-				))
-			}
-		</ul>
+						</li>
+					))
+				}
+			</ul>
+		</div>
 	</section>
 </Base>
 
 <style>
-	.channel .value {
+	.masthead-profile {
+		display: grid;
+		grid-template-columns: 5rem 1fr;
+		align-items: start;
+		gap: 1.25rem;
+	}
+	.masthead-profile img {
+		width: 5rem;
+		aspect-ratio: 1;
+		border: 1px solid var(--line-strong);
+		border-radius: 3px;
+		object-fit: cover;
+	}
+	.channels {
+		padding-block: clamp(6rem, 11vw, 10rem);
+		border-top: 1px solid var(--line);
+	}
+	.contact-shell {
+		max-width: 1240px;
+	}
+	.section-heading {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 2rem;
+	}
+	.section-number,
+	.channel-index {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		font-weight: 500;
+		letter-spacing: 0.08em;
+		color: var(--accent-warm);
+		vertical-align: middle;
+	}
+	.section-heading > p,
+	.channel-label,
+	.channel-note {
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
+	.channel-grid {
+		display: grid;
+		margin-top: clamp(2.5rem, 5vw, 4rem);
+		border-bottom: 1px solid var(--line);
+		list-style: none;
+	}
+	.channel-grid li {
+		min-width: 0;
+		border-top: 1px solid var(--line);
+	}
+	.channel-grid a {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		grid-template-rows: auto 1fr auto;
+		gap: 1rem;
+		height: 100%;
+		min-height: 16rem;
+		padding: 1.5rem;
+		transition: background-color 0.25s ease;
+	}
+	.channel-grid a:hover,
+	.channel-grid a:focus-visible {
+		background: color-mix(in srgb, var(--accent) 4%, transparent);
+	}
+	.channel-label {
+		grid-column: 2;
+		text-align: right;
+	}
+	.channel-grid strong {
+		grid-column: 1 / -1;
+		align-self: center;
+		min-width: 0;
+		overflow-wrap: anywhere;
+		font-size: clamp(1.25rem, 2.1vw, 1.75rem);
+		font-weight: 500;
+		letter-spacing: -0.025em;
 		transition: color 0.2s ease;
 	}
-	.channel:hover .value {
+	.channel-grid a:hover strong,
+	.channel-grid a:focus-visible strong {
 		color: var(--accent);
+	}
+	.channel-note {
+		align-self: end;
+		line-height: 1.5;
+		text-transform: none;
+		letter-spacing: 0;
+	}
+	.channel-arrow {
+		align-self: end;
+		justify-self: end;
+		color: var(--accent-warm);
+		transition: transform 0.2s ease;
+	}
+	.channel-grid a:hover .channel-arrow,
+	.channel-grid a:focus-visible .channel-arrow {
+		transform: translateX(3px);
+	}
+	@media (width >= 48rem) {
+		.channel-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+		.channel-grid li:nth-child(even) {
+			border-left: 1px solid var(--line);
+		}
+	}
+	@media (width < 48rem) {
+		.section-heading {
+			align-items: flex-start;
+			flex-direction: column;
+			gap: 0.75rem;
+		}
+		.masthead-profile {
+			grid-template-columns: 4.5rem 1fr;
+		}
+		.masthead-profile img {
+			width: 4.5rem;
+		}
 	}
 </style>
