@@ -100,3 +100,7 @@ export const writingHref = (path: string) =>
 /** Project case studies belong to the code-first origin. */
 export const projectHref = (path: string) =>
 	site.id === 'seanbehan' ? `${SITES.codebam.url}${path}` : path;
+
+/** Products ship under the code-first identity with the projects they extend. */
+export const productHref = (path: string) =>
+	site.id === 'seanbehan' ? `${SITES.codebam.url}${path}` : path;

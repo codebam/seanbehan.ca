@@ -37,3 +37,6 @@ scripts/out
 # Local git worktrees. One was once committed as a bare gitlink with no
 # .gitmodules entry, which made every fresh clone fail on `git submodule`.
 .worktrees/
+
+# Paid release artifacts stay local and are uploaded directly to the storefront.
+/releases/

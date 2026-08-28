@@ -1,0 +1,391 @@
+---
+import Base from '../../layouts/Base.astro';
+import BlueprintMasthead from '../../components/BlueprintMasthead.astro';
+import { LinkButton } from '@cloudflare/kumo/components/button';
+import { SITES } from '../../lib/site.data.js';
+
+const PRODUCT_NAME = 'Cloudflare Workers Production Kit';
+const PRICE = 59;
+const CURRENCY = 'CAD';
+const checkoutHref =
+	'https://products.codebam.ca/checkout/buy/b65b12a7-fe32-4c26-8663-9b81ed746976';
+const canonical = `${SITES.codebam.url}/products/cloudflare-workers-production-kit`;
+
+const modules = [
+	{
+		title: 'Worker foundation',
+		copy: 'Astro server rendering on Cloudflare Workers, strict TypeScript, local development and production configuration.'
+	},
+	{
+		title: 'D1 data layer',
+		copy: 'Schema, migrations, typed queries and transaction patterns with fixtures that make local work repeatable.'
+	},
+	{
+		title: 'R2 uploads',
+		copy: 'Validated uploads, object metadata, safe download responses and cleanup paths for abandoned files.'
+	},
+	{
+		title: 'Authentication',
+		copy: 'Session handling, protected routes and authorization boundaries that stay explicit at the edge.'
+	},
+	{
+		title: 'Abuse controls',
+		copy: 'Rate limiting, input validation, cache rules and security headers with notes on the tradeoffs.'
+	},
+	{
+		title: 'Operations',
+		copy: 'CI deployment, environment separation, structured errors, monitoring hooks and a practical release runbook.'
+	}
+];
+
+const steps = [
+	[
+		'Clone',
+		'Start from a small working application rather than a directory of disconnected examples.'
+	],
+	[
+		'Configure',
+		'Set bindings and secrets from one documented inventory for local, preview and production.'
+	],
+	['Adapt', 'Remove sample features and keep the production boundaries your service needs.'],
+	['Ship', 'Run checks, migrate D1 and deploy through the included GitHub Actions workflow.']
+];
+
+const schema = JSON.stringify({
+	'@context': 'https://schema.org',
+	'@type': 'Product',
+	'@id': `${canonical}#product`,
+	name: PRODUCT_NAME,
+	description:
+		'A deployment-ready Astro and Cloudflare Workers reference starter with D1, R2, authentication, security, deployment and operations guidance.',
+	url: canonical,
+	brand: { '@type': 'Brand', name: 'codebam' },
+	offers: {
+		'@type': 'Offer',
+		url: checkoutHref,
+		price: PRICE,
+		priceCurrency: CURRENCY,
+		availability: 'https://schema.org/InStock',
+		category: 'Digital product'
+	}
+}).replace(/</g, '\\u003c');
+---
+
+<Base
+	title={PRODUCT_NAME}
+	description="Ship an Astro service on Cloudflare Workers with D1, R2, authentication, security and deployment already wired together."
+	ogTitle={`${PRODUCT_NAME} — codebam`}
+	canonical={canonical}
+>
+	<script slot="head" type="application/ld+json" is:inline set:html={schema} />
+
+	<BlueprintMasthead
+		label="Digital product / Production kit"
+		meta={`$${PRICE} ${CURRENCY} / one-time`}
+	>
+		<Fragment slot="title">Ship the service. <em>Skip the plumbing.</em></Fragment>
+		<p>
+			A deployment-ready Astro and Cloudflare Workers reference starter with D1, R2, authentication,
+			security, deployment and operating notes wired into one coherent system.
+		</p>
+		<p class="masthead-actions">
+			<LinkButton href={checkoutHref} variant="primary" size="lg" className="blueprint-control">
+				Buy the production kit
+			</LinkButton>
+			<span class="checkout-note">Immediate download</span>
+		</p>
+	</BlueprintMasthead>
+
+	<section class="panel contents">
+		<div class="product-shell shell">
+			<div class="section-heading" data-reveal>
+				<h2 class="display display-lg"><span class="section-number">02 /</span> What ships</h2>
+				<p>{modules.length} production modules</p>
+			</div>
+
+			<div class="module-grid">
+				{
+					modules.map((module, i) => (
+						<article data-reveal data-reveal-delay={Math.min(i, 4) * 45}>
+							<span class="item-index" aria-hidden="true">
+								{String(i + 1).padStart(2, '0')}
+							</span>
+							<h3>{module.title}</h3>
+							<p>{module.copy}</p>
+						</article>
+					))
+				}
+			</div>
+		</div>
+	</section>
+
+	<section class="workflow panel-invert">
+		<div class="product-shell shell">
+			<div class="section-heading" data-reveal>
+				<h2 class="display display-lg"><span class="section-number">03 /</span> Clone to deploy</h2>
+				<p>One documented path</p>
+			</div>
+
+			<ol class="workflow-list">
+				{
+					steps.map(([title, copy], i) => (
+						<li data-reveal data-reveal-delay={i * 50}>
+							<span class="item-index" aria-hidden="true">
+								{String(i + 1).padStart(2, '0')}
+							</span>
+							<h3>{title}</h3>
+							<p>{copy}</p>
+						</li>
+					))
+				}
+			</ol>
+		</div>
+	</section>
+
+	<section class="offer panel-alt">
+		<div class="product-shell shell">
+			<div class="offer-grid">
+				<div data-reveal>
+					<p class="eyebrow">One-time purchase</p>
+					<h2 class="display display-lg">Own the foundation.</h2>
+					<p class="offer-copy">
+						Get the complete release for <strong>${PRICE} {CURRENCY}</strong>. Buyers receive the
+						Git repository, written handbook, example application and one year of product updates.
+					</p>
+				</div>
+
+				<aside class="price-card" data-reveal data-reveal-delay="70" aria-label="Purchase terms">
+					<p class="price"><span>$</span>{PRICE}<small> {CURRENCY}</small></p>
+					<ul>
+						<li>Single-developer commercial license</li>
+						<li>Git repository and downloadable archive</li>
+						<li>Setup handbook and deployment runbook</li>
+						<li>Updates for one year</li>
+					</ul>
+					<LinkButton href={checkoutHref} variant="primary" size="lg" className="blueprint-control">
+						Buy the production kit
+					</LinkButton>
+					<p class="terms">
+						Secure checkout and immediate download through Lemon Squeezy. One-time payment in
+						Canadian dollars.
+					</p>
+				</aside>
+			</div>
+		</div>
+	</section>
+
+	<section class="fit panel">
+		<div class="product-shell shell">
+			<div class="section-heading" data-reveal>
+				<h2 class="display display-lg"><span class="section-number">04 /</span> Built for</h2>
+				<p>Small teams / serious services</p>
+			</div>
+
+			<div class="fit-grid">
+				<div data-reveal>
+					<h3>Good fit</h3>
+					<p>
+						Developers shipping an API, SaaS, content service or internal tool on Cloudflare who
+						want to own straightforward source instead of adopting a platform-sized framework.
+					</p>
+				</div>
+				<div data-reveal data-reveal-delay="55">
+					<h3>Not a fit</h3>
+					<p>
+						A visual page builder, managed backend, generic component library or promise that one
+						architecture fits every workload. Cloudflare experience still helps.
+					</p>
+				</div>
+			</div>
+		</div>
+	</section>
+</Base>
+
+<style>
+	.checkout-note,
+	.section-heading > p {
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
+	.checkout-note {
+		align-self: center;
+	}
+	.contents,
+	.workflow,
+	.offer,
+	.fit {
+		padding-block: clamp(6rem, 11vw, 10rem);
+		border-top: 1px solid var(--line);
+	}
+	.workflow {
+		background-image:
+			linear-gradient(color-mix(in srgb, var(--accent) 8%, transparent) 1px, transparent 1px),
+			linear-gradient(90deg, color-mix(in srgb, var(--accent) 8%, transparent) 1px, transparent 1px);
+		background-size: 32px 32px;
+	}
+	.product-shell {
+		max-width: 1240px;
+	}
+	.section-heading {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 2rem;
+	}
+	.section-number,
+	.item-index {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		font-weight: 500;
+		letter-spacing: 0.08em;
+		color: var(--accent-warm);
+		vertical-align: middle;
+	}
+	.module-grid {
+		display: grid;
+		margin-top: clamp(2.5rem, 5vw, 4rem);
+		border-bottom: 1px solid var(--line);
+	}
+	.module-grid article {
+		min-width: 0;
+		min-height: 17rem;
+		padding: 1.5rem;
+		border-top: 1px solid var(--line);
+		transition: background-color 0.25s ease;
+	}
+	.module-grid article:hover {
+		background: color-mix(in srgb, var(--accent) 4%, transparent);
+	}
+	.item-index {
+		display: block;
+		margin-bottom: 3.5rem;
+	}
+	.module-grid h3,
+	.workflow-list h3,
+	.fit-grid h3 {
+		font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+		font-weight: 500;
+		letter-spacing: -0.025em;
+	}
+	.module-grid p,
+	.workflow-list p,
+	.fit-grid p {
+		margin-top: 0.75rem;
+		font-size: 0.95rem;
+		line-height: 1.65;
+		color: var(--body);
+	}
+	.workflow-list {
+		display: grid;
+		margin-top: clamp(2.5rem, 5vw, 4rem);
+		border-bottom: 1px solid var(--line);
+		list-style: none;
+	}
+	.workflow-list li {
+		padding: 1.5rem;
+		border-top: 1px solid var(--line);
+		background: color-mix(in srgb, var(--bg) 78%, transparent);
+	}
+	.offer-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.7fr);
+		align-items: start;
+		gap: clamp(3rem, 8vw, 8rem);
+	}
+	.offer-grid h2 {
+		max-width: 12ch;
+		margin-top: 1rem;
+	}
+	.offer-copy {
+		max-width: 52ch;
+		margin-top: 2rem;
+		font-size: 1.08rem;
+		line-height: 1.7;
+		color: var(--body);
+	}
+	.price-card {
+		padding: clamp(1.5rem, 4vw, 2.5rem);
+		border: 1px solid var(--line-strong);
+		border-top: 3px solid var(--accent);
+		border-radius: 3px;
+		background: var(--panel);
+	}
+	.price {
+		font-family: var(--font-sans);
+		font-size: clamp(3.5rem, 7vw, 5.5rem);
+		font-weight: 650;
+		letter-spacing: -0.06em;
+		line-height: 1;
+	}
+	.price span,
+	.price small {
+		font-family: var(--font-mono);
+		font-size: 0.8rem;
+		font-weight: 500;
+		letter-spacing: 0.08em;
+		color: var(--accent-warm);
+	}
+	.price-card ul {
+		display: grid;
+		gap: 0.7rem;
+		margin-block: 2rem;
+		padding-top: 2rem;
+		border-top: 1px solid var(--line);
+		list-style: none;
+		font-size: 0.92rem;
+		color: var(--body);
+	}
+	.price-card li::before {
+		content: '+';
+		margin-right: 0.65rem;
+		color: var(--accent);
+	}
+	.terms {
+		margin-top: 1.25rem;
+		font-size: 0.78rem;
+		line-height: 1.55;
+		color: var(--muted);
+	}
+	.fit-grid {
+		display: grid;
+		gap: 1px;
+		margin-top: clamp(2.5rem, 5vw, 4rem);
+		border: 1px solid var(--line);
+		background: var(--line);
+	}
+	.fit-grid > div {
+		min-height: 15rem;
+		padding: 1.75rem;
+		background: var(--bg);
+	}
+	@media (width >= 48rem) {
+		.module-grid {
+			grid-template-columns: repeat(3, 1fr);
+		}
+		.module-grid article:not(:nth-child(3n + 1)) {
+			border-left: 1px solid var(--line);
+		}
+		.workflow-list {
+			grid-template-columns: repeat(4, 1fr);
+		}
+		.workflow-list li:not(:first-child) {
+			border-left: 1px solid var(--line);
+		}
+		.fit-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+	@media (width < 48rem) {
+		.section-heading {
+			align-items: flex-start;
+			flex-direction: column;
+			gap: 0.75rem;
+		}
+		.offer-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

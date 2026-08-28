@@ -167,7 +167,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		}
 
 		// The shared database does not imply two indexed copies. Writing belongs
-		// to Sean's domain; project case studies belong to the code-first domain.
+		// to Sean's domain; projects and products belong to the code-first domain.
 		if (
 			site.id === 'codebam' &&
 			(target.pathname === '/posts' ||
@@ -180,7 +180,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		}
 		if (
 			site.id === 'seanbehan' &&
-			(target.pathname === '/projects' || target.pathname.startsWith('/projects/'))
+			(target.pathname === '/projects' ||
+				target.pathname.startsWith('/projects/') ||
+				target.pathname === '/products' ||
+				target.pathname.startsWith('/products/'))
 		) {
 			target.host = new URL(SITES.codebam.url).host;
 			redirect = true;
