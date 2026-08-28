@@ -115,7 +115,7 @@ const latest = posts.slice(0, 6);
 	}
 
 	<!-- LATEST WRITING — back to the page surface -->
-	<section class="panel py-20 md:py-24">
+	<section class="latest-writing panel py-20 md:py-24">
 		<div class="shell">
 			<div class="flex items-baseline justify-between gap-4" data-reveal>
 				<h2 class="display display-lg">Latest writing</h2>
@@ -125,13 +125,21 @@ const latest = posts.slice(0, 6);
 			</div>
 
 			<div class="mt-10" data-reveal data-reveal-delay="60">
-				<PostList posts={latest} columns={2} />
+				<PostList posts={latest} columns={2} raised />
 			</div>
 		</div>
 	</section>
 </Base>
 
 <style>
+	.latest-writing {
+		background-color: var(--bg);
+		background-image:
+			linear-gradient(color-mix(in srgb, var(--accent) 6%, transparent) 1px, transparent 1px),
+			linear-gradient(90deg, color-mix(in srgb, var(--accent) 6%, transparent) 1px, transparent 1px);
+		background-size: 32px 32px;
+	}
+
 	/* The wash is held at low opacity and faded out from under the intro, so
 	   the headline and body copy sit on something close to paper and the
 	   boundary with the band below is a colour change rather than an edge. The
@@ -158,11 +166,7 @@ const latest = posts.slice(0, 6);
 				transparent 1px
 			);
 		background-size: 32px 32px;
-		background-position:
-			calc(var(--scene-x, 0) * 8px) calc(var(--scene-y, 0) * 8px),
-			calc(var(--scene-x, 0) * 8px) calc(var(--scene-y, 0) * 8px);
 		mask-image: linear-gradient(90deg, #000 0%, #000 72%, transparent 100%);
-		transition: background-position 0.35s var(--ease-out-soft);
 		z-index: 0;
 	}
 	.hero > .shell {

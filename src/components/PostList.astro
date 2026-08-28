@@ -18,6 +18,8 @@ interface Props {
 	columns?: 1 | 2;
 	/** Topic tags are noise next to six posts, useful across twenty-four */
 	showTags?: boolean;
+	/** Lift home-page entries from a decorative section background. */
+	raised?: boolean;
 	/**
 	 * Heading level for an entry title. The default suits the home page, where
 	 * the list sits under an h2 section heading. A page whose list is the
@@ -27,7 +29,7 @@ interface Props {
 	headingLevel?: 2 | 3;
 }
 
-const { posts, columns = 1, showTags = false, headingLevel = 3 } = Astro.props;
+const { posts, columns = 1, showTags = false, raised = false, headingLevel = 3 } = Astro.props;
 const Heading = `h${headingLevel}` as 'h2' | 'h3';
 
 /** "Apr 2026" — the day is never what a reader is after in a list. */
@@ -35,7 +37,7 @@ const monthYear = (date: string) =>
 	new Date(date).toLocaleDateString('en-CA', { month: 'short', year: 'numeric', timeZone: 'UTC' });
 ---
 
-<div class:list={['list', columns === 2 && 'paired']} data-post-list>
+<div class:list={['list', columns === 2 && 'paired', raised && 'raised']} data-post-list>
 	{
 		posts.map((post) => (
 			<LayerCard
@@ -81,6 +83,36 @@ const monthYear = (date: string) =>
 		border: 0;
 		box-shadow: none;
 		background: transparent;
+	}
+	.raised {
+		gap: 1rem;
+	}
+	.raised .post-card {
+		height: 100%;
+		overflow: clip;
+		border: 1px solid color-mix(in srgb, var(--accent) 14%, var(--line));
+		border-radius: 3px;
+		background: color-mix(in srgb, var(--accent) 3%, var(--panel));
+		box-shadow: 0 8px 24px color-mix(in srgb, #000 9%, transparent);
+		transition:
+			border-color 0.3s ease,
+			box-shadow 0.3s ease,
+			transform 0.3s var(--ease-out-soft);
+	}
+	.raised .post-card:hover,
+	.raised .post-card:focus-within {
+		border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+		box-shadow: 0 12px 30px color-mix(in srgb, #000 14%, transparent);
+		transform: translateY(-2px);
+	}
+	.raised .entry {
+		height: 100%;
+		padding: 1.25rem;
+		border-top: 0;
+	}
+	.raised .entry:hover,
+	.raised .entry:focus-visible {
+		transform: none;
 	}
 	@media (width >= 48rem) {
 		.paired {
@@ -129,6 +161,10 @@ const monthYear = (date: string) =>
 		opacity: 1;
 	}
 	@media (prefers-reduced-motion: reduce) {
+		.raised .post-card:hover,
+		.raised .post-card:focus-within {
+			transform: none;
+		}
 		.pool {
 			display: none;
 		}
