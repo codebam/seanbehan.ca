@@ -168,7 +168,7 @@ const isCurrent = (href: string) =>
 		<a href="#main" class="skip-link">Skip to content</a>
 
 		<header class="border-b border-[var(--line)]">
-			<div class="shell flex items-center gap-6 py-5 md:py-6">
+			<div class="site-header shell flex items-center gap-6 py-5 md:py-6">
 				<a
 					href="/"
 					class="wordmark display mr-auto text-[1.2rem] whitespace-nowrap"
@@ -177,7 +177,7 @@ const isCurrent = (href: string) =>
 					{site.name}
 				</a>
 
-				<nav aria-label="Primary" class="flex items-center gap-5 md:gap-6">
+				<nav aria-label="Primary" class="primary-nav flex items-center gap-5 md:gap-6">
 					<!-- Hash link into the home page. aria-current is "true" rather than
 					     "page": the destination is a section of the current page, not the
 					     page itself. -->
@@ -253,6 +253,18 @@ const isCurrent = (href: string) =>
 </html>
 
 <style>
+	@media (width < 40rem) {
+		.site-header {
+			flex-wrap: wrap;
+			row-gap: 1rem;
+		}
+		.primary-nav {
+			width: 100%;
+			justify-content: space-between;
+			gap: 0.5rem;
+		}
+	}
+
 	/* Nav and footer links carry the same underline wipe as `.link-quiet`: it
 	   grows from the left on hover and retracts to the left on the way out, so
 	   the label itself never shifts and the row height never changes. */

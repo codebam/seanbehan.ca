@@ -90,6 +90,9 @@ export default defineConfig({
 	],
 	vite: {
 		plugins: [tailwindcss()],
+		server: {
+			allowedHosts: ['nixos-desktop.tail7d7a2.ts.net']
+		},
 		resolve: {
 			dedupe: ['react', 'react-dom']
 		},
