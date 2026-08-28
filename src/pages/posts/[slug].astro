@@ -104,66 +104,61 @@ const updated = post.meta.updated
 	     it is hidden outright for reduced-motion readers. -->
 	<div class="read-progress" aria-hidden="true"></div>
 
-	<article class="panel pt-14 pb-20 md:pt-16">
-		<div class="shell">
-			<header class="enter border-b border-[var(--line)] pb-10">
-				<p class="eyebrow">
-					<a href="/posts" class="hover:underline">Writing</a>
+	<article class="panel">
+		<header class="post-masthead">
+			<div class="post-masthead-shell shell">
+				<p class="post-kicker enter">
+					<span class="section-number">01 /</span>
+					<a href="/posts">Writing</a>
+					<span class="masthead-meta">
+						<time datetime={post.meta.date}>{published}</time>
+						{post.readingMinutes && <> / {post.readingMinutes} min read</>}
+					</span>
 				</p>
 
-				<h1 class="article-title display mt-5 max-w-[24ch] text-[2.4rem] md:text-[3.4rem]">
-					{post.meta.title}
-				</h1>
+				<div class="post-masthead-grid">
+					<h1 class="article-title display enter" style="--enter-delay:40ms">
+						{post.meta.title}
+					</h1>
 
-				{
-					post.meta.description && (
-						<p class="mt-5 max-w-[54ch] text-[1.15rem] leading-[1.55] text-[var(--body)] md:text-[1.3rem]">
-							{post.meta.description}
+					<div class="post-deck enter" style="--enter-delay:100ms">
+						{post.meta.description && <p class="description">{post.meta.description}</p>}
+
+						<p class="post-meta">
+							<span>By <a href="/about" rel="author">{LEGAL_NAME}</a></span>
+							{
+								updated && (
+									<>
+										<span aria-hidden="true">&middot;</span>
+										<time datetime={post.meta.updated}>Updated {updated}</time>
+									</>
+								)
+							}
+							{
+								post.meta.tags.length > 0 && (
+									<>
+										<span aria-hidden="true">&middot;</span>
+										<span class="tag-list">
+											{post.meta.tags.map((tag) =>
+												publishedTagSlugs.has(slugifyTag(tag)) ? (
+													<a href={`/posts/tag/${slugifyTag(tag)}`}>
+														<Badge variant="outline">{tag}</Badge>
+													</a>
+												) : (
+													<Badge variant="secondary">{tag}</Badge>
+												)
+											)}
+										</span>
+									</>
+								)
+							}
 						</p>
-					)
-				}
+					</div>
+				</div>
+			</div>
+		</header>
 
-				<p class="mt-7 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[var(--muted)]">
-					<span>By <a href="/about" rel="author" class="hover:underline">{LEGAL_NAME}</a></span>
-					<span class="text-[var(--muted)]">&middot;</span>
-					<time datetime={post.meta.date}>Published {published}</time>
-					{
-						updated && (
-							<>
-								<span class="text-[var(--muted)]">&middot;</span>
-								<time datetime={post.meta.updated}>Updated {updated}</time>
-							</>
-						)
-					}
-					{
-						post.readingMinutes && (
-							<>
-								<span class="text-[var(--muted)]">&middot;</span>
-								<span>{post.readingMinutes} min read</span>
-							</>
-						)
-					}
-					{
-						post.meta.tags.length > 0 && (
-							<>
-								<span class="text-[var(--muted)]">&middot;</span>
-								<span class="flex flex-wrap items-center gap-x-3">
-									{post.meta.tags.map((tag) =>
-										publishedTagSlugs.has(slugifyTag(tag)) ? (
-											<a href={`/posts/tag/${slugifyTag(tag)}`}>
-												<Badge variant="outline">{tag}</Badge>
-											</a>
-										) : (
-											<Badge variant="secondary">{tag}</Badge>
-										)
-									)}
-								</span>
-							</>
-						)
-					}
-				</p>
-			</header>
-
+		<div class="post-body shell">
 			{
 				toc.length > 0 && (
 					/* Only on a post long enough to need it: a contents list above three
@@ -190,7 +185,7 @@ const updated = post.meta.updated
 			}
 
 			<div
-				class="enter prose mt-12 max-w-[68ch] text-[1.05rem]"
+				class:list={['enter prose max-w-[68ch] text-[1.05rem]', toc.length > 0 && 'mt-12']}
 				style="--enter-delay:60ms"
 				data-prose
 			>
@@ -202,26 +197,25 @@ const updated = post.meta.updated
 					/* Suggested by shared tags, not by recency: a reader who finished this
 					   one is looking for more of the same subject, which is exactly what
 					   the sibling links below cannot offer. */
-					<aside class="mt-16 border-t border-[var(--line)] pt-8">
-						<h2 class="eyebrow">Related</h2>
-						<div class="mt-6">
-							<PostList posts={related} columns={2} headingLevel={3} />
+					<aside class="related mt-20 border-t border-[var(--line)] pt-10">
+						<h2 class="display display-lg">
+							<span class="section-number">02 /</span> Related reading
+						</h2>
+						<div class="mt-8">
+							<PostList posts={related} columns={2} headingLevel={3} carded />
 						</div>
 					</aside>
 				)
 			}
 
-			<footer class="mt-16 border-t border-[var(--line)] pt-6 text-sm">
+			<footer class="post-footer mt-20 border-t border-[var(--line)] pt-10 text-sm">
 				<!-- The archive is newest first, so the older post is the one further
 				     down it — labelled by direction in time rather than by list order,
 				     which is what a reader is actually choosing between. -->
-				<nav
-					class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between"
-					aria-label="More posts"
-				>
+				<nav class="sibling-grid" aria-label="More posts">
 					{
 						older && (
-							<a href={older.path} class="sibling older max-w-[26ch]">
+							<a href={older.path} class="sibling older">
 								<span class="eyebrow">
 									<span class="arrow">&larr;</span> Older
 								</span>
@@ -231,7 +225,7 @@ const updated = post.meta.updated
 					}
 					{
 						newer && (
-							<a href={newer.path} class="sibling newer max-w-[26ch] sm:ml-auto sm:text-right">
+							<a href={newer.path} class="sibling newer">
 								<span class="eyebrow">
 									Newer <span class="arrow">&rarr;</span>
 								</span>
@@ -255,10 +249,103 @@ const updated = post.meta.updated
 </Base>
 
 <style>
-	.article-title {
-		font-family: var(--font-serif);
+	.post-masthead {
+		position: relative;
+		overflow: hidden;
+		padding-block: clamp(4.5rem, 9vw, 8rem);
+		border-bottom: 1px solid var(--line);
+	}
+	.post-masthead::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		background-image:
+			linear-gradient(color-mix(in srgb, var(--accent) 10%, transparent) 1px, transparent 1px),
+			linear-gradient(
+				90deg,
+				color-mix(in srgb, var(--accent) 10%, transparent) 1px,
+				transparent 1px
+			);
+		background-size: 32px 32px;
+		mask-image: linear-gradient(to bottom, transparent, #000 20%, #000 80%, transparent);
+	}
+	.post-masthead-shell {
+		position: relative;
+		max-width: 1240px;
+		z-index: 1;
+	}
+	.post-kicker {
+		display: flex;
+		align-items: baseline;
+		gap: 0.75rem;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
+	.post-kicker a {
+		transition: color 0.2s ease;
+	}
+	.post-kicker a:hover,
+	.post-kicker a:focus-visible {
+		color: var(--accent);
+	}
+	.section-number {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
 		font-weight: 500;
-		letter-spacing: -0.02em;
+		letter-spacing: 0.08em;
+		color: var(--accent-warm);
+		vertical-align: middle;
+	}
+	.masthead-meta {
+		margin-left: auto;
+	}
+	.post-masthead-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1.6fr) minmax(18rem, 0.6fr);
+		align-items: end;
+		gap: clamp(3rem, 8vw, 8rem);
+		margin-top: clamp(3.5rem, 8vw, 7rem);
+	}
+	.article-title {
+		max-width: 13ch;
+		font-size: clamp(3rem, 6.5vw, 6.4rem);
+		line-height: 0.98;
+	}
+	.post-deck {
+		padding-top: 1.25rem;
+		border-top: 1px solid var(--line-strong);
+	}
+	.description {
+		font-size: clamp(1rem, 1.4vw, 1.2rem);
+		line-height: 1.65;
+		color: var(--body);
+	}
+	.post-meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.45rem 0.65rem;
+		margin-top: 1.75rem;
+		font-size: 0.82rem;
+		line-height: 1.5;
+		color: var(--muted);
+	}
+	.post-meta a:hover,
+	.post-meta a:focus-visible {
+		color: var(--accent);
+	}
+	.tag-list {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.4rem;
+	}
+	.post-body {
+		padding-block: clamp(4rem, 8vw, 7rem);
 	}
 	/* The contents list is a quiet block, not a sidebar: the site has one column
 	   and a floating rail would fight the reading measure. */
@@ -293,15 +380,40 @@ const updated = post.meta.updated
 		color: var(--accent);
 	}
 
-	/* A sibling link is a two-line block, so the hover lands on the title rather
-	   than the whole thing: the label above it is a direction, not a name. */
+	.sibling-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1rem;
+	}
 	.sibling {
 		display: flex;
 		flex-direction: column;
-		gap: 0.4rem;
+		gap: 1.25rem;
+		min-height: 10rem;
+		padding: 1.5rem;
+		border: 1px solid var(--line);
+		border-top: 3px solid var(--accent);
+		border-radius: 3px;
+		background: var(--panel);
+		transition:
+			border-color 0.25s ease,
+			background-color 0.25s ease,
+			transform 0.25s var(--ease-out-soft);
+	}
+	.sibling.newer {
+		grid-column: 2;
+		text-align: right;
+	}
+	.sibling:hover,
+	.sibling:focus-visible {
+		border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+		background: color-mix(in srgb, var(--accent) 4%, var(--panel));
+		transform: translateY(-2px);
 	}
 	.sibling .title {
-		font-size: 1.05rem;
+		font-size: 1.15rem;
+		font-weight: 500;
+		line-height: 1.35;
 		color: var(--text);
 		transition: color 0.25s ease;
 	}
@@ -325,5 +437,33 @@ const updated = post.meta.updated
 	.back:hover :global(.arrow),
 	.back:focus-visible :global(.arrow) {
 		transform: translateX(-3px);
+	}
+	@media (width < 48rem) {
+		.post-masthead {
+			padding-block: 4rem 5rem;
+		}
+		.post-masthead-grid {
+			grid-template-columns: 1fr;
+			gap: 3rem;
+			margin-top: 4rem;
+		}
+		.article-title {
+			font-size: clamp(2.75rem, 13vw, 4.5rem);
+		}
+		.sibling-grid {
+			grid-template-columns: 1fr;
+		}
+		.sibling.newer {
+			grid-column: 1;
+		}
+	}
+	@media (width < 30rem) {
+		.post-kicker {
+			flex-wrap: wrap;
+		}
+		.masthead-meta {
+			width: 100%;
+			margin: 0.5rem 0 0;
+		}
 	}
 </style>

@@ -20,6 +20,8 @@ interface Props {
 	showTags?: boolean;
 	/** Present home-page entries as a numbered editorial index. */
 	raised?: boolean;
+	/** Enclose entries in compact blueprint cards. */
+	carded?: boolean;
 	/**
 	 * Heading level for an entry title. The default suits the home page, where
 	 * the list sits under an h2 section heading. A page whose list is the
@@ -29,7 +31,14 @@ interface Props {
 	headingLevel?: 2 | 3;
 }
 
-const { posts, columns = 1, showTags = false, raised = false, headingLevel = 3 } = Astro.props;
+const {
+	posts,
+	columns = 1,
+	showTags = false,
+	raised = false,
+	carded = false,
+	headingLevel = 3
+} = Astro.props;
 const Heading = `h${headingLevel}` as 'h2' | 'h3';
 
 /** "Apr 2026" — the day is never what a reader is after in a list. */
@@ -37,7 +46,10 @@ const monthYear = (date: string) =>
 	new Date(date).toLocaleDateString('en-CA', { month: 'short', year: 'numeric', timeZone: 'UTC' });
 ---
 
-<div class:list={['list', columns === 2 && 'paired', raised && 'raised']} data-post-list>
+<div
+	class:list={['list', columns === 2 && 'paired', raised && 'raised', carded && 'carded']}
+	data-post-list
+>
 	{
 		posts.map((post, i) => (
 			<LayerCard
@@ -88,6 +100,38 @@ const monthYear = (date: string) =>
 		border: 0;
 		box-shadow: none;
 		background: transparent;
+	}
+	.carded {
+		gap: 1rem;
+	}
+	.carded .post-card {
+		height: 100%;
+		overflow: clip;
+		border: 1px solid var(--line);
+		border-radius: 3px;
+		background: var(--panel);
+		transition:
+			border-color 0.3s ease,
+			background-color 0.3s ease;
+	}
+	.carded .post-card:hover,
+	.carded .post-card:focus-within {
+		border-color: color-mix(in srgb, var(--accent) 50%, var(--line));
+		background: color-mix(in srgb, var(--accent) 4%, var(--panel));
+	}
+	.carded .entry {
+		height: 100%;
+		min-height: 13rem;
+		padding: 1.5rem;
+		border-top: 3px solid var(--accent);
+	}
+	.carded .entry:hover,
+	.carded .entry:focus-visible {
+		transform: none;
+	}
+	.carded .pool {
+		inset: 0;
+		border-radius: 0;
 	}
 	.raised {
 		gap: 0;
