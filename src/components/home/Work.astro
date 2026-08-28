@@ -1,5 +1,5 @@
 ---
-/** SELECTED WORK — inverted panel, one row per featured repository. */
+/** SELECTED WORK — editorial rows enhanced into a pinned scroll story with JS. */
 import { projectHref } from '../../lib/site';
 import type { FeaturedProject } from '../../lib/types';
 import { Badge } from '@cloudflare/kumo/components/badge';
@@ -11,7 +11,7 @@ interface Props {
 const { projects } = Astro.props;
 ---
 
-<section id="work" class="work-panel panel-invert scroll-mt-4">
+<section id="work" class="work-panel panel-invert scroll-mt-4" data-work-carousel>
 	<div class="work-shell shell">
 		<div class="flex items-baseline justify-between gap-4" data-reveal>
 			<h2 class="display display-lg"><span class="section-number">01 /</span> Selected work</h2>
@@ -99,6 +99,11 @@ const { projects } = Astro.props;
 					</article>
 				))
 			}
+		</div>
+		<div class="carousel-status" aria-hidden="true">
+			<span><span data-carousel-current>01</span> / {String(projects.length).padStart(2, '0')}</span
+			>
+			<span class="carousel-progress"><span data-carousel-progress></span></span>
 		</div>
 	</div>
 </section>
@@ -243,6 +248,133 @@ const { projects } = Astro.props;
 	.work-row:hover .title,
 	.work-row:focus-within .title {
 		color: var(--accent);
+	}
+	.carousel-status {
+		display: none;
+	}
+
+	/* The unenhanced list above remains the no-JS and reduced-motion experience.
+	   Once the controller is ready, vertical page distance becomes horizontal
+	   slide progress while this inner stage stays pinned. */
+	.work-panel[data-carousel-ready] {
+		height: calc(var(--slide-count) * 100svh + 35svh);
+		padding-block: 0;
+	}
+	.work-panel[data-carousel-ready] .work-shell {
+		position: sticky;
+		top: 0;
+		display: grid;
+		grid-template-rows: auto minmax(0, 1fr) auto;
+		height: 100svh;
+		padding-block: clamp(2rem, 5vh, 4rem);
+		overflow: hidden;
+	}
+	.work-panel[data-carousel-ready] .work-list {
+		position: relative;
+		min-height: 0;
+		margin-top: clamp(2rem, 5vh, 4rem);
+		border: 0;
+	}
+	.work-panel[data-carousel-ready] .work-row {
+		position: absolute;
+		inset: 0;
+		display: grid;
+		grid-template-columns: minmax(0, 1.55fr) minmax(18rem, 0.65fr);
+		grid-template-rows: auto minmax(0, 1fr) auto;
+		column-gap: clamp(2rem, 5vw, 5rem);
+		padding: 0;
+		border: 0;
+		opacity: var(--slide-opacity, 0);
+		transform: translate3d(var(--slide-x, 110%), 0, 0) scale(var(--slide-scale, 0.97));
+		animation: none;
+		transition: none;
+		will-change: transform, opacity;
+	}
+	.work-panel[data-carousel-ready] .row-media {
+		grid-column: 1;
+		grid-row: 1 / -1;
+		align-self: center;
+		margin: 0;
+	}
+	.work-panel[data-carousel-ready] .row-head {
+		grid-column: 2;
+		grid-row: 1;
+	}
+	.work-panel[data-carousel-ready] .row-stars {
+		grid-column: 2;
+		grid-row: 1;
+	}
+	.work-panel[data-carousel-ready] .row-body {
+		grid-column: 2;
+		grid-row: 2;
+		align-self: center;
+	}
+	.work-panel[data-carousel-ready] .carousel-status {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		justify-self: end;
+		padding-top: 1.5rem;
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		letter-spacing: 0.1em;
+		color: var(--accent-warm);
+	}
+	.carousel-progress {
+		width: 7rem;
+		height: 1px;
+		overflow: hidden;
+		background: var(--line-strong);
+	}
+	.carousel-progress > span {
+		display: block;
+		width: 100%;
+		height: 100%;
+		background: var(--accent-warm);
+		transform: scaleX(var(--carousel-progress, 0));
+		transform-origin: left;
+	}
+	@media (width < 48rem) {
+		.work-panel[data-carousel-ready] {
+			height: calc(var(--slide-count) * 110svh + 25svh);
+		}
+		.work-panel[data-carousel-ready] .work-shell {
+			padding-block: 2rem;
+		}
+		.work-panel[data-carousel-ready] .work-list {
+			margin-top: 1.75rem;
+		}
+		.work-panel[data-carousel-ready] .work-row {
+			display: grid;
+			grid-template-columns: 1fr auto;
+			grid-template-rows: auto auto minmax(0, 1fr);
+			row-gap: 0.75rem;
+		}
+		.work-panel[data-carousel-ready] .row-media {
+			grid-column: 1 / -1;
+			grid-row: 1;
+			align-self: auto;
+			margin-bottom: 0.75rem;
+		}
+		.work-panel[data-carousel-ready] .row-head {
+			grid-column: 1;
+			grid-row: 2;
+		}
+		.work-panel[data-carousel-ready] .row-stars {
+			grid-column: 2;
+			grid-row: 2;
+		}
+		.work-panel[data-carousel-ready] .row-body {
+			grid-column: 1 / -1;
+			grid-row: 3;
+			align-self: start;
+		}
+		.work-panel[data-carousel-ready] .row-body > p:first-of-type {
+			display: -webkit-box;
+			overflow: hidden;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 5;
+		}
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.work-row::before {
