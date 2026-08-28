@@ -1,6 +1,6 @@
 ---
 /**
- * FACTS — tinted cards over a blueprint grid that follows the pointer.
+ * FACTS — tinted cards over a static blueprint grid.
  *
  * The fourth cell is a word rather than a number, so it is spelled out instead
  * of being forced into the same shape as the three counts beside it.
@@ -29,7 +29,7 @@ const facts = [
 ];
 ---
 
-<section class="facts panel-alt relative overflow-hidden py-12 md:py-14" data-pointer-scene>
+<section class="facts panel-alt relative overflow-hidden py-12 md:py-14">
 	<div class="shell relative grid grid-cols-2 gap-x-8 gap-y-8 md:grid-cols-4">
 		{
 			facts.map((fact, i) => (
@@ -54,10 +54,6 @@ const facts = [
 				transparent 1px
 			);
 		background-size: 32px 32px;
-		background-position:
-			calc(var(--scene-x, 0) * 8px) calc(var(--scene-y, 0) * 8px),
-			calc(var(--scene-x, 0) * 8px) calc(var(--scene-y, 0) * 8px);
-		transition: background-position 0.35s var(--ease-out-soft);
 	}
 	.fact {
 		background: color-mix(in srgb, var(--accent) 10%, var(--panel));
