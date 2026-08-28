@@ -307,20 +307,7 @@
 	}
 	@media (prefers-color-scheme: dark) {
 		.panel-invert {
-			--bg: var(--palette-light-bg);
-			--surface-alt: var(--palette-light-alt);
-			--panel: var(--palette-light-panel);
-			--line: var(--palette-light-line);
-			--line-strong: var(--palette-light-line-strong);
-			--text: var(--palette-light-text);
-			--body: var(--palette-light-body);
-			--muted: var(--palette-light-muted);
-			--dim: var(--palette-light-dim);
-			--accent: var(--palette-light-accent);
-			--accent-hover: var(--palette-light-accent-hover);
-			--accent-on: var(--palette-light-accent-on);
-			--invert-bg: var(--palette-light-text);
-			--invert-text: var(--palette-light-bg);
+			--bg: var(--palette-dark-alt);
 		}
 	}
 
