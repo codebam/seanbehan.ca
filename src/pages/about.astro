@@ -1,6 +1,34 @@
 ---
 import Base from '../layouts/Base.astro';
+import BlueprintMasthead from '../components/BlueprintMasthead.astro';
 import { site, LEGAL_NAME, LINKEDIN_URL, writingHref } from '../lib/site';
+
+const notes = [
+	{
+		title: 'What I work on',
+		copy: 'My public work sits where application code meets infrastructure: Linux graphics, serverless systems, storage, deployment and the tools around them. I prefer small systems with explicit failure modes, reproducible environments and source a reader can inspect.'
+	},
+	{
+		title: 'Writing',
+		copy: 'The articles document things I have built, repaired or had to understand closely enough to explain. Technical posts include commands and examples that worked when published; meaningful later changes are recorded with an updated date.'
+	}
+];
+
+const destinations = [
+	{
+		label: 'GitHub projects and source code',
+		href: 'https://github.com/codebam',
+		external: true
+	},
+	{ label: 'Technical writing', href: writingHref('/posts'), external: false },
+	...(site.showResume
+		? [
+				{ label: 'Résumé and work history', href: '/resume', external: false },
+				{ label: 'LinkedIn', href: LINKEDIN_URL, external: true }
+			]
+		: []),
+	{ label: 'Contact', href: '/contact', external: false }
+];
 ---
 
 <Base
@@ -8,53 +36,211 @@ import { site, LEGAL_NAME, LINKEDIN_URL, writingHref } from '../lib/site';
 	description={`About ${LEGAL_NAME}, the developer behind ${site.name} and @codebam.`}
 	ogTitle={`About — ${site.name}`}
 >
-	<article class="panel pt-14 pb-20 md:pt-16 md:pb-24">
-		<div class="shell">
-			<p class="enter eyebrow">{site.about.eyebrow}</p>
-			<h1 class="display display-xl mt-5 max-w-[20ch]">{site.about.headline}</h1>
-			<p
-				class="enter mt-7 max-w-[58ch] text-[1.15rem] leading-[1.65] text-[var(--body)] md:text-[1.3rem]"
-				style="--enter-delay:80ms"
-			>
-				{site.about.intro}
-			</p>
+	<BlueprintMasthead label={site.about.eyebrow} meta="Ontario / Canada">
+		<Fragment slot="title">{site.about.headline}</Fragment>
+		<div class="masthead-profile">
+			<img src="/profile.webp" alt={LEGAL_NAME} width="180" height="180" />
+			<p>{site.about.intro}</p>
+		</div>
+	</BlueprintMasthead>
 
-			<div class="prose enter mt-12 max-w-[68ch]" style="--enter-delay:120ms">
-				<h2>What I work on</h2>
-				<p>
-					My public work sits where application code meets infrastructure: Linux graphics,
-					serverless systems, storage, deployment and the tools around them. I prefer small systems
-					with explicit failure modes, reproducible environments and source a reader can inspect.
-				</p>
+	<section class="notes panel">
+		<div class="about-shell shell">
+			<div class="section-heading" data-reveal>
+				<h2 class="display display-lg"><span class="section-number">02 /</span> Working notes</h2>
+				<p>Systems / writing</p>
+			</div>
 
-				<h2>Writing</h2>
-				<p>
-					The articles document things I have built, repaired or had to understand closely enough to
-					explain. Technical posts include commands and examples that worked when published;
-					meaningful later changes are recorded with an updated date.
-				</p>
-
-				<h2>Elsewhere</h2>
-				<ul>
-					<li><a href="https://github.com/codebam">GitHub projects and source code</a></li>
-					<li><a href={writingHref('/posts')}>Technical writing</a></li>
-					{
-						site.showResume && (
-							<li>
-								<a href="/resume">Résumé and work history</a>
-							</li>
-						)
-					}
-					{
-						site.showResume && (
-							<li>
-								<a href={LINKEDIN_URL}>LinkedIn</a>
-							</li>
-						)
-					}
-					<li><a href="/contact">Contact</a></li>
-				</ul>
+			<div class="notes-grid">
+				{
+					notes.map((note, i) => (
+						<article data-reveal data-reveal-delay={i * 55}>
+							<span class="item-index" aria-hidden="true">
+								{String(i + 1).padStart(2, '0')}
+							</span>
+							<h3>{note.title}</h3>
+							<p>{note.copy}</p>
+						</article>
+					))
+				}
 			</div>
 		</div>
-	</article>
+	</section>
+
+	<section class="elsewhere panel-alt">
+		<div class="about-shell shell">
+			<div class="section-heading" data-reveal>
+				<h2 class="display display-lg"><span class="section-number">03 /</span> Elsewhere</h2>
+				<p>{destinations.length} destinations</p>
+			</div>
+
+			<ul class="destination-grid">
+				{
+					destinations.map((destination, i) => (
+						<li data-reveal data-reveal-delay={i * 45}>
+							<a
+								href={destination.href}
+								target={destination.external ? '_blank' : undefined}
+								rel={destination.external ? 'noopener noreferrer' : undefined}
+							>
+								<span class="item-index" aria-hidden="true">
+									{String(i + 1).padStart(2, '0')}
+								</span>
+								<strong>{destination.label}</strong>
+								<span class="destination-arrow" aria-hidden="true">
+									&rarr;
+								</span>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</div>
+	</section>
 </Base>
+
+<style>
+	.masthead-profile {
+		display: grid;
+		grid-template-columns: 5rem 1fr;
+		align-items: start;
+		gap: 1.25rem;
+	}
+	.masthead-profile img {
+		width: 5rem;
+		aspect-ratio: 1;
+		border: 1px solid var(--line-strong);
+		border-radius: 3px;
+		object-fit: cover;
+	}
+	.notes,
+	.elsewhere {
+		padding-block: clamp(6rem, 11vw, 10rem);
+		border-top: 1px solid var(--line);
+	}
+	.about-shell {
+		max-width: 1240px;
+	}
+	.section-heading {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 2rem;
+	}
+	.section-number,
+	.item-index {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		font-weight: 500;
+		letter-spacing: 0.08em;
+		color: var(--accent-warm);
+		vertical-align: middle;
+	}
+	.section-heading > p {
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
+	.notes-grid,
+	.destination-grid {
+		display: grid;
+		margin-top: clamp(2.5rem, 5vw, 4rem);
+		border-bottom: 1px solid var(--line);
+	}
+	.notes-grid article,
+	.destination-grid li {
+		min-width: 0;
+		border-top: 1px solid var(--line);
+	}
+	.notes-grid article {
+		min-height: 19rem;
+		padding: 1.75rem;
+	}
+	.item-index {
+		display: block;
+		margin-bottom: 4rem;
+	}
+	.notes-grid h3 {
+		font-size: clamp(1.4rem, 2.5vw, 2rem);
+		font-weight: 500;
+		letter-spacing: -0.03em;
+	}
+	.notes-grid p {
+		max-width: 55ch;
+		margin-top: 0.75rem;
+		font-size: 0.98rem;
+		line-height: 1.65;
+		color: var(--body);
+	}
+	.destination-grid {
+		list-style: none;
+	}
+	.destination-grid a {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		grid-template-rows: auto 1fr;
+		gap: 1rem;
+		min-height: 14rem;
+		padding: 1.5rem;
+		transition:
+			background-color 0.25s ease,
+			border-color 0.25s ease;
+	}
+	.destination-grid .item-index {
+		margin-bottom: 0;
+	}
+	.destination-grid strong {
+		grid-column: 1;
+		align-self: end;
+		max-width: 22ch;
+		font-size: clamp(1.2rem, 2vw, 1.65rem);
+		font-weight: 500;
+		letter-spacing: -0.025em;
+		line-height: 1.3;
+		transition: color 0.2s ease;
+	}
+	.destination-arrow {
+		grid-column: 2;
+		grid-row: 2;
+		align-self: end;
+		color: var(--accent-warm);
+		transition: transform 0.2s ease;
+	}
+	.destination-grid a:hover,
+	.destination-grid a:focus-visible {
+		background: color-mix(in srgb, var(--accent) 4%, transparent);
+	}
+	.destination-grid a:hover strong,
+	.destination-grid a:focus-visible strong {
+		color: var(--accent);
+	}
+	.destination-grid a:hover .destination-arrow,
+	.destination-grid a:focus-visible .destination-arrow {
+		transform: translateX(3px);
+	}
+	@media (width >= 48rem) {
+		.notes-grid,
+		.destination-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+		.notes-grid article:not(:first-child),
+		.destination-grid li:nth-child(even) {
+			border-left: 1px solid var(--line);
+		}
+	}
+	@media (width < 48rem) {
+		.section-heading {
+			align-items: flex-start;
+			flex-direction: column;
+			gap: 0.75rem;
+		}
+		.masthead-profile {
+			grid-template-columns: 4.5rem 1fr;
+		}
+		.masthead-profile img {
+			width: 4.5rem;
+		}
+	}
+</style>
