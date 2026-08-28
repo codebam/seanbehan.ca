@@ -11,7 +11,7 @@ interface Props {
 const { projects } = Astro.props;
 ---
 
-<section id="work" class="panel-invert scroll-mt-4 py-20 md:py-24">
+<section id="work" class="work-panel panel-invert scroll-mt-4 py-20 md:py-24">
 	<div class="shell">
 		<div class="flex items-baseline justify-between gap-4" data-reveal>
 			<h2 class="display display-lg">Selected work</h2>
@@ -23,7 +23,7 @@ const { projects } = Astro.props;
 			>
 		</div>
 
-		<div class="mt-12">
+		<div class="work-list mt-12">
 			{
 				projects.map((project, i) => (
 					/* Grid areas rather than utility columns: on a phone the star count
@@ -31,7 +31,7 @@ const { projects } = Astro.props;
 					   read as a stray. Source order matches the phone (year, stars, body);
 					   the desktop column order is set by the areas. */
 					<article
-						class="work-row border-t border-[var(--line)] py-8"
+						class="work-row py-8"
 						data-pointer-glow
 						data-reveal
 						data-reveal-delay={Math.min(i, 4) * 70}
@@ -93,6 +93,18 @@ const { projects } = Astro.props;
 </section>
 
 <style>
+	.work-panel {
+		background-color: var(--bg);
+		background-image:
+			linear-gradient(color-mix(in srgb, var(--accent) 8%, transparent) 1px, transparent 1px),
+			linear-gradient(90deg, color-mix(in srgb, var(--accent) 8%, transparent) 1px, transparent 1px);
+		background-size: 32px 32px;
+	}
+	.work-list {
+		display: grid;
+		gap: 0.75rem;
+	}
+
 	/* The pointer light stays within the row and never changes its surface or
 	   layout. It adds depth without turning a reading row into a floating card. */
 	.work-row {
@@ -106,7 +118,15 @@ const { projects } = Astro.props;
 		grid-template-areas:
 			'head stars'
 			'body body';
-		transition: border-color 0.3s ease;
+		padding-inline: 1.25rem;
+		border: 1px solid color-mix(in srgb, var(--accent) 16%, var(--line));
+		border-radius: 3px;
+		background: color-mix(in srgb, var(--panel) 88%, transparent);
+		box-shadow: 0 10px 28px color-mix(in srgb, #000 14%, transparent);
+		transition:
+			background-color 0.3s ease,
+			border-color 0.3s ease,
+			box-shadow 0.3s ease;
 	}
 	.work-row::before {
 		content: '';
@@ -145,11 +165,14 @@ const { projects } = Astro.props;
 		.work-row {
 			grid-template-columns: 110px minmax(0, 1fr) auto;
 			grid-template-areas: 'head body stars';
+			padding-inline: 1.75rem;
 		}
 	}
 	.work-row:hover,
 	.work-row:focus-within {
 		border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+		background: color-mix(in srgb, var(--accent) 6%, var(--panel));
+		box-shadow: 0 14px 34px color-mix(in srgb, #000 20%, transparent);
 	}
 	.work-row:hover .row-body,
 	.work-row:focus-within .row-body {
