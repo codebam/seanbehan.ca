@@ -10,7 +10,6 @@ import Base from '../layouts/Base.astro';
 import PostList from '../components/PostList.astro';
 import Facts from '../components/home/Facts.astro';
 import Work from '../components/home/Work.astro';
-import Grainient from '../components/effects/Grainient.astro';
 import { LinkButton } from '@cloudflare/kumo/components/button';
 import { getPosts } from '../lib/posts';
 import { withLiveStats } from '../lib/github';
@@ -29,26 +28,13 @@ const latest = posts.slice(0, 6);
 ---
 
 <Base>
-	<!-- HERO — page surface, over an ambient wash
-
-	     Grainient is decorative and sits behind everything, masked out before the
-	     fold ends so the band below starts on flat paper. It is the one place on
-	     the site where something moves on its own; every reading surface stays
-	     still. -->
-	<section
-		class="hero panel relative overflow-hidden pt-14 pb-20 md:pt-16 md:pb-24"
-		data-pointer-scene
-	>
-		<div class="wash" aria-hidden="true">
-			<!-- Desaturated and low-contrast: at full strength the accent blob reads
-			     as a stain behind the headline instead of an ambient wash. -->
-			<Grainient saturation={0.7} contrast={1.05} zoom={1.1} />
-		</div>
-
-		<div class="shell relative">
+	<!-- One oversized statement gets the visual emphasis; supporting information
+	     stays deliberately quiet so this reads as an introduction, not a dashboard. -->
+	<section class="hero panel relative overflow-hidden">
+		<div class="hero-shell shell relative">
 			<!-- Byline: the photo identifies the author rather than decorating the
 			     page, which leaves the headline the full column width. -->
-			<div class="enter flex items-center gap-3.5">
+			<div class="hero-kicker enter flex items-center gap-3.5">
 				<!-- avatar.webp is the 2x crop of profile.webp at the size this
 				     actually renders (1.4 kB against 13 kB). The full 460px
 				     profile.webp is the contact photo and the Person image in JSON-LD. -->
@@ -66,21 +52,15 @@ const latest = posts.slice(0, 6);
 				</div>
 			</div>
 
-			<h1 class="display display-xl mt-9 max-w-[20ch]">
+			<h1 class="hero-title display display-xl">
 				{site.headline.before}<em>{site.headline.emphasis}</em>{site.headline.after}
 			</h1>
 
-			<p
-				class="enter mt-8 max-w-[52ch] text-[1.15rem] leading-[1.55] text-[var(--body)] md:text-[1.35rem]"
-				style="--enter-delay:80ms"
-			>
+			<p class="hero-intro enter" style="--enter-delay:80ms">
 				{intro}
 			</p>
 
-			<div
-				class="enter mt-9 flex flex-wrap items-center gap-x-7 gap-y-4"
-				style="--enter-delay:140ms"
-			>
+			<div class="hero-actions enter" style="--enter-delay:140ms">
 				<LinkButton
 					href={writingHref('/posts')}
 					variant="primary"
@@ -115,10 +95,10 @@ const latest = posts.slice(0, 6);
 	}
 
 	<!-- LATEST WRITING — back to the page surface -->
-	<section class="latest-writing panel py-20 md:py-24">
+	<section class="latest-writing panel">
 		<div class="shell">
 			<div class="flex items-baseline justify-between gap-4" data-reveal>
-				<h2 class="display display-lg">Latest writing</h2>
+				<h2 class="display display-lg"><span class="section-number">02 /</span> Latest writing</h2>
 				<a href={writingHref('/posts')} class="link-accent whitespace-nowrap"
 					>All {posts.length} posts <span class="arrow">&rarr;</span></a
 				>
@@ -133,25 +113,24 @@ const latest = posts.slice(0, 6);
 
 <style>
 	.latest-writing {
-		background-color: var(--bg);
-		background-image:
-			linear-gradient(color-mix(in srgb, var(--accent) 6%, transparent) 1px, transparent 1px),
-			linear-gradient(90deg, color-mix(in srgb, var(--accent) 6%, transparent) 1px, transparent 1px);
-		background-size: 32px 32px;
+		padding-block: clamp(7rem, 13vw, 12rem);
 	}
-
-	/* The wash is held at low opacity and faded out from under the intro, so
-	   the headline and body copy sit on something close to paper and the
-	   boundary with the band below is a colour change rather than an edge. The
-	   mask is what keeps it ambient instead of a hero image. */
-	.hero .wash {
-		position: absolute;
-		inset: -2%;
-		opacity: 0.32;
-		mask-image: linear-gradient(180deg, #000 0%, #000 40%, transparent 100%);
-		transform: translate3d(calc(var(--scene-x, 0) * 10px), calc(var(--scene-y, 0) * 7px), 0);
-		transition: transform 0.45s var(--ease-out-soft);
-		will-change: transform;
+	.latest-writing > .shell {
+		max-width: 1240px;
+	}
+	.section-number {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		font-weight: 500;
+		letter-spacing: 0.08em;
+		color: var(--accent-warm);
+		vertical-align: middle;
+	}
+	.hero {
+		min-height: min(860px, calc(100svh - 77px));
+		display: grid;
+		align-items: center;
+		padding-block: clamp(6rem, 13vh, 10rem);
 	}
 	.hero::after {
 		content: '';
@@ -166,26 +145,56 @@ const latest = posts.slice(0, 6);
 				transparent 1px
 			);
 		background-size: 32px 32px;
-		mask-image: linear-gradient(90deg, #000 0%, #000 72%, transparent 100%);
+		mask-image: radial-gradient(circle at 50% 48%, #000 0%, transparent 72%);
 		z-index: 0;
 	}
-	.hero > .shell {
+	.hero-shell {
+		width: 100%;
+		max-width: 1240px;
+		text-align: center;
 		z-index: 1;
 	}
-	.hero-avatar {
-		transform: translate3d(calc(var(--scene-x, 0) * -3px), calc(var(--scene-y, 0) * -3px), 0);
-		transition:
-			transform 0.3s var(--ease-out-soft),
-			box-shadow 0.3s ease;
+	.hero-kicker,
+	.hero-actions {
+		justify-content: center;
 	}
-	.hero:hover .hero-avatar {
-		box-shadow: 0 8px 24px color-mix(in srgb, var(--accent) 18%, transparent);
+	.hero-title {
+		max-width: 19ch;
+		margin: clamp(3.5rem, 8vh, 6rem) auto 0;
+		font-size: clamp(3.2rem, 6.8vw, 6.5rem);
 	}
-	@media (prefers-color-scheme: dark) {
-		/* The dark palette has far less headroom between the accent and the page,
-		   so the same opacity that reads as a wash in light reads as a wall here. */
-		.hero .wash {
-			opacity: 0.2;
+	.hero-intro {
+		max-width: 54ch;
+		margin: 2.25rem auto 0;
+		font-size: clamp(1.05rem, 1.7vw, 1.3rem);
+		line-height: 1.6;
+		color: var(--body);
+	}
+	.hero-actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 1rem 2rem;
+		margin-top: 2.5rem;
+	}
+	@media (width < 40rem) {
+		.hero {
+			min-height: auto;
+			padding-block: 4rem 5.5rem;
+		}
+		.hero-shell {
+			text-align: left;
+		}
+		.hero-kicker,
+		.hero-actions {
+			justify-content: flex-start;
+		}
+		.hero-title {
+			margin-top: 3.5rem;
+			font-size: clamp(2.75rem, 13vw, 4rem);
+		}
+		.hero-intro {
+			margin-inline: 0;
 		}
 	}
 </style>

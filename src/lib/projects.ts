@@ -21,6 +21,8 @@ export const featuredProjects: FeaturedProject[] = [
 			'A Wayland compositor whose entire shell — wallpaper, dock, window frames — is a web page, composited zero-copy alongside native clients. Smithay drives DRM/KMS and input; WPE WebKit renders the UI straight to a DMA-BUF, so no pixel ever touches the CPU.',
 		language: 'Rust',
 		stars: 0,
+		mockup: '/img/project-viewport.webp',
+		mockupAlt: 'Viewport desktop shell showing its keyboard controls',
 		tags: ['wayland', 'smithay', 'wpe-webkit'],
 		challenge:
 			'Build a native Wayland compositor while letting ordinary web technology own the desktop shell and window layout, without copying rendered frames through the CPU.',
@@ -46,6 +48,8 @@ export const featuredProjects: FeaturedProject[] = [
 		stars: 322,
 		homepage: 'https://tux-robot.codebam.ca',
 		homepageLabel: 'Try the bot',
+		mockup: '/img/project-telegram.webp',
+		mockupAlt: 'Tux Robot holding a conversation in Telegram',
 		tags: ['cloudflare', 'telegram', 'ai'],
 		challenge:
 			'Run a useful Telegram bot without a persistent server while keeping webhook handling, shared types and the companion web application deployable together.',
@@ -71,6 +75,8 @@ export const featuredProjects: FeaturedProject[] = [
 		stars: 1,
 		homepage: 'https://discord.com/oauth2/authorize?client_id=1314059926326349824',
 		homepageLabel: 'Add to Discord',
+		mockup: '/img/project-discord.webp',
+		mockupAlt: 'Discord slash command followed by a deferred Workers AI response',
 		tags: ['cloudflare', 'discord', 'workers-ai'],
 		challenge:
 			'Answer Discord slash commands with model output that can take longer than Discord allows an interaction request to remain open.',
@@ -96,6 +102,8 @@ export const featuredProjects: FeaturedProject[] = [
 		stars: 4,
 		homepage: 'https://paste.codebam.ca',
 		homepageLabel: 'Open pastebin',
+		mockup: '/img/project-pastebin.webp',
+		mockupAlt: 'Pastebin R2 editor and command-line usage',
 		tags: ['cloudflare', 'r2', 'hono'],
 		challenge:
 			'Provide a small paste service whose objects expire predictably, without introducing a separate application server or database for the paste bodies.',

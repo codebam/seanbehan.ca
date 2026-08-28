@@ -22,6 +22,9 @@ export interface FeaturedProject {
 	/** Live deployment or install link, where one exists */
 	homepage?: string;
 	homepageLabel?: string;
+	/** Presentation image used on the home page and project case study. */
+	mockup: string;
+	mockupAlt: string;
 	tags: string[];
 	challenge: string;
 	architecture: string[];

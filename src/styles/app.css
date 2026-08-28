@@ -104,6 +104,7 @@
 		--palette-light-accent: #2457d6;
 		--palette-light-accent-hover: #1e46b5;
 		--palette-light-accent-on: #ffffff;
+		--palette-light-warm: #c2410c;
 
 		--palette-dark-bg: #101827;
 		--palette-dark-alt: #172236;
@@ -117,6 +118,7 @@
 		--palette-dark-accent: #60a5fa;
 		--palette-dark-accent-hover: #93c5fd;
 		--palette-dark-accent-on: #081225;
+		--palette-dark-warm: #fb923c;
 	}
 }
 
@@ -146,6 +148,7 @@
 		/* Accent */
 		--accent: #2457d6;
 		--accent-hover: #1e46b5;
+		--accent-warm: var(--palette-light-warm);
 		/* Text that sits on an accent surface. */
 		--accent-on: var(--palette-light-accent-on);
 		/* Accent at low alpha, for tints that survive both themes */
@@ -172,6 +175,7 @@
 
 			--accent: #60a5fa;
 			--accent-hover: #93c5fd;
+			--accent-warm: var(--palette-dark-warm);
 			--accent-on: var(--palette-dark-accent-on);
 			--accent-wash: color-mix(in srgb, var(--accent) 14%, transparent);
 
@@ -241,7 +245,7 @@
 	}
 	.display em {
 		font-style: italic;
-		color: var(--accent);
+		color: var(--accent-warm);
 	}
 
 	/* Page headline. Fluid rather than stepped, so the line count stays put
@@ -297,6 +301,7 @@
 		--dim: var(--palette-dark-dim);
 		--accent: var(--palette-dark-accent);
 		--accent-hover: var(--palette-dark-accent-hover);
+		--accent-warm: var(--palette-dark-warm);
 		--accent-on: var(--palette-dark-accent-on);
 		--invert-bg: var(--palette-dark-text);
 		--invert-text: var(--palette-dark-bg);
