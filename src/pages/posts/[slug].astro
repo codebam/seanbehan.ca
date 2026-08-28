@@ -111,7 +111,9 @@ const updated = post.meta.updated
 					<a href="/posts" class="hover:underline">Writing</a>
 				</p>
 
-				<h1 class="display mt-5 max-w-[24ch] text-[2.4rem] md:text-[3.4rem]">{post.meta.title}</h1>
+				<h1 class="article-title display mt-5 max-w-[24ch] text-[2.4rem] md:text-[3.4rem]">
+					{post.meta.title}
+				</h1>
 
 				{
 					post.meta.description && (
@@ -253,6 +255,11 @@ const updated = post.meta.updated
 </Base>
 
 <style>
+	.article-title {
+		font-family: var(--font-serif);
+		font-weight: 500;
+		letter-spacing: -0.02em;
+	}
 	/* The contents list is a quiet block, not a sidebar: the site has one column
 	   and a floating rail would fight the reading measure. */
 	.toc details summary {

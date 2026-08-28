@@ -11,7 +11,6 @@ import PostList from '../components/PostList.astro';
 import Facts from '../components/home/Facts.astro';
 import Work from '../components/home/Work.astro';
 import Grainient from '../components/effects/Grainient.astro';
-import StarBorder from '../components/effects/StarBorder.astro';
 import { LinkButton } from '@cloudflare/kumo/components/button';
 import { getPosts } from '../lib/posts';
 import { withLiveStats } from '../lib/github';
@@ -82,16 +81,14 @@ const latest = posts.slice(0, 6);
 				class="enter mt-9 flex flex-wrap items-center gap-x-7 gap-y-4"
 				style="--enter-delay:140ms"
 			>
-				<StarBorder>
-					<LinkButton
-						href={writingHref('/posts')}
-						variant="primary"
-						size="lg"
-						className="rounded-full"
-					>
-						Read the writing
-					</LinkButton>
-				</StarBorder>
+				<LinkButton
+					href={writingHref('/posts')}
+					variant="primary"
+					size="lg"
+					className="blueprint-control"
+				>
+					Read the writing
+				</LinkButton>
 				<a
 					href="https://github.com/codebam"
 					target="_blank"
@@ -147,6 +144,29 @@ const latest = posts.slice(0, 6);
 		transform: translate3d(calc(var(--scene-x, 0) * 10px), calc(var(--scene-y, 0) * 7px), 0);
 		transition: transform 0.45s var(--ease-out-soft);
 		will-change: transform;
+	}
+	.hero::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		background-image:
+			linear-gradient(color-mix(in srgb, var(--accent) 11%, transparent) 1px, transparent 1px),
+			linear-gradient(
+				90deg,
+				color-mix(in srgb, var(--accent) 11%, transparent) 1px,
+				transparent 1px
+			);
+		background-size: 32px 32px;
+		background-position:
+			calc(var(--scene-x, 0) * 8px) calc(var(--scene-y, 0) * 8px),
+			calc(var(--scene-x, 0) * 8px) calc(var(--scene-y, 0) * 8px);
+		mask-image: linear-gradient(90deg, #000 0%, #000 72%, transparent 100%);
+		transition: background-position 0.35s var(--ease-out-soft);
+		z-index: 0;
+	}
+	.hero > .shell {
+		z-index: 1;
 	}
 	.hero-avatar {
 		transform: translate3d(calc(var(--scene-x, 0) * -3px), calc(var(--scene-y, 0) * -3px), 0);

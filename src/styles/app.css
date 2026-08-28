@@ -92,31 +92,31 @@
    section the palette it is not currently in. */
 @layer base {
 	:root {
-		--palette-light-bg: #f7f8fa;
-		--palette-light-alt: #eef1f5;
+		--palette-light-bg: #f1f5f9;
+		--palette-light-alt: #e7edf4;
 		--palette-light-panel: #ffffff;
-		--palette-light-line: #dce1e8;
-		--palette-light-line-strong: #c7ced8;
-		--palette-light-text: #172033;
-		--palette-light-body: #445066;
-		--palette-light-muted: #5f6b7d;
-		--palette-light-dim: #8791a1;
-		--palette-light-accent: #2563eb;
-		--palette-light-accent-hover: #1d4ed8;
+		--palette-light-line: #cbd5e1;
+		--palette-light-line-strong: #94a3b8;
+		--palette-light-text: #111827;
+		--palette-light-body: #334155;
+		--palette-light-muted: #52647a;
+		--palette-light-dim: #7a8ba2;
+		--palette-light-accent: #2457d6;
+		--palette-light-accent-hover: #1e46b5;
 		--palette-light-accent-on: #ffffff;
 
-		--palette-dark-bg: #0f141c;
-		--palette-dark-alt: #171e29;
-		--palette-dark-panel: #171e29;
-		--palette-dark-line: #293241;
-		--palette-dark-line-strong: #3b4658;
-		--palette-dark-text: #e7edf6;
-		--palette-dark-body: #b6c0ce;
-		--palette-dark-muted: #929eae;
-		--palette-dark-dim: #687487;
+		--palette-dark-bg: #101827;
+		--palette-dark-alt: #172236;
+		--palette-dark-panel: #172236;
+		--palette-dark-line: #2a3a52;
+		--palette-dark-line-strong: #40536f;
+		--palette-dark-text: #eff6ff;
+		--palette-dark-body: #c2cedd;
+		--palette-dark-muted: #98a8bc;
+		--palette-dark-dim: #64748b;
 		--palette-dark-accent: #60a5fa;
 		--palette-dark-accent-hover: #93c5fd;
-		--palette-dark-accent-on: #08111f;
+		--palette-dark-accent-on: #081225;
 	}
 }
 
@@ -127,25 +127,25 @@
 		--kumo-button-emphasis-ring: var(--accent-hover);
 
 		/* Surfaces */
-		--bg: #f7f8fa;
-		--surface-alt: #eef1f5;
+		--bg: #f1f5f9;
+		--surface-alt: #e7edf4;
 		--panel: #ffffff;
-		--line: #dce1e8;
-		--line-strong: #c7ced8;
+		--line: #cbd5e1;
+		--line-strong: #94a3b8;
 
 		/* Text */
-		--text: #172033;
-		--body: #445066;
-		--muted: #5f6b7d;
+		--text: #111827;
+		--body: #334155;
+		--muted: #52647a;
 		/* Non-text only — scrollbar thumb, the search icon. It sits at 3.3:1 on
 		   every surface here, which clears the 3:1 bar for UI marks but not the
 		   4.5:1 one for type, and it fails hardest in the inverted footer where
 		   Lighthouse caught it. The faintest *text* tier is --muted. */
-		--dim: #8791a1;
+		--dim: #7a8ba2;
 
 		/* Accent */
-		--accent: #2563eb;
-		--accent-hover: #1d4ed8;
+		--accent: #2457d6;
+		--accent-hover: #1e46b5;
 		/* Text that sits on an accent surface. */
 		--accent-on: var(--palette-light-accent-on);
 		/* Accent at low alpha, for tints that survive both themes */
@@ -153,30 +153,30 @@
 
 		/* Inverted pair, used by the primary button: a dark pill on a
 		   light page, a light pill on a dark one. */
-		--invert-bg: #172033;
-		--invert-text: #f7f8fa;
+		--invert-bg: #111827;
+		--invert-text: #f1f5f9;
 	}
 
 	@media (prefers-color-scheme: dark) {
 		:root {
-			--bg: #0f141c;
-			--surface-alt: #171e29;
-			--panel: #171e29;
-			--line: #293241;
-			--line-strong: #3b4658;
+			--bg: #101827;
+			--surface-alt: #172236;
+			--panel: #172236;
+			--line: #2a3a52;
+			--line-strong: #40536f;
 
-			--text: #e7edf6;
-			--body: #b6c0ce;
-			--muted: #929eae;
-			--dim: #687487;
+			--text: #eff6ff;
+			--body: #c2cedd;
+			--muted: #98a8bc;
+			--dim: #64748b;
 
 			--accent: #60a5fa;
 			--accent-hover: #93c5fd;
 			--accent-on: var(--palette-dark-accent-on);
 			--accent-wash: color-mix(in srgb, var(--accent) 14%, transparent);
 
-			--invert-bg: #e7edf6;
-			--invert-text: #0f141c;
+			--invert-bg: #eff6ff;
+			--invert-text: #101827;
 		}
 	}
 
@@ -232,13 +232,11 @@
 	   Type
 	   ═══════════════════════════════════════════════════════════ */
 
-	/* Display serif. Optical sizing and a tight tracking are what keep
-	   Newsreader from looking like a default browser serif at 60px. */
+	/* Tight sans display face gives page and section titles blueprint density. */
 	.display {
-		font-family: var(--font-serif);
-		font-weight: 400;
-		font-optical-sizing: auto;
-		letter-spacing: -0.025em;
+		font-family: var(--font-sans);
+		font-weight: 650;
+		letter-spacing: -0.045em;
 		line-height: 1.04;
 	}
 	.display em {
@@ -263,9 +261,10 @@
 
 	/* Section label: small, uppercase, tracked out */
 	.eyebrow {
+		font-family: var(--font-mono);
 		font-size: 0.78rem;
-		font-weight: 600;
-		letter-spacing: 0.16em;
+		font-weight: 500;
+		letter-spacing: 0.1em;
 		text-transform: uppercase;
 		color: var(--accent);
 	}
@@ -470,6 +469,13 @@
 	}
 }
 
+/* Blueprint geometry deliberately overrides Kumo's rounded utility classes. */
+.blueprint-card,
+.blueprint-control {
+	border-radius: 3px;
+	box-shadow: none;
+}
+
 /* ═══════════════════════════════════════════════════════════
    Long-form content
    Tailwind's typography plugin, pointed at our tokens so a single
@@ -668,6 +674,7 @@
 		transform: translateY(0);
 	}
 }
+
 .animate-fade-in-up {
 	animation: fadeInUp 0.45s ease-out forwards;
 }
@@ -797,8 +804,8 @@
 		--muted: #4a4b4f;
 		--dim: #6c6a66;
 
-		--accent: #2563eb;
-		--accent-hover: #1d4ed8;
+		--accent: #2457d6;
+		--accent-hover: #1e46b5;
 		--accent-on: #ffffff;
 		--accent-wash: transparent;
 
@@ -818,8 +825,8 @@
 		--body: #26272a;
 		--muted: #4a4b4f;
 		--dim: #6c6a66;
-		--accent: #2563eb;
-		--accent-hover: #1d4ed8;
+		--accent: #2457d6;
+		--accent-hover: #1e46b5;
 		--accent-on: #ffffff;
 		--invert-bg: #17181a;
 		--invert-text: #ffffff;

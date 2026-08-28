@@ -1,11 +1,10 @@
 ---
 /**
- * FACTS — tinted band over a dot field that answers the pointer.
+ * FACTS — tinted cards over a blueprint grid that follows the pointer.
  *
  * The fourth cell is a word rather than a number, so it is spelled out instead
  * of being forced into the same shape as the three counts beside it.
  */
-import DotGrid from '../effects/DotGrid.astro';
 import type { FeaturedProject } from '../../lib/types';
 import { LayerCard } from '@cloudflare/kumo/components/layer-card';
 
@@ -30,13 +29,11 @@ const facts = [
 ];
 ---
 
-<section class="facts panel-alt relative overflow-hidden py-12 md:py-14">
-	<DotGrid />
-
+<section class="facts panel-alt relative overflow-hidden py-12 md:py-14" data-pointer-scene>
 	<div class="shell relative grid grid-cols-2 gap-x-8 gap-y-8 md:grid-cols-4">
 		{
 			facts.map((fact, i) => (
-				<LayerCard className="fact p-4" data-reveal data-reveal-delay={i * 60}>
+				<LayerCard className="blueprint-card fact p-4" data-reveal data-reveal-delay={i * 60}>
 					<div class="fact-value display text-[2.4rem] tabular-nums md:text-[2.9rem]">
 						{fact.value}
 					</div>
@@ -48,7 +45,24 @@ const facts = [
 </section>
 
 <style>
+	.facts {
+		background-image:
+			linear-gradient(color-mix(in srgb, var(--accent) 13%, transparent) 1px, transparent 1px),
+			linear-gradient(
+				90deg,
+				color-mix(in srgb, var(--accent) 13%, transparent) 1px,
+				transparent 1px
+			);
+		background-size: 32px 32px;
+		background-position:
+			calc(var(--scene-x, 0) * 8px) calc(var(--scene-y, 0) * 8px),
+			calc(var(--scene-x, 0) * 8px) calc(var(--scene-y, 0) * 8px);
+		transition: background-position 0.35s var(--ease-out-soft);
+	}
 	.fact {
+		background: color-mix(in srgb, var(--accent) 10%, var(--panel));
+		border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--line));
+		box-shadow: none;
 		transition: transform 0.35s var(--ease-out-soft);
 	}
 	.fact-value {

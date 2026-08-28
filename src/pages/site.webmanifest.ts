@@ -17,11 +17,11 @@ export const GET: APIRoute = async () => {
 			{ src: '/android-chrome-512x512.png', sizes: '512x512', type: 'image/png' },
 			{ src: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }
 		],
-		theme_color: '#2563eb',
-		background_color: '#f7f8fa',
+		theme_color: '#2457d6',
+		background_color: '#f1f5f9',
 		theme_colors: [
-			{ color: '#f7f8fa', media: '(prefers-color-scheme: light)' },
-			{ color: '#0f141c', media: '(prefers-color-scheme: dark)' }
+			{ color: '#f1f5f9', media: '(prefers-color-scheme: light)' },
+			{ color: '#101827', media: '(prefers-color-scheme: dark)' }
 		],
 		display: 'standalone',
 		scope: '/'
