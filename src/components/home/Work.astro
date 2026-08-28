@@ -257,7 +257,7 @@ const { projects } = Astro.props;
 	   Once the controller is ready, vertical page distance becomes horizontal
 	   slide progress while this inner stage stays pinned. */
 	.work-panel[data-carousel-ready] {
-		height: calc(var(--slide-count) * 100svh + 35svh);
+		height: calc(var(--slide-count) * 75svh + 51.25svh);
 		padding-block: 0;
 	}
 	.work-panel[data-carousel-ready] .work-shell {
@@ -289,6 +289,12 @@ const { projects } = Astro.props;
 		animation: none;
 		transition: none;
 		will-change: transform, opacity;
+	}
+	@media (width >= 48rem) {
+		.work-panel[data-carousel-ready] .work-row {
+			inset-inline: -2.5rem;
+			padding-inline: 2.5rem;
+		}
 	}
 	.work-panel[data-carousel-ready] .row-media {
 		grid-column: 1;
@@ -336,7 +342,7 @@ const { projects } = Astro.props;
 	}
 	@media (width < 48rem) {
 		.work-panel[data-carousel-ready] {
-			height: calc(var(--slide-count) * 110svh + 25svh);
+			height: calc(var(--slide-count) * 82.5svh + 43.75svh);
 		}
 		.work-panel[data-carousel-ready] .work-shell {
 			padding-block: 2rem;
