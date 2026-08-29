@@ -11,20 +11,20 @@ const contactHref = `mailto:${serviceSite.email}?subject=${encodeURIComponent('W
 const services = [
 	{
 		index: '01',
-		label: 'Web',
-		title: 'Websites that do a job.',
-		copy: 'Fast, accessible sites built around a clear goal: explain the offer, earn trust, and turn the right visitors into customers.',
+		label: 'Website launch package',
+		title: 'Launch a site that does a job.',
+		copy: 'A custom, accessible business website built around a clear goal: explain the offer, earn trust, and turn the right visitors into customers.',
 		items: [
-			'Landing pages and business sites',
+			'Landing page or focused business site',
 			'Responsive design and content structure',
 			'Forms, analytics, SEO, and deployment'
 		]
 	},
 	{
 		index: '02',
-		label: 'Telegram',
-		title: 'Bots that remove busywork.',
-		copy: 'Purpose-built Telegram bots for communities and businesses, from a focused command workflow to a connected production service.',
+		label: 'Telegram bot package',
+		title: 'Put the busywork on a bot.',
+		copy: 'A purpose-built Telegram bot for your community or business, from a focused command workflow to a connected production service.',
 		items: [
 			'Commands, menus, and automated replies',
 			'Payments, notifications, and API integrations',
@@ -66,7 +66,7 @@ const schema = JSON.stringify({
 >
 	<script slot="head" type="application/ld+json" is:inline set:html={schema} />
 
-	<BlueprintMasthead label="Custom development / Direct collaboration" meta="Web + Telegram">
+	<BlueprintMasthead label="Custom project packages / Direct collaboration" meta="Quoted by email">
 		<Fragment slot="title">Your idea, built to <em>work.</em></Fragment>
 		<p>
 			Custom websites and Telegram bots, taken from a clear scope to a production launch. You work
@@ -74,17 +74,19 @@ const schema = JSON.stringify({
 		</p>
 		<p class="masthead-actions">
 			<LinkButton href={contactHref} variant="primary" size="lg" className="blueprint-control">
-				Start a project
+				Request a project quote
 			</LinkButton>
-			<span class="response-note">Tell me what you need</span>
+			<span class="response-note">No checkout / scoped by email</span>
 		</p>
 	</BlueprintMasthead>
 
 	<section class="services panel-alt">
 		<div class="service-shell shell">
 			<div class="section-heading" data-reveal>
-				<h2 class="display display-lg"><span class="section-number">02 /</span> What I build</h2>
-				<p>Two focused services</p>
+				<h2 class="display display-lg">
+					<span class="section-number">02 /</span> Choose a starting point
+				</h2>
+				<p>Two custom packages</p>
 			</div>
 
 			<div class="service-grid">
