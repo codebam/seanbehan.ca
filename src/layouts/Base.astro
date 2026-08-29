@@ -13,7 +13,7 @@
 import { EmDashHead, EmDashBodyStart, EmDashBodyEnd } from 'emdash/ui';
 import { createPublicPageContext } from 'emdash/page';
 import { LinkButton } from '@cloudflare/kumo/components/button';
-import { site, absolute, canonicalUrl, productHref, writingHref } from '../lib/site';
+import { site, absolute, canonicalUrl, codebamHref, writingHref } from '../lib/site';
 import type { PostSummary } from '../lib/types';
 import '../styles/app.css';
 
@@ -102,13 +102,13 @@ const pageCtx = createPublicPageContext({
 /** The two variants share a frame but send writing to its canonical origin. */
 const nav = site.showResume
 	? [
-			{ href: productHref('/products/cloudflare-workers-production-kit'), label: 'Kit' },
+			{ href: codebamHref('/services'), label: 'Services' },
 			{ href: writingHref('/posts'), label: 'Writing' },
 			{ href: '/links', label: 'Links' },
 			{ href: '/resume', label: 'Résumé' }
 		]
 	: [
-			{ href: productHref('/products/cloudflare-workers-production-kit'), label: 'Kit' },
+			{ href: codebamHref('/services'), label: 'Services' },
 			{ href: writingHref('/posts'), label: 'Writing' },
 			{ href: '/links', label: 'Links' }
 		];

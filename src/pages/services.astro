@@ -1,0 +1,320 @@
+---
+import Base from '../layouts/Base.astro';
+import BlueprintMasthead from '../components/BlueprintMasthead.astro';
+import { LinkButton } from '@cloudflare/kumo/components/button';
+import { SITES } from '../lib/site.data.js';
+
+const serviceSite = SITES.codebam;
+const canonical = `${serviceSite.url}/services`;
+const contactHref = `mailto:${serviceSite.email}?subject=${encodeURIComponent('Website or Telegram bot project')}`;
+
+const services = [
+	{
+		index: '01',
+		label: 'Web',
+		title: 'Websites that do a job.',
+		copy: 'Fast, accessible sites built around a clear goal: explain the offer, earn trust, and turn the right visitors into customers.',
+		items: [
+			'Landing pages and business sites',
+			'Responsive design and content structure',
+			'Forms, analytics, SEO, and deployment'
+		]
+	},
+	{
+		index: '02',
+		label: 'Telegram',
+		title: 'Bots that remove busywork.',
+		copy: 'Purpose-built Telegram bots for communities and businesses, from a focused command workflow to a connected production service.',
+		items: [
+			'Commands, menus, and automated replies',
+			'Payments, notifications, and API integrations',
+			'Hosting, data storage, and admin tools'
+		]
+	}
+];
+
+const steps = [
+	['Scope', 'Define the audience, the job to be done, and what a successful launch needs.'],
+	['Design', 'Turn the scope into a clear interface and a practical technical plan.'],
+	['Build', 'Implement in small reviewable stages, with progress visible throughout.'],
+	['Launch', 'Test the production path, deploy it, and document what you own.']
+];
+
+const schema = JSON.stringify({
+	'@context': 'https://schema.org',
+	'@type': 'Service',
+	'@id': `${canonical}#service`,
+	name: 'Website and Telegram bot development',
+	description: 'Custom website and Telegram bot design, development, integration, and launch.',
+	url: canonical,
+	provider: {
+		'@type': 'Person',
+		name: 'Sean Behan',
+		url: serviceSite.url
+	},
+	areaServed: 'Worldwide',
+	serviceType: ['Website development', 'Telegram bot development']
+}).replace(/</g, '\\u003c');
+---
+
+<Base
+	title="Website and Telegram Bot Development"
+	description="Custom websites and Telegram bots designed, built, integrated, and launched by codebam."
+	ogTitle="Websites and Telegram bots, built to ship — codebam"
+	ogDescription="Custom web development and Telegram automation without the agency handoff."
+	canonical={canonical}
+>
+	<script slot="head" type="application/ld+json" is:inline set:html={schema} />
+
+	<BlueprintMasthead label="Custom development / Direct collaboration" meta="Web + Telegram">
+		<Fragment slot="title">Your idea, built to <em>work.</em></Fragment>
+		<p>
+			Custom websites and Telegram bots, taken from a clear scope to a production launch. You work
+			directly with the developer doing the work.
+		</p>
+		<p class="masthead-actions">
+			<LinkButton href={contactHref} variant="primary" size="lg" className="blueprint-control">
+				Start a project
+			</LinkButton>
+			<span class="response-note">Tell me what you need</span>
+		</p>
+	</BlueprintMasthead>
+
+	<section class="services panel-alt">
+		<div class="service-shell shell">
+			<div class="section-heading" data-reveal>
+				<h2 class="display display-lg"><span class="section-number">02 /</span> What I build</h2>
+				<p>Two focused services</p>
+			</div>
+
+			<div class="service-grid">
+				{
+					services.map((service, i) => (
+						<article data-reveal data-reveal-delay={i * 70}>
+							<header>
+								<span class="item-index">{service.index}</span>
+								<span class="service-label">{service.label}</span>
+							</header>
+							<h3>{service.title}</h3>
+							<p>{service.copy}</p>
+							<ul>
+								{service.items.map((item) => (
+									<li>{item}</li>
+								))}
+							</ul>
+						</article>
+					))
+				}
+			</div>
+		</div>
+	</section>
+
+	<section class="process panel-invert">
+		<div class="service-shell shell">
+			<div class="section-heading" data-reveal>
+				<h2 class="display display-lg"><span class="section-number">03 /</span> One clear path</h2>
+				<p>Scope to launch</p>
+			</div>
+
+			<ol class="process-list">
+				{
+					steps.map(([title, copy], i) => (
+						<li data-reveal data-reveal-delay={i * 50}>
+							<span class="item-index">{String(i + 1).padStart(2, '0')}</span>
+							<h3>{title}</h3>
+							<p>{copy}</p>
+						</li>
+					))
+				}
+			</ol>
+		</div>
+	</section>
+
+	<section class="project-brief panel">
+		<div class="service-shell shell brief-grid">
+			<div data-reveal>
+				<p class="eyebrow">Have something in mind?</p>
+				<h2 class="display display-lg">Start with the problem.</h2>
+			</div>
+			<div class="brief-copy" data-reveal data-reveal-delay="60">
+				<p>
+					Send a short note with what you want to make, who it is for, and when you want it live. I
+					will reply with questions and a practical next step.
+				</p>
+				<LinkButton href={contactHref} variant="primary" size="lg" className="blueprint-control">
+					Email {serviceSite.email}
+				</LinkButton>
+				<a class="kit-link link-accent" href="/products/cloudflare-workers-production-kit">
+					Building it yourself? See the production kit <span class="arrow" aria-hidden="true"
+						>&rarr;</span
+					>
+				</a>
+			</div>
+		</div>
+	</section>
+</Base>
+
+<style>
+	.response-note,
+	.section-heading > p,
+	.service-label {
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
+	.response-note {
+		align-self: center;
+	}
+	.services,
+	.process,
+	.project-brief {
+		padding-block: clamp(6rem, 11vw, 10rem);
+		border-top: 1px solid var(--line);
+	}
+	.service-shell {
+		max-width: 1240px;
+	}
+	.section-heading {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 2rem;
+	}
+	.section-number,
+	.item-index {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		font-weight: 500;
+		letter-spacing: 0.08em;
+		color: var(--accent-warm);
+	}
+	.service-grid {
+		display: grid;
+		gap: 1px;
+		margin-top: clamp(2.5rem, 5vw, 4rem);
+		border: 1px solid var(--line);
+		background: var(--line);
+	}
+	.service-grid article {
+		min-width: 0;
+		padding: clamp(1.5rem, 4vw, 3rem);
+		background: var(--bg);
+	}
+	.service-grid header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding-bottom: 4rem;
+	}
+	.service-grid h3 {
+		max-width: 14ch;
+		font-size: clamp(2rem, 4vw, 3.4rem);
+		font-weight: 550;
+		letter-spacing: -0.045em;
+		line-height: 1.05;
+	}
+	.service-grid article > p {
+		max-width: 48ch;
+		margin-top: 1.5rem;
+		font-size: 1rem;
+		line-height: 1.7;
+		color: var(--body);
+	}
+	.service-grid ul {
+		display: grid;
+		gap: 0.7rem;
+		margin-top: 2.5rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid var(--line);
+		list-style: none;
+		font-size: 0.9rem;
+		color: var(--body);
+	}
+	.service-grid li::before {
+		content: '+';
+		margin-right: 0.65rem;
+		color: var(--accent);
+	}
+	.process {
+		background-image:
+			linear-gradient(color-mix(in srgb, var(--accent) 8%, transparent) 1px, transparent 1px),
+			linear-gradient(90deg, color-mix(in srgb, var(--accent) 8%, transparent) 1px, transparent 1px);
+		background-size: 32px 32px;
+	}
+	.process-list {
+		display: grid;
+		margin-top: clamp(2.5rem, 5vw, 4rem);
+		border-bottom: 1px solid var(--line);
+		list-style: none;
+	}
+	.process-list li {
+		padding: 1.5rem;
+		border-top: 1px solid var(--line);
+		background: color-mix(in srgb, var(--bg) 78%, transparent);
+	}
+	.process-list .item-index {
+		display: block;
+		margin-bottom: 3rem;
+	}
+	.process-list h3 {
+		font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+		font-weight: 500;
+		letter-spacing: -0.025em;
+	}
+	.process-list p {
+		margin-top: 0.75rem;
+		font-size: 0.92rem;
+		line-height: 1.65;
+		color: var(--body);
+	}
+	.brief-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.7fr);
+		align-items: start;
+		gap: clamp(3rem, 8vw, 8rem);
+	}
+	.brief-grid h2 {
+		max-width: 12ch;
+		margin-top: 1rem;
+	}
+	.brief-copy {
+		padding-top: 1.25rem;
+		border-top: 1px solid var(--line-strong);
+	}
+	.brief-copy > p {
+		font-size: 1.05rem;
+		line-height: 1.7;
+		color: var(--body);
+	}
+	.brief-copy :global(a[role='button']) {
+		margin-top: 2rem;
+	}
+	.kit-link {
+		display: block;
+		width: fit-content;
+		margin-top: 1.5rem;
+	}
+	@media (width >= 48rem) {
+		.service-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+		.process-list {
+			grid-template-columns: repeat(4, 1fr);
+		}
+		.process-list li:not(:first-child) {
+			border-left: 1px solid var(--line);
+		}
+	}
+	@media (width < 48rem) {
+		.section-heading {
+			align-items: flex-start;
+			flex-direction: column;
+			gap: 0.75rem;
+		}
+		.brief-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

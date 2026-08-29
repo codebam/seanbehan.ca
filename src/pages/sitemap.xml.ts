@@ -12,7 +12,7 @@ const staticPaths = () => [
 	'/about',
 	'/contact',
 	'/links',
-	...(site.id === 'codebam' ? ['/products/cloudflare-workers-production-kit'] : []),
+	...(site.id === 'codebam' ? ['/services', '/products/cloudflare-workers-production-kit'] : []),
 	...(site.id === 'seanbehan' ? ['/posts', '/posts/tags'] : []),
 	...(site.showResume ? ['/resume'] : [])
 ];

@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500" role="img" aria-labelledby="title desc">
+  <title id="title">codebam websites and Telegram bots advertisement</title>
+  <desc id="desc">Circular advertisement offering custom websites and Telegram bots.</desc>
+  <defs>
+    <radialGradient id="field" cx="35%" cy="25%" r="80%">
+      <stop offset="0" stop-color="#17396d"/>
+      <stop offset="0.58" stop-color="#0d1c34"/>
+      <stop offset="1" stop-color="#08111f"/>
+    </radialGradient>
+    <linearGradient id="ring" x1="65" y1="65" x2="435" y2="435" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4f8cff"/>
+      <stop offset="0.5" stop-color="#ff893b"/>
+      <stop offset="1" stop-color="#4f8cff"/>
+    </linearGradient>
+    <clipPath id="circle">
+      <circle cx="250" cy="250" r="222"/>
+    </clipPath>
+  </defs>
+
+  <rect width="500" height="500" fill="#08111f"/>
+  <g opacity="0.16" stroke="#4f8cff" stroke-width="1">
+    <path d="M0 50h500M0 100h500M0 150h500M0 200h500M0 250h500M0 300h500M0 350h500M0 400h500M0 450h500"/>
+    <path d="M50 0v500M100 0v500M150 0v500M200 0v500M250 0v500M300 0v500M350 0v500M400 0v500M450 0v500"/>
+  </g>
+
+  <circle cx="250" cy="250" r="226" fill="#08111f" stroke="url(#ring)" stroke-width="3"/>
+  <g clip-path="url(#circle)">
+    <circle cx="250" cy="250" r="222" fill="url(#field)"/>
+    <path d="M14 365 486 168" stroke="#4f8cff" stroke-opacity="0.12" stroke-width="78"/>
+    <circle cx="378" cy="120" r="82" fill="none" stroke="#ff893b" stroke-opacity="0.18" stroke-width="1"/>
+    <circle cx="378" cy="120" r="57" fill="none" stroke="#ff893b" stroke-opacity="0.18" stroke-width="1"/>
+  </g>
+
+  <g fill="#f2f5fb" font-family="Inter, Arial, sans-serif" text-anchor="middle">
+    <text x="250" y="93" font-size="23" font-weight="700">codebam<tspan fill="#ff893b">.</tspan></text>
+    <text x="250" y="134" fill="#79a7ff" font-family="monospace" font-size="10" letter-spacing="3">DESIGN  ·  BUILD  ·  SHIP</text>
+
+    <text x="250" y="208" font-size="47" font-weight="750" letter-spacing="-2">Websites</text>
+    <text x="250" y="260" font-size="25" font-weight="500">+</text>
+    <text x="250" y="316" font-size="42" font-weight="750" letter-spacing="-2">Telegram Bots</text>
+
+    <text x="250" y="357" fill="#b8c4d8" font-size="14">Custom-built for your business.</text>
+  </g>
+
+  <g transform="translate(145 382)">
+    <rect width="210" height="43" rx="2" fill="#4f7fff"/>
+    <text x="105" y="27" fill="#fff" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" text-anchor="middle">codebam.ca/services</text>
+  </g>
+  <circle cx="250" cy="451" r="3" fill="#ff893b"/>
+</svg>
