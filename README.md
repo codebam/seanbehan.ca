@@ -26,6 +26,8 @@ npm run dev
 
 `npm run dev` runs `emdash dev`: it applies any pending migrations, seeds an empty database from `seed/seed.json`, and starts Astro. The site is at `http://localhost:4321` and the admin panel at `http://localhost:4321/_emdash/admin` — on localhost the dev bypass signs you in without a passkey.
 
+Use `npm run dev:codebam` for the codebam variant and its private storefront bindings.
+
 The local database is a SQLite file under `.wrangler/state`, not committed. An empty one is seeded with the schema (posts, pages, tags) but no posts; see **Content** below for how the real ones got there.
 
 ## Content
@@ -57,8 +59,17 @@ First deploy needs the bindings to exist:
 ```bash
 npx wrangler d1 create seanbehan-ca
 npx wrangler r2 bucket create seanbehan-ca-media
-npx wrangler secret put EMDASH_ENCRYPTION_KEY   # value from .env, or `npx emdash auth secret`
+npx wrangler r2 bucket create codebam-product-downloads
+npx emdash secrets generate
+npx wrangler secret put EMDASH_ENCRYPTION_KEY
+npx wrangler secret put EMDASH_ENCRYPTION_KEY --env codebam
 ```
+
+Use the same generated encryption key for both Worker secret prompts.
+
+The production kit uses Stripe Checkout and a private R2 download. Product, Managed Payments,
+webhook, artifact, email, and Worker secret setup is documented in
+[`docs/stripe-checkout.md`](docs/stripe-checkout.md).
 
 HTML is served with `s-maxage` so Cloudflare can hold it at the edge, but that only takes effect once a Cache Rule marks HTML cacheable — a zone setting, not a repo one. `docs/edge-caching.md` has the rule and the deploy-time purge it requires.
 

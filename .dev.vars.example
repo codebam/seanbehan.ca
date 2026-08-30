@@ -1,0 +1,4 @@
+EMDASH_ENCRYPTION_KEY=emdash_enc_v1_replace_me
+STRIPE_SECRET_KEY=rk_test_replace_me
+STRIPE_PRICE_ID=price_replace_me
+STRIPE_WEBHOOK_SECRET=whsec_replace_me

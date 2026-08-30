@@ -12,7 +12,16 @@ const staticPaths = () => [
 	'/about',
 	'/contact',
 	'/links',
-	...(site.id === 'codebam' ? ['/services', '/products/cloudflare-workers-production-kit'] : []),
+	...(site.id === 'codebam'
+		? [
+				'/services',
+				'/products/cloudflare-workers-production-kit',
+				'/legal/privacy',
+				'/legal/terms-of-sale',
+				'/legal/refund-policy',
+				'/legal/product-license'
+			]
+		: []),
 	...(site.id === 'seanbehan' ? ['/posts', '/posts/tags'] : []),
 	...(site.showResume ? ['/resume'] : [])
 ];

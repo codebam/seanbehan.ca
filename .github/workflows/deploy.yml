@@ -11,18 +11,18 @@ on:
   # For a redeploy that no push justifies.
   workflow_dispatch:
 
-# A newer push supersedes this one: deploying an older commit over a newer one
-# is the one outcome worth cancelling for.
+# A deployment may have migrated the shared database or updated one origin.
+# Finish that rollout before a newer push starts rather than stranding variants.
 concurrency:
   group: deploy-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   verify:
     uses: ./.github/workflows/ci.yml
 
   deploy:
-    needs: verify
+    needs: migrate
     runs-on: ubuntu-latest
     # Both origins are one repo and one database; they differ only in the
     # identity baked in at build time, so each is built and deployed in turn.
@@ -34,10 +34,12 @@ jobs:
       matrix:
         include:
           - variant: seanbehan
-            script: deploy
+            build: build
+            wrangler_args: ''
             zone: seanbehan.ca
           - variant: codebam
-            script: deploy:codebam
+            build: build:codebam
+            wrangler_args: --env codebam
             zone: codebam.ca
     steps:
       - uses: actions/checkout@v4
@@ -49,11 +51,16 @@ jobs:
 
       - run: npm ci
 
+      # Build before exposing a production credential. Astro and its plugins do
+      # not need Cloudflare access to produce the Worker bundle.
+      - name: Build ${{ matrix.variant }}
+        run: npm run ${{ matrix.build }}
+
       - name: Deploy ${{ matrix.variant }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-        run: npm run ${{ matrix.script }}
+        run: npx wrangler deploy ${{ matrix.wrangler_args }}
 
       # Pages are rendered per request and held at the edge for ten minutes, so
       # a purge is no longer about stale HTML referencing bundles that have gone
@@ -63,3 +70,24 @@ jobs:
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
         run: bash tools/cloudflare/purge.sh ${{ matrix.zone }}
+
+  # Both Workers share one D1 database. Apply repository-owned migrations once,
+  # before either build can deploy code that expects the new schema.
+  migrate:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - run: npm ci
+
+      - name: Apply site migrations
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+        run: npm run migrate:prod

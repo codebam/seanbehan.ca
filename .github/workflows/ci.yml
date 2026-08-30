@@ -32,6 +32,9 @@ jobs:
       - name: Test
         run: npm run test:run
 
+      - name: Validate site migrations
+        run: npm run migrate:local
+
       # Both variants, because the identity is chosen at build time and a
       # change that breaks only codebam.ca would otherwise reach master green.
       - name: Build seanbehan

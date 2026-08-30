@@ -16,8 +16,10 @@
       in
       {
         devShell = pkgs.mkShell {
+          # Vite's embedded workerd does not discover NixOS's system CA store.
+          NODE_EXTRA_CA_CERTS = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
           buildInputs = with pkgs; [
-            nodejs
+            nodejs_26
             typescript-language-server
             prettier
             astro-language-server

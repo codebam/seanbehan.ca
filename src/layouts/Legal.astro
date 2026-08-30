@@ -1,0 +1,39 @@
+---
+import Base from './Base.astro';
+import { SITES } from '../lib/site';
+
+interface Props {
+	frontmatter: {
+		title: string;
+		description: string;
+	};
+}
+
+const { frontmatter } = Astro.props;
+const canonical = `${SITES.codebam.url}${Astro.url.pathname}`;
+---
+
+<Base title={frontmatter.title} description={frontmatter.description} canonical={canonical}>
+	<article class="panel pt-14 pb-20 md:pt-16">
+		<div class="legal-shell shell">
+			<p class="eyebrow">Legal / codebam</p>
+			<div class="legal-document prose mt-5 max-w-[68ch] text-[1.05rem]" data-prose>
+				<slot />
+			</div>
+		</div>
+	</article>
+</Base>
+
+<style>
+	.legal-shell {
+		max-width: 900px;
+	}
+	.legal-document :global(h1) {
+		max-width: 22ch;
+		margin-bottom: 2.5rem;
+		font-size: clamp(2.4rem, 6vw, 3.4rem);
+	}
+	.legal-document :global(h2) {
+		margin-top: 3rem;
+	}
+</style>

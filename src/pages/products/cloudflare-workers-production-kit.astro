@@ -1,15 +1,13 @@
 ---
 import Base from '../../layouts/Base.astro';
 import BlueprintMasthead from '../../components/BlueprintMasthead.astro';
-import { LinkButton } from '@cloudflare/kumo/components/button';
-import { SITES } from '../../lib/site.data.js';
+import { Button } from '@cloudflare/kumo/components/button';
+import { PRODUCT } from '../../lib/product';
 
-const PRODUCT_NAME = 'Cloudflare Workers Production Kit';
-const PRICE = 59;
-const CURRENCY = 'CAD';
-const checkoutHref =
-	'https://products.codebam.ca/checkout/buy/b65b12a7-fe32-4c26-8663-9b81ed746976';
-const canonical = `${SITES.codebam.url}/products/cloudflare-workers-production-kit`;
+const PRODUCT_NAME = PRODUCT.name;
+const PRICE = PRODUCT.price;
+const CURRENCY = PRODUCT.currency;
+const canonical = PRODUCT.url;
 
 const modules = [
 	{
@@ -62,7 +60,7 @@ const schema = JSON.stringify({
 	brand: { '@type': 'Brand', name: 'codebam' },
 	offers: {
 		'@type': 'Offer',
-		url: checkoutHref,
+		url: canonical,
 		price: PRICE,
 		priceCurrency: CURRENCY,
 		availability: 'https://schema.org/InStock',
@@ -88,11 +86,20 @@ const schema = JSON.stringify({
 			A deployment-ready Astro and Cloudflare Workers reference starter with D1, R2, authentication,
 			security, deployment and operating notes wired into one coherent system.
 		</p>
-		<p class="masthead-actions">
-			<LinkButton href={checkoutHref} variant="primary" size="lg" className="blueprint-control">
-				Buy the production kit
-			</LinkButton>
+		<div class="masthead-actions">
+			<form method="post" action={PRODUCT.checkoutPath}>
+				<Button type="submit" variant="primary" size="lg" className="blueprint-control">
+					Buy the production kit
+				</Button>
+			</form>
 			<span class="checkout-note">Immediate download</span>
+		</div>
+		<p class="purchase-terms masthead-terms">
+			By purchasing, you agree to the <a href="/legal/terms-of-sale">Terms of Sale</a>, <a
+				href="/legal/refund-policy">Refund Policy</a
+			>, and <a href="/legal/product-license">Product License</a>. See the <a href="/legal/privacy"
+				>Privacy Policy</a
+			>.
 		</p>
 	</BlueprintMasthead>
 
@@ -150,24 +157,30 @@ const schema = JSON.stringify({
 					<h2 class="display display-lg">Own the foundation.</h2>
 					<p class="offer-copy">
 						Get the complete release for <strong>${PRICE} {CURRENCY}</strong>. Buyers receive the
-						Git repository, written handbook, example application and one year of product updates.
+						source tree, written handbook, example application and one year of product updates.
 					</p>
 				</div>
 
 				<aside class="price-card" data-reveal data-reveal-delay="70" aria-label="Purchase terms">
 					<p class="price"><span>$</span>{PRICE}<small> {CURRENCY}</small></p>
 					<ul>
-						<li>Single-developer commercial license</li>
-						<li>Git repository and downloadable archive</li>
+						<li>Commercial license for one purchaser and their team</li>
+						<li>Complete source tree and downloadable archive</li>
 						<li>Setup handbook and deployment runbook</li>
 						<li>Updates for one year</li>
 					</ul>
-					<LinkButton href={checkoutHref} variant="primary" size="lg" className="blueprint-control">
-						Buy the production kit
-					</LinkButton>
-					<p class="terms">
-						Secure checkout and immediate download through Lemon Squeezy. One-time payment in
-						Canadian dollars.
+					<form method="post" action={PRODUCT.checkoutPath}>
+						<Button type="submit" variant="primary" size="lg" className="blueprint-control">
+							Buy the production kit
+						</Button>
+					</form>
+					<p class="purchase-terms terms">
+						Secure checkout through Stripe. Immediate access after payment; applicable tax and local
+						currency are shown at checkout. By purchasing, you agree to the <a
+							href="/legal/terms-of-sale">Terms of Sale</a
+						>, <a href="/legal/refund-policy">Refund Policy</a>, and <a
+							href="/legal/product-license">Product License</a
+						>. See the <a href="/legal/privacy">Privacy Policy</a>.
 					</p>
 				</aside>
 			</div>
@@ -212,6 +225,37 @@ const schema = JSON.stringify({
 	}
 	.checkout-note {
 		align-self: center;
+	}
+	.masthead-actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 1rem;
+		margin-top: 2rem;
+	}
+	.masthead-terms {
+		max-width: 66ch;
+		margin-top: 1rem;
+	}
+	.purchase-terms {
+		font-size: 0.78rem;
+		line-height: 1.55;
+		color: var(--muted);
+	}
+	.purchase-terms a {
+		color: var(--text);
+		text-decoration: underline;
+		text-decoration-color: var(--line-strong);
+		text-underline-offset: 0.18em;
+	}
+	.purchase-terms a:hover {
+		color: var(--accent);
+	}
+	.price-card form {
+		display: flex;
+	}
+	.price-card form :global(button) {
+		width: 100%;
 	}
 	.contents,
 	.workflow,
@@ -345,9 +389,6 @@ const schema = JSON.stringify({
 	}
 	.terms {
 		margin-top: 1.25rem;
-		font-size: 0.78rem;
-		line-height: 1.55;
-		color: var(--muted);
 	}
 	.fit-grid {
 		display: grid;

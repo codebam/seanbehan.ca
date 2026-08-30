@@ -49,7 +49,7 @@ export default defineConfig({
 				"frame-src 'none'",
 				"frame-ancestors 'none'",
 				"base-uri 'self'",
-				"form-action 'self'",
+				"form-action 'self' https://checkout.stripe.com",
 				"manifest-src 'self'"
 			],
 			styleDirective: {
@@ -89,6 +89,23 @@ export default defineConfig({
 		})
 	],
 	vite: {
+		// Cloudflare's SSR scanner misses imports in Astro frontmatter. Pre-bundle
+		// this site's late discoveries so workerd never sees invalidated chunks.
+		optimizeDeps: {
+			include: [
+				'@cf-wasm/og',
+				'@cloudflare/kumo/components/badge',
+				'@cloudflare/kumo/components/button',
+				'@cloudflare/kumo/components/input',
+				'@cloudflare/kumo/components/layer-card',
+				'@emdash-cms/plugin-forms',
+				'@emdash-cms/plugin-forms/astro',
+				'@portabletext/to-html',
+				'astro/app/manifest',
+				'astro/logger/json',
+				'fuse.js'
+			]
+		},
 		plugins: [tailwindcss()],
 		server: {
 			allowedHosts: ['nixos-desktop.tail7d7a2.ts.net']

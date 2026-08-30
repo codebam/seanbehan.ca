@@ -45,6 +45,9 @@ const IMMUTABLE = /^\/_astro\//;
  */
 const LONG_LIVED = /^\/(fonts|og|img|optimized)\/|\.(webp|png|svg|ico)$/;
 
+/** Order pages carry bearer credentials and can never enter the shared cache. */
+const COMMERCE_PRIVATE = /^\/(checkout|api\/stripe)(?:\/|$)/;
+
 /**
  * HTML is revalidated by the browser and held at the edge for ten minutes.
  * Pages are rendered from D1 now rather than prerendered, so this is what
@@ -113,6 +116,7 @@ const isCacheable = async (context: {
 	// minutes, which defeats Astro's file watcher and HMR.
 	if (import.meta.env.DEV) return false;
 	if (request.method !== 'GET' || url.pathname.startsWith('/_emdash')) return false;
+	if (COMMERCE_PRIVATE.test(url.pathname)) return false;
 	if (url.searchParams.has('_preview')) return false;
 	if (request.headers.get('Authorization')?.toLowerCase().startsWith('bearer ')) return false;
 	return !(await hasLiveSession(request, context.session));
@@ -183,13 +187,27 @@ export const onRequest = defineMiddleware(async (context, next) => {
 			(target.pathname === '/projects' ||
 				target.pathname.startsWith('/projects/') ||
 				target.pathname === '/products' ||
-				target.pathname.startsWith('/products/'))
+				target.pathname.startsWith('/products/') ||
+				target.pathname === '/legal' ||
+				target.pathname.startsWith('/legal/'))
 		) {
 			target.host = new URL(SITES.codebam.url).host;
 			redirect = true;
 		}
 
-		if (redirect) return Response.redirect(target, 301);
+		if (redirect) {
+			if (COMMERCE_PRIVATE.test(pathname)) {
+				return new Response(null, {
+					status: 301,
+					headers: {
+						Location: target.toString(),
+						'Cache-Control': 'private, no-store',
+						'Referrer-Policy': 'no-referrer'
+					}
+				});
+			}
+			return Response.redirect(target, 301);
+		}
 	}
 	const cache = caches.default;
 	const cacheable = await isCacheable(context);
@@ -210,6 +228,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
 	for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
 		response.headers.set(name, value);
+	}
+	if (COMMERCE_PRIVATE.test(pathname)) {
+		response.headers.set('Cache-Control', 'private, no-store');
+		response.headers.set('Referrer-Policy', 'no-referrer');
 	}
 
 	if (pathname.startsWith('/_emdash')) {
@@ -237,7 +259,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		}
 	}
 
-	if (key && response.status === 200) {
+	const cacheControl = response.headers.get('Cache-Control')?.toLowerCase() ?? '';
+	const safeToStore =
+		!cacheControl.includes('private') &&
+		!cacheControl.includes('no-store') &&
+		!response.headers.has('Set-Cookie');
+
+	if (key && response.status === 200 && safeToStore) {
 		// The stored copy is read by `cache.match` above and never by a browser,
 		// so it is put away without the `max-age=0, must-revalidate` half of the
 		// policy — those two are instructions to the reader's own cache, and the

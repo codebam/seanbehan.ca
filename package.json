@@ -8,12 +8,13 @@
 		"seed": "seed/seed.json"
 	},
 	"scripts": {
-		"dev": "emdash dev",
+		"dev": "npm run migrate:local && emdash dev",
+		"dev:codebam": "CLOUDFLARE_ENV=codebam PUBLIC_SITE=codebam npm run dev",
 		"build": "astro build",
 		"build:codebam": "CLOUDFLARE_ENV=codebam PUBLIC_SITE=codebam astro build",
 		"preview": "astro build && wrangler dev",
-		"deploy": "astro build && wrangler deploy",
-		"deploy:codebam": "npm run build:codebam && wrangler deploy --env codebam",
+		"deploy": "env -u CLOUDFLARE_API_TOKEN -u CLOUDFLARE_ACCOUNT_ID -u CF_API_TOKEN astro build && wrangler deploy",
+		"deploy:codebam": "env -u CLOUDFLARE_API_TOKEN -u CLOUDFLARE_ACCOUNT_ID -u CF_API_TOKEN npm run build:codebam && wrangler deploy --env codebam",
 		"check": "astro check",
 		"test": "vitest",
 		"test:run": "vitest run",
@@ -23,7 +24,9 @@
 		"lint": "prettier --check .",
 		"format": "prettier --write .",
 		"prepare": "git config core.hooksPath .githooks || true",
-		"backup": "node scripts/backup-d1.mjs"
+		"backup": "node scripts/backup-d1.mjs",
+		"migrate:local": "wrangler d1 migrations apply DB --local",
+		"migrate:prod": "wrangler d1 migrations apply DB --remote"
 	},
 	"dependencies": {
 		"@astrojs/cloudflare": "^14.0.0",
@@ -44,6 +47,7 @@
 		"react": "19.2.4",
 		"react-dom": "19.2.4",
 		"shiki": "^4.4.3",
+		"stripe": "^22.6.0",
 		"tailwindcss": "^4.3.3",
 		"typescript": "^6.0.3"
 	},

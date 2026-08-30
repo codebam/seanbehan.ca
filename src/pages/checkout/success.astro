@@ -1,0 +1,120 @@
+---
+import Base from '../../layouts/Base.astro';
+import BlueprintMasthead from '../../components/BlueprintMasthead.astro';
+import { LinkButton } from '@cloudflare/kumo/components/button';
+import { env } from 'cloudflare:workers';
+import { PRODUCT } from '../../lib/product';
+import { site } from '../../lib/site';
+import {
+	createStripeClient,
+	isCheckoutSessionId,
+	productDownloadUrl,
+	retrieveProductAccess,
+	safeErrorDetails,
+	type ProductAccess
+} from '../../lib/stripe';
+
+Astro.response.headers.set('Cache-Control', 'private, no-store');
+Astro.response.headers.set('Referrer-Policy', 'no-referrer');
+
+const sessionId = Astro.url.searchParams.get('session_id');
+let access: ProductAccess = { status: 'invalid' };
+let unavailable = false;
+
+if (site.id !== 'codebam' || !isCheckoutSessionId(sessionId)) {
+	Astro.response.status = 400;
+} else {
+	try {
+		access = await retrieveProductAccess(
+			createStripeClient(env.STRIPE_SECRET_KEY),
+			sessionId,
+			env.STRIPE_PRICE_ID
+		);
+		if (access.status === 'invalid' || access.status === 'revoked') Astro.response.status = 404;
+	} catch (error) {
+		console.error('Stripe Checkout confirmation failed', safeErrorDetails(error));
+		unavailable = true;
+		Astro.response.status = 503;
+	}
+}
+
+const downloadHref =
+	access.status === 'paid'
+		? productDownloadUrl(sessionId!, import.meta.env.DEV ? Astro.url.origin : undefined)
+		: null;
+---
+
+<Base
+	title="Order confirmation"
+	description={`Stripe Checkout confirmation for ${PRODUCT.name}.`}
+	canonical={PRODUCT.url}
+	robots="noindex, nofollow"
+>
+	<BlueprintMasthead label="Digital product / Order" meta="Stripe Checkout">
+		<Fragment slot="title">
+			{
+				access.status === 'paid'
+					? 'Payment complete.'
+					: access.status === 'pending'
+						? 'Payment processing.'
+						: unavailable
+							? 'Confirmation unavailable.'
+							: 'Order not found.'
+			}
+		</Fragment>
+		{
+			access.status === 'paid' && downloadHref ? (
+				<>
+					<p>
+						Your v{access.release.version} download is ready. A second access link is being sent to
+						the email used at checkout.
+					</p>
+					<p class="confirmation-actions">
+						<LinkButton
+							href={downloadHref}
+							variant="primary"
+							size="lg"
+							className="blueprint-control"
+						>
+							Download the production kit
+						</LinkButton>
+					</p>
+					<p class="checksum">
+						SHA-256 <code>{access.release.sha256}</code>
+					</p>
+				</>
+			) : access.status === 'pending' ? (
+				<p>
+					Stripe is still confirming the payment. The download link will be emailed when it clears.
+				</p>
+			) : unavailable ? (
+				<p>
+					The payment service could not be reached. Refresh this page, or email{' '}
+					<a href="mailto:codebam@codebam.ca">codebam@codebam.ca</a> with your receipt.
+				</p>
+			) : (
+				<p>
+					This confirmation link is invalid. Return to the <a href={PRODUCT.url}>product page</a> or
+					email <a href="mailto:codebam@codebam.ca">codebam@codebam.ca</a> with your receipt.
+				</p>
+			)
+		}
+	</BlueprintMasthead>
+</Base>
+
+<style>
+	.confirmation-actions {
+		margin-top: 1.75rem;
+	}
+	.checksum {
+		margin-top: 1.25rem;
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		line-height: 1.6;
+		color: var(--muted);
+		word-break: break-all;
+	}
+	.checksum code {
+		color: inherit;
+	}
+</style>
