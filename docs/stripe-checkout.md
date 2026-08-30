@@ -25,9 +25,9 @@ Managed Payments is deliberate. Standard Stripe Checkout makes Sean Behan the me
 and shifts sales-tax, VAT, GST, fraud, dispute, and transaction-support obligations back to him.
 Do not silently disable `managed_payments.enabled` if activation fails.
 
-The reviewed policy pages live under `/legal`: privacy, terms of sale, the 14-day defect refund
-policy, and the product license. Put the privacy and terms URLs in Stripe Checkout settings. The
-license shown on the site matches `PRODUCT-LICENSE.md` in the release archive.
+The policy pages live under `/legal`: privacy, terms of sale, the 14-day defect refund policy, and
+the product license. Put the privacy and terms URLs in Stripe Checkout settings. The license shown
+on the site matches `PRODUCT-LICENSE.md` in the release archive.
 
 ## 2. Product and Price
 
