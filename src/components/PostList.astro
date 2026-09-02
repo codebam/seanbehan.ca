@@ -2,15 +2,14 @@
 /**
  * The list of posts, shared by the home page, the archive and the tag pages.
  *
- * Same markup and styling as the SvelteKit component it replaces; the pointer
- * spotlight is now a class the delegated script in scripts/spotlight.ts picks
- * up, rather than a component instance per row.
+ * Entries are rows of text separated by hairlines — the search script in
+ * PostSearch reorders these server-rendered rows, so the data attributes and
+ * the `[data-post-list]` root are load-bearing, not decorative.
  */
 import { writingHref } from '../lib/site';
 import { displayTag, slugifyTag } from '../lib/tags';
 import type { PostSummary } from '../lib/types';
 import { Badge } from '@cloudflare/kumo/components/badge';
-import { LayerCard } from '@cloudflare/kumo/components/layer-card';
 
 interface Props {
 	posts: PostSummary[];
@@ -18,9 +17,9 @@ interface Props {
 	columns?: 1 | 2;
 	/** Topic tags are noise next to six posts, useful across twenty-four */
 	showTags?: boolean;
-	/** Present home-page entries as a numbered editorial index. */
+	/** Present home-page entries larger, as the page's lead story list. */
 	raised?: boolean;
-	/** Enclose entries in compact blueprint cards. */
+	/** Enclose entries in quiet boxed cards (related reading). */
 	carded?: boolean;
 	/**
 	 * Heading level for an entry title. The default suits the home page, where
@@ -51,28 +50,24 @@ const monthYear = (date: string) =>
 	data-post-list
 >
 	{
-		posts.map((post, i) => (
-			<LayerCard
-				className="item post-card"
+		posts.map((post) => (
+			<div
+				class="item post-card"
 				data-post
 				data-slug={post.slug}
 				data-title={post.meta.title}
 				data-description={post.meta.description}
 				data-tags={post.meta.tags.join(',')}
 			>
-				{/* Tags sit outside the card so they can be links without nesting
+				{/* Tags sit outside the link so they can be links without nesting
 				    anchors. The paired grid still takes these wrappers as children. */}
-				<a class="spotlight entry" href={writingHref(post.path)}>
-					<span class="pool" aria-hidden="true" />
-					{raised && (
-						<span class="entry-number" aria-hidden="true">
-							{String(i + 1).padStart(2, '0')}
-						</span>
-					)}
-					<time datetime={post.meta.date}>{monthYear(post.meta.date)}</time>
-					{post.readingMinutes && <span class="read">&middot; {post.readingMinutes} min</span>}
+				<a class="entry" href={writingHref(post.path)}>
+					<p class="meta">
+						<time datetime={post.meta.date}>{monthYear(post.meta.date)}</time>
+						{post.readingMinutes && <span class="read">&middot; {post.readingMinutes} min</span>}
+					</p>
 					<Heading class="title">{post.meta.title}</Heading>
-					{post.meta.description && <p>{post.meta.description}</p>}
+					{post.meta.description && <p class="desc">{post.meta.description}</p>}
 				</a>
 				{showTags && post.meta.tags.length > 0 && (
 					<p class="tags">
@@ -86,211 +81,129 @@ const monthYear = (date: string) =>
 						))}
 					</p>
 				)}
-			</LayerCard>
+			</div>
 		))
 	}
 </div>
 
 <style>
-	.paired {
-		display: grid;
-		gap: 0 3rem;
+	/* ── Plain rows ── */
+	.list {
+		border-top: 1px solid var(--line-strong);
 	}
 	.post-card {
-		border: 0;
-		box-shadow: none;
-		background: transparent;
-	}
-	.carded {
-		gap: 1rem;
-	}
-	.carded .post-card {
-		height: 100%;
-		overflow: clip;
-		border: 1px solid var(--line);
-		border-radius: 3px;
-		background: var(--panel);
-		transition:
-			border-color 0.3s ease,
-			background-color 0.3s ease;
-	}
-	.carded .post-card:hover,
-	.carded .post-card:focus-within {
-		border-color: color-mix(in srgb, var(--accent) 50%, var(--line));
-		background: color-mix(in srgb, var(--accent) 4%, var(--panel));
-	}
-	.carded .entry {
-		height: 100%;
-		min-height: 13rem;
-		padding: 1.5rem;
-		border-top: 3px solid var(--accent);
-	}
-	.carded .entry:hover,
-	.carded .entry:focus-visible {
-		transform: none;
-	}
-	.carded .pool {
-		inset: 0;
-		border-radius: 0;
-	}
-	.raised {
-		gap: 0;
 		border-bottom: 1px solid var(--line);
 	}
-	.raised .post-card {
-		height: 100%;
-		overflow: clip;
-		border-top: 1px solid var(--line);
-		border-radius: 0;
-		transition:
-			border-color 0.3s ease,
-			background-color 0.3s ease;
-	}
-	.raised .post-card:hover,
-	.raised .post-card:focus-within {
-		border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
-		background: color-mix(in srgb, var(--accent) 4%, transparent);
-	}
-	.raised .entry {
-		height: 100%;
-		min-height: 17rem;
-		padding: 1.75rem 1.5rem 2.5rem;
-		border-top: 0;
-	}
-	.raised .post-card:has(.tags) {
-		display: flex;
-		flex-direction: column;
-	}
-	.raised .post-card:has(.tags) .entry {
-		height: auto;
-		flex: 1;
-	}
-	.raised .tags {
-		margin: -1rem 0 0;
-		padding: 0 1.5rem 1.75rem;
-	}
-	.raised .entry-number {
-		display: block;
-		margin-bottom: 3.5rem;
-		font-family: var(--font-mono);
-		font-size: 0.75rem;
-		letter-spacing: 0.08em;
-		color: var(--accent-warm);
-	}
-	.raised .title {
-		font-size: clamp(1.35rem, 2vw, 1.8rem);
-		line-height: 1.15;
-	}
-	.raised .entry:hover,
-	.raised .entry:focus-visible {
-		transform: none;
-	}
-	@media (width >= 48rem) {
-		.paired {
-			grid-template-columns: 1fr 1fr;
-		}
-		.raised {
-			grid-template-columns: repeat(3, 1fr);
-		}
-		.raised .post-card:not(:nth-child(3n + 1)) {
-			border-left: 1px solid var(--line);
-		}
-	}
-
-	/* Whole-card hover: the rule warms to the accent and the block slides a
-	   couple of pixels toward the reader's click. Two pixels is enough to feel
-	   live and small enough that a column of entries does not visibly reflow. */
 	.entry {
-		position: relative;
-		isolation: isolate;
 		display: block;
-		padding: 1.25rem 0;
-		border-top: 1px solid var(--line);
-		transition:
-			border-color 0.3s ease,
-			transform 0.3s var(--ease-out-soft);
+		padding: 1.4rem 0;
 	}
-	.entry:hover,
-	.entry:focus-visible {
-		border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
-		transform: translateX(2px);
-	}
-
-	/* The light itself. Position comes from the pointer via --spot-x/--spot-y;
-	   with no pointer over the card it stays at zero opacity and costs nothing. */
-	.pool {
-		position: absolute;
-		/* Bleeds past the row's own padding, so the light looks like it falls on
-		   the page rather than being clipped to a box the reader cannot see. */
-		inset: 0 -1rem;
-		z-index: -1;
-		pointer-events: none;
-		border-radius: 10px;
-		opacity: 0;
-		transition: opacity 0.35s ease;
-		background: radial-gradient(
-			260px circle at var(--spot-x, 50%) var(--spot-y, 50%),
-			color-mix(in srgb, var(--accent) 12%, transparent),
-			transparent 72%
-		);
-	}
-	.entry[data-lit] .pool {
-		opacity: 1;
-	}
-	@media (prefers-reduced-motion: reduce) {
-		.pool {
-			display: none;
-		}
-	}
-
-	.entry time {
-		font-size: 0.78rem;
-		letter-spacing: 0.1em;
+	.meta {
+		display: flex;
+		align-items: baseline;
+		gap: 0.6rem;
+		font-size: 0.7rem;
+		font-weight: 600;
+		letter-spacing: 0.16em;
 		text-transform: uppercase;
 		color: var(--muted);
+	}
+	.entry time {
 		transition: color 0.25s ease;
 	}
 	.entry:hover time {
 		color: var(--accent);
 	}
-
 	/* Same eyebrow treatment as the date. It reads as the secondary fact on the
-	   line through size and tracking rather than colour: at 0.78rem it needs
-	   4.5:1, and --dim only reaches 3.3:1 on any of our surfaces. */
+	   line through size and tracking rather than colour: --dim does not clear
+	   the 4.5:1 bar for type on any of our surfaces. */
 	.entry .read {
-		font-size: 0.78rem;
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
 		color: var(--muted);
 	}
-
 	/* Selector is the class, not the tag: the level varies with where the list
 	   sits in the document outline, the styling does not. */
 	.entry .title {
-		margin-top: 0.35rem;
-		font-size: 1.2rem;
+		margin-top: 0.45rem;
+		font-family: var(--font-serif);
+		font-size: 1.35rem;
 		font-weight: 500;
 		letter-spacing: -0.01em;
+		line-height: 1.2;
+		color: var(--text);
 		transition: color 0.2s ease;
 	}
-	.entry:hover .title {
+	.entry:hover .title,
+	.entry:focus-visible .title {
 		color: var(--accent);
 	}
-
-	.entry p {
-		margin-top: 0.3rem;
-		color: var(--body);
-		font-size: 0.95rem;
-		line-height: 1.6;
+	.entry .desc {
 		max-width: 62ch;
+		margin-top: 0.4rem;
+		font-family: var(--font-serif);
+		color: var(--body);
+		font-size: 0.98rem;
+		line-height: 1.6;
+	}
+
+	/* ── Paired grid: two columns of rows, reading across then down ── */
+	.paired {
+		display: grid;
+		gap: 0 3.5rem;
+	}
+	@media (width >= 48rem) {
+		.paired {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	/* ── Raised: the lead story list on the home page ── */
+	.raised {
+		border-top: 1px solid var(--line-strong);
+	}
+	.raised .entry {
+		padding-block: 2rem;
+	}
+	.raised .title {
+		font-size: clamp(1.5rem, 2.2vw, 1.9rem);
+		line-height: 1.15;
+	}
+	.raised .desc {
+		font-size: 1.02rem;
+	}
+
+	/* ── Carded: related reading under a post ── */
+	.carded {
+		display: grid;
+		gap: 1.25rem;
+		border-top: 0;
+	}
+	@media (width >= 48rem) {
+		.carded {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+	.carded .post-card {
+		height: 100%;
+		border: 1px solid var(--line);
+		border-radius: 3px;
+		background: var(--panel);
+		transition: border-color 0.25s ease;
+	}
+	.carded .post-card:hover,
+	.carded .post-card:focus-within {
+		border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+	}
+	.carded .entry {
+		height: 100%;
+		padding: 1.5rem;
 	}
 
 	.tags {
-		margin: -0.25rem 0 0;
-		padding-bottom: 1.1rem;
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.35rem;
+		align-items: center;
+		gap: 0.4rem;
+		padding-bottom: 1.25rem;
 	}
 	.tags > span {
 		display: none;

@@ -1,6 +1,7 @@
 ---
 /**
- * Home: hero, then the two variable sections, then the latest writing.
+ * Home: the introduction, then the two variable sections, then the latest
+ * writing.
  *
  * The order of the middle two is the difference between the variants.
  * seanbehan.ca leads with the numbers band and reads as a profile; codebam.ca
@@ -30,8 +31,8 @@ const latest = posts.slice(0, 6);
 <Base>
 	<!-- One oversized statement gets the visual emphasis; supporting information
 	     stays deliberately quiet so this reads as an introduction, not a dashboard. -->
-	<section class="hero panel relative overflow-hidden">
-		<div class="hero-shell shell relative">
+	<section class="hero panel">
+		<div class="shell">
 			<!-- Byline: the photo identifies the author rather than decorating the
 			     page, which leaves the headline the full column width. -->
 			<div class="hero-kicker enter flex items-center gap-3.5">
@@ -44,15 +45,15 @@ const latest = posts.slice(0, 6);
 					width="56"
 					height="56"
 					fetchpriority="high"
-					class="hero-avatar h-14 w-14 shrink-0 rounded-full object-cover"
+					class="h-14 w-14 shrink-0 rounded-full border border-[var(--line-strong)] object-cover"
 				/>
 				<div>
 					<p class="eyebrow">{site.eyebrow}</p>
-					<p class="mt-0.5 text-[0.95rem] text-[var(--muted)]">{site.byline}</p>
+					<p class="mt-1 text-[0.9rem] text-[var(--muted)]">{site.byline}</p>
 				</div>
 			</div>
 
-			<h1 class="hero-title display display-xl">
+			<h1 class="hero-title display">
 				{site.headline.before}<em>{site.headline.emphasis}</em>{site.headline.after}
 			</h1>
 
@@ -65,7 +66,7 @@ const latest = posts.slice(0, 6);
 					href={writingHref('/posts')}
 					variant="primary"
 					size="lg"
-					className="blueprint-control"
+					className="flat-control"
 				>
 					Read the writing
 				</LinkButton>
@@ -94,17 +95,16 @@ const latest = posts.slice(0, 6);
 		)
 	}
 
-	<!-- LATEST WRITING — back to the page surface -->
 	<section class="latest-writing panel">
 		<div class="shell">
-			<div class="flex items-baseline justify-between gap-4" data-reveal>
-				<h2 class="display display-lg"><span class="section-number">02 /</span> Latest writing</h2>
+			<div class="writing-heading" data-reveal>
+				<h2 class="display display-lg">Latest writing</h2>
 				<a href={writingHref('/posts')} class="link-accent whitespace-nowrap"
 					>All {posts.length} posts <span class="arrow">&rarr;</span></a
 				>
 			</div>
 
-			<div class="mt-10" data-reveal data-reveal-delay="60">
+			<div class="mt-8" data-reveal data-reveal-delay="60">
 				<PostList posts={latest} columns={2} raised />
 			</div>
 		</div>
@@ -112,62 +112,22 @@ const latest = posts.slice(0, 6);
 </Base>
 
 <style>
-	.latest-writing {
-		padding-block: clamp(7rem, 13vw, 12rem);
-	}
-	.latest-writing > .shell {
-		max-width: 1240px;
-	}
-	.section-number {
-		font-family: var(--font-mono);
-		font-size: 0.75rem;
-		font-weight: 500;
-		letter-spacing: 0.08em;
-		color: var(--accent-warm);
-		vertical-align: middle;
-	}
 	.hero {
-		min-height: min(860px, calc(100svh - 77px));
-		display: grid;
-		align-items: center;
-		padding-block: clamp(6rem, 13vh, 10rem);
-	}
-	.hero::after {
-		content: '';
-		position: absolute;
-		inset: 0;
-		pointer-events: none;
-		background-image:
-			linear-gradient(color-mix(in srgb, var(--accent) 11%, transparent) 1px, transparent 1px),
-			linear-gradient(
-				90deg,
-				color-mix(in srgb, var(--accent) 11%, transparent) 1px,
-				transparent 1px
-			);
-		background-size: 32px 32px;
-		mask-image: radial-gradient(circle at 50% 48%, #000 0%, transparent 72%);
-		z-index: 0;
-	}
-	.hero-shell {
-		width: 100%;
-		max-width: 1240px;
-		text-align: center;
-		z-index: 1;
-	}
-	.hero-kicker,
-	.hero-actions {
-		justify-content: center;
+		padding-block: clamp(5rem, 11vh, 9rem) clamp(5.5rem, 12vh, 10rem);
 	}
 	.hero-title {
-		max-width: 19ch;
-		margin: clamp(3.5rem, 8vh, 6rem) auto 0;
-		font-size: clamp(3.2rem, 6.8vw, 6.5rem);
+		max-width: 21ch;
+		margin-top: clamp(2.75rem, 6vh, 4.5rem);
+		font-size: clamp(3rem, 7vw, 5.6rem);
+		line-height: 1.02;
+		letter-spacing: -0.02em;
 	}
 	.hero-intro {
-		max-width: 54ch;
-		margin: 2.25rem auto 0;
-		font-size: clamp(1.05rem, 1.7vw, 1.3rem);
-		line-height: 1.6;
+		max-width: 58ch;
+		margin-top: clamp(1.75rem, 4vh, 2.5rem);
+		font-family: var(--font-serif);
+		font-size: clamp(1.1rem, 1.7vw, 1.3rem);
+		line-height: 1.65;
 		color: var(--body);
 	}
 	.hero-actions {
@@ -177,24 +137,21 @@ const latest = posts.slice(0, 6);
 		gap: 1rem 2rem;
 		margin-top: 2.5rem;
 	}
+	.latest-writing {
+		padding-block: clamp(5rem, 10vw, 9rem);
+	}
+	.writing-heading {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 2rem;
+		padding-bottom: 1rem;
+		border-bottom: 1px solid var(--line-strong);
+	}
 	@media (width < 40rem) {
-		.hero {
-			min-height: auto;
-			padding-block: 4rem 5.5rem;
-		}
-		.hero-shell {
-			text-align: left;
-		}
-		.hero-kicker,
-		.hero-actions {
-			justify-content: flex-start;
-		}
-		.hero-title {
-			margin-top: 3.5rem;
-			font-size: clamp(2.75rem, 13vw, 4rem);
-		}
-		.hero-intro {
-			margin-inline: 0;
+		.writing-heading {
+			flex-wrap: wrap;
+			gap: 0.5rem 2rem;
 		}
 	}
 </style>

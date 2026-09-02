@@ -32,20 +32,20 @@ const schema = JSON.stringify({
 	<script slot="head" type="application/ld+json" is:inline set:html={schema} />
 
 	<article class="panel pt-14 pb-20 md:pt-16 md:pb-24">
-		<div class="shell">
+		<div class="shell case-shell">
 			<p class="enter eyebrow">{project.language} · {project.since}</p>
-			<h1 class="display display-xl mt-5 max-w-[20ch]">{project.title}</h1>
+			<h1 class="display mt-5 text-[clamp(2.6rem,5.6vw,4.4rem)] leading-[1.05]">{project.title}</h1>
 			<p
-				class="enter mt-7 max-w-[58ch] text-[1.15rem] leading-[1.65] text-[var(--body)] md:text-[1.3rem]"
+				class="enter mt-7 max-w-[58ch] font-serif text-[1.2rem] leading-[1.65] text-[var(--body)] md:text-[1.3rem]"
 			>
 				{project.description}
 			</p>
 
-			<p class="enter mt-8 flex flex-wrap gap-6" style="--enter-delay:100ms">
+			<p class="enter mt-8 flex flex-wrap items-center gap-6" style="--enter-delay:100ms">
 				<a class="btn" href={source}>View source</a>
 				{
 					project.homepage && (
-						<a class="link-quiet self-center" href={project.homepage}>
+						<a class="link-quiet" href={project.homepage}>
 							{project.homepageLabel}
 						</a>
 					)
@@ -62,7 +62,7 @@ const schema = JSON.stringify({
 				/>
 			</figure>
 
-			<div class="prose enter mt-14 max-w-[68ch]" style="--enter-delay:180ms">
+			<div class="prose enter mt-14 max-w-[68ch] text-[1.08rem]" style="--enter-delay:180ms">
 				<h2>The problem</h2>
 				<p>{project.challenge}</p>
 
@@ -80,20 +80,25 @@ const schema = JSON.stringify({
 				<p>{[project.language, ...project.tags].join(' · ')}</p>
 			</div>
 
-			<p class="mt-14 border-t border-[var(--line)] pt-7">
-				<a class="link-accent" href="/#work">&larr; All selected work</a>
+			<p class="mt-14 border-t border-[var(--line-strong)] pt-7">
+				<a class="link-accent" href="/projects"
+					><span class="arrow">&larr;</span> All selected work</a
+				>
 			</p>
 		</div>
 	</article>
 </Base>
 
 <style>
+	.case-shell {
+		max-width: 900px;
+	}
 	.project-mockup {
-		margin-top: clamp(3.5rem, 8vw, 7rem);
+		margin-top: clamp(3.5rem, 8vw, 6rem);
 		overflow: hidden;
 		border: 1px solid var(--line-strong);
 		border-radius: 3px;
-		box-shadow: 0 24px 60px color-mix(in srgb, #000 18%, transparent);
+		background: var(--panel);
 	}
 	.project-mockup img {
 		display: block;

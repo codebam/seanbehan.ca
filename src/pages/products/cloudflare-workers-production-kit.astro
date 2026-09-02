@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import BlueprintMasthead from '../../components/BlueprintMasthead.astro';
+import Masthead from '../../components/Masthead.astro';
 import { Button } from '@cloudflare/kumo/components/button';
 import { PRODUCT } from '../../lib/product';
 
@@ -77,10 +77,7 @@ const schema = JSON.stringify({
 >
 	<script slot="head" type="application/ld+json" is:inline set:html={schema} />
 
-	<BlueprintMasthead
-		label="Digital product / Production kit"
-		meta={`$${PRICE} ${CURRENCY} / one-time`}
-	>
+	<Masthead label="Digital product / Production kit" meta={`$${PRICE} ${CURRENCY} / one-time`}>
 		<Fragment slot="title">Ship the service. <em>Skip the plumbing.</em></Fragment>
 		<p>
 			A deployment-ready Astro and Cloudflare Workers reference starter with D1, R2, authentication,
@@ -88,7 +85,7 @@ const schema = JSON.stringify({
 		</p>
 		<div class="masthead-actions">
 			<form method="post" action={PRODUCT.checkoutPath}>
-				<Button type="submit" variant="primary" size="lg" className="blueprint-control">
+				<Button type="submit" variant="primary" size="lg" className="flat-control">
 					Buy the production kit
 				</Button>
 			</form>
@@ -101,12 +98,12 @@ const schema = JSON.stringify({
 				>Privacy Policy</a
 			>.
 		</p>
-	</BlueprintMasthead>
+	</Masthead>
 
 	<section class="panel contents">
-		<div class="product-shell shell">
+		<div class="shell">
 			<div class="section-heading" data-reveal>
-				<h2 class="display display-lg"><span class="section-number">02 /</span> What ships</h2>
+				<h2 class="display display-lg">What ships</h2>
 				<p>{modules.length} production modules</p>
 			</div>
 
@@ -114,9 +111,6 @@ const schema = JSON.stringify({
 				{
 					modules.map((module, i) => (
 						<article data-reveal data-reveal-delay={Math.min(i, 4) * 45}>
-							<span class="item-index" aria-hidden="true">
-								{String(i + 1).padStart(2, '0')}
-							</span>
 							<h3>{module.title}</h3>
 							<p>{module.copy}</p>
 						</article>
@@ -127,9 +121,9 @@ const schema = JSON.stringify({
 	</section>
 
 	<section class="workflow panel-invert">
-		<div class="product-shell shell">
+		<div class="shell">
 			<div class="section-heading" data-reveal>
-				<h2 class="display display-lg"><span class="section-number">03 /</span> Clone to deploy</h2>
+				<h2 class="display display-lg">Clone to deploy</h2>
 				<p>One documented path</p>
 			</div>
 
@@ -137,9 +131,7 @@ const schema = JSON.stringify({
 				{
 					steps.map(([title, copy], i) => (
 						<li data-reveal data-reveal-delay={i * 50}>
-							<span class="item-index" aria-hidden="true">
-								{String(i + 1).padStart(2, '0')}
-							</span>
+							<span class="step-index">{String(i + 1).padStart(2, '0')}</span>
 							<h3>{title}</h3>
 							<p>{copy}</p>
 						</li>
@@ -150,11 +142,11 @@ const schema = JSON.stringify({
 	</section>
 
 	<section class="offer panel-alt">
-		<div class="product-shell shell">
+		<div class="shell">
 			<div class="offer-grid">
 				<div data-reveal>
 					<p class="eyebrow">One-time purchase</p>
-					<h2 class="display display-lg">Own the foundation.</h2>
+					<h2 class="display display-lg mt-4">Own the foundation.</h2>
 					<p class="offer-copy">
 						Get the complete release for <strong>${PRICE} {CURRENCY}</strong>. Buyers receive the
 						source tree, written handbook, example application and one year of product updates.
@@ -170,7 +162,7 @@ const schema = JSON.stringify({
 						<li>Updates for one year</li>
 					</ul>
 					<form method="post" action={PRODUCT.checkoutPath}>
-						<Button type="submit" variant="primary" size="lg" className="blueprint-control">
+						<Button type="submit" variant="primary" size="lg" className="flat-control">
 							Buy the production kit
 						</Button>
 					</form>
@@ -188,9 +180,9 @@ const schema = JSON.stringify({
 	</section>
 
 	<section class="fit panel">
-		<div class="product-shell shell">
+		<div class="shell">
 			<div class="section-heading" data-reveal>
-				<h2 class="display display-lg"><span class="section-number">04 /</span> Built for</h2>
+				<h2 class="display display-lg">Built for</h2>
 				<p>Small teams / serious services</p>
 			</div>
 
@@ -217,9 +209,9 @@ const schema = JSON.stringify({
 <style>
 	.checkout-note,
 	.section-heading > p {
-		font-family: var(--font-mono);
-		font-size: 0.72rem;
-		letter-spacing: 0.08em;
+		font-size: 0.7rem;
+		font-weight: 600;
+		letter-spacing: 0.16em;
 		text-transform: uppercase;
 		color: var(--muted);
 	}
@@ -238,6 +230,7 @@ const schema = JSON.stringify({
 		margin-top: 1rem;
 	}
 	.purchase-terms {
+		font-family: var(--font-sans);
 		font-size: 0.78rem;
 		line-height: 1.55;
 		color: var(--muted);
@@ -261,77 +254,63 @@ const schema = JSON.stringify({
 	.workflow,
 	.offer,
 	.fit {
-		padding-block: clamp(6rem, 11vw, 10rem);
+		padding-block: clamp(4.5rem, 9vw, 8rem);
 		border-top: 1px solid var(--line);
-	}
-	.workflow {
-		background-image:
-			linear-gradient(color-mix(in srgb, var(--accent) 8%, transparent) 1px, transparent 1px),
-			linear-gradient(90deg, color-mix(in srgb, var(--accent) 8%, transparent) 1px, transparent 1px);
-		background-size: 32px 32px;
-	}
-	.product-shell {
-		max-width: 1240px;
 	}
 	.section-heading {
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
 		gap: 2rem;
-	}
-	.section-number,
-	.item-index {
-		font-family: var(--font-mono);
-		font-size: 0.75rem;
-		font-weight: 500;
-		letter-spacing: 0.08em;
-		color: var(--accent-warm);
-		vertical-align: middle;
+		padding-bottom: 1rem;
+		border-bottom: 1px solid var(--line-strong);
 	}
 	.module-grid {
 		display: grid;
+		gap: 2.5rem 3.5rem;
 		margin-top: clamp(2.5rem, 5vw, 4rem);
-		border-bottom: 1px solid var(--line);
 	}
 	.module-grid article {
 		min-width: 0;
-		min-height: 17rem;
-		padding: 1.5rem;
-		border-top: 1px solid var(--line);
-		transition: background-color 0.25s ease;
-	}
-	.module-grid article:hover {
-		background: color-mix(in srgb, var(--accent) 4%, transparent);
-	}
-	.item-index {
-		display: block;
-		margin-bottom: 3.5rem;
+		padding-left: 1.25rem;
+		border-left: 1px solid var(--line-strong);
 	}
 	.module-grid h3,
 	.workflow-list h3,
 	.fit-grid h3 {
-		font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+		font-family: var(--font-serif);
+		font-size: clamp(1.35rem, 2.2vw, 1.8rem);
 		font-weight: 500;
-		letter-spacing: -0.025em;
+		letter-spacing: -0.01em;
 	}
 	.module-grid p,
 	.workflow-list p,
 	.fit-grid p {
-		margin-top: 0.75rem;
-		font-size: 0.95rem;
+		margin-top: 0.6rem;
+		font-family: var(--font-serif);
+		font-size: 1rem;
 		line-height: 1.65;
 		color: var(--body);
 	}
 	.workflow-list {
 		display: grid;
+		gap: 2.5rem 0;
 		margin-top: clamp(2.5rem, 5vw, 4rem);
-		border-bottom: 1px solid var(--line);
 		list-style: none;
 	}
 	.workflow-list li {
-		padding: 1.5rem;
-		border-top: 1px solid var(--line);
-		background: color-mix(in srgb, var(--bg) 78%, transparent);
+		padding-left: 1.25rem;
+		border-left: 1px solid var(--line-strong);
+	}
+	.step-index {
+		display: block;
+		font-size: 0.7rem;
+		font-weight: 600;
+		letter-spacing: 0.16em;
+		color: var(--accent-warm);
+	}
+	.workflow-list h3 {
+		margin-top: 0.6rem;
 	}
 	.offer-grid {
 		display: grid;
@@ -341,49 +320,48 @@ const schema = JSON.stringify({
 	}
 	.offer-grid h2 {
 		max-width: 12ch;
-		margin-top: 1rem;
 	}
 	.offer-copy {
 		max-width: 52ch;
-		margin-top: 2rem;
-		font-size: 1.08rem;
+		margin-top: 1.5rem;
+		font-family: var(--font-serif);
+		font-size: 1.12rem;
 		line-height: 1.7;
 		color: var(--body);
 	}
 	.price-card {
 		padding: clamp(1.5rem, 4vw, 2.5rem);
 		border: 1px solid var(--line-strong);
-		border-top: 3px solid var(--accent);
 		border-radius: 3px;
 		background: var(--panel);
 	}
 	.price {
-		font-family: var(--font-sans);
-		font-size: clamp(3.5rem, 7vw, 5.5rem);
-		font-weight: 650;
-		letter-spacing: -0.06em;
+		font-family: var(--font-serif);
+		font-size: clamp(3.2rem, 6vw, 4.8rem);
+		font-weight: 500;
+		letter-spacing: -0.03em;
 		line-height: 1;
 	}
 	.price span,
 	.price small {
-		font-family: var(--font-mono);
-		font-size: 0.8rem;
-		font-weight: 500;
-		letter-spacing: 0.08em;
+		font-family: var(--font-sans);
+		font-size: 0.75rem;
+		font-weight: 600;
+		letter-spacing: 0.14em;
 		color: var(--accent-warm);
 	}
 	.price-card ul {
 		display: grid;
-		gap: 0.7rem;
-		margin-block: 2rem;
-		padding-top: 2rem;
+		gap: 0.6rem;
+		margin-block: 1.75rem;
+		padding-top: 1.75rem;
 		border-top: 1px solid var(--line);
 		list-style: none;
 		font-size: 0.92rem;
 		color: var(--body);
 	}
 	.price-card li::before {
-		content: '+';
+		content: '—';
 		margin-right: 0.65rem;
 		color: var(--accent);
 	}
@@ -392,28 +370,20 @@ const schema = JSON.stringify({
 	}
 	.fit-grid {
 		display: grid;
-		gap: 1px;
+		gap: 2.5rem 3.5rem;
 		margin-top: clamp(2.5rem, 5vw, 4rem);
-		border: 1px solid var(--line);
-		background: var(--line);
 	}
 	.fit-grid > div {
-		min-height: 15rem;
-		padding: 1.75rem;
-		background: var(--bg);
+		padding-left: 1.25rem;
+		border-left: 1px solid var(--line-strong);
 	}
 	@media (width >= 48rem) {
 		.module-grid {
 			grid-template-columns: repeat(3, 1fr);
 		}
-		.module-grid article:not(:nth-child(3n + 1)) {
-			border-left: 1px solid var(--line);
-		}
 		.workflow-list {
 			grid-template-columns: repeat(4, 1fr);
-		}
-		.workflow-list li:not(:first-child) {
-			border-left: 1px solid var(--line);
+			gap: 0 3rem;
 		}
 		.fit-grid {
 			grid-template-columns: repeat(2, 1fr);

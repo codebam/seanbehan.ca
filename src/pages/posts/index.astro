@@ -1,7 +1,7 @@
 ---
 /** The archive: every published post, with search over the rendered list. */
 import Base from '../../layouts/Base.astro';
-import BlueprintMasthead from '../../components/BlueprintMasthead.astro';
+import Masthead from '../../components/Masthead.astro';
 import PostList from '../../components/PostList.astro';
 import PostSearch from '../../components/PostSearch.astro';
 import { getPosts } from '../../lib/posts';
@@ -16,24 +16,20 @@ if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 	description="Posts on Linux, NixOS, Rust, and Cloudflare Workers."
 	ogTitle={`Writing — ${site.name}`}
 >
-	<BlueprintMasthead
-		label="Writing archive"
-		meta={`${String(posts.length).padStart(2, '0')} published`}
-	>
+	<Masthead label="Writing archive" meta={`${posts.length} published`}>
 		<Fragment slot="title">Writing from <em>underneath the stack.</em></Fragment>
 		<p>
 			Notes from whatever I am taking apart: Linux and NixOS, containers and systemd, Rust, and the
-			edge.
+			edge. <a class="link-accent" href="/posts/tags"
+				>Browse by tag <span class="arrow">&rarr;</span></a
+			>
 		</p>
-		<p class="masthead-actions">
-			<a href="/posts/tags" class="link-accent">Browse by tag <span class="arrow">&rarr;</span></a>
-		</p>
-	</BlueprintMasthead>
+	</Masthead>
 
 	<section id="archive" class="archive panel">
-		<div class="archive-shell shell">
+		<div class="shell">
 			<div class="archive-heading" data-reveal>
-				<h2 class="display display-lg"><span class="section-number">02 /</span> All posts</h2>
+				<h2 class="display display-lg">All posts</h2>
 				<p>{posts.length} entries, newest first</p>
 			</div>
 
@@ -42,28 +38,15 @@ if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 			</div>
 
 			<div class="archive-list" data-reveal data-reveal-delay="100">
-				<PostList posts={posts} columns={2} showTags raised headingLevel={2} />
+				<PostList posts={posts} columns={2} showTags headingLevel={2} />
 			</div>
 		</div>
 	</section>
 </Base>
 
 <style>
-	.archive-shell {
-		position: relative;
-		max-width: 1240px;
-		z-index: 1;
-	}
-	.section-number {
-		font-family: var(--font-mono);
-		font-size: 0.75rem;
-		font-weight: 500;
-		letter-spacing: 0.08em;
-		color: var(--accent-warm);
-		vertical-align: middle;
-	}
 	.archive {
-		padding-block: clamp(6rem, 11vw, 10rem);
+		padding-block: clamp(4.5rem, 9vw, 8rem);
 		border-top: 1px solid var(--line);
 	}
 	.archive-heading {
@@ -71,11 +54,13 @@ if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 		align-items: baseline;
 		justify-content: space-between;
 		gap: 2rem;
+		padding-bottom: 1rem;
+		border-bottom: 1px solid var(--line-strong);
 	}
 	.archive-heading p {
-		font-family: var(--font-mono);
-		font-size: 0.72rem;
-		letter-spacing: 0.08em;
+		font-size: 0.7rem;
+		font-weight: 600;
+		letter-spacing: 0.16em;
 		text-transform: uppercase;
 		color: var(--muted);
 	}
@@ -83,7 +68,7 @@ if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 		margin-top: clamp(2.5rem, 5vw, 4rem);
 	}
 	.archive-list {
-		margin-top: 1.5rem;
+		margin-top: 1.75rem;
 	}
 	@media (width < 48rem) {
 		.archive-heading {

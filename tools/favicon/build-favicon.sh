@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Renders the favicon (grey serif SB on blue) at every size we ship.
+# Renders the favicon (cream serif SB on blue) at every size we ship.
 #
 # Each size is rendered natively by Chromium rather than downscaled from one
 # master, so the small sizes get their own hinting pass instead of inheriting
@@ -9,7 +9,10 @@
 set -euo pipefail
 
 DIR="$(cd "$(dirname "$0")" && pwd)"
-FONT="/home/codebam/Documents/git/seanbehan.ca/node_modules/@fontsource-variable/newsreader/files/newsreader-latin-standard-normal.woff2"
+REPO="$(cd "$DIR/../.." && pwd)"
+# The checked-in site font rather than the Fontsource package: the packages
+# are a build-time dependency of tools/fonts only and are not installed here.
+FONT="$REPO/public/fonts/newsreader-latin.woff2"
 OUT="$DIR/out"
 mkdir -p "$OUT"
 

@@ -6,16 +6,18 @@
 
 /* ═══════════════════════════════════════════════════════════
    Fonts
-   Inter for UI and body copy, Newsreader for display type.
-   Newsreader carries the italic in the hero headline, so its
-   italic axis is not optional.
+   Newsreader carries the site: display type, page titles and the
+   reading column are all set in it. Inter is the utility face —
+   navigation, labels, buttons, metadata. Newsreader's italic axis
+   is not optional: it is the voice of every emphasized word in a
+   headline.
 
    Served from static/fonts rather than imported from
    Fontsource: the packages declare every subset and the full
    axis ranges, which is ~330 kB of font for a latin-only site
    that uses two serif weights. tools/fonts/build-fonts.sh
    rebuilds these three files — run it when either package is
-   upgraded. Stable filenames, so app.html can preload them
+   upgraded. Stable filenames, so the document can preload them
    instead of waiting for this stylesheet to be parsed first.
    ═══════════════════════════════════════════════════════════ */
 @font-face {
@@ -68,8 +70,11 @@
 
    One set of names, two palettes. Light uses cool paper greys;
    dark carries the same blue accent onto a deep slate surface.
-   Nothing outside this block knows which is active —
-   components only ever reference the tokens.
+   Blue does the interactive work — links, focus, targets — and
+   a warm orange is the editorial accent: italic emphasis, the
+   wordmark's dot, the small decorative marks. Nothing outside
+   this block knows which palette is active — components only
+   ever reference the tokens.
    ═══════════════════════════════════════════════════════════ */
 @theme {
 	/* The Fallback families are the local ones with the webfont's metrics forced
@@ -88,7 +93,7 @@
 		Consolas, 'Liberation Mono', monospace;
 }
 
-/* The two palettes, written once each so the panel classes below can hand a
+/* The two palettes, written once each so the inverted band below can hand a
    section the palette it is not currently in. */
 @layer base {
 	:root {
@@ -236,13 +241,16 @@
 	   Type
 	   ═══════════════════════════════════════════════════════════ */
 
-	/* Tight sans display face gives page and section titles blueprint density. */
+	/* The display face is the serif: page and section titles are set wide and
+	   quiet, with the optical-sizing axis doing the fine fitting. */
 	.display {
-		font-family: var(--font-sans);
-		font-weight: 650;
-		letter-spacing: -0.045em;
-		line-height: 1.04;
+		font-family: var(--font-serif);
+		font-weight: 500;
+		letter-spacing: -0.015em;
+		line-height: 1.05;
+		font-optical-sizing: auto;
 	}
+	/* Italic, in the warm orange: the one decorative move a headline gets. */
 	.display em {
 		font-style: italic;
 		color: var(--accent-warm);
@@ -251,25 +259,33 @@
 	/* Page headline. Fluid rather than stepped, so the line count stays put
 	   between the breakpoints instead of reflowing at each one. */
 	.display-xl {
-		font-size: clamp(2.6rem, 7vw, 5.4rem);
-		line-height: 1;
-		letter-spacing: -0.03em;
+		font-size: clamp(2.9rem, 6.8vw, 5.2rem);
+		line-height: 1.02;
 	}
 
 	/* Panel heading */
 	.display-lg {
-		font-size: clamp(2rem, 3.6vw, 2.9rem);
-		line-height: 1.05;
-		letter-spacing: -0.028em;
+		font-size: clamp(1.85rem, 3.4vw, 2.6rem);
+		line-height: 1.1;
 	}
 
-	/* Section label: small, uppercase, tracked out */
+	/* Section label: small, uppercase, tracked out. Inter, not the serif —
+	   this is furniture, not copy. */
 	.eyebrow {
-		font-family: var(--font-mono);
-		font-size: 0.78rem;
-		font-weight: 500;
-		letter-spacing: 0.1em;
+		font-family: var(--font-sans);
+		font-size: 0.7rem;
+		font-weight: 600;
+		letter-spacing: 0.16em;
 		text-transform: uppercase;
+		color: var(--muted);
+	}
+	.eyebrow a {
+		color: inherit;
+		text-decoration: none;
+		transition: color 0.2s ease;
+	}
+	.eyebrow a:hover,
+	.eyebrow a:focus-visible {
 		color: var(--accent);
 	}
 
@@ -317,9 +333,10 @@
 	}
 
 	/* Inner column shared by every panel, and by the pages that are a single
-	   panel of their own. */
+	   panel of their own. Narrower than a full-bleed grid: the site reads as
+	   a page, not a dashboard. */
 	.shell {
-		max-width: 1040px;
+		max-width: 1140px;
 		margin-inline: auto;
 		padding-inline: 1.5rem;
 	}
@@ -337,26 +354,23 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 0.5rem;
-		border-radius: 999px;
+		border-radius: 2px;
 		background: var(--invert-bg);
 		color: var(--invert-text);
 		padding: 0.7rem 1.35rem;
-		font-size: 0.95rem;
+		font-size: 0.9rem;
 		font-weight: 500;
-		transform: translate3d(var(--magnet-x, 0px), var(--magnet-y, 0px), 0);
+		letter-spacing: 0.01em;
 		transition:
 			background 0.2s ease,
-			color 0.2s ease,
-			transform 0.18s var(--ease-out-soft),
-			box-shadow 0.25s ease;
+			color 0.2s ease;
 	}
 	.btn:hover {
 		background: var(--accent);
 		color: var(--accent-on);
-		box-shadow: 0 9px 24px color-mix(in srgb, var(--accent) 24%, transparent);
 	}
 	.btn:active {
-		transform: translate3d(var(--magnet-x, 0px), var(--magnet-y, 0px), 0) scale(0.97);
+		transform: translateY(1px);
 		transition-duration: 0.08s;
 	}
 
@@ -365,8 +379,8 @@
 		align-items: center;
 		gap: 0.5rem;
 		border: 1px solid var(--line-strong);
-		border-radius: 999px;
-		padding: 0.45rem 0.95rem;
+		border-radius: 2px;
+		padding: 0.55rem 1.1rem;
 		font-size: 0.9rem;
 		color: var(--text);
 		transition:
@@ -378,7 +392,15 @@
 		color: var(--accent);
 	}
 
-	/* Quiet inline link with a rule under it, for secondary hero actions.
+	/* Kumo's buttons are rounder and softer than the house style; every Kumo
+	   control on the site carries this class so the geometry stays square and
+	   quiet without forking the component. */
+	.flat-control {
+		border-radius: 2px;
+		box-shadow: none;
+	}
+
+	/* Quiet inline link with a rule under it, for secondary actions.
 	   The resting rule stays put and a second accent rule wipes across it from
 	   the left, so the link gains weight on hover without the text moving. */
 	.link-quiet {
@@ -431,7 +453,7 @@
 		width: 100%;
 		background: var(--panel);
 		border: 1px solid var(--line);
-		border-radius: 8px;
+		border-radius: 2px;
 		padding: 0.6rem 0.85rem;
 		font-size: 0.95rem;
 		color: var(--text);
@@ -461,19 +483,15 @@
 	}
 }
 
-/* Blueprint geometry deliberately overrides Kumo's rounded utility classes. */
-.blueprint-card,
-.blueprint-control {
-	border-radius: 3px;
-	box-shadow: none;
-}
-
 /* ═══════════════════════════════════════════════════════════
    Long-form content
    Tailwind's typography plugin, pointed at our tokens so a single
    `.prose` works in both themes with no `prose-invert` swap.
+   The reading column is set in the serif — the same face as the
+   headlines, which is what makes a page of it read like a page.
    ═══════════════════════════════════════════════════════════ */
 .prose {
+	font-family: var(--font-serif);
 	--tw-prose-body: var(--body);
 	--tw-prose-headings: var(--text);
 	--tw-prose-lead: var(--body);
@@ -492,10 +510,32 @@
 	--tw-prose-td-borders: var(--line);
 }
 
-.prose :where(h1, h2, h3) {
+.prose :where(h1, h2, h3, h4) {
 	font-family: var(--font-serif);
 	font-weight: 500;
 	letter-spacing: -0.015em;
+}
+
+/* A serif at the same point size reads smaller than a sans, so the column
+   takes a little more leading and a little more width than a sans column
+   would. */
+.prose {
+	line-height: 1.72;
+}
+
+/* Prose links carry a resting rule in a quiet colour; hover moves the rule to
+   the accent rather than moving the text. */
+.prose :where(a):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+	text-decoration: underline;
+	text-decoration-color: var(--line-strong);
+	text-underline-offset: 0.18em;
+	transition:
+		color 0.2s ease,
+		text-decoration-color 0.2s ease;
+}
+.prose :where(a):hover:not(:where([class~='not-prose'], [class~='not-prose'] *)),
+.prose :where(a):focus-visible:not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+	text-decoration-color: var(--accent);
 }
 
 /* Post images now carry their intrinsic width and height, so the box is
@@ -542,11 +582,11 @@
 
 .prose :where(code):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
 	font-family: var(--font-mono);
-	font-size: 0.85em;
+	font-size: 0.8em;
 	font-weight: 400;
 	background: var(--panel);
 	border: 1px solid var(--line);
-	border-radius: 4px;
+	border-radius: 3px;
 	padding: 0.1em 0.35em;
 }
 .prose :where(code)::before,
@@ -559,7 +599,7 @@
 	font-size: 0.85em;
 	line-height: 1.65;
 	border: 1px solid var(--line);
-	border-radius: 8px;
+	border-radius: 4px;
 }
 /* Nested code inside a pre keeps the block's own background */
 .prose :where(pre code) {
@@ -612,7 +652,7 @@
 	color: var(--muted);
 	background: var(--surface-alt);
 	border: 1px solid var(--line);
-	border-radius: 6px;
+	border-radius: 3px;
 	padding: 0.3rem 0.6rem;
 	opacity: 0;
 	pointer-events: none;
@@ -659,7 +699,7 @@
 @keyframes fadeInUp {
 	from {
 		opacity: 0;
-		transform: translateY(10px);
+		transform: translateY(8px);
 	}
 	to {
 		opacity: 1;
@@ -686,11 +726,11 @@
 }
 
 /* ── Scroll reveal ──
-   `reveal-pending` is added by the reveal action (src/lib/actions/reveal.ts),
+   `reveal-pending` is added by the reveal script (src/scripts/reveal.ts),
    never by markup, so content is visible when JS is not. */
 .reveal-pending {
 	opacity: 0;
-	transform: translateY(14px);
+	transform: translateY(12px);
 }
 .reveal-in {
 	animation: fadeInUp 0.6s var(--ease-out-soft) both;
@@ -798,6 +838,7 @@
 
 		--accent: #2457d6;
 		--accent-hover: #1e46b5;
+		--accent-warm: #c2410c;
 		--accent-on: #ffffff;
 		--accent-wash: transparent;
 
@@ -819,6 +860,7 @@
 		--dim: #6c6a66;
 		--accent: #2457d6;
 		--accent-hover: #1e46b5;
+		--accent-warm: #c2410c;
 		--accent-on: #ffffff;
 		--invert-bg: #17181a;
 		--invert-text: #ffffff;
@@ -844,9 +886,6 @@
 	footer,
 	.read-progress,
 	nav[aria-label='Primary'],
-	.star-border,
-	.dot-grid,
-	.grainient,
 	.code-copy,
 	.btn,
 	.btn-outline,

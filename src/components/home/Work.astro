@@ -1,5 +1,9 @@
 ---
-/** SELECTED WORK — editorial rows enhanced into a pinned scroll story with JS. */
+/**
+ * SELECTED WORK — one editorial row per project: a hairline, the picture,
+ * the story. The rows alternate sides so a page of them reads as a
+ * conversation rather than a feed.
+ */
 import { projectHref } from '../../lib/site';
 import type { FeaturedProject } from '../../lib/types';
 import { Badge } from '@cloudflare/kumo/components/badge';
@@ -11,10 +15,10 @@ interface Props {
 const { projects } = Astro.props;
 ---
 
-<section id="work" class="work-panel panel-invert scroll-mt-4" data-work-carousel>
-	<div class="work-shell shell">
-		<div class="flex items-baseline justify-between gap-4" data-reveal>
-			<h2 class="display display-lg"><span class="section-number">01 /</span> Selected work</h2>
+<section id="work" class="work-panel panel scroll-mt-4">
+	<div class="shell">
+		<div class="work-heading" data-reveal>
+			<h2 class="display display-lg">Selected work</h2>
 			<a
 				href="https://github.com/codebam?tab=repositories"
 				target="_blank"
@@ -26,16 +30,7 @@ const { projects } = Astro.props;
 		<div class="work-list">
 			{
 				projects.map((project, i) => (
-					/* Grid areas rather than utility columns: on a phone the star count
-					   shares the year's line instead of landing under the links, where it
-					   read as a stray. Source order matches the phone (year, stars, body);
-					   the desktop column order is set by the areas. */
-					<article
-						class="work-row"
-						data-pointer-glow
-						data-reveal
-						data-reveal-delay={Math.min(i, 4) * 70}
-					>
+					<article class="work-row" data-reveal data-reveal-delay={Math.min(i, 3) * 70}>
 						<a class="row-media" href={projectHref(`/projects/${project.slug}`)} tabindex="-1">
 							<img
 								src={project.mockup}
@@ -47,35 +42,32 @@ const { projects } = Astro.props;
 							/>
 						</a>
 
-						<div class="row-head text-[0.95rem] text-[var(--muted)] md:pt-1.5">
-							{project.since} &mdash;
-						</div>
-
-						{project.stars > 0 && (
-							<div
-								class="row-stars text-[0.95rem] text-[var(--muted)] md:text-right"
-								title={`${project.stars} ${project.stars === 1 ? 'star' : 'stars'} on GitHub`}
-							>
-								&#9733; {project.stars}
-							</div>
-						)}
-
 						<div class="row-body">
-							<h3 class="title font-medium tracking-tight">
-								<a href={projectHref(`/projects/${project.slug}`)}>{project.title}</a>
-							</h3>
-							<p class="mt-2.5 max-w-[58ch] text-[1.05rem] leading-relaxed text-[var(--body)]">
-								{project.description}
+							<p class="row-meta">
+								<span>{project.since} &mdash;</span>
+								{project.stars > 0 && (
+									<span
+										class="row-stars"
+										title={`${project.stars} ${project.stars === 1 ? 'star' : 'stars'} on GitHub`}
+									>
+										&#9733; {project.stars}
+									</span>
+								)}
 							</p>
 
-							<p class="mt-3.5 flex flex-wrap gap-1.5">
+							<h3 class="title">
+								<a href={projectHref(`/projects/${project.slug}`)}>{project.title}</a>
+							</h3>
+							<p class="row-copy">{project.description}</p>
+
+							<p class="row-tags">
 								<Badge variant="blue">{project.language}</Badge>
 								{project.tags.map((tag) => (
 									<Badge variant="outline">{tag}</Badge>
 								))}
 							</p>
 
-							<p class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-[0.98rem]">
+							<p class="row-links">
 								<a
 									href={`https://github.com/codebam/${project.repo}`}
 									target="_blank"
@@ -100,299 +92,108 @@ const { projects } = Astro.props;
 				))
 			}
 		</div>
-		<div class="carousel-status" aria-hidden="true">
-			<span><span data-carousel-current>01</span> / {String(projects.length).padStart(2, '0')}</span
-			>
-			<span class="carousel-progress"><span data-carousel-progress></span></span>
-		</div>
 	</div>
 </section>
 
 <style>
 	.work-panel {
-		background-color: var(--bg);
-		background-image:
-			linear-gradient(color-mix(in srgb, var(--accent) 8%, transparent) 1px, transparent 1px),
-			linear-gradient(90deg, color-mix(in srgb, var(--accent) 8%, transparent) 1px, transparent 1px);
-		background-size: 32px 32px;
-		padding-block: clamp(7rem, 13vw, 12rem);
+		padding-block: clamp(5rem, 10vw, 9rem);
 	}
-	.work-shell {
-		max-width: 1240px;
-	}
-	.section-number {
-		font-family: var(--font-mono);
-		font-size: 0.75rem;
-		font-weight: 500;
-		letter-spacing: 0.08em;
-		color: var(--accent-warm);
-		vertical-align: middle;
+	.work-heading {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 2rem;
+		padding-bottom: 1rem;
+		border-bottom: 1px solid var(--line-strong);
 	}
 	.work-list {
 		display: grid;
-		margin-top: clamp(3rem, 7vw, 6rem);
+	}
+	.work-row {
+		display: grid;
+		gap: clamp(2rem, 4vw, 4rem);
+		padding-block: clamp(3rem, 6vw, 5rem);
 		border-bottom: 1px solid var(--line);
 	}
-
-	/* The pointer light stays within the row and never changes its surface or
-	   layout. It adds depth without turning a reading row into a floating card. */
-	.work-row {
-		position: relative;
-		isolation: isolate;
-		overflow: clip;
-		display: grid;
-		column-gap: 2rem;
-		row-gap: 0.5rem;
-		grid-template-columns: minmax(0, 1fr) auto;
-		padding-block: clamp(2.5rem, 5vw, 4.5rem);
-		border-top: 1px solid var(--line);
-		transition:
-			background-color 0.3s ease,
-			border-color 0.3s ease;
-	}
-	.work-row::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		z-index: -1;
-		pointer-events: none;
-		opacity: 0;
-		background: radial-gradient(
-			340px circle at var(--glow-x, 50%) var(--glow-y, 50%),
-			color-mix(in srgb, var(--accent) 11%, transparent),
-			transparent 72%
-		);
-		transition: opacity 0.35s ease;
-	}
-	.work-row[data-glow-active]::before,
-	.work-row:focus-within::before {
-		opacity: 1;
-	}
-	.row-head {
-		grid-column: 1;
-		grid-row: 2;
+	@media (width >= 48rem) {
+		.work-row {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			align-items: center;
+		}
+		/* The picture trades sides down the page. */
+		.work-row:nth-child(even) .row-media {
+			order: 2;
+		}
 	}
 	.row-media {
-		grid-column: 1 / -1;
-		grid-row: 1;
 		display: block;
-		margin-bottom: clamp(2rem, 5vw, 4rem);
 		overflow: hidden;
 		border: 1px solid var(--line-strong);
 		border-radius: 3px;
-		box-shadow: 0 30px 70px color-mix(in srgb, #000 32%, transparent);
+		background: var(--panel);
 	}
 	.row-media img {
 		display: block;
 		width: 100%;
 		height: auto;
-		transition: transform 0.7s var(--ease-out-soft);
 	}
-	.work-row:hover .row-media img,
-	.work-row:focus-within .row-media img {
-		transform: scale(1.012);
+	.row-meta {
+		display: flex;
+		align-items: baseline;
+		gap: 1.25rem;
+		font-size: 0.7rem;
+		font-weight: 600;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--muted);
 	}
-	/* Right-aligned on the year's line; the column track sizes to it. */
 	.row-stars {
-		grid-column: 2;
-		grid-row: 2;
-		justify-self: end;
 		color: var(--accent-warm);
-		transition:
-			color 0.25s ease,
-			transform 0.3s var(--ease-out-soft);
-	}
-	.row-body {
-		grid-column: 1 / -1;
-		grid-row: 3;
-		transition: transform 0.35s var(--ease-out-soft);
 	}
 	.title {
-		font-size: clamp(1.65rem, 3vw, 2.65rem);
+		margin-top: 1rem;
+		font-family: var(--font-serif);
+		font-size: clamp(1.8rem, 3vw, 2.5rem);
+		font-weight: 500;
+		letter-spacing: -0.02em;
+		line-height: 1.1;
 	}
-	@media (width >= 48rem) {
-		.work-row {
-			grid-template-columns: 130px minmax(0, 1fr) auto;
-		}
-		.row-body {
-			grid-column: 2;
-			grid-row: 2;
-		}
-		.row-stars {
-			grid-column: 3;
-		}
-		.work-row:nth-child(odd) .row-media {
-			margin-right: 6%;
-		}
-		.work-row:nth-child(even) .row-media {
-			margin-left: 6%;
-		}
+	.title a {
+		color: var(--text);
+		text-decoration: none;
+		transition: color 0.2s ease;
 	}
-	.work-row:hover,
-	.work-row:focus-within {
-		border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
-		background: color-mix(in srgb, var(--accent) 4%, transparent);
-	}
-	.work-row:hover .row-body,
-	.work-row:focus-within .row-body {
-		transform: translateX(4px);
-	}
-	.work-row:hover .row-stars,
-	.work-row:focus-within .row-stars {
-		color: var(--accent-warm);
-		transform: translateY(-2px) rotate(-3deg);
-	}
-	.work-row .title {
-		transition: color 0.25s ease;
-	}
-	.work-row:hover .title,
-	.work-row:focus-within .title {
+	.title a:hover,
+	.title a:focus-visible {
 		color: var(--accent);
 	}
-	.carousel-status {
-		display: none;
+	.row-copy {
+		max-width: 52ch;
+		margin-top: 1rem;
+		font-family: var(--font-serif);
+		font-size: 1.08rem;
+		line-height: 1.65;
+		color: var(--body);
 	}
-
-	/* The unenhanced list above remains the no-JS and reduced-motion experience.
-	   Once the controller is ready, vertical page distance becomes horizontal
-	   slide progress while this inner stage stays pinned. */
-	.work-panel[data-carousel-ready] {
-		height: calc(var(--slide-count) * 75svh + 51.25svh);
-		padding-block: 0;
-	}
-	.work-panel[data-carousel-ready] .work-shell {
-		position: sticky;
-		top: 0;
-		display: grid;
-		grid-template-rows: auto minmax(0, 1fr) auto;
-		height: 100svh;
-		padding-block: clamp(2rem, 5vh, 4rem);
-		overflow: hidden;
-	}
-	.work-panel[data-carousel-ready] .work-list {
-		position: relative;
-		min-height: 0;
-		margin-top: clamp(2rem, 5vh, 4rem);
-		border: 0;
-	}
-	.work-panel[data-carousel-ready] .work-row {
-		position: absolute;
-		inset: 0;
-		display: grid;
-		grid-template-columns: minmax(0, 1.55fr) minmax(18rem, 0.65fr);
-		grid-template-rows: auto minmax(0, 1fr) auto;
-		column-gap: clamp(2rem, 5vw, 5rem);
-		padding: 0;
-		border: 0;
-		opacity: var(--slide-opacity, 0);
-		transform: translate3d(var(--slide-x, 110%), 0, 0) scale(var(--slide-scale, 0.97));
-		animation: none;
-		transition: none;
-		will-change: transform, opacity;
-	}
-	@media (width >= 48rem) {
-		.work-panel[data-carousel-ready] .work-row {
-			inset-inline: -2.5rem;
-			padding-inline: 2.5rem;
-		}
-	}
-	.work-panel[data-carousel-ready] .row-media {
-		grid-column: 1;
-		grid-row: 1 / -1;
-		align-self: center;
-		margin: 0;
-	}
-	.work-panel[data-carousel-ready] .row-head {
-		grid-column: 2;
-		grid-row: 1;
-	}
-	.work-panel[data-carousel-ready] .row-stars {
-		grid-column: 2;
-		grid-row: 1;
-	}
-	.work-panel[data-carousel-ready] .row-body {
-		grid-column: 2;
-		grid-row: 2;
-		align-self: center;
-	}
-	.work-panel[data-carousel-ready] .carousel-status {
+	.row-tags {
 		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		margin-top: 1.25rem;
+	}
+	.row-links {
+		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
-		gap: 1rem;
-		justify-self: end;
-		padding-top: 1.5rem;
-		font-family: var(--font-mono);
-		font-size: 0.72rem;
-		letter-spacing: 0.1em;
-		color: var(--accent-warm);
-	}
-	.carousel-progress {
-		width: 7rem;
-		height: 1px;
-		overflow: hidden;
-		background: var(--line-strong);
-	}
-	.carousel-progress > span {
-		display: block;
-		width: 100%;
-		height: 100%;
-		background: var(--accent-warm);
-		transform: scaleX(var(--carousel-progress, 0));
-		transform-origin: left;
+		gap: 0.75rem 1.75rem;
+		margin-top: 1.5rem;
+		font-size: 0.95rem;
 	}
 	@media (width < 48rem) {
-		.work-panel[data-carousel-ready] {
-			height: calc(var(--slide-count) * 82.5svh + 43.75svh);
-		}
-		.work-panel[data-carousel-ready] .work-shell {
-			padding-block: 2rem;
-		}
-		.work-panel[data-carousel-ready] .work-list {
-			margin-top: 1.75rem;
-		}
-		.work-panel[data-carousel-ready] .work-row {
-			display: grid;
-			grid-template-columns: 1fr auto;
-			grid-template-rows: auto auto minmax(0, 1fr);
-			row-gap: 0.75rem;
-		}
-		.work-panel[data-carousel-ready] .row-media {
-			grid-column: 1 / -1;
-			grid-row: 1;
-			align-self: auto;
-			margin-bottom: 0.75rem;
-		}
-		.work-panel[data-carousel-ready] .row-head {
-			grid-column: 1;
-			grid-row: 2;
-		}
-		.work-panel[data-carousel-ready] .row-stars {
-			grid-column: 2;
-			grid-row: 2;
-		}
-		.work-panel[data-carousel-ready] .row-body {
-			grid-column: 1 / -1;
-			grid-row: 3;
-			align-self: start;
-		}
-		.work-panel[data-carousel-ready] .row-body > p:first-of-type {
-			display: -webkit-box;
-			overflow: hidden;
-			-webkit-box-orient: vertical;
-			-webkit-line-clamp: 5;
-		}
-	}
-	@media (prefers-reduced-motion: reduce) {
-		.work-row::before {
-			display: none;
-		}
-		.work-row:hover .row-body,
-		.work-row:focus-within .row-body,
-		.work-row:hover .row-stars,
-		.work-row:focus-within .row-stars,
-		.work-row:hover .row-media img,
-		.work-row:focus-within .row-media img {
-			transform: none;
+		.work-heading {
+			flex-wrap: wrap;
+			gap: 0.5rem 2rem;
 		}
 	}
 </style>

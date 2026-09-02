@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import BlueprintMasthead from '../../components/BlueprintMasthead.astro';
+import Masthead from '../../components/Masthead.astro';
 import { LinkButton } from '@cloudflare/kumo/components/button';
 import { env } from 'cloudflare:workers';
 import { PRODUCT } from '../../lib/product';
@@ -50,7 +50,7 @@ const downloadHref =
 	canonical={PRODUCT.url}
 	robots="noindex, nofollow"
 >
-	<BlueprintMasthead label="Digital product / Order" meta="Stripe Checkout">
+	<Masthead label="Digital product / Order" meta="Stripe Checkout">
 		<Fragment slot="title">
 			{
 				access.status === 'paid'
@@ -70,12 +70,7 @@ const downloadHref =
 						the email used at checkout.
 					</p>
 					<p class="confirmation-actions">
-						<LinkButton
-							href={downloadHref}
-							variant="primary"
-							size="lg"
-							className="blueprint-control"
-						>
+						<LinkButton href={downloadHref} variant="primary" size="lg" className="flat-control">
 							Download the production kit
 						</LinkButton>
 					</p>
@@ -99,7 +94,7 @@ const downloadHref =
 				</p>
 			)
 		}
-	</BlueprintMasthead>
+	</Masthead>
 </Base>
 
 <style>

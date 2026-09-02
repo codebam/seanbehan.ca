@@ -1,0 +1,84 @@
+---
+/**
+ * The page opening shared by every non-home page: a labelled rule, one serif
+ * headline, then the deck. The label/meta row reads like a folio line in a
+ * printed page — what this is, and one fact about it.
+ */
+interface Props {
+	label: string;
+	meta: string;
+}
+
+const { label, meta } = Astro.props;
+---
+
+<section class="masthead panel">
+	<div class="shell">
+		<p class="masthead-kicker enter">
+			<span>{label}</span>
+			<span class="masthead-meta">{meta}</span>
+		</p>
+
+		<h1 class="masthead-title display display-xl"><slot name="title" /></h1>
+		<div class="masthead-copy enter" style="--enter-delay:80ms">
+			<slot />
+		</div>
+	</div>
+</section>
+
+<style>
+	.masthead {
+		padding-block: clamp(4.5rem, 9vw, 7.5rem) clamp(5rem, 10vw, 8.5rem);
+	}
+	/* The folio line: small caps either side of a hairline, the way a printed
+	   page names itself at the top. */
+	.masthead-kicker {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1rem;
+		padding-bottom: 1rem;
+		border-bottom: 1px solid var(--line-strong);
+		font-size: 0.7rem;
+		font-weight: 600;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
+	.masthead-title {
+		max-width: 16ch;
+		margin-top: clamp(2.5rem, 6vw, 4.5rem);
+	}
+	.masthead-title :global(em) {
+		font-style: italic;
+		color: var(--accent-warm);
+	}
+	/* The deck reads as the first paragraph under a headline: the measure of a
+	   comfortable line, no wider, whatever the screen. */
+	.masthead-copy {
+		max-width: 55ch;
+		margin-top: clamp(1.75rem, 4vw, 2.75rem);
+		font-family: var(--font-serif);
+		font-size: clamp(1.1rem, 1.6vw, 1.3rem);
+		line-height: 1.65;
+		color: var(--body);
+	}
+	.masthead-copy :global(.masthead-actions) {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.75rem 1.5rem;
+		margin-top: 1.75rem;
+		font-family: var(--font-sans);
+		font-size: 0.95rem;
+	}
+	@media (width < 48rem) {
+		.masthead {
+			padding-block: 3.5rem 4.5rem;
+		}
+		.masthead-kicker {
+			flex-wrap: wrap;
+			gap: 0.35rem 1rem;
+		}
+	}
+</style>

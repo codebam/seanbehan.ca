@@ -5,7 +5,7 @@
  * titled "Résumé — codebam" that nothing links to.
  */
 import Base from '../layouts/Base.astro';
-import BlueprintMasthead from '../components/BlueprintMasthead.astro';
+import Masthead from '../components/Masthead.astro';
 import { LinkButton } from '@cloudflare/kumo/components/button';
 import { site, yearsBuilding } from '../lib/site';
 
@@ -35,11 +35,11 @@ const profile = [
 	description={`Résumé for ${site.name}, full-stack developer.`}
 	ogTitle={`Résumé — ${site.name}`}
 >
-	<BlueprintMasthead label="Professional profile" meta="Ontario / Canada">
+	<Masthead label="Professional profile" meta="Ontario / Canada">
 		<Fragment slot="title">A résumé for <em>building in the open.</em></Fragment>
 		<p>Full-stack developer in Ontario. {intro}</p>
 		<p class="masthead-actions">
-			<LinkButton href={RESUME_URL} variant="primary" size="lg" className="blueprint-control">
+			<LinkButton href={RESUME_URL} variant="primary" size="lg" className="flat-control">
 				Download PDF
 			</LinkButton>
 			<a class="link-quiet" href={`mailto:${site.email}`}>{site.email}</a>
@@ -50,21 +50,18 @@ const profile = [
 				rel="noopener noreferrer">GitHub</a
 			>
 		</p>
-	</BlueprintMasthead>
+	</Masthead>
 
 	<section class="profile panel">
-		<div class="resume-shell shell">
+		<div class="shell">
 			<div class="section-heading" data-reveal>
-				<h2 class="display display-lg"><span class="section-number">02 /</span> Working profile</h2>
+				<h2 class="display display-lg">Working profile</h2>
 				<p>Full-stack / systems / edge</p>
 			</div>
 			<div class="profile-grid">
 				{
 					profile.map((item, i) => (
 						<article data-reveal data-reveal-delay={i * 55}>
-							<span class="profile-index" aria-hidden="true">
-								{String(i + 1).padStart(2, '0')}
-							</span>
 							<h3>{item.label}</h3>
 							<p>{item.copy}</p>
 						</article>
@@ -75,11 +72,9 @@ const profile = [
 	</section>
 
 	<section class="document panel-alt">
-		<div class="resume-shell shell">
+		<div class="shell">
 			<div class="section-heading" data-reveal>
-				<h2 class="display display-lg">
-					<span class="section-number">03 /</span> Formatted résumé
-				</h2>
+				<h2 class="display display-lg">Formatted résumé</h2>
 				<a class="link-accent" href={RESUME_URL}>Open PDF <span class="arrow">&rarr;</span></a>
 			</div>
 
@@ -93,7 +88,7 @@ const profile = [
 				class="resume-object"
 				data-reveal
 			>
-				<div class="p-8 text-[var(--body)]">
+				<div class="p-8 font-serif text-[var(--body)]">
 					<p>Your browser cannot display the PDF inline.</p>
 					<p class="mt-2">
 						<a class="link-accent" href={RESUME_URL}>Open the résumé &rarr;</a>
@@ -107,56 +102,44 @@ const profile = [
 <style>
 	.profile,
 	.document {
-		padding-block: clamp(6rem, 11vw, 10rem);
+		padding-block: clamp(4.5rem, 9vw, 8rem);
 		border-top: 1px solid var(--line);
-	}
-	.resume-shell {
-		max-width: 1240px;
 	}
 	.section-heading {
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
 		gap: 2rem;
-	}
-	.section-number,
-	.profile-index {
-		font-family: var(--font-mono);
-		font-size: 0.75rem;
-		font-weight: 500;
-		letter-spacing: 0.08em;
-		color: var(--accent-warm);
-		vertical-align: middle;
+		padding-bottom: 1rem;
+		border-bottom: 1px solid var(--line-strong);
 	}
 	.section-heading > p {
-		font-family: var(--font-mono);
-		font-size: 0.72rem;
-		letter-spacing: 0.08em;
+		font-size: 0.7rem;
+		font-weight: 600;
+		letter-spacing: 0.16em;
 		text-transform: uppercase;
 		color: var(--muted);
 	}
 	.profile-grid {
 		display: grid;
+		gap: 2.5rem 0;
 		margin-top: clamp(2.5rem, 5vw, 4rem);
-		border-bottom: 1px solid var(--line);
 	}
 	.profile-grid article {
-		min-height: 18rem;
-		padding: 1.75rem;
-		border-top: 1px solid var(--line);
-	}
-	.profile-index {
-		display: block;
-		margin-bottom: 4rem;
+		padding-left: 1.25rem;
+		border-left: 1px solid var(--line-strong);
 	}
 	.profile-grid h3 {
-		font-size: clamp(1.4rem, 2.5vw, 2rem);
+		font-family: var(--font-serif);
+		font-size: clamp(1.5rem, 2.5vw, 2rem);
 		font-weight: 500;
-		letter-spacing: -0.03em;
+		letter-spacing: -0.015em;
 	}
 	.profile-grid p {
+		max-width: 48ch;
 		margin-top: 0.75rem;
-		font-size: 0.98rem;
+		font-family: var(--font-serif);
+		font-size: 1.02rem;
 		line-height: 1.65;
 		color: var(--body);
 	}
@@ -172,9 +155,7 @@ const profile = [
 	@media (width >= 48rem) {
 		.profile-grid {
 			grid-template-columns: repeat(3, 1fr);
-		}
-		.profile-grid article:not(:first-child) {
-			border-left: 1px solid var(--line);
+			gap: 0 3rem;
 		}
 	}
 	@media (width < 48rem) {

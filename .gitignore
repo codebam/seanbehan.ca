@@ -42,3 +42,8 @@ scripts/out
 
 # Paid release artifacts stay local and are uploaded directly to the storefront.
 /releases/
+
+# Favicon build intermediates: the rendered pages and the raster set the script
+# assembles before it is copied into public/.
+tools/favicon/_icon-*.html
+tools/favicon/out/

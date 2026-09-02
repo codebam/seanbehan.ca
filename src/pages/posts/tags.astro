@@ -1,7 +1,7 @@
 ---
 /** The tag index: every topic, with how many posts sit under it. */
 import Base from '../../layouts/Base.astro';
-import BlueprintMasthead from '../../components/BlueprintMasthead.astro';
+import Masthead from '../../components/Masthead.astro';
 import { getPosts, tagCounts } from '../../lib/posts';
 import { displayTag } from '../../lib/tags';
 import { site } from '../../lib/site';
@@ -13,18 +13,20 @@ const tags = tagCounts(posts);
 ---
 
 <Base title="Tags" description="Browse every post by topic." ogTitle={`Tags — ${site.name}`}>
-	<BlueprintMasthead label="Taxonomy index" meta={`${String(tags.length).padStart(2, '0')} topics`}>
+	<Masthead label="Taxonomy index" meta={`${tags.length} topics`}>
 		<Fragment slot="title">Writing, sorted <em>by subject.</em></Fragment>
-		<p>Every topic I write about, ordered by how much has been filed under it.</p>
-		<p class="masthead-actions">
-			<a href="/posts" class="link-accent">All writing <span class="arrow">&rarr;</span></a>
+		<p>
+			Every topic I write about, ordered by how much has been filed under it. <a
+				class="link-accent"
+				href="/posts">All writing <span class="arrow">&rarr;</span></a
+			>
 		</p>
-	</BlueprintMasthead>
+	</Masthead>
 
 	<section class="tag-archive panel">
-		<div class="archive-shell shell">
+		<div class="shell">
 			<div class="archive-heading" data-reveal>
-				<h2 class="display display-lg"><span class="section-number">02 /</span> All tags</h2>
+				<h2 class="display display-lg">All tags</h2>
 				<p>Most used first</p>
 			</div>
 
@@ -32,18 +34,12 @@ const tags = tagCounts(posts);
 				tags.length > 0 ? (
 					<nav class="tag-nav" aria-label="Post tags" data-reveal data-reveal-delay="60">
 						<ol class="tag-grid">
-							{tags.map((tag, i) => (
+							{tags.map((tag) => (
 								<li>
 									<a href={`/posts/tag/${tag.slug}`}>
-										<span class="tag-index" aria-hidden="true">
-											{String(i + 1).padStart(2, '0')}
-										</span>
 										<strong>{displayTag(tag.slug)}</strong>
 										<span class="tag-count">
-											{String(tag.count).padStart(2, '0')} {tag.count === 1 ? 'post' : 'posts'}
-										</span>
-										<span class="tag-arrow" aria-hidden="true">
-											&rarr;
+											{tag.count} {tag.count === 1 ? 'post' : 'posts'}
 										</span>
 									</a>
 								</li>
@@ -62,32 +58,21 @@ const tags = tagCounts(posts);
 
 <style>
 	.tag-archive {
-		padding-block: clamp(6rem, 11vw, 10rem);
+		padding-block: clamp(4.5rem, 9vw, 8rem);
 		border-top: 1px solid var(--line);
-	}
-	.archive-shell {
-		max-width: 1240px;
 	}
 	.archive-heading {
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
 		gap: 2rem;
+		padding-bottom: 1rem;
+		border-bottom: 1px solid var(--line-strong);
 	}
-	.section-number,
-	.tag-index {
-		font-family: var(--font-mono);
-		font-size: 0.75rem;
-		font-weight: 500;
-		letter-spacing: 0.08em;
-		color: var(--accent-warm);
-		vertical-align: middle;
-	}
-	.archive-heading p,
-	.tag-count {
-		font-family: var(--font-mono);
-		font-size: 0.72rem;
-		letter-spacing: 0.08em;
+	.archive-heading p {
+		font-size: 0.7rem;
+		font-weight: 600;
+		letter-spacing: 0.16em;
 		text-transform: uppercase;
 		color: var(--muted);
 	}
@@ -98,78 +83,60 @@ const tags = tagCounts(posts);
 		margin-top: 4rem;
 		padding-block: 3rem;
 		border-block: 1px solid var(--line);
+		font-family: var(--font-serif);
+		font-size: 1.05rem;
 		color: var(--muted);
 	}
 	.tag-grid {
 		display: grid;
-		border-bottom: 1px solid var(--line);
 		list-style: none;
+		border-top: 1px solid var(--line-strong);
 	}
 	.tag-grid li {
 		min-width: 0;
-		border-top: 1px solid var(--line);
+		border-bottom: 1px solid var(--line);
 	}
 	.tag-grid a {
-		display: grid;
-		grid-template-columns: 1fr auto;
-		grid-template-rows: auto 1fr auto;
-		gap: 1rem;
-		min-height: 14rem;
-		padding: 1.5rem;
-		transition:
-			background-color 0.25s ease,
-			color 0.25s ease;
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1.5rem;
+		padding: 1.15rem 0.25rem;
+		transition: background-color 0.2s ease;
 	}
 	.tag-grid a:hover,
 	.tag-grid a:focus-visible {
 		background: color-mix(in srgb, var(--accent) 4%, transparent);
 	}
-	.tag-index {
-		grid-column: 1;
-	}
-	.tag-count {
-		grid-column: 2;
-		text-align: right;
-	}
 	.tag-grid strong {
-		grid-column: 1 / -1;
-		align-self: center;
-		font-size: clamp(1.45rem, 2.5vw, 2rem);
+		font-family: var(--font-serif);
+		font-size: clamp(1.2rem, 2vw, 1.5rem);
 		font-weight: 500;
-		letter-spacing: -0.03em;
+		letter-spacing: -0.01em;
+		color: var(--text);
 		transition: color 0.2s ease;
 	}
 	.tag-grid a:hover strong,
 	.tag-grid a:focus-visible strong {
 		color: var(--accent);
 	}
-	.tag-arrow {
-		grid-column: 2;
-		justify-self: end;
-		color: var(--accent-warm);
-		transition: transform 0.2s ease;
-	}
-	.tag-grid a:hover .tag-arrow,
-	.tag-grid a:focus-visible .tag-arrow {
-		transform: translateX(3px);
+	.tag-count {
+		font-size: 0.7rem;
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--muted);
+		white-space: nowrap;
 	}
 	@media (width >= 48rem) {
 		.tag-grid {
-			grid-template-columns: repeat(2, 1fr);
-		}
-		.tag-grid li:not(:nth-child(2n + 1)) {
-			border-left: 1px solid var(--line);
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			column-gap: 3.5rem;
 		}
 	}
 	@media (width >= 64rem) {
 		.tag-grid {
-			grid-template-columns: repeat(3, 1fr);
-		}
-		.tag-grid li:not(:nth-child(2n + 1)) {
-			border-left: 0;
-		}
-		.tag-grid li:not(:nth-child(3n + 1)) {
-			border-left: 1px solid var(--line);
+			grid-template-columns: repeat(3, minmax(0, 1fr));
 		}
 	}
 	@media (width < 48rem) {

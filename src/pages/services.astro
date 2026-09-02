@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import BlueprintMasthead from '../components/BlueprintMasthead.astro';
+import Masthead from '../components/Masthead.astro';
 import { LinkButton } from '@cloudflare/kumo/components/button';
 import { SITES } from '../lib/site.data.js';
 
@@ -10,7 +10,6 @@ const contactHref = `mailto:${serviceSite.email}?subject=${encodeURIComponent('W
 
 const services = [
 	{
-		index: '01',
 		label: 'Website launch package',
 		title: 'Launch a site that does a job.',
 		copy: 'A custom, accessible business website built around a clear goal: explain the offer, earn trust, and turn the right visitors into customers.',
@@ -21,7 +20,6 @@ const services = [
 		]
 	},
 	{
-		index: '02',
 		label: 'Telegram bot package',
 		title: 'Put the busywork on a bot.',
 		copy: 'A purpose-built Telegram bot for your community or business, from a focused command workflow to a connected production service.',
@@ -66,26 +64,24 @@ const schema = JSON.stringify({
 >
 	<script slot="head" type="application/ld+json" is:inline set:html={schema} />
 
-	<BlueprintMasthead label="Custom project packages / Direct collaboration" meta="Quoted by email">
+	<Masthead label="Custom project packages / Direct collaboration" meta="Quoted by email">
 		<Fragment slot="title">Your idea, built to <em>work.</em></Fragment>
 		<p>
 			Custom websites and Telegram bots, taken from a clear scope to a production launch. You work
 			directly with the developer doing the work.
 		</p>
 		<p class="masthead-actions">
-			<LinkButton href={contactHref} variant="primary" size="lg" className="blueprint-control">
+			<LinkButton href={contactHref} variant="primary" size="lg" className="flat-control">
 				Request a project quote
 			</LinkButton>
 			<span class="response-note">No checkout / scoped by email</span>
 		</p>
-	</BlueprintMasthead>
+	</Masthead>
 
 	<section class="services panel-alt">
-		<div class="service-shell shell">
+		<div class="shell">
 			<div class="section-heading" data-reveal>
-				<h2 class="display display-lg">
-					<span class="section-number">02 /</span> Choose a starting point
-				</h2>
+				<h2 class="display display-lg">Choose a starting point</h2>
 				<p>Two custom packages</p>
 			</div>
 
@@ -93,10 +89,7 @@ const schema = JSON.stringify({
 				{
 					services.map((service, i) => (
 						<article data-reveal data-reveal-delay={i * 70}>
-							<header>
-								<span class="item-index">{service.index}</span>
-								<span class="service-label">{service.label}</span>
-							</header>
+							<p class="service-label">{service.label}</p>
 							<h3>{service.title}</h3>
 							<p>{service.copy}</p>
 							<ul>
@@ -112,9 +105,9 @@ const schema = JSON.stringify({
 	</section>
 
 	<section class="process panel-invert">
-		<div class="service-shell shell">
+		<div class="shell">
 			<div class="section-heading" data-reveal>
-				<h2 class="display display-lg"><span class="section-number">03 /</span> One clear path</h2>
+				<h2 class="display display-lg">One clear path</h2>
 				<p>Scope to launch</p>
 			</div>
 
@@ -122,7 +115,7 @@ const schema = JSON.stringify({
 				{
 					steps.map(([title, copy], i) => (
 						<li data-reveal data-reveal-delay={i * 50}>
-							<span class="item-index">{String(i + 1).padStart(2, '0')}</span>
+							<span class="step-index">{String(i + 1).padStart(2, '0')}</span>
 							<h3>{title}</h3>
 							<p>{copy}</p>
 						</li>
@@ -133,17 +126,17 @@ const schema = JSON.stringify({
 	</section>
 
 	<section class="project-brief panel">
-		<div class="service-shell shell brief-grid">
+		<div class="shell brief-grid">
 			<div data-reveal>
 				<p class="eyebrow">Have something in mind?</p>
-				<h2 class="display display-lg">Start with the problem.</h2>
+				<h2 class="display display-lg mt-4">Start with the problem.</h2>
 			</div>
 			<div class="brief-copy" data-reveal data-reveal-delay="60">
 				<p>
 					Send a short note with what you want to make, who it is for, and when you want it live. I
 					will reply with questions and a practical next step.
 				</p>
-				<LinkButton href={contactHref} variant="primary" size="lg" className="blueprint-control">
+				<LinkButton href={contactHref} variant="primary" size="lg" className="flat-control">
 					Email {serviceSite.email}
 				</LinkButton>
 				<a class="kit-link link-accent" href="/products/cloudflare-workers-production-kit">
@@ -160,9 +153,9 @@ const schema = JSON.stringify({
 	.response-note,
 	.section-heading > p,
 	.service-label {
-		font-family: var(--font-mono);
-		font-size: 0.72rem;
-		letter-spacing: 0.08em;
+		font-size: 0.7rem;
+		font-weight: 600;
+		letter-spacing: 0.16em;
 		text-transform: uppercase;
 		color: var(--muted);
 	}
@@ -172,102 +165,85 @@ const schema = JSON.stringify({
 	.services,
 	.process,
 	.project-brief {
-		padding-block: clamp(6rem, 11vw, 10rem);
+		padding-block: clamp(4.5rem, 9vw, 8rem);
 		border-top: 1px solid var(--line);
-	}
-	.service-shell {
-		max-width: 1240px;
 	}
 	.section-heading {
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
 		gap: 2rem;
-	}
-	.section-number,
-	.item-index {
-		font-family: var(--font-mono);
-		font-size: 0.75rem;
-		font-weight: 500;
-		letter-spacing: 0.08em;
-		color: var(--accent-warm);
+		padding-bottom: 1rem;
+		border-bottom: 1px solid var(--line-strong);
 	}
 	.service-grid {
 		display: grid;
-		gap: 1px;
+		gap: 3rem 0;
 		margin-top: clamp(2.5rem, 5vw, 4rem);
-		border: 1px solid var(--line);
-		background: var(--line);
 	}
 	.service-grid article {
 		min-width: 0;
-		padding: clamp(1.5rem, 4vw, 3rem);
-		background: var(--bg);
-	}
-	.service-grid header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding-bottom: 4rem;
+		padding-left: 1.5rem;
+		border-left: 1px solid var(--line-strong);
 	}
 	.service-grid h3 {
-		max-width: 14ch;
-		font-size: clamp(2rem, 4vw, 3.4rem);
-		font-weight: 550;
-		letter-spacing: -0.045em;
-		line-height: 1.05;
+		max-width: 16ch;
+		margin-top: 0.75rem;
+		font-family: var(--font-serif);
+		font-size: clamp(1.9rem, 3.6vw, 2.9rem);
+		font-weight: 500;
+		letter-spacing: -0.015em;
+		line-height: 1.08;
 	}
 	.service-grid article > p {
-		max-width: 48ch;
-		margin-top: 1.5rem;
-		font-size: 1rem;
+		max-width: 52ch;
+		margin-top: 1.25rem;
+		font-family: var(--font-serif);
+		font-size: 1.05rem;
 		line-height: 1.7;
 		color: var(--body);
 	}
 	.service-grid ul {
 		display: grid;
-		gap: 0.7rem;
-		margin-top: 2.5rem;
-		padding-top: 1.5rem;
-		border-top: 1px solid var(--line);
+		gap: 0.6rem;
+		margin-top: 1.75rem;
 		list-style: none;
-		font-size: 0.9rem;
+		font-size: 0.92rem;
 		color: var(--body);
 	}
 	.service-grid li::before {
-		content: '+';
+		content: '—';
 		margin-right: 0.65rem;
 		color: var(--accent);
 	}
-	.process {
-		background-image:
-			linear-gradient(color-mix(in srgb, var(--accent) 8%, transparent) 1px, transparent 1px),
-			linear-gradient(90deg, color-mix(in srgb, var(--accent) 8%, transparent) 1px, transparent 1px);
-		background-size: 32px 32px;
-	}
 	.process-list {
 		display: grid;
+		gap: 2.5rem 0;
 		margin-top: clamp(2.5rem, 5vw, 4rem);
-		border-bottom: 1px solid var(--line);
 		list-style: none;
 	}
 	.process-list li {
-		padding: 1.5rem;
-		border-top: 1px solid var(--line);
-		background: color-mix(in srgb, var(--bg) 78%, transparent);
+		padding-left: 1.25rem;
+		border-left: 1px solid var(--line-strong);
 	}
-	.process-list .item-index {
+	.step-index {
 		display: block;
-		margin-bottom: 3rem;
+		font-size: 0.7rem;
+		font-weight: 600;
+		letter-spacing: 0.16em;
+		color: var(--accent-warm);
 	}
 	.process-list h3 {
-		font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+		margin-top: 0.6rem;
+		font-family: var(--font-serif);
+		font-size: clamp(1.4rem, 2.2vw, 1.9rem);
 		font-weight: 500;
-		letter-spacing: -0.025em;
+		letter-spacing: -0.01em;
 	}
 	.process-list p {
-		margin-top: 0.75rem;
-		font-size: 0.92rem;
+		max-width: 30ch;
+		margin-top: 0.6rem;
+		font-size: 0.95rem;
 		line-height: 1.65;
 		color: var(--body);
 	}
@@ -279,14 +255,14 @@ const schema = JSON.stringify({
 	}
 	.brief-grid h2 {
 		max-width: 12ch;
-		margin-top: 1rem;
 	}
 	.brief-copy {
 		padding-top: 1.25rem;
 		border-top: 1px solid var(--line-strong);
 	}
 	.brief-copy > p {
-		font-size: 1.05rem;
+		font-family: var(--font-serif);
+		font-size: 1.1rem;
 		line-height: 1.7;
 		color: var(--body);
 	}
@@ -301,12 +277,11 @@ const schema = JSON.stringify({
 	@media (width >= 48rem) {
 		.service-grid {
 			grid-template-columns: repeat(2, 1fr);
+			gap: 0 3.5rem;
 		}
 		.process-list {
 			grid-template-columns: repeat(4, 1fr);
-		}
-		.process-list li:not(:first-child) {
-			border-left: 1px solid var(--line);
+			gap: 0 3rem;
 		}
 	}
 	@media (width < 48rem) {

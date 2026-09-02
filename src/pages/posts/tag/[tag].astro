@@ -1,6 +1,7 @@
 ---
 /** Every post carrying one tag, newest first. */
 import Base from '../../../layouts/Base.astro';
+import Masthead from '../../../components/Masthead.astro';
 import PostList from '../../../components/PostList.astro';
 import { getPosts } from '../../../lib/posts';
 import { displayTag, slugifyTag } from '../../../lib/tags';
@@ -41,19 +42,18 @@ const robots = posts.length < 2 ? 'noindex, follow' : undefined;
 		href={`/posts/tag/${target}/rss.xml`}
 	/>
 
-	<section class="panel pt-14 pb-20 md:pt-16 md:pb-24">
-		<div class="shell">
-			<p class="enter eyebrow">
-				<a href="/posts" class="hover:underline">Writing</a> · {posts.length}
-				{posts.length === 1 ? 'post' : 'posts'}
-			</p>
-			<h1 class="display display-xl mt-5">{display}</h1>
-			<p class="enter mt-6 flex flex-wrap gap-x-6 gap-y-2" style="--enter-delay:80ms">
-				<a href="/posts/tags" class="link-accent">All tags &rarr;</a>
-				<a class="link-quiet" href={`/posts/tag/${target}/rss.xml`}>Subscribe via RSS</a>
-			</p>
+	<Masthead label="Filed under" meta={`${posts.length} ${posts.length === 1 ? 'post' : 'posts'}`}>
+		<Fragment slot="title">{display}</Fragment>
+		<p>Everything filed under this subject, newest first.</p>
+		<p class="masthead-actions">
+			<a class="link-accent" href="/posts/tags">All tags <span class="arrow">&rarr;</span></a>
+			<a class="link-quiet" href={`/posts/tag/${target}/rss.xml`}>Subscribe via RSS</a>
+		</p>
+	</Masthead>
 
-			<div class="mt-12" data-reveal>
+	<section class="panel">
+		<div class="shell pb-24">
+			<div data-reveal>
 				<PostList posts={posts} headingLevel={2} />
 			</div>
 		</div>

@@ -1,6 +1,6 @@
 # Favicon
 
-The mark is Newsreader `SB` in cream (`#faf8f4`) on the rust accent (`#a8391f`).
+The mark is Newsreader `SB` in cream (`#f7f8fa`) on blue (`#2563eb`).
 
 Two scripts regenerate everything in `static/`. Neither runs in CI — run them by
 hand when the mark or the palette changes.

@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import BlueprintMasthead from '../components/BlueprintMasthead.astro';
+import Masthead from '../components/Masthead.astro';
 import { site, LEGAL_NAME, LINKEDIN_URL, writingHref } from '../lib/site';
 
 const notes = [
@@ -36,18 +36,18 @@ const destinations = [
 	description={`About ${LEGAL_NAME}, the developer behind ${site.name} and @codebam.`}
 	ogTitle={`About — ${site.name}`}
 >
-	<BlueprintMasthead label={site.about.eyebrow} meta="Ontario / Canada">
+	<Masthead label={site.about.eyebrow} meta="Ontario / Canada">
 		<Fragment slot="title">{site.about.headline}</Fragment>
 		<div class="masthead-profile">
 			<img src="/profile.webp" alt={LEGAL_NAME} width="180" height="180" />
 			<p>{site.about.intro}</p>
 		</div>
-	</BlueprintMasthead>
+	</Masthead>
 
 	<section class="notes panel">
-		<div class="about-shell shell">
+		<div class="shell">
 			<div class="section-heading" data-reveal>
-				<h2 class="display display-lg"><span class="section-number">02 /</span> Working notes</h2>
+				<h2 class="display display-lg">Working notes</h2>
 				<p>Systems / writing</p>
 			</div>
 
@@ -55,9 +55,6 @@ const destinations = [
 				{
 					notes.map((note, i) => (
 						<article data-reveal data-reveal-delay={i * 55}>
-							<span class="item-index" aria-hidden="true">
-								{String(i + 1).padStart(2, '0')}
-							</span>
 							<h3>{note.title}</h3>
 							<p>{note.copy}</p>
 						</article>
@@ -68,13 +65,13 @@ const destinations = [
 	</section>
 
 	<section class="elsewhere panel-alt">
-		<div class="about-shell shell">
+		<div class="shell">
 			<div class="section-heading" data-reveal>
-				<h2 class="display display-lg"><span class="section-number">03 /</span> Elsewhere</h2>
+				<h2 class="display display-lg">Elsewhere</h2>
 				<p>{destinations.length} destinations</p>
 			</div>
 
-			<ul class="destination-grid">
+			<ul class="destination-list">
 				{
 					destinations.map((destination, i) => (
 						<li data-reveal data-reveal-delay={i * 45}>
@@ -83,9 +80,6 @@ const destinations = [
 								target={destination.external ? '_blank' : undefined}
 								rel={destination.external ? 'noopener noreferrer' : undefined}
 							>
-								<span class="item-index" aria-hidden="true">
-									{String(i + 1).padStart(2, '0')}
-								</span>
 								<strong>{destination.label}</strong>
 								<span class="destination-arrow" aria-hidden="true">
 									&rarr;
@@ -115,119 +109,93 @@ const destinations = [
 	}
 	.notes,
 	.elsewhere {
-		padding-block: clamp(6rem, 11vw, 10rem);
+		padding-block: clamp(4.5rem, 9vw, 8rem);
 		border-top: 1px solid var(--line);
-	}
-	.about-shell {
-		max-width: 1240px;
 	}
 	.section-heading {
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
 		gap: 2rem;
-	}
-	.section-number,
-	.item-index {
-		font-family: var(--font-mono);
-		font-size: 0.75rem;
-		font-weight: 500;
-		letter-spacing: 0.08em;
-		color: var(--accent-warm);
-		vertical-align: middle;
+		padding-bottom: 1rem;
+		border-bottom: 1px solid var(--line-strong);
 	}
 	.section-heading > p {
-		font-family: var(--font-mono);
-		font-size: 0.72rem;
-		letter-spacing: 0.08em;
+		font-size: 0.7rem;
+		font-weight: 600;
+		letter-spacing: 0.16em;
 		text-transform: uppercase;
 		color: var(--muted);
 	}
-	.notes-grid,
-	.destination-grid {
+	.notes-grid {
 		display: grid;
+		gap: 0 3.5rem;
 		margin-top: clamp(2.5rem, 5vw, 4rem);
-		border-bottom: 1px solid var(--line);
-	}
-	.notes-grid article,
-	.destination-grid li {
-		min-width: 0;
-		border-top: 1px solid var(--line);
 	}
 	.notes-grid article {
-		min-height: 19rem;
-		padding: 1.75rem;
-	}
-	.item-index {
-		display: block;
-		margin-bottom: 4rem;
+		min-width: 0;
+		padding-left: 1.25rem;
+		border-left: 1px solid var(--line-strong);
 	}
 	.notes-grid h3 {
-		font-size: clamp(1.4rem, 2.5vw, 2rem);
+		font-family: var(--font-serif);
+		font-size: clamp(1.5rem, 2.5vw, 2rem);
 		font-weight: 500;
-		letter-spacing: -0.03em;
+		letter-spacing: -0.015em;
 	}
 	.notes-grid p {
 		max-width: 55ch;
-		margin-top: 0.75rem;
-		font-size: 0.98rem;
-		line-height: 1.65;
+		margin-top: 0.9rem;
+		font-family: var(--font-serif);
+		font-size: 1.05rem;
+		line-height: 1.7;
 		color: var(--body);
 	}
-	.destination-grid {
+	.destination-list {
+		margin-top: clamp(2.5rem, 5vw, 4rem);
+		border-top: 1px solid var(--line-strong);
 		list-style: none;
 	}
-	.destination-grid a {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr) auto;
-		grid-template-rows: auto 1fr;
-		gap: 1rem;
-		min-height: 14rem;
-		padding: 1.5rem;
-		transition:
-			background-color 0.25s ease,
-			border-color 0.25s ease;
+	.destination-list li {
+		min-width: 0;
+		border-bottom: 1px solid var(--line);
 	}
-	.destination-grid .item-index {
-		margin-bottom: 0;
+	.destination-list a {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1.5rem;
+		padding: 1.35rem 0.25rem;
+		transition: background-color 0.2s ease;
 	}
-	.destination-grid strong {
-		grid-column: 1;
-		align-self: end;
-		max-width: 22ch;
-		font-size: clamp(1.2rem, 2vw, 1.65rem);
+	.destination-list strong {
+		font-family: var(--font-serif);
+		font-size: clamp(1.25rem, 2vw, 1.6rem);
 		font-weight: 500;
-		letter-spacing: -0.025em;
+		letter-spacing: -0.01em;
 		line-height: 1.3;
+		color: var(--text);
 		transition: color 0.2s ease;
 	}
 	.destination-arrow {
-		grid-column: 2;
-		grid-row: 2;
-		align-self: end;
 		color: var(--accent-warm);
 		transition: transform 0.2s ease;
 	}
-	.destination-grid a:hover,
-	.destination-grid a:focus-visible {
+	.destination-list a:hover,
+	.destination-list a:focus-visible {
 		background: color-mix(in srgb, var(--accent) 4%, transparent);
 	}
-	.destination-grid a:hover strong,
-	.destination-grid a:focus-visible strong {
+	.destination-list a:hover strong,
+	.destination-list a:focus-visible strong {
 		color: var(--accent);
 	}
-	.destination-grid a:hover .destination-arrow,
-	.destination-grid a:focus-visible .destination-arrow {
+	.destination-list a:hover .destination-arrow,
+	.destination-list a:focus-visible .destination-arrow {
 		transform: translateX(3px);
 	}
 	@media (width >= 48rem) {
-		.notes-grid,
-		.destination-grid {
+		.notes-grid {
 			grid-template-columns: repeat(2, 1fr);
-		}
-		.notes-grid article:not(:first-child),
-		.destination-grid li:nth-child(even) {
-			border-left: 1px solid var(--line);
 		}
 	}
 	@media (width < 48rem) {
@@ -235,6 +203,9 @@ const destinations = [
 			align-items: flex-start;
 			flex-direction: column;
 			gap: 0.75rem;
+		}
+		.notes-grid {
+			gap: 3rem;
 		}
 		.masthead-profile {
 			grid-template-columns: 4.5rem 1fr;
