@@ -100,7 +100,10 @@ const schema = JSON.stringify({
 		</p>
 	</Masthead>
 
-	<section class="panel contents">
+	<!-- Not `contents`: that is a Tailwind utility (display:contents), emitted
+	     because Kumo markup uses the class too, and it would dissolve the
+	     section's box — padding, background and border all lost. -->
+	<section class="panel modules">
 		<div class="shell">
 			<div class="section-heading" data-reveal>
 				<h2 class="display display-lg">What ships</h2>
@@ -250,7 +253,7 @@ const schema = JSON.stringify({
 	.price-card form :global(button) {
 		width: 100%;
 	}
-	.contents,
+	.modules,
 	.workflow,
 	.offer,
 	.fit {
