@@ -47,3 +47,6 @@ scripts/out
 # assembles before it is copied into public/.
 tools/favicon/_icon-*.html
 tools/favicon/out/
+
+# search index
+.zvec-grep/
