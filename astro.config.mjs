@@ -6,7 +6,10 @@ import { cloudflareEmail } from '@emdash-cms/cloudflare/plugins';
 import { formsPlugin } from '@emdash-cms/plugin-forms';
 import { defineConfig } from 'astro/config';
 import emdash from 'emdash/astro';
+import { siteFor } from './src/lib/site.data.js';
 import { siteSeo } from './src/plugins/site-seo';
+
+const buildSite = siteFor(process.env.PUBLIC_SITE);
 
 /**
  * The admin panel is React; the site itself is plain Astro templates.
@@ -60,6 +63,7 @@ export default defineConfig({
 	integrations: [
 		react(),
 		emdash({
+			siteUrl: buildSite.url,
 			database: d1({ binding: 'DB', session: 'auto' }),
 			storage: r2({ binding: 'MEDIA' }),
 			plugins: [

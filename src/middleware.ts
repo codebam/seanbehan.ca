@@ -14,6 +14,7 @@
  */
 
 import { defineMiddleware } from 'astro:middleware';
+import { edgeCacheKey } from './lib/edgeCache';
 import { SITES, site } from './lib/site';
 
 /**
@@ -55,6 +56,7 @@ const COMMERCE_PRIVATE = /^\/(checkout|api\/stripe)(?:\/|$)/;
  * purges the tag when content changes.
  */
 const EDGE_SECONDS = 600;
+const IMMUTABLE_SECONDS = 31536000;
 
 const HTML_CACHE = `public, max-age=0, s-maxage=${EDGE_SECONDS}, must-revalidate`;
 
@@ -121,30 +123,6 @@ const isCacheable = async (context: {
 	if (request.headers.get('Authorization')?.toLowerCase().startsWith('bearer ')) return false;
 	return !(await hasLiveSession(request, context.session));
 };
-
-/**
- * The cache key drops the query string, except where a route reads it:
- * /search.json ranks by ?q=.
- *
- * Dropping it is the DDoS fix, not an optimisation: with the full URL as the
- * key, ?nonce=1..N manufactures an unlimited supply of fresh anonymous keys
- * and each one costs a render (verified live: ?x=1 and ?x=2 both MISS). One
- * key per page turns that flood into hits.
- *
- * The archive's ?q= is not one of the routes that reads it — PostSearch.astro
- * only mirrors the input box into the address bar; the HTML is unchanged. So
- * search.json is the sole entry here.
- *
- * A new route that reads query parameters into its response MUST add its
- * path to QUERY_SENSITIVE, or the cache serves one reader's results to the
- * next.
- */
-const QUERY_SENSITIVE = /(^|\/)search\.json$/;
-
-function cacheKey(url: URL): Request {
-	const search = QUERY_SENSITIVE.test(url.pathname) ? url.search : '';
-	return new Request(`${url.origin}${url.pathname}${search}`, { method: 'GET' });
-}
 
 export const onRequest = defineMiddleware(async (context, next) => {
 	const { pathname } = context.url;
@@ -213,7 +191,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	const cacheable = await isCacheable(context);
 	// The match and the put must use this one key, or the second misses the
 	// first.
-	const key = cacheable ? cacheKey(context.url) : null;
+	const key = cacheable ? edgeCacheKey(context.url) : null;
 
 	if (key) {
 		const hit = await cache.match(key);
@@ -271,7 +249,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		// policy — those two are instructions to the reader's own cache, and the
 		// Cache API would honour the zero and store nothing.
 		const stored = new Response(response.clone().body, response);
-		stored.headers.set('Cache-Control', `public, max-age=${EDGE_SECONDS}`);
+		// EmDash image URLs identify immutable source bytes and transform options,
+		// so keeping them for a year avoids decoding the same rendition again.
+		stored.headers.set(
+			'Cache-Control',
+			pathname === '/_image'
+				? `public, max-age=${IMMUTABLE_SECONDS}, immutable`
+				: `public, max-age=${EDGE_SECONDS}`
+		);
 		stored.headers.delete('X-Edge-Cache');
 		// Awaited rather than handed to waitUntil: Astro 6 removed the runtime
 		// context from locals, and a put of an already-rendered response costs

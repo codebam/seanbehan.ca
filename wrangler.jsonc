@@ -23,6 +23,9 @@
 			"bucket_name": "seanbehan-ca-media"
 		}
 	],
+	"images": {
+		"binding": "IMAGES"
+	},
 
 	// Worker Loader for plugin sandboxing
 	"worker_loaders": [
@@ -87,6 +90,9 @@
 					"bucket_name": "codebam-product-downloads"
 				}
 			],
+			"images": {
+				"binding": "IMAGES"
+			},
 			"worker_loaders": [
 				{
 					"binding": "LOADER"
