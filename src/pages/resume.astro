@@ -66,7 +66,7 @@ const updated = resume
 >
 	<Masthead label="Professional profile" meta="Ontario / Canada">
 		<Fragment slot="title">A résumé for <em>building in the open.</em></Fragment>
-		<p>Full-stack developer in Ontario. {intro}</p>
+		<p class="masthead-blurb">Full-stack developer in Ontario. {intro}</p>
 		<p class="masthead-actions">
 			<LinkButton
 				href={RESUME_PDF}
@@ -231,6 +231,24 @@ const updated = resume
 			align-items: flex-start;
 			flex-direction: column;
 			gap: 0.75rem;
+		}
+	}
+	/* Paper. The fragment carries its own identity block, contacts included, so a
+	   print of this page should hand back the résumé rather than the pitch around
+	   it. The PDF is still the better artifact; this is for the reader who hits
+	   ⌘P anyway. */
+	@media print {
+		.profile,
+		.masthead-blurb,
+		.masthead-actions,
+		.document .section-heading,
+		.document-note,
+		.document-missing {
+			display: none;
+		}
+		.document {
+			padding-block: 0;
+			border-top: 0;
 		}
 	}
 </style>

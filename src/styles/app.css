@@ -846,15 +846,20 @@
 	}
 }
 
-/* A résumé printed from the browser is a second draft of the PDF: keep it
-   intact rather than clever about it. */
+/* A résumé printed from the browser is a second draft of the PDF, so it gets
+   the same thing the TeX template fights for: a section title stranded alone at
+   the foot of a page is the one break that ruins a print. */
 @media print {
-	.resume-doc .resume-entry,
+	.resume-doc {
+		margin-block-start: 0;
+	}
+	.resume-doc .resume-section,
+	.resume-doc .resume-subsection,
+	.resume-doc .resume-entry {
+		break-after: avoid;
+	}
 	.resume-doc li {
 		break-inside: avoid;
-	}
-	.resume-doc .resume-section {
-		break-before: auto;
 	}
 }
 
