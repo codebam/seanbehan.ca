@@ -14,6 +14,7 @@ Same posts. Identity is chosen at build time by `PUBLIC_SITE`.
 - Node.js 26 (see `.node-version`)
 - npm
 - A Cloudflare account. EmDash runs plugins in Worker sandboxes, which needs a paid Workers plan; everything else here works on the free one.
+- Nix, only for the résumé: `nix run .#resume` is what builds the PDF. Nothing else in the repo needs it, and no build step here asks for it.
 
 ## Setup
 
@@ -29,6 +30,8 @@ npm run dev
 Use `npm run dev:codebam` for the codebam variant and its private storefront bindings.
 
 The local database is a SQLite file under `.wrangler/state`, not committed. An empty one is seeded with the schema (posts, pages, tags) but no posts; see **Content** below for how the real ones got there.
+
+`/resume` reads its document out of R2 rather than the database, so a fresh clone renders it without the résumé in it. `npm run resume:seed` builds the two artifacts into the local store once, and the page is normal from then on.
 
 ## Content
 
@@ -93,6 +96,28 @@ database for its table list and exports everything that is not virtual. The
 search indexes are derived data — after a restore, rebuild each with
 `INSERT INTO <fts_table>(<fts_table>) VALUES('rebuild')`.
 
+## Résumé
+
+`resume/resume.md` is the résumé, and it is a build rather than a page: pandoc
+typesets it to PDF with tectonic and renders the same pass to an HTML fragment.
+CI does both on a push that touches `resume/` — `.github/workflows/resume.yml`
+builds, checks, and writes `resume.pdf` and `resume.html` to the `private`
+bucket, then purges the zone.
+
+The page renders the fragment inline; `/resume.pdf` streams the file out of the
+same bucket, which is why the download is a path on this origin and not a
+hostname. A résumé edit therefore goes live with an upload, not a deploy, and
+`npm run build` never needs TeX.
+
+```bash
+npm run resume        # both artifacts into resume/out/, via nix
+npm run resume:seed   # …and into the local dev bucket, for npm run dev
+```
+
+[`docs/resume.md`](docs/resume.md) is the pipeline — bucket, routes, CI, what a
+token needs to be able to do. `resume/README.md` is the author's guide — the
+Markdown conventions, the front matter, and every knob in `metadata.yaml`.
+
 ## Checks
 
 ```bash
@@ -101,7 +126,7 @@ npm run test:run           # unit tests over src/lib
 npm run smoke              # ask a running site for one of everything
 ```
 
-`npm run smoke` takes a base URL and defaults to `http://localhost:4321`. It is the check that matters most here: pages assemble on a Worker out of a database, so a page, a feed, a social card and a 404 have to be fetched to know they work.
+`npm run smoke` takes a base URL and defaults to `http://localhost:4321`. It is the check that matters most here: pages assemble on a Worker out of a database, so a page, a feed, a social card and a 404 have to be fetched to know they work. It asks for `/resume` and `/resume.pdf` too, which are the two routes that answer out of R2 — so seed the local bucket first.
 
 GitHub Actions runs the formatter check, `astro check`, the tests and both builds on every push and pull request. `.githooks` is wired by `prepare` so commits run Prettier and the type check first.
 
@@ -123,5 +148,6 @@ GitHub Actions runs the formatter check, `astro check`, the tests and both build
 | `src/scripts`            | Canvas effects and small delegated client behaviours              |
 | `src/middleware.ts`      | Security headers and the cache policy                             |
 | `seed/seed.json`         | Schema a fresh database is built from                             |
+| `resume/`                | The résumé: Markdown source, pandoc templates, Lua filter, driver |
 | `scripts/`               | The markdown import, its backfill, and the smoke test             |
 | `tools/`                 | Font, favicon and Cloudflare cache utilities                      |

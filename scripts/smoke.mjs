@@ -22,6 +22,13 @@ const CHECKS = [
 	{ path: '/posts/tag/nixos', contains: ['NixOS', 'Subscribe via RSS'] },
 	{ path: '/posts/nixos', contains: ['NixOS Flakes', 'shiki', 'On this page'] },
 	{ path: '/contact', contains: ['Say', 'mailto:'] },
+	// The résumé is the page whose words come from neither D1 nor the bundle: the
+	// markup is read out of R2 at request time, so this is the check that notices
+	// a bucket the site lost sight of — and /resume.pdf is the one route that
+	// answers with bytes this Worker did not produce. Locally it wants
+	// `npm run resume:seed` to have run once.
+	{ path: '/resume', contains: ['resume-doc', 'SEAN BEHAN'] },
+	{ path: '/resume.pdf', type: 'application/pdf' },
 	{ path: '/rss.xml', contains: ['<rss version="2.0"', '<content:encoded>'] },
 	{ path: '/posts/tag/nixos/rss.xml', contains: ['<rss version="2.0"'] },
 	{ path: '/sitemap.xml', contains: ['<urlset', '/posts/nixos'] },

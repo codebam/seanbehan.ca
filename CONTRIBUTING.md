@@ -19,6 +19,8 @@ npm run dev
 
 A fresh database has the schema and no posts. That is expected — the writing lives in D1 on the deployed site, not in this repo.
 
+`/resume` is empty on a fresh clone for the same reason: its document is built from `resume/resume.md` into the R2 bucket the page reads, and a local bucket starts with nothing in it. `npm run resume:seed` (Nix) does one build and writes both artifacts locally; after that the page is normal. `docs/resume.md` covers the pipeline, `resume/README.md` the writing.
+
 ## Build Variants
 
 - `seanbehan.ca` — name-first, résumé in the nav

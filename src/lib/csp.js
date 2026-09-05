@@ -29,8 +29,11 @@ export const CSP_DIRECTIVES = [
 	"img-src 'self' data:",
 	"font-src 'self'",
 	"connect-src 'self'",
-	// The résumé is embedded as an <object> from a Cloudflare R2 bucket.
-	"object-src 'self' https://pub-b1fc9705d9cd4b50885284c3ede52d27.r2.dev",
+	// Nothing is embedded any more. The résumé used to arrive as a PDF in an
+	// <object> from the bucket's r2.dev domain, which needed this origin on the
+	// list; it is inline HTML now and the PDF is a download, so the plugin slot
+	// can be shut outright rather than opened to a hostname.
+	"object-src 'none'",
 	"frame-src 'none'",
 	"frame-ancestors 'none'",
 	"base-uri 'self'",

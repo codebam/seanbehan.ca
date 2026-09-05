@@ -10,6 +10,8 @@ npm run check        # astro check
 npm run test:run     # vitest over src/lib
 npm run smoke        # ask a running site for one of everything
 npm run build        # seanbehan.ca; build:codebam for the other origin
+npm run resume       # nix: the résumé PDF and HTML fragment into resume/out/
+npm run resume:seed  # …and into the local bucket, which is what /resume reads
 ```
 
 The admin UI is at `http://localhost:4321/_emdash/admin`; localhost signs you in without a passkey.
@@ -28,7 +30,9 @@ The admin UI is at `http://localhost:4321/_emdash/admin`; localhost signs you in
 | `src/layouts/Base.astro` | Head metadata, header, footer — every page renders into it                   |
 | `src/middleware.ts`      | Security headers and the cache policy (was `_headers` on Pages)              |
 | `seed/seed.json`         | Schema a fresh database is built from. Not the writing.                      |
-| `src/styles/app.css`     | The whole design: tokens, panels, prose, code blocks                         |
+| `src/styles/app.css`     | The whole design: tokens, panels, prose, résumé, code blocks                 |
+| `src/lib/resume.ts`      | The résumé artifacts in the `private` bucket, and their download name        |
+| `resume/`                | The résumé's source, pandoc templates, Lua filter and driver                 |
 
 ## Rules
 
@@ -39,6 +43,7 @@ The admin UI is at `http://localhost:4321/_emdash/admin`; localhost signs you in
 - Heading ids come from `prepareBody`, so the contents list and the headings cannot disagree. Do not derive them anywhere else.
 - The public site is plain Astro. Client behaviour goes in `src/scripts`; prefer delegated listeners, and keep decorative canvas markup in Astro components. React remains only because the EmDash admin UI requires it.
 - The page must work with JS off: search filters a server-rendered list, the copy buttons are injected rather than shipped, the contents list starts open.
+- The résumé is the exception to "the words live in D1": `/resume` renders an HTML fragment CI built from `resume/resume.md` and uploaded to R2, styled from `src/styles/app.css` rather than a component. What it says is edited there, never in the admin.
 
 ## Writing style
 

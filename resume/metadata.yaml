@@ -1,0 +1,44 @@
+# Pandoc metadata defaults for templates/resume.latex
+# Consumed by build.sh (`pandoc -d defaults.yaml`).  Anything here can be
+# overridden per-build with -V key=value, or edited in place.  Front matter in
+# resume.md always wins over this file for keys it defines.
+
+# ---------- page ----------
+papersize: letter
+fontsize: 10.5          # pt; fractional sizes are fine
+# margin: 0.6in         # uncomment for a uniform margin
+# top / bottom / left / right also accepted, e.g. `top: 0.45in`
+
+# ---------- typefaces (any font fontconfig can find) ----------
+mainfont: TeX Gyre Pagella      # body
+sansfont: TeX Gyre Heros        # name, section + entry titles
+monofont: DejaVu Sans Mono
+# fallbackfont: DejaVu Serif    # second choice for the body face
+# fallbacksans: DejaVu Sans
+# fallbackmono: Liberation Mono
+nameTracking: 8                 # % letter-spacing, name
+titleTracking: 6                # % letter-spacing, section titles
+subtitleTracking: 16
+
+# ---------- colour palette (HTML hex, no leading #) ----------
+accentcolor: 1F3A5F     # navy: rules, section titles, company names
+inkcolor: 1A1D21
+mutedcolor: 5C6672      # dates, contact line
+rulecolor: AEB7C0
+linkcolor: 1F3A5F
+
+# ---------- behaviour ----------
+links: true             # clickable, colourised links
+icons: false            # true -> FontAwesome glyphs in the contact line
+# nofooter: true        # true -> drop the "Page 2 of 2" footer
+
+# ---------- filter switches (filters/resume-entries.lua) ----------
+dash_lists: true                # "label + - item" lines -> real bullet lists
+drop_rules: true                # ignore the author's `---` separators
+date_rows: true                 # right-align the italic line under a heading
+split_entries: true             # "Role · Company" -> role + accent company
+entry_separator: "·"
+inline_bullets: true            # collapse short bullet lists onto one line
+inline_bullet_max: 30           # "short" threshold, in characters
+uppercase_sections: false       # set true if headings are written lowercase
+build_contacts: true            # phone/email/website -> template header

@@ -1,5 +1,18 @@
 ---
 /**
+ * The résumé.
+ *
+ * The document is inline, in this site's own type, rather than a PDF in a box:
+ * an embedded PDF is unreadable on a phone, invisible to a text browser and to
+ * anything that indexes the page, and it styles the career in a face the rest
+ * of the site never uses. The fragment comes out of R2 — built by CI from
+ * resume/resume.md by the same pandoc pass that typesets the PDF, so the two
+ * cannot disagree about what 2021 looked like. They differ in exactly two
+ * places: the fragment carries classes where the PDF carries LaTeX macros, and
+ * its headings start two levels lower so the résumé's sections sit underneath
+ * this page's own. The PDF stays one click away for anyone who means to print
+ * it or forward it as an attachment.
+ *
  * The codebam variant does not pitch a résumé: it is omitted from the nav and
  * the sitemap, and the route answers 404 there rather than serving a page
  * titled "Résumé — codebam" that nothing links to.
@@ -7,11 +20,20 @@
 import Base from '../layouts/Base.astro';
 import Masthead from '../components/Masthead.astro';
 import { LinkButton } from '@cloudflare/kumo/components/button';
+import { getResumeFragment, resumePdfFilename } from '../lib/resume';
 import { site, yearsBuilding } from '../lib/site';
 
 if (!site.showResume) return Astro.rewrite('/404');
 
-const RESUME_URL = 'https://pub-b1fc9705d9cd4b50885284c3ede52d27.r2.dev/resume.pdf';
+const RESUME_PDF = '/resume.pdf';
+const resume = await getResumeFragment();
+
+if (resume && Astro.cache?.enabled) {
+	// The object's own upload time is the only truthful last-modified here: this
+	// page reads no content out of D1, so EmDash's tags have nothing to say about
+	// it. See docs/edge-caching.md.
+	Astro.cache.set({ tags: ['resume'], lastModified: resume.updatedAt });
+}
 
 const intro = site.intro.replace('{years}', String(yearsBuilding()));
 const profile = [
@@ -28,6 +50,13 @@ const profile = [
 		copy: 'Linux, containers, NixOS, and the engineering decisions behind software that ships.'
 	}
 ];
+
+/** R2's upload time, phrased for a reader rather than for a log line. */
+const updated = resume
+	? new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: 'long', day: 'numeric' }).format(
+			resume.updatedAt
+		)
+	: null;
 ---
 
 <Base
@@ -39,7 +68,13 @@ const profile = [
 		<Fragment slot="title">A résumé for <em>building in the open.</em></Fragment>
 		<p>Full-stack developer in Ontario. {intro}</p>
 		<p class="masthead-actions">
-			<LinkButton href={RESUME_URL} variant="primary" size="lg" className="flat-control">
+			<LinkButton
+				href={RESUME_PDF}
+				download={resumePdfFilename()}
+				variant="primary"
+				size="lg"
+				className="flat-control"
+			>
 				Download PDF
 			</LinkButton>
 			<a class="link-quiet" href={`mailto:${site.email}`}>{site.email}</a>
@@ -74,27 +109,40 @@ const profile = [
 	<section class="document panel-alt">
 		<div class="shell">
 			<div class="section-heading" data-reveal>
-				<h2 class="display display-lg">Formatted résumé</h2>
-				<a class="link-accent" href={RESUME_URL}>Open PDF <span class="arrow">&rarr;</span></a>
+				<h2 class="display display-lg">The document</h2>
+				<a class="link-accent" href={RESUME_PDF} download={resumePdfFilename()}>
+					Download the PDF <span class="arrow">&rarr;</span>
+				</a>
 			</div>
+			{
+				updated && (
+					<p class="document-note">Typeset from the same source as the PDF · updated {updated}</p>
+				)
+			}
 
-			<!-- Fixed 8.5×11 ratio so the embed never letterboxes, and it is a plain
-			     <object> rather than <embed> so the fallback link actually renders on
-			     browsers with no PDF viewer (iOS Safari, most in-app browsers). -->
-			<object
-				data={RESUME_URL}
-				type="application/pdf"
-				title={`${site.name} résumé`}
-				class="resume-object"
-				data-reveal
-			>
-				<div class="p-8 font-serif text-[var(--body)]">
-					<p>Your browser cannot display the PDF inline.</p>
-					<p class="mt-2">
-						<a class="link-accent" href={RESUME_URL}>Open the résumé &rarr;</a>
-					</p>
-				</div>
-			</object>
+			{
+				resume ? (
+					<Fragment set:html={resume.html} />
+				) : (
+					/* The bucket has no fragment in it: a fresh clone with an empty dev
+					   store, or a build that uploaded nothing. Said out loud rather than
+					   left as a hole where the résumé should be. */
+					<div class="document-missing">
+						<p>
+							The inline copy is not available on this build of the site. The PDF is, and it is the
+							same document.
+						</p>
+						<p>
+							Locally: <code>npm run resume</code> then <code>npm run resume:seed</code>.
+						</p>
+						<p>
+							<a class="link-accent" href={RESUME_PDF} download={resumePdfFilename()}>
+								Download the PDF &rarr;
+							</a>
+						</p>
+					</div>
+				)
+			}
 		</div>
 	</section>
 </Base>
@@ -120,6 +168,17 @@ const profile = [
 		text-transform: uppercase;
 		color: var(--muted);
 	}
+	/* The one line under a heading that is a sentence rather than an eyebrow: it
+	   sits below the rule, in the body's own voice, at the width of the column it
+	   describes. */
+	.document-note {
+		max-width: 46rem;
+		margin: 1rem auto 0;
+		font-family: var(--font-sans);
+		font-size: 0.78rem;
+		letter-spacing: 0.04em;
+		color: var(--muted);
+	}
 	.profile-grid {
 		display: grid;
 		gap: 2.5rem 0;
@@ -143,14 +202,23 @@ const profile = [
 		line-height: 1.65;
 		color: var(--body);
 	}
-	.resume-object {
-		display: block;
-		width: min(100%, 980px);
-		aspect-ratio: 8.5 / 11;
+	.document-missing {
+		max-width: 46rem;
 		margin: clamp(2.5rem, 5vw, 4rem) auto 0;
+		padding: 1.5rem 1.75rem;
 		border: 1px solid var(--line-strong);
 		border-radius: 3px;
 		background: var(--panel);
+		font-family: var(--font-serif);
+		color: var(--body);
+	}
+	.document-missing p + p {
+		margin-top: 0.85rem;
+	}
+	.document-missing code {
+		font-family: var(--font-mono);
+		font-size: 0.86em;
+		color: var(--text);
 	}
 	@media (width >= 48rem) {
 		.profile-grid {

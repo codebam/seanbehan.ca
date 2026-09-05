@@ -21,6 +21,14 @@
 		{
 			"binding": "MEDIA",
 			"bucket_name": "seanbehan-ca-media"
+		},
+		// The résumé's home, and the reason /resume.pdf is a path rather than a
+		// hostname: `private` has no public domain of its own, so the Worker is
+		// the only way to resume.pdf and resume.html. Both are written by
+		// .github/workflows/resume.yml from resume/resume.md — see docs/resume.md.
+		{
+			"binding": "RESUME",
+			"bucket_name": "private"
 		}
 	],
 	"images": {
@@ -88,6 +96,13 @@
 				{
 					"binding": "DOWNLOADS",
 					"bucket_name": "codebam-product-downloads"
+				},
+				// Not needed here — /resume is the seanbehan variant's page, and
+				// codebam answers 404 for it. Bound anyway, so that the two Workers
+				// describe the same bucket the same way if the résumé ever does move.
+				{
+					"binding": "RESUME",
+					"bucket_name": "private"
 				}
 			],
 			"images": {

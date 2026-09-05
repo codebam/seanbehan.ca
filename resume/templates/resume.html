@@ -1,0 +1,44 @@
+$-- resume.html -- the inline-HTML twin of templates/resume.latex.
+$--
+$-- Not a page: a fragment. The site renders it inside its own layout at
+$-- /resume, so there is no <html>, no <head> and no stylesheet here -- only
+$-- the header block the LaTeX template builds, the resume body, and class
+$-- names src/styles/app.css knows about (.resume-* inside .resume-doc).
+$--
+$-- Same source, same Lua filter, same metadata.yaml as the PDF. The one
+$-- difference is tex_markup=false, which makes the filter emit the classed
+$-- spans below instead of LaTeX macros. Everything else about the structure --
+$-- which heading is an entry, which line is a date, which bullet list
+$-- collapsed onto one row -- is decided once, for both formats.
+$--
+$-- The LaTeX template's visual grammar, translated:
+$--   two rules under the identity block  ->  a heavy border and a light second
+$--   accent section titles               ->  .resume-section in --accent
+$--   the flush-right date column         ->  .resume-meta, floated right
+$--   contact line separated by bars      ->  a stacked list: in a narrow
+$--                                            column the bars only wrap badly
+$--
+$-- pandoc template comments are per-line ($--), which is why this header is
+$-- forty short lines rather than one block.
+
+<article class="resume-doc">
+  <header class="resume-head">
+    <div class="resume-id">
+      <p class="resume-name">$if(title)$$title$$else$Résumé$endif$</p>
+$if(subtitle)$
+      <p class="resume-subtitle">$subtitle$</p>
+$endif$
+    </div>
+$if(contacts)$
+    <ul class="resume-contacts">
+$for(contacts)$
+      <li>$if(contacts.url)$<a href="$contacts.url$">$if(contacts.text)$$contacts.text$$else$$contacts$$endif$</a>$else$$if(contacts.text)$$contacts.text$$else$$contacts$$endif$$endif$</li>
+$endfor$
+    </ul>
+$endif$
+  </header>
+$if(abstract)$
+  <p class="resume-abstract">$abstract$</p>
+$endif$
+$body$
+</article>

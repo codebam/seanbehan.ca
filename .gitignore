@@ -54,5 +54,14 @@ tools/favicon/out/
 # search index
 .zvec-grep/
 
+# Résumé build output. resume/build.sh writes a PDF and an HTML fragment; both
+# are published to R2 by CI, which is why neither is committed: the site reads
+# them from the bucket, so a copy in git would only be an old one. The patterns
+# cover a build run inside resume/ as well as `npm run resume`'s resume/out/.
+resume/out/
+resume/*.pdf
+resume/*.html
+resume/*.tex
+
 # Pi agent session artifacts (per-run task state and logs)
 .pi/

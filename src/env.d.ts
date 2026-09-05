@@ -33,6 +33,20 @@ declare module 'cloudflare:workers' {
 				checksums: { md5?: ArrayBuffer };
 			} | null>;
 		};
+		/**
+		 * The `private` bucket: the résumé fragment /resume renders inline, and the
+		 * PDF behind /resume.pdf. `get` for two keys is the whole use — see
+		 * src/lib/resume.ts for what lives there and who writes it.
+		 */
+		RESUME: {
+			get(key: string): Promise<{
+				body: ReadableStream<Uint8Array>;
+				text(): Promise<string>;
+				size: number;
+				httpEtag: string;
+				uploaded: Date;
+			} | null>;
+		};
 		ORDER_EMAIL: {
 			send(message: {
 				to: string;

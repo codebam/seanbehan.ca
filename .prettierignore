@@ -15,3 +15,11 @@ worker-configuration.d.ts
 
 # Agent session artifacts (per-run task state and logs)
 .pi/
+
+# The résumé source. Prettier reads templates/resume.html as HTML and would
+# reflow pandoc's `$if$`/`$--$` lines into something that no longer compiles, and
+# resume.md as prose to tidy — emphasis markers and list spacing included, in a
+# file whose line breaks the Lua filter reads as structure (a `- item` line
+# directly under a date is a list, not a continuation). Both are formatted by
+# eye, like templates/resume.latex already is.
+resume/

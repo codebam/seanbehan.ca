@@ -1,0 +1,194 @@
+name: Publish the résumé
+
+# resume/resume.md is the résumé; this workflow is what makes it exist in two
+# formats. It builds the PDF and the inline-HTML fragment with the toolchain the
+# flake pins, puts both in the private bucket, and purges the edge so the page
+# picks the new fragment up now rather than in ten minutes.
+#
+# Nothing here deploys a Worker: /resume reads the fragment out of R2 per
+# request, so a résumé edit is an upload, not a release. See docs/resume.md.
+#
+# On a pull request the same build runs and stops before the upload, because a
+# résumé that fails to typeset should be caught by the person who broke it
+# rather than by whoever notices the site still shows last week's.
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'resume/**'
+      - 'flake.nix'
+      - 'flake.lock'
+      - '.github/workflows/resume.yml'
+  pull_request:
+    paths:
+      - 'resume/**'
+      - 'flake.nix'
+      - 'flake.lock'
+      - '.github/workflows/resume.yml'
+  # For a republish with no commit behind it: a bucket that lost an object, or
+  # a toolchain bump whose output should be checked in by eye.
+  workflow_dispatch:
+
+concurrency:
+  group: resume
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      OUT: resume-out
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # pandoc and tectonic come from the flake rather than from apt or a
+      # download: it is the same pinned nixpkgs the repo's own dev shell uses,
+      # so the PDF a recruiter gets was typeset by the toolchain `nix run
+      # .#resume` gives locally. flake.lock is committed, so "pinned" means
+      # pinned; a fresh nixpkgs needs a commit, like any other dependency.
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Tectonic pulls its own TeX bundle (~40 MB) on first use and refuses to
+      # do it inside a sandboxed derivation, which is why the build is an app
+      # and not a package. The bundle is keyed to the nixpkgs rev: a tectonic
+      # bump is the only thing that changes which bundle it wants.
+      - uses: actions/cache@v6
+        with:
+          path: ~/.cache/tectonic
+          key: tectonic-${{ hashFiles('flake.lock') }}
+          restore-keys: tectonic-
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      # Only for wrangler, in the publish step below — the résumé build needs no
+      # node at all. Same version as the deploy workflow rather than whatever
+      # `npx` decides to fetch.
+      - run: npm ci
+
+      - name: Build the PDF and the fragment
+        run: |
+          set -euo pipefail
+          nix run .#resume -- --outdir "$OUT" 2>&1 | tee "$RUNNER_TEMP/resume-build.log"
+
+          # templates/resume.latex walks a font chain and keeps the engine
+          # default rather than failing, so a family fontconfig cannot see is one
+          # line in the TeX log and a résumé quietly set in DejaVu. The fonts come
+          # from the flake's XDG_DATA_DIRS, which is exactly the kind of thing that
+          # works on the author's machine and not on a runner.
+          if grep -q 'unavailable; using the engine default' "$RUNNER_TEMP/resume-build.log"; then
+            echo 'a typeface in metadata.yaml did not resolve:' >&2
+            grep 'unavailable' "$RUNNER_TEMP/resume-build.log" >&2
+            exit 1
+          fi
+
+      - name: Check both outputs
+        run: |
+          set -euo pipefail
+
+          head -c 4 "$OUT/resume.pdf" | grep -q '%PDF' || {
+            echo 'resume.pdf is not a PDF' >&2
+            exit 1
+          }
+          nix shell .#resume-toolchain --command pdfinfo "$OUT/resume.pdf" |
+            awk '/^Pages:/{p = $2} END { if (!(p >= 1)) { print "no pages"; exit 1 } }'
+
+          # The two anchors src/styles/app.css hangs on, and no leftovers from
+          # the other markup: if tex_markup ever fails to reach the filter, the
+          # fragment fills with \resumeEntryRole{ and the page prints it.
+          grep -q 'class="resume-doc"' "$OUT/resume.html" || {
+            echo 'resume.html has no .resume-doc root — templates/resume.html did not render' >&2
+            exit 1
+          }
+          grep -q 'class="resume-name"' "$OUT/resume.html" || {
+            echo 'resume.html has no .resume-name — is `title:` still in the front matter?' >&2
+            exit 1
+          }
+          if grep -q '\\resume' "$OUT/resume.html"; then
+            echo 'resume.html still carries LaTeX macros; build.sh must pass -M tex_markup=false' >&2
+            exit 1
+          fi
+
+          # Injected into the page with set:html, so say out loud that it is not
+          # executable. pandoc emits no script tags for this document by
+          # construction; the check is for the day that stops being true.
+          if grep -qi '<script\|javascript:' "$OUT/resume.html"; then
+            echo 'resume.html contains script — refusing to publish' >&2
+            exit 1
+          fi
+
+          {
+            echo "### Résumé"
+            echo
+            echo "- \`resume.pdf\` $(wc -c <"$OUT/resume.pdf") bytes, $(
+              nix shell .#resume-toolchain --command pdfinfo "$OUT/resume.pdf" |
+                awk '/^Pages:/{print $2}'
+            ) pages"
+            echo "- \`resume.html\` $(wc -c <"$OUT/resume.html") bytes"
+          } >>"$GITHUB_STEP_SUMMARY"
+
+      # The key the bucket already had under it, so a résumé link someone
+      # pasted into an email last month still resolves.
+      - name: Upload to R2
+        if: github.event_name != 'pull_request'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          npx wrangler r2 object put "private/resume.pdf" \
+            --file "$OUT/resume.pdf" \
+            --content-type application/pdf \
+            --remote
+          npx wrangler r2 object put "private/resume.html" \
+            --file "$OUT/resume.html" \
+            --content-type "text/html; charset=utf-8" \
+            --remote
+
+      # On a pull request nothing reaches the bucket, so leave the two files
+      # where someone can open the PDF before it becomes the live one.
+      - uses: actions/upload-artifact@v7
+        if: github.event_name == 'pull_request'
+        with:
+          name: resume-${{ github.event.pull_request.number || github.sha }}
+          path: |
+            ${{ env.OUT }}/resume.pdf
+            ${{ env.OUT }}/resume.html
+          retention-days: 14
+
+      # /resume is held at the edge for ten minutes and the PDF for an hour, so
+      # without this the new résumé appears on its own schedule. Whole-zone
+      # purge, as on a deploy: the site is small and a file list would drift.
+      - name: Purge seanbehan.ca
+        if: github.event_name != 'pull_request'
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+        run: bash tools/cloudflare/purge.sh seanbehan.ca
+
+      # Proof the thing readers actually hit answers with what was just written,
+      # rather than proof that wrangler reported success. A purge is not
+      # instantaneous across datacentres, so this tries a while before calling
+      # the run broken.
+      - name: Check the live page
+        if: github.event_name != 'pull_request'
+        run: |
+          set -euo pipefail
+          published=no
+          for attempt in 1 2 3 4 5 6; do
+            if curl -fsS https://seanbehan.ca/resume | grep -q 'resume-doc' &&
+              curl -fsSI https://seanbehan.ca/resume.pdf |
+                grep -qi '^content-type: *application/pdf'; then
+              published=yes
+              break
+            fi
+            echo "attempt $attempt: the site is not serving what was just published"
+            sleep 10
+          done
+          test "$published" = yes

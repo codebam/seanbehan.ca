@@ -1,0 +1,362 @@
+%%%%% ------------------------------------------------------------------- %%%%%
+%%  resume.latex -- a professional resume template for Pandoc
+%%
+%%  Works with any Unicode engine: Tectonic (recommended), XeLaTeX, LuaLaTeX.
+%%
+%%  Minimal invocation:
+%%      pandoc resume.md --template=templates/resume.latex \
+%%        --pdf-engine=tectonic -o resume.pdf
+%%
+%%  Template variables (defaults in brackets):
+%%    papersize  [letter]    letter | a4
+%%    fontsize   [10]        body size in pt; fractional sizes allowed
+%%    margin                 uniform margin; or top/bottom/left/right
+%%    geometry               extra geometry options (repeatable)
+%%    mainfont   [TeX Gyre Pagella]  body face
+%%    sansfont   [TeX Gyre Heros]    name, section titles, entry titles
+%%    monofont   [DejaVu Sans Mono]  typewriter face
+%%    fallbackfont / fallbacksans / fallbackfont
+%%               second choice when the first font is not installed
+%%    accentcolor [1F3A5F]   section titles + rules      (HTML hex, no #)
+%%    inkcolor    [1A1D21]   body text + entry titles
+%%    mutedcolor  [5C6672]   dates, contact line, footer
+%%    rulecolor   [AEB7C0]   hairlines
+%%    nameTracking     [8]   letter-spacing of the name (%)
+%%    namesize         [21]  name height in pt
+%%    titleTracking    [6]   letter-spacing of section titles (%)
+%%    subtitleTracking [16]  letter-spacing of the subtitle (%)
+%%    nofooter [false]       true -> drop the running footer entirely
+%%    links    [true]        colourised hyperlinks (links stay clickable)
+%%    icons    [false]       FontAwesome glyphs in the contact line
+%%    contactSep [\ \textbar\ ]  separator between contact items
+%%
+%%  Header metadata: `title` (the person's name), optional `subtitle`, and a
+%%  contact line built from a normalised `contacts` list (produced by
+%%  filters/resume-entries.lua) or directly from location / phone / email /
+%%  website / github / linkedin.  `abstract` renders as a summary block.
+%%  Front-matter keys rendered into the header block are listed at the top of
+%%  metadata.yaml.
+%%
+%%  MAINTENANCE NOTE: pandoc expands template tokens (dollar-name-dollar and
+%%  the if/for forms) everywhere in this file, including inside LaTeX
+%%  comments. Never spell a real variable name that way in a comment -- it gets
+%%  substituted, and long values are re-wrapped, which breaks the comment.
+%%%%% ------------------------------------------------------------------- %%%%%
+
+\documentclass[%
+$if(papersize)$$papersize$$else$letter$endif$paper,10pt]{article}
+
+%% article only offers 10/11/12pt; the fontsize package allows any size (and
+%% rescales the leading with it), so `fontsize: 10.5` works as expected.
+$if(fontsize)$\usepackage[fontsize=$fontsize$pt]{fontsize}$else$\usepackage[fontsize=10pt]{fontsize}$endif$
+
+%%%%% ------------------------------------------------------------------- %%%%%
+%%%%%  Colour
+%%%%% ------------------------------------------------------------------- %%%%%
+\usepackage[dvipsnames]{xcolor}
+\definecolor{resumeaccent}{HTML}{$if(accentcolor)$$accentcolor$$else$1F3A5F$endif$}
+\definecolor{resumeink}{HTML}{$if(inkcolor)$$inkcolor$$else$1A1D21$endif$}
+\definecolor{resumemuted}{HTML}{$if(mutedcolor)$$mutedcolor$$else$5C6672$endif$}
+\definecolor{resumerule}{HTML}{$if(rulecolor)$$rulecolor$$else$AEB7C0$endif$}
+\definecolor{resumelink}{HTML}{$if(linkcolor)$$linkcolor$$else$1F3A5F$endif$}
+
+%%%%% ------------------------------------------------------------------- %%%%%
+%%%%%  Fonts
+%%%%% ------------------------------------------------------------------- %%%%%
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures=TeX}
+
+%% Missing font on this machine?  Walk a short candidate chain, and if none of
+%% it resolves, leave the engine default alone instead of failing the build.
+%% (Tectonic only sees fonts fontconfig knows about, so e.g. "Latin Modern
+%% Roman" is *not* a usable name here even though it is TeX's default face.)
+\newcommand{\resumeSetFace}[4]{%
+  \IfFontExistsTF{#2}{#1{#2}}{%
+    \IfFontExistsTF{#3}{#1{#3}}{%
+      \IfFontExistsTF{#4}{#1{#4}}{%
+        \typeout{resume: font "#2" unavailable; using the engine default}%
+      }{}%
+    }{}%
+  }%
+}
+\resumeSetFace{\setmainfont}
+  {$if(mainfont)$$mainfont$$else$TeX Gyre Pagella$endif$}
+  {$if(fallbackfont)$$fallbackfont$$else$TeX Gyre Pagella$endif$}
+  {DejaVu Serif}
+\resumeSetFace{\setsansfont}
+  {$if(sansfont)$$sansfont$$else$TeX Gyre Heros$endif$}
+  {$if(fallbacksans)$$fallbacksans$$else$TeX Gyre Heros$endif$}
+  {DejaVu Sans}
+\resumeSetFace{\setmonofont}
+  {$if(monofont)$$monofont$$else$DejaVu Sans Mono$endif$}
+  {$if(fallbackmono)$$fallbackmono$$else$DejaVu Sans Mono$endif$}
+  {Liberation Mono}
+
+%%%%% ------------------------------------------------------------------- %%%%%
+%%%%%  Page geometry and paragraph rhythm
+%%%%% ------------------------------------------------------------------- %%%%%
+\usepackage[%
+$if(margin)$margin=$margin$$else$left=0.62in,right=0.62in,top=0.5in,bottom=0.62in$endif$%
+$if(top)$,top=$top$$endif$$if(bottom)$,bottom=$bottom$$endif$%
+$if(left)$,left=$left$$endif$$if(right)$,right=$right$$endif$%
+$for(geometry)$,$geometry$$endfor$,%
+nohead,headheight=0pt,footskip=0.26in]{geometry}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.3em}
+\raggedbottom
+
+%% Resumes read better unhyphenated; the stretch lets long URLs and tool
+%% names fit without hyphenating.
+\hyphenpenalty=10000
+\exhyphenpenalty=200
+\tolerance=1400
+\emergencystretch=2.4em
+\clubpenalty=1000
+\widowpenalty=1000
+
+%%%%% ------------------------------------------------------------------- %%%%%
+%%%%%  Micro-typography
+%%%%% ------------------------------------------------------------------- %%%%%
+\usepackage{microtype}
+\usepackage{ragged2e}   %% loaded here, applied after \begin{document}
+
+%%%%% ------------------------------------------------------------------- %%%%%
+%%%%%  Ornamental glyphs
+%%%%%
+%%%%%  Text fonts rarely cover the decorative characters people paste into
+%%%%%  resumes (★ from GitHub, ✓, coloured bullets).  Mapping them onto TeX
+%%%%%  symbols keeps the build glyph-complete and font-independent.
+%%%%% ------------------------------------------------------------------- %%%%%
+\usepackage{amssymb}
+\usepackage{textcase}
+\usepackage{newunicodechar}
+\newcommand{\resumesymbol}[1]{\ensuremath{#1}}
+%% \bigstar is small and rides high next to lowercase text; nudge it into place.
+\newcommand{\resumestar}{\raisebox{-0.06em}{\scalebox{1.15}{\ensuremath{\bigstar}}}}
+\newunicodechar{★}{\textcolor{resumeaccent}{\resumestar}}
+\newunicodechar{☆}{\resumesymbol{\star}}
+\newunicodechar{✓}{\textcolor{resumeaccent}{\resumesymbol{\checkmark}}}
+\newunicodechar{✔}{\textcolor{resumeaccent}{\resumesymbol{\checkmark}}}
+\newunicodechar{●}{\resumesymbol{\bullet}}
+\newunicodechar{○}{\resumesymbol{\circ}}
+\newunicodechar{■}{\resumesymbol{\blacksquare}}
+\newunicodechar{□}{\resumesymbol{\square}}
+\newunicodechar{◆}{\resumesymbol{\blacklozenge}}
+\newunicodechar{♥}{\resumesymbol{\heartsuit}}
+\newunicodechar{☞}{\textbullet}
+
+%%%%% ------------------------------------------------------------------- %%%%%
+%%%%%  Section styling
+%%%%% ------------------------------------------------------------------- %%%%%
+\usepackage{titlesec}
+\usepackage{enumitem}
+
+%% Level 1 -- EXPERIENCE / EDUCATION / SKILLS.  Tracked, accent coloured, with
+%% a heavy rule and a hairline underneath.
+\newcommand{\resumeSectionRule}{%
+  \par\nobreak\vskip 1.7pt\nointerlineskip
+  {\color{resumeaccent}\hrule height 0.95pt}%
+  \nointerlineskip\vskip 0.6pt
+  {\color{resumerule}\hrule height 0.25pt}%
+  \par\nobreak}
+
+\titleformat{\section}[hang]
+  {\normalfont\sffamily\bfseries\large\color{resumeaccent}%
+   \addfontfeatures{LetterSpace=$if(titleTracking)$$titleTracking$$else$6$endif$}}
+  {}{0pt}{}
+  [\resumeSectionRule]
+\titlespacing*{\section}{0pt}{1.05em plus 3pt minus 2pt}{0.62em plus 1pt}
+
+%% Level 2 -- PROGRAMMING LANGUAGES / OPERATING SYSTEMS: a quiet label.
+\titleformat{\subsection}[hang]
+  {\normalfont\sffamily\bfseries\small\color{resumeaccent}%
+   \addfontfeatures{LetterSpace=10}}
+  {}{0pt}{}
+\titlespacing*{\subsection}{0pt}{0.8em plus 2pt minus 2pt}{0.28em}
+
+%% Level 3 -- one entry (job, degree, project, role).
+%% The companion Lua filter rebuilds entry titles out of these hooks so the
+%% date lands flush right on the entry's own line:
+%%   \resumeEntryRole{role}\resumeEntrySep{·}\resumeEntryOrg{company}\hfill{}
+%%   \mbox{\resumeEntryMeta{Apr. 2021 – Oct. 2021}}
+%% Headings the filter leaves alone are still typeset as clean entry titles.
+\newcommand{\resumeEntryRole}[1]{#1}
+\newcommand{\resumeEntryOrg}[1]{{\mdseries\color{resumeaccent}#1}}
+\newcommand{\resumeEntrySep}[1]{\textcolor{resumeaccent}{#1}}
+\newcommand{\resumeEntryMeta}[1]{\textcolor{resumemuted}{\footnotesize#1}}
+\providecommand{\resumeSep}{\resumeEntrySep{·}}
+%% Bold lead-in label for compacted "Expert: …" style lines.
+\newcommand{\resumeKey}[1]{{\sffamily\bfseries\color{resumeink}#1}}
+
+\titleformat{\subsubsection}[hang]
+  {\normalfont\sffamily\bfseries\color{resumeink}}
+  {}{0pt}{}
+\titlespacing*{\subsubsection}{0pt}{0.92em plus 2pt minus 2pt}{0.14em}
+
+%% Lists: tight, accent-coloured bullet.
+\setlist[itemize]{%
+  topsep=1.8pt, partopsep=0pt, parsep=0pt, itemsep=1.2pt,%
+  leftmargin=1.25em, labelsep=0.45em,%
+  label=\textcolor{resumeaccent}{\small\textbullet}}
+\setlist[enumerate]{%
+  topsep=1.8pt, partopsep=0pt, parsep=0pt, itemsep=1.2pt,%
+  leftmargin=1.6em, labelsep=0.42em}
+
+%% Macros Pandoc's LaTeX writer expects the template to provide.
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}%
+  \setlength{\topsep}{1.5pt}\setlength{\partopsep}{0pt}}
+\providecommand{\pandocbounded}[1]{#1}
+
+%%%%% ------------------------------------------------------------------- %%%%%
+%%%%%  Header block
+%%%%% ------------------------------------------------------------------- %%%%%
+\newcommand{\resumeName}[1]{{\sffamily\bfseries\fontsize{$if(namesize)$$namesize$$else$21$endif$}{26}\selectfont
+  \color{resumeink}%
+  \addfontfeatures{LetterSpace=$if(nameTracking)$$nameTracking$$else$8$endif$}%
+  \MakeTextUppercase{#1}}}
+
+\newcommand{\resumeSubtitle}[1]{\par\nobreak\vskip 3pt
+  {\sffamily\mdseries\footnotesize\color{resumeaccent}%
+   \addfontfeatures{LetterSpace=$if(subtitleTracking)$$subtitleTracking$$else$16$endif$}%
+   #1\par}}
+
+%% Contact items appear in source order; the separator only ever lands
+%% between two items, whatever subset is filled in.
+\newif\ifresumecontact
+\newcommand{\resumeContact}[1]{%
+  \ifresumecontact
+    \textcolor{resumerule}{$if(contactSep)$$contactSep$$else$\,\textbar\,$endif$}\allowbreak
+  \else
+    \resumecontacttrue
+  \fi
+  %% \mbox keeps a phone number or URL from breaking across lines; the
+  %% \allowbreak above is what lets the contact line wrap between items.
+  \mbox{\sffamily\footnotesize\color{resumemuted}#1}}
+
+$if(icons)$
+\usepackage{fontawesome5}
+\newcommand{\resumeIcon}[1]{\textcolor{resumerule}{\faIcon{#1}}\,}
+$else$
+\newcommand{\resumeIcon}[1]{}
+$endif$
+
+%%%%% ------------------------------------------------------------------- %%%%%
+%%%%%  Hyperlinks
+%%%%% ------------------------------------------------------------------- %%%%%
+\usepackage[%
+  unicode, bookmarks=true, bookmarksnumbered=false, bookmarksopen=true,%
+  breaklinks=true, hypertexnames=false, pdfborder={0 0 0}]{hyperref}
+\hypersetup{%
+  colorlinks=$if(links)$$links$$else$true$endif$,%
+  linkcolor=resumelink,urlcolor=resumelink,citecolor=resumelink,%
+$if(title)$  pdftitle={$title$},
+$endif$$if(subtitle)$  pdfsubject={$subtitle$},
+$endif$$if(author)$  pdfauthor={$for(author)$$author$$sep$, $endfor$},
+$endif$  pdfkeywords={$if(keywords)$$for(keywords)$$keywords$$sep$, $endfor$$else$résumé$endif$}}
+\Urlmuskip=0mu plus 1mu\relax
+
+%% Header links keep the muted contact colour instead of the link colour.
+\newcommand{\resumeLink}[2]{\href{#1}{\textcolor{resumemuted}{#2}}}
+
+$if(highlighting-macros)$
+$highlighting-macros$
+$endif$
+
+$for(header-includes)$
+$header-includes$
+$endfor$
+
+%%%%% ------------------------------------------------------------------- %%%%%
+%%%%%  Building blocks Pandoc's writer may reach for
+%%%%% ------------------------------------------------------------------- %%%%%
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{longtable}
+
+%%%%% ------------------------------------------------------------------- %%%%%
+%%%%%  Running footer for continuation pages
+%%%%%
+%%%%%  Shown by default; set `nofooter: true` in metadata to drop it.
+%%%%% ------------------------------------------------------------------- %%%%%
+$if(nofooter)$
+\newcommand{\resumeFirstPage}{}
+$else$
+\usepackage{fancyhdr}
+\IfFileExists{lastpage.sty}%
+  {\usepackage{lastpage}\def\resumePageLast{~of \pageref{LastPage}}}%
+  {\def\resumePageLast{}}
+\pagestyle{fancy}%
+\fancyhf{}%
+\renewcommand{\headrulewidth}{0pt}%
+\renewcommand{\footrulewidth}{0.25pt}%
+\makeatletter
+\renewcommand{\footrule}{\hbox to\headwidth{\color{resumerule}\leaders\hrule height \footrulewidth\hfill}}
+\makeatother
+%% The empty group before the subtitle is load-bearing: without it TeX would
+%% read the following letters as one (undefined) control sequence.
+\fancyfoot[L]{{\sffamily\scriptsize\color{resumemuted}%
+  $if(title)$$title$$else$Résumé$endif$$if(subtitle)$\qquad·\qquad{}$subtitle$$endif$}}
+\fancyfoot[R]{{\sffamily\scriptsize\color{resumemuted}Page \thepage\resumePageLast}}
+%% Page 1 carries the full identity block, so it gets no footer.
+\newcommand{\resumeFirstPage}{\thispagestyle{empty}}
+$endif$
+
+%%%%% ------------------------------------------------------------------- %%%%%
+%%%%%  Document
+%%%%% ------------------------------------------------------------------- %%%%%
+\begin{document}
+\color{resumeink}
+\resumeFirstPage
+
+%% Resumes are set ragged-right: with hyphenation switched off, justification
+%% would leave visible gaps around long tool names and URLs.
+\RaggedRight
+\setlength{\emergencystretch}{1.5em}
+
+%%%%% ---- Identity ------------------------------------------------------ %%%%%
+\begingroup
+\setlength{\parskip}{0pt}%
+\noindent\begin{minipage}[t]{0.44\textwidth}\RaggedRight
+\resumeName{$if(title)$$title$$else$Your Name$endif$}%
+$if(subtitle)$\resumeSubtitle{$subtitle$}$else$\strut$endif$
+\end{minipage}\hfill
+\begin{minipage}[t]{0.54\textwidth}\RaggedLeft
+\resumecontactfalse
+$if(contacts)$
+  $for(contacts)$\resumeContact{%
+    $if(contacts.icon)$\resumeIcon{$contacts.icon$}$endif$%
+    $if(contacts.url)$\resumeLink{$contacts.url$}%
+      {$if(contacts.text)$$contacts.text$$else$$contacts$$endif$}%
+    $else$$if(contacts.text)$$contacts.text$$else$$contacts$$endif$$endif$}%
+  $endfor$
+$else$
+  $if(location)$\resumeContact{\resumeIcon{location-dot}$location$}$endif$%
+  $if(phone)$\resumeContact{\resumeIcon{phone}$phone$}$endif$%
+  $if(email)$\resumeContact{\resumeIcon{envelope}\resumeLink{mailto:$email$}{$email$}}$endif$%
+  $if(website)$\resumeContact{\resumeIcon{globe}\resumeLink{$website$}{$website$}}$endif$%
+  $if(github)$\resumeContact{\resumeIcon{github}\resumeLink{https://github.com/$github$}{$github$}}$endif$%
+  $if(linkedin)$\resumeContact{\resumeIcon{linkedin}\resumeLink{https://linkedin.com/in/$linkedin$}{$linkedin$}}$endif$%
+$endif$
+\end{minipage}%
+\par\nobreak\vskip 4.5pt\nointerlineskip
+{\color{resumeaccent}\hrule height 1.7pt}%
+\nointerlineskip\vskip 1.2pt
+{\color{resumerule}\hrule height 0.3pt}%
+\par\nobreak\vskip 0.9em
+\endgroup
+
+$if(abstract)$
+%%%%% ---- Summary ------------------------------------------------------- %%%%%
+\begingroup
+\setlength{\parskip}{0pt}%
+{\small\color{resumeink}\itshape $abstract$}%
+\par\nobreak\vskip 0.8em
+\endgroup
+$endif$
+
+%%%%% ---- Content ------------------------------------------------------- %%%%%
+$body$
+\end{document}
