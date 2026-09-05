@@ -28,7 +28,7 @@ const facts = [
 ];
 ---
 
-<section class="facts panel-alt">
+<section class="facts">
 	<div class="facts-row shell">
 		{
 			facts.map((fact, i) => (
@@ -56,13 +56,15 @@ const facts = [
 		padding-left: 1.25rem;
 		border-left: 1px solid var(--line-strong);
 	}
+	/* Oldstyle numerals where the face has them — the value set with the
+	   page's voice, not with a dashboard's tabular figures. */
 	.fact-value {
 		font-family: var(--font-serif);
 		font-size: clamp(2.4rem, 4.5vw, 3.6rem);
 		font-weight: 500;
 		letter-spacing: -0.02em;
 		line-height: 1;
-		font-variant-numeric: tabular-nums;
+		font-variant-numeric: oldstyle-nums;
 		transition: color 0.25s ease;
 	}
 	.fact-label {

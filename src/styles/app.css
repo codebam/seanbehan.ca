@@ -158,6 +158,9 @@
 		--accent-on: var(--palette-light-accent-on);
 		/* Accent at low alpha, for tints that survive both themes */
 		--accent-wash: color-mix(in srgb, var(--accent) 8%, transparent);
+		/* The same for the warm accent. One definition works in both themes
+		   because the mix resolves against whichever warm is live. */
+		--accent-warm-wash: color-mix(in srgb, var(--accent-warm) 22%, transparent);
 
 		/* Inverted pair, used by the primary button: a dark pill on a
 		   light page, a light pill on a dark one. */
@@ -202,8 +205,10 @@
 		text-rendering: optimizeLegibility;
 	}
 
+	/* A highlight is an editorial act, so it takes the warm accent's tint;
+	   blue stays reserved for what the hand can reach. */
 	::selection {
-		background: color-mix(in srgb, var(--accent) 22%, transparent);
+		background: var(--accent-warm-wash);
 		color: var(--text);
 	}
 
@@ -257,9 +262,12 @@
 	}
 
 	/* Page headline. Fluid rather than stepped, so the line count stays put
-	   between the breakpoints instead of reflowing at each one. */
+	   between the breakpoints instead of reflowing at each one. The cap is set
+	   to the reading column, not the 1140px shell — at the old 5.2rem the
+	   headline overspans the page it sits on, and the optical-size axis is
+	   what does the fitting at the smaller cap. */
 	.display-xl {
-		font-size: clamp(2.9rem, 6.8vw, 5.2rem);
+		font-size: clamp(2.9rem, 6.8vw, 4.6rem);
 		line-height: 1.02;
 	}
 
@@ -366,7 +374,7 @@
 			color 0.2s ease;
 	}
 	.btn:hover {
-		background: var(--accent);
+		background: var(--accent-warm);
 		color: var(--accent-on);
 	}
 	.btn:active {
@@ -469,16 +477,18 @@
 	.input:focus {
 		outline: none;
 		border-color: var(--accent);
-		box-shadow: 0 0 0 3px var(--accent-wash);
+		box-shadow: 0 0 0 3px var(--accent-warm-wash);
 	}
 
-	/* Tag: language tags take the accent, topic tags stay quiet */
+	/* Tag: language tags name the site's materials in its own voice, the way a
+	   headline's italic emphasis does, so they take the warm accent. The topic
+	   tags stay quiet; interaction blue is reserved for what is clickable. */
 	.tag {
 		font-size: 0.8rem;
 		color: var(--muted);
 	}
 	.tag-lang {
-		color: var(--accent);
+		color: var(--accent-warm);
 		font-weight: 500;
 	}
 }
