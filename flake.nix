@@ -59,8 +59,10 @@
         };
 
         packages = {
-          # The toolchain on its own, for poking at it: `nix build .#resume-toolchain`.
-          inherit resumeToolchain;
+          # The toolchain on its own, for poking at it: `nix build .#resume-toolchain`,
+          # and CI runs pdfinfo out of it. Named with the dash the command has,
+          # because `inherit` would publish the camelCase binding instead.
+          resume-toolchain = resumeToolchain;
         };
 
         apps = {
