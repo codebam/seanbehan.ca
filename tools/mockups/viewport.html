@@ -1,0 +1,198 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Viewport</title>
+		<link rel="stylesheet" href="frame.css" />
+		<style>
+			/* No browser chrome: this one is the desktop itself, empty until a
+			   client connects. */
+			.card {
+				background: rgba(8, 12, 22, 0.92);
+			}
+
+			.screen {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				height: 100%;
+				padding-bottom: 40px;
+			}
+
+			.glyph {
+				position: relative;
+				width: 62px;
+				height: 46px;
+			}
+
+			.glyph i {
+				position: absolute;
+				width: 44px;
+				height: 34px;
+				border: 2px solid #55637c;
+				border-radius: 6px;
+			}
+
+			.glyph i:first-child {
+				top: 0;
+				left: 0;
+			}
+
+			.glyph i:last-child {
+				right: 0;
+				bottom: 0;
+				border-color: #3b475c;
+			}
+
+			.prompt {
+				margin: 34px 0 44px;
+				color: #93a1b8;
+			}
+
+			table {
+				border-collapse: collapse;
+				font-size: 16px;
+			}
+
+			td {
+				padding: 4px 0;
+				white-space: nowrap;
+			}
+
+			td.key {
+				color: #dbe3f0;
+				padding-right: 26px;
+			}
+
+			td.action {
+				color: #6f7d95;
+				padding-right: 54px;
+			}
+
+			td.action.dim {
+				color: #4d5b73;
+			}
+
+			td:last-child.action {
+				padding-right: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="label">02 / Viewport</div>
+		<div class="stack">Rust · Wayland · WPE WebKit</div>
+
+		<div class="card">
+			<div class="screen">
+				<div class="glyph"><i></i><i></i></div>
+				<p class="prompt">Launch a client against SWAYLAND_DISPLAY.</p>
+
+				<table>
+					<tr>
+						<td class="key">Mod4+Return</td>
+						<td class="action">exec foot</td>
+						<td class="key">Mod4+d</td>
+						<td class="action dim">shell launcher</td>
+					</tr>
+					<tr>
+						<td class="key">Mod4+Shift+q</td>
+						<td class="action">close</td>
+						<td class="key">Mod4+Shift+e</td>
+						<td class="action dim">exit</td>
+					</tr>
+					<tr>
+						<td class="key">Mod4+Shift+c</td>
+						<td class="action">reload</td>
+						<td class="key">Mod4+Shift+d</td>
+						<td class="action dim">appearance toggle</td>
+					</tr>
+					<tr>
+						<td class="key">Mod4+Shift+v</td>
+						<td class="action">shell clipboard</td>
+						<td class="key">Mod4+Shift+m</td>
+						<td class="action dim">shell notifications</td>
+					</tr>
+					<tr>
+						<td class="key">Mod4+Shift+n</td>
+						<td class="action">shell network</td>
+						<td class="key">Mod4+Shift+t</td>
+						<td class="action dim">shell bluetooth</td>
+					</tr>
+					<tr>
+						<td class="key">Mod4+Shift+k</td>
+						<td class="action">shell osk</td>
+						<td class="key">Mod4+Shift+comma</td>
+						<td class="action dim">shell settings</td>
+					</tr>
+					<tr>
+						<td class="key">Mod4+f</td>
+						<td class="action">shell window.fullscreen</td>
+						<td class="key">Mod4+a</td>
+						<td class="action dim">shell window.focus_parent</td>
+					</tr>
+					<tr>
+						<td class="key">Mod4+Shift+space</td>
+						<td class="action">shell layout.float.toggle</td>
+						<td class="key">Mod4+b</td>
+						<td class="action dim">shell layout.split_horizontal</td>
+					</tr>
+					<tr>
+						<td class="key">Mod4+v</td>
+						<td class="action">shell layout.split_vertical</td>
+						<td class="key">Mod4+e</td>
+						<td class="action dim">shell layout.toggle</td>
+					</tr>
+					<tr>
+						<td class="key">Mod4+w</td>
+						<td class="action">shell layout.tabbed</td>
+						<td class="key">Mod4+s</td>
+						<td class="action dim">shell layout.stacked</td>
+					</tr>
+					<tr>
+						<td class="key">Mod4+n</td>
+						<td class="action">shell bar.toggle</td>
+						<td class="key">Mod4+o</td>
+						<td class="action dim">shell layout.overview</td>
+					</tr>
+					<tr>
+						<td class="key">Mod4+grave</td>
+						<td class="action">shell workspace.back</td>
+						<td class="key">Mod4+Shift+Return</td>
+						<td class="action dim">background</td>
+					</tr>
+					<tr>
+						<td class="key">Mod4+Shift+x</td>
+						<td class="action">lock</td>
+						<td class="key">Mod4+Shift+b</td>
+						<td class="action dim">blank</td>
+					</tr>
+					<tr>
+						<td class="key">Mod4+Alt+equal</td>
+						<td class="action">magnify in</td>
+						<td class="key">Mod4+Alt+minus</td>
+						<td class="action dim">magnify out</td>
+					</tr>
+					<tr>
+						<td class="key">Mod4+Alt+0</td>
+						<td class="action">magnify off</td>
+						<td class="key">Mod4+Shift+p</td>
+						<td class="action dim">shell output.hdr</td>
+					</tr>
+					<tr>
+						<td class="key">XF86AudioPlay</td>
+						<td class="action">exec playerctl play-pause</td>
+						<td class="key">XF86AudioPause</td>
+						<td class="action dim">exec playerctl pause</td>
+					</tr>
+					<tr>
+						<td class="key">XF86AudioNext</td>
+						<td class="action">exec playerctl next</td>
+						<td class="key">XF86AudioPrev</td>
+						<td class="action dim">exec playerctl previous</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</body>
+</html>

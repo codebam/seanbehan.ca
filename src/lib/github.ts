@@ -4,11 +4,14 @@
  * Not `language` — that stays curated, because linguist reports pastebin-r2 as
  * HTML when the interesting part is the TypeScript worker.
  *
+ * Rows without a repository are left alone: there is nothing to ask about them,
+ * and the year committed in projects.ts is the only one anyone has.
+ *
  * On the SvelteKit site this ran once per deploy, because the home page was
- * prerendered. The page is server-rendered now, so the same four requests would
- * otherwise ride along with every visit. They are cached instead: the Worker's
- * own cache holds each response for six hours, and a module-level memo covers
- * the requests an isolate serves back to back.
+ * prerendered. The page is server-rendered now, so the same handful of requests
+ * would otherwise ride along with every visit. They are cached instead: the
+ * Worker's own cache holds each response for six hours, and a module-level memo
+ * covers the requests an isolate serves back to back.
  *
  * Any failure — rate limit, outage, offline build — falls back to the values
  * committed in projects.ts, so a flaky third party never costs the page its
@@ -32,11 +35,13 @@ export async function withLiveStats(projects: FeaturedProject[]): Promise<Featur
 
 	// Claim the memo before the requests, not after: the page renders per
 	// request now, and a cold isolate serving several at once would otherwise
-	// send four GitHub calls per visitor rather than four in total.
+	// send a GitHub call per visitor rather than one per repository.
 	memo = { at: Date.now(), projects };
 
 	const withStats = await Promise.all(
 		projects.map(async (project) => {
+			if (!project.repo) return project;
+
 			try {
 				const res = await fetch(`https://api.github.com/repos/codebam/${project.repo}`, {
 					headers: {

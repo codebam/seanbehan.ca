@@ -1,0 +1,169 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Pastebin R2</title>
+		<link rel="stylesheet" href="frame.css" />
+		<style>
+			.head {
+				display: flex;
+				align-items: baseline;
+				justify-content: space-between;
+			}
+
+			.head h1 {
+				margin: 0;
+				font-size: 36px;
+				font-weight: 600;
+				color: #eef2f8;
+			}
+
+			.head .cursor {
+				display: inline-block;
+				width: 14px;
+				height: 30px;
+				margin-left: 8px;
+				background: var(--green);
+				vertical-align: -3px;
+			}
+
+			.editor-panel {
+				border: 1px solid var(--line);
+				border-radius: 4px;
+				background: rgba(13, 20, 34, 0.75);
+			}
+
+			.editor-panel > header {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				padding: 12px 18px;
+				border-bottom: 1px solid rgba(140, 170, 220, 0.14);
+				color: #cdd7e6;
+			}
+
+			.pulse {
+				width: 10px;
+				height: 10px;
+				border-radius: 50%;
+				background: var(--green);
+			}
+
+			.right {
+				margin-left: auto;
+				color: var(--muted);
+			}
+
+			.buffer {
+				display: flex;
+				gap: 22px;
+			}
+
+			.gutter {
+				padding: 18px 0 60px 20px;
+				color: #4d5b73;
+			}
+
+			.placeholder {
+				padding-top: 18px;
+				color: #55637c;
+			}
+
+			.toolbar {
+				display: flex;
+				align-items: center;
+				gap: 12px;
+				padding: 16px 18px;
+			}
+
+			.key {
+				padding: 6px 14px;
+				color: #b9c5d8;
+				background: #1b2434;
+				border: 1px solid rgba(140, 170, 220, 0.16);
+				border-radius: 3px;
+			}
+
+			.key--go {
+				color: var(--green);
+				border-color: rgba(74, 222, 128, 0.45);
+			}
+
+			.cli {
+				padding: 18px;
+				border-top: 1px solid rgba(140, 170, 220, 0.14);
+			}
+
+			.cli h2 {
+				margin: 0 0 14px;
+				font-size: 19px;
+				font-weight: 400;
+				color: #93a1b8;
+			}
+
+			.cli p {
+				margin: 6px 0;
+				font-size: 18px;
+				color: #cdd7e6;
+			}
+
+			.foot {
+				margin: 30px 0 0;
+				font-size: 18px;
+			}
+
+			.foot u {
+				color: #a8b6cc;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="label">05 / Pastebin R2</div>
+		<div class="stack">TypeScript · Hono · Cloudflare R2</div>
+
+		<div class="card">
+			<div class="chrome">
+				<i class="dot"></i><i class="dot"></i><i class="dot"></i>
+				<span>paste.codebam.ca</span>
+			</div>
+
+			<div class="view">
+				<div class="head">
+					<h1><span class="accent">~$</span> pastebin<span class="cursor"></span></h1>
+					<span class="muted">r2 · edge</span>
+				</div>
+				<div class="rule"></div>
+
+				<section class="editor-panel">
+					<header>
+						<i class="pulse"></i>
+						buffer
+						<span class="right">0 B · 1 line</span>
+					</header>
+					<div class="buffer">
+						<div class="gutter">1</div>
+						<div class="placeholder">type here, or drop a file on this box…</div>
+					</div>
+					<div class="toolbar">
+						<span class="key">attach</span>
+						<span class="key">from clipboard</span>
+						<span class="right muted">expires</span>
+						<span class="key">48 hours ▾</span>
+						<span class="muted">⎘</span>
+						<span class="key">clear</span>
+						<span class="key key--go">create paste</span>
+					</div>
+					<div class="cli">
+						<h2>cli</h2>
+						<p><span class="accent">$</span> curl -T file.txt https://paste.codebam.ca</p>
+						<p>
+							<span class="accent">$</span> pbpaste | curl --data-binary @- https://paste.codebam.ca
+						</p>
+					</div>
+				</section>
+
+				<p class="foot muted">hono · cloudflare workers · <u>github.com/codebam/pastebin-r2</u></p>
+			</div>
+		</div>
+	</body>
+</html>

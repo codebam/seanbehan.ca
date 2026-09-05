@@ -1,0 +1,128 @@
+/*
+	The frame every project mockup is drawn in: the navy grid, the orange
+	ordinal on the left, the stack on the right, and one bordered surface for
+	the product itself. The mockups are decoration for the Selected work rows,
+	so they borrow the site's palette rather than inventing one, and they are set
+	at a fixed 1600x1000 because that is the box the templates ask the image for.
+
+	Each page overrides only what sits inside `.card`.
+*/
+
+:root {
+	--ink: #dbe3f0;
+	--muted: #8d9bb3;
+	--line: rgba(140, 170, 220, 0.22);
+	--orange: #e0913f;
+	--green: #4ade80;
+	--panel: rgba(9, 14, 26, 0.9);
+	--mono: 'JetBrainsMono Nerd Font', 'DejaVu Sans Mono', ui-monospace, monospace;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	width: 1600px;
+	height: 1000px;
+	margin: 0;
+	overflow: hidden;
+}
+
+body {
+	position: relative;
+	font-family: var(--mono);
+	font-size: 19px;
+	line-height: 1.5;
+	color: var(--ink);
+	background:
+		radial-gradient(1100px 700px at 86% -12%, rgba(43, 86, 180, 0.5), transparent 62%),
+		radial-gradient(900px 620px at -6% 106%, rgba(150, 86, 40, 0.32), transparent 60%), #0a1120;
+}
+
+/* The grid is a screen, not a page: it stops at the edges and never scrolls. */
+body::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background-image:
+		linear-gradient(rgba(140, 175, 235, 0.065) 1px, transparent 1px),
+		linear-gradient(90deg, rgba(140, 175, 235, 0.065) 1px, transparent 1px);
+	background-size: 48px 48px;
+}
+
+.label,
+.stack {
+	position: absolute;
+	top: 46px;
+	font-size: 26px;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+}
+
+.label {
+	left: 80px;
+	color: var(--orange);
+}
+
+.stack {
+	right: 80px;
+	color: #c6d1e2;
+	letter-spacing: 0.2em;
+}
+
+.card {
+	position: absolute;
+	top: 118px;
+	left: 78px;
+	width: 1444px;
+	height: 787px;
+	overflow: hidden;
+	background: var(--panel);
+	border: 1px solid var(--line);
+	border-radius: 12px;
+}
+
+/* Window chrome for the rows that show a site. Viewport shows a desktop, so it
+   leaves this out. */
+.chrome {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	height: 52px;
+	padding: 0 22px;
+	background: #18202f;
+	border-bottom: 1px solid rgba(140, 170, 220, 0.14);
+	font-size: 19px;
+	color: #c3cddd;
+}
+
+.chrome .dot {
+	width: 13px;
+	height: 13px;
+	border-radius: 50%;
+	background: #46536b;
+}
+
+.chrome .dot:first-child {
+	background: var(--orange);
+}
+
+.view {
+	padding: 44px 52px;
+}
+
+.muted {
+	color: var(--muted);
+}
+
+.accent {
+	color: var(--green);
+}
+
+.rule {
+	height: 1px;
+	margin: 26px 0;
+	background: var(--line);
+}

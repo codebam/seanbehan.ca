@@ -68,14 +68,16 @@ const { projects } = Astro.props;
 							</p>
 
 							<p class="row-links">
-								<a
-									href={`https://github.com/codebam/${project.repo}`}
-									target="_blank"
-									rel="noopener noreferrer"
-									class="link-quiet"
-								>
-									Source
-								</a>
+								{project.repo && (
+									<a
+										href={`https://github.com/codebam/${project.repo}`}
+										target="_blank"
+										rel="noopener noreferrer"
+										class="link-quiet"
+									>
+										Source
+									</a>
+								)}
 								{project.homepage && (
 									<a
 										href={project.homepage}

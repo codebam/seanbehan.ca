@@ -1,0 +1,193 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Telegram Bot for Cloudflare Workers</title>
+		<link rel="stylesheet" href="frame.css" />
+		<style>
+			.pkg {
+				margin: 0;
+				font-size: 34px;
+				font-weight: 600;
+				color: #eef2f8;
+			}
+
+			.pkg span {
+				color: var(--muted);
+			}
+
+			.pills {
+				display: flex;
+				gap: 12px;
+				margin-top: 14px;
+				font-size: 16px;
+			}
+
+			.pill {
+				padding: 4px 12px;
+				color: #b9c5d8;
+				border: 1px solid var(--line);
+				border-radius: 3px;
+			}
+
+			.pill--star {
+				color: var(--orange);
+				border-color: rgba(224, 145, 63, 0.45);
+			}
+
+			.cols {
+				display: grid;
+				grid-template-columns: 1fr 372px;
+				gap: 28px;
+				margin-top: 18px;
+			}
+
+			.box {
+				border: 1px solid var(--line);
+				border-radius: 4px;
+				background: rgba(13, 20, 34, 0.75);
+			}
+
+			.box header {
+				padding: 10px 18px;
+				font-size: 15px;
+				letter-spacing: 0.14em;
+				text-transform: uppercase;
+				color: var(--muted);
+				border-bottom: 1px solid rgba(140, 170, 220, 0.14);
+			}
+
+			.install {
+				display: flex;
+				gap: 14px;
+				padding: 14px 22px;
+				margin-bottom: 18px;
+				font-size: 19px;
+			}
+
+			pre {
+				margin: 0;
+				padding: 16px 22px;
+				overflow: hidden;
+				font-family: var(--mono);
+				font-size: 15px;
+				line-height: 1.5;
+				color: #cdd7e6;
+			}
+
+			.k {
+				color: #c792ea;
+			}
+
+			.s {
+				color: var(--green);
+			}
+
+			.c {
+				color: #55637c;
+			}
+
+			.notes {
+				display: flex;
+				flex-direction: column;
+				gap: 22px;
+			}
+
+			.notes ul {
+				margin: 0;
+				padding: 20px 22px 20px 40px;
+				font-size: 17px;
+				color: #b9c5d8;
+			}
+
+			.notes li {
+				margin: 6px 0;
+			}
+
+			.notes p {
+				margin: 0;
+				padding: 20px 22px;
+				font-size: 17px;
+				color: #b9c5d8;
+			}
+
+			.notes code {
+				color: var(--green);
+			}
+		</style>
+	</head>
+	<body>
+		<div class="label">03 / cf-workers-telegram-bot</div>
+		<div class="stack">TypeScript · Telegram · npm</div>
+
+		<div class="card">
+			<div class="chrome">
+				<i class="dot"></i><i class="dot"></i><i class="dot"></i>
+				<span>www.npmjs.com/package/@codebam/cf-workers-telegram-bot</span>
+			</div>
+
+			<div class="view">
+				<h1 class="pkg">@codebam<span>/</span>cf-workers-telegram-bot</h1>
+				<p class="muted" style="margin: 8px 0 0">serverless telegram bot on cf workers</p>
+
+				<div class="pills">
+					<span class="pill">v12.6.20</span>
+					<span class="pill">Apache-2.0</span>
+					<span class="pill">122.7 kB</span>
+					<span class="pill pill--star">★ 325 · 214 forks · 120 releases</span>
+				</div>
+
+				<div class="cols">
+					<div>
+						<div class="box install">
+							<span class="accent">$</span> npm i @codebam/cf-workers-telegram-bot
+						</div>
+
+						<div class="box">
+							<header>worker.ts</header>
+							<!-- The snippet is the package's own quick start, and it is flush left on
+     purpose: every space the source indents it with is a space the picture
+     draws. -->
+							<pre>
+<span class="k">import</span> TelegramBot <span class="k">from</span> <span class="s">'@codebam/cf-workers-telegram-bot'</span>;
+
+<span class="k">export default</span> {
+  <span class="k">async</span> fetch(request: Request, env: Env): Promise&lt;Response&gt; {
+    <span class="k">const</span> bot = <span class="k">new</span> TelegramBot(env.SECRET_TELEGRAM_API_TOKEN);
+
+    <span class="k">await</span> bot
+      .command(<span class="s">'start'</span>, <span class="k">async</span> (ctx) =&gt;
+        ctx.reply(<span class="s">'Hello! I am running on Cloudflare Workers.'</span>))
+      .onMessage(<span class="k">async</span> (ctx) =&gt; ctx.reply(<span class="s">`You said: ${ctx.text}`</span>))
+      .handle(request);
+
+    <span class="k">return new</span> Response(<span class="s">'ok'</span>);
+  },
+};</pre>
+						</div>
+					</div>
+
+					<div class="notes">
+						<div class="box">
+							<header>what it gives you</header>
+							<ul>
+								<li>Typed handlers chained off the Request</li>
+								<li>Middleware ahead of every handler</li>
+								<li>Webhook management built in</li>
+								<li>No runtime dependencies to bundle</li>
+							</ul>
+						</div>
+						<div class="box">
+							<header>go live</header>
+							<p>
+								Open
+								<code>/&lt;token&gt;/setWebhook</code>
+								on the Worker and Telegram starts sending updates to it.
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

@@ -19,6 +19,7 @@
 		"test": "vitest",
 		"test:run": "vitest run",
 		"smoke": "node scripts/smoke.mjs",
+		"mockups": "node tools/mockups/build.mjs",
 		"types": "emdash types",
 		"resume": "nix run .#resume -- --outdir resume/out",
 		"resume:seed": "npm run resume && npx wrangler r2 object put private/resume.html --file resume/out/resume.html --content-type \"text/html; charset=utf-8\" --local && npx wrangler r2 object put private/resume.pdf --file resume/out/resume.pdf --content-type application/pdf --local",

@@ -3,24 +3,58 @@ import type { FeaturedProject } from './types';
 /**
  * Projects featured on the home page.
  *
- * The blurbs are written here rather than pulled from GitHub: two of these
+ * The set follows resume/resume.md — the same work, in the same order, at the
+ * length a case study needs rather than a bullet point. When a line there
+ * changes, these rows change with it; the résumé is the shorter telling, not a
+ * second opinion.
+ *
+ * The blurbs are written here rather than pulled from GitHub: most of these
  * repos have no description set, and the rest read better trimmed.
  *
  * `stars` and `since` are refreshed from the GitHub API at build time (see
- * +page.server.ts) — the values below are the fallback used when that request
- * fails, so they are worth keeping roughly current but are never load-bearing.
- * `language` stays curated either way.
+ * github.ts) for the rows that have a repository — the values below are the
+ * fallback used when that request fails, so they are worth keeping roughly
+ * current but are never load-bearing. `language` stays curated either way.
  */
 export const featuredProjects: FeaturedProject[] = [
+	{
+		slug: 'codebam-stream',
+		// The one row without a repository: the control plane takes Stripe money
+		// for a live service, so it stays private and the row links to the
+		// service instead of to source nobody is allowed to read.
+		since: '2026',
+		title: 'Codebam Stream',
+		description:
+			'Browser-first multistreaming in early access: OBS pushes one signal in over WHIP, your own watch page is the program output, and the same signal leaves again as RTMPS to YouTube, Twitch, X, Kick and Telegram. Cloudflare Workers, Durable Objects, D1 and LiveKit underneath, prepaid hours on top.',
+		language: 'TypeScript',
+		stars: 0,
+		homepage: 'https://stream.codebam.ca',
+		homepageLabel: 'Open the dashboard',
+		mockup: '/img/project-stream.webp',
+		mockupAlt: 'Codebam Stream control room with one program feed and five relay destinations',
+		tags: ['durable-objects', 'livekit', 'rtmps'],
+		challenge:
+			'Relay one live broadcast to five providers that each have their own stream key, rate limit and way of failing — while taking money for it in advance, and never letting a customer watch or push frames they have not paid for.',
+		architecture: [
+			'WHIP ingest from OBS lands in LiveKit, which serves the browser watch page.',
+			'Provider relays are auxiliary outputs, each held by a Durable Object that owns its lifecycle.',
+			'Two channels of prepaid credit — destination-hours and browser viewer-hours — are allocated FIFO in D1 and reconciled per customer as usage accrues.'
+		],
+		highlights: [
+			'Publisher epochs and relay generations fence every path, so a stale relay can never attach to a replacement broadcast',
+			'Resource-bound capabilities rather than ambient authority inside the Worker',
+			'Fail-closed relays and durable refund handling across 18k lines of tested TypeScript'
+		]
+	},
 	{
 		slug: 'viewport',
 		repo: 'viewport',
 		since: '2026',
 		title: 'Viewport',
 		description:
-			'A Wayland compositor whose entire shell — wallpaper, dock, window frames — is a web page, composited zero-copy alongside native clients. Smithay drives DRM/KMS and input; WPE WebKit renders the UI straight to a DMA-BUF, so no pixel ever touches the CPU.',
+			'A Wayland compositor in Rust on Smithay whose entire shell — wallpaper, dock, window frames and titlebars — is a web page, composited zero-copy alongside native clients. Five interchangeable engine backends render that same page: WPE, WebKitGTK, Chromium, CEF and Servo.',
 		language: 'Rust',
-		stars: 0,
+		stars: 4,
 		mockup: '/img/project-viewport.webp',
 		mockupAlt: 'Viewport desktop shell showing its keyboard controls',
 		tags: ['wayland', 'smithay', 'wpe-webkit'],
@@ -28,13 +62,13 @@ export const featuredProjects: FeaturedProject[] = [
 			'Build a native Wayland compositor while letting ordinary web technology own the desktop shell and window layout, without copying rendered frames through the CPU.',
 		architecture: [
 			'Smithay handles DRM/KMS, input and the xdg-shell protocol.',
-			'WPE WebKit renders the HTML shell to DMA-BUFs that become compositor render elements.',
-			'JavaScript measures CSS layout and sends window rectangles back to the compositor over IPC.'
+			'An engine backend renders the HTML shell to DMA-BUFs that become compositor render elements.',
+			'Tiling is a tree of CSS flexboxes, so the browser computes every window rectangle and the shell only measures the result.'
 		],
 		highlights: [
-			'Zero-copy composition for the web shell and native Wayland clients',
-			'CSS flexbox-based tiling rather than a second layout engine in Rust',
-			'Explicit synchronization and output frame pacing'
+			'Five interchangeable engine backends behind one shell page — WPE, WebKitGTK, Chromium, CEF and Servo',
+			'Zero-copy from engine to screen: DMA-BUF frames, drm_syncobj fences and real vblank pacing',
+			'A Nix flake that builds WPE WebKit from source'
 		]
 	},
 	{
@@ -43,52 +77,52 @@ export const featuredProjects: FeaturedProject[] = [
 		since: '2022',
 		title: 'Telegram Bot for Cloudflare Workers',
 		description:
-			'A Telegram bot framework running entirely on Cloudflare Workers, with Workers AI wired up so bots can answer using Gemini and Gemma.',
+			'A lightweight, type-safe Telegram bot framework for Cloudflare Workers: handlers chain off the incoming Request, middleware runs before them, and one URL registers the webhook. 325 stars, 214 forks and 120 releases on npm.',
 		language: 'TypeScript',
-		stars: 322,
-		homepage: 'https://tux-robot.codebam.ca',
-		homepageLabel: 'Try the bot',
-		mockup: '/img/project-telegram.webp',
-		mockupAlt: 'Tux Robot holding a conversation in Telegram',
-		tags: ['cloudflare', 'telegram', 'ai'],
+		stars: 325,
+		homepage: 'https://cf-workers-telegram-bot.codebam.ca',
+		homepageLabel: 'Read the docs',
+		mockup: '/img/project-telegram-sdk.webp',
+		mockupAlt: 'The package page and a Worker that hands its fetch handler to the bot',
+		tags: ['cloudflare', 'telegram', 'npm'],
 		challenge:
 			'Run a useful Telegram bot without a persistent server while keeping webhook handling, shared types and the companion web application deployable together.',
 		architecture: [
-			'grammY handles Telegram updates inside a Cloudflare Worker.',
-			'A Svelte 5 web application provides the browser-facing interface.',
-			'Shared packages keep types and helpers consistent across both deployments.'
+			'The Worker’s fetch receives Telegram’s webhook and hands the Request to the bot, which dispatches to typed handlers.',
+			'Middleware runs before the handlers, and the shared package keeps the bot and its web app on one set of types.',
+			'A visit to /<token>/setWebhook registers the Worker with Telegram, so there is no deploy-time CLI step to go live.'
 		],
 		highlights: [
-			'Separate development and production Worker bindings',
-			'Webhook authentication and automated deployment',
-			'Workers AI and web-search integrations for bot responses'
+			'325 stars, 214 forks and 120 releases on npm, under Apache-2.0',
+			'No runtime dependencies beyond the type definitions',
+			'Separate development and production Worker bindings, with a consumer template to start from'
 		]
 	},
 	{
-		slug: 'cloudflare-discord-bot',
-		repo: 'discord-bot',
-		since: '2024',
-		title: 'Discord Bot',
+		slug: 'tux-robot',
+		repo: 'tux-robot',
+		since: '2026',
+		title: 'Tux Robot',
 		description:
-			'A Discord bot on Cloudflare Workers that answers slash commands with Workers AI, using Workflows to handle the deferred replies that longer model responses need.',
+			'The bot that grew out of the framework, rebuilt on grammY: one Cloudflare Worker for the conversation, Cloudflare AI for the answers, Tavily for web search and document retrieval, and a Svelte 5 web app in front of it all. Live at t.me/TuxRobot.',
 		language: 'TypeScript',
-		stars: 1,
-		homepage: 'https://discord.com/oauth2/authorize?client_id=1314059926326349824',
-		homepageLabel: 'Add to Discord',
-		mockup: '/img/project-discord.webp',
-		mockupAlt: 'Discord slash command followed by a deferred Workers AI response',
-		tags: ['cloudflare', 'discord', 'workers-ai'],
+		stars: 0,
+		homepage: 'https://t.me/TuxRobot',
+		homepageLabel: 'Message the bot',
+		mockup: '/img/project-tux.webp',
+		mockupAlt: 'Tux Robot holding a conversation in Telegram',
+		tags: ['cloudflare', 'telegram', 'grammy'],
 		challenge:
-			'Answer Discord slash commands with model output that can take longer than Discord allows an interaction request to remain open.',
+			'Answer Telegram messages with model output and current web results from a single Worker, without a server that has to stay warm between messages.',
 		architecture: [
-			'A Cloudflare Worker validates and acknowledges each Discord interaction.',
-			'Cloudflare Workflows continues work after the deferred response.',
-			'Workers AI generates the eventual answer returned to Discord.'
+			'grammY handles Telegram updates inside one Cloudflare Worker.',
+			'Cloudflare AI generates the answers, with Gemini and Llama behind it; Tavily supplies web search and document retrieval.',
+			'A Svelte 5 web application provides the browser-facing interface.'
 		],
 		highlights: [
-			'Deferred interaction handling',
-			'Durable orchestration for longer AI requests',
-			'Serverless deployment with no continuously running bot process'
+			'Webhook, model calls and retrieval in a single deployment',
+			'Search over documents the bot has been sent, not only the web',
+			'Moved off the framework above and onto grammY, which is the honest ordering of the two rows'
 		]
 	},
 	{
@@ -97,7 +131,7 @@ export const featuredProjects: FeaturedProject[] = [
 		since: '2023',
 		title: 'Pastebin R2',
 		description:
-			'A pastebin on Cloudflare Workers backed by R2 object storage: Hono routes the API and web UI, pastes render with syntax highlighting and expire on their own after 48 hours.',
+			'A pastebin on Cloudflare Workers in TypeScript with Hono, storing objects in R2 behind a small REST API — create, update, list, info, delete — with syntax-highlighted and plain-text views, and pastes that expire on their own.',
 		language: 'TypeScript',
 		stars: 4,
 		homepage: 'https://paste.codebam.ca',
@@ -109,13 +143,13 @@ export const featuredProjects: FeaturedProject[] = [
 			'Provide a small paste service whose objects expire predictably, without introducing a separate application server or database for the paste bodies.',
 		architecture: [
 			'Hono routes the API and browser interface in a Cloudflare Worker.',
-			'R2 stores paste bodies and expiry metadata.',
-			'Reads enforce expiry immediately while an hourly cron removes expired objects.'
+			'R2 stores paste bodies and their TTL in custom metadata.',
+			'Reads enforce expiry immediately while an hourly cron sweeps what is left.'
 		],
 		highlights: [
 			'Syntax-highlighted and plain-text views',
 			'Configurable lifetimes capped at 48 hours',
-			'Create, update, delete, list and metadata endpoints'
+			'A Nix flake for dev and build, and a live instance at paste.codebam.ca'
 		]
 	}
 ];

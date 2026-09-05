@@ -1,0 +1,221 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Tux Robot</title>
+		<link rel="stylesheet" href="frame.css" />
+		<style>
+			body {
+				/* The chat is the one mockup drawn in the product's own face: a
+				   Telegram conversation has no business being monospaced. */
+				font-family: 'Liberation Sans', 'DejaVu Sans', sans-serif;
+			}
+
+			.card {
+				background: #0d0f14;
+			}
+
+			.chat {
+				width: 660px;
+				margin: 0 auto;
+				padding-bottom: 4px;
+			}
+
+			.chat-head {
+				display: flex;
+				align-items: center;
+				gap: 12px;
+				margin: 10px 0 14px;
+				padding: 8px 16px;
+				background: #1c232c;
+				border-radius: 22px;
+				color: #e7ecf3;
+			}
+
+			.chat-head .back {
+				color: #8b98a9;
+				font-size: 20px;
+			}
+
+			.avatar {
+				display: grid;
+				place-items: center;
+				width: 34px;
+				height: 34px;
+				font-size: 17px;
+				color: #fff;
+				background: #2ea8e6;
+				border-radius: 50%;
+			}
+
+			.chat-head b {
+				display: block;
+				font-size: 16px;
+				font-weight: 600;
+			}
+
+			.chat-head small {
+				display: block;
+				font-size: 13px;
+				color: #8b98a9;
+			}
+
+			.chat-head .icons {
+				margin-left: auto;
+				font-size: 19px;
+				color: #8b98a9;
+			}
+
+			.bubble {
+				max-width: 600px;
+				margin-bottom: 8px;
+				padding: 8px 14px;
+				font-size: 14px;
+				line-height: 1.38;
+				border-radius: 12px;
+			}
+
+			.mine {
+				margin-left: auto;
+				max-width: 360px;
+				color: #fff;
+				text-align: center;
+				background: #7a6ff0;
+				border-bottom-right-radius: 4px;
+			}
+
+			.mine .stamp {
+				font-size: 11px;
+				opacity: 0.8;
+			}
+
+			.theirs {
+				position: relative;
+				color: #e7ecf3;
+				text-align: left;
+				background: #17202c;
+				border-left: 3px solid #2ea8e6;
+			}
+
+			.theirs .from {
+				margin-bottom: 4px;
+				font-size: 13px;
+				font-weight: 600;
+				color: #4fb3f0;
+			}
+
+			.theirs blockquote {
+				margin: 0 0 8px;
+				padding-left: 10px;
+				font-size: 13px;
+				color: #9fb0c4;
+				border-left: 2px solid #2ea8e6;
+			}
+
+			.theirs ul {
+				margin: 6px 0;
+				padding-left: 20px;
+			}
+
+			.theirs li {
+				margin: 2px 0;
+			}
+
+			.theirs p {
+				margin: 5px 0;
+			}
+
+			.theirs .stamp {
+				display: block;
+				margin-top: 6px;
+				font-size: 11px;
+				color: #6f7f94;
+				text-align: right;
+			}
+
+			.day {
+				width: 70px;
+				margin: 0 auto 10px;
+				font-size: 12px;
+				color: #cfd8e3;
+				text-align: center;
+				background: #2b333d;
+				border-radius: 12px;
+			}
+
+			.intro {
+				max-width: 400px;
+				margin: 0 0 10px auto;
+				background: #2b333d;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="label">04 / Tux Robot</div>
+		<div class="stack">TypeScript · Telegram · grammY</div>
+
+		<div class="card">
+			<div class="chrome">
+				<i class="dot"></i><i class="dot"></i><i class="dot"></i>
+				<span>web.telegram.org</span>
+			</div>
+
+			<div class="chat">
+				<div class="chat-head">
+					<span class="back">←</span>
+					<span class="avatar">🐧</span>
+					<span>
+						<b>hey lets hav…</b>
+						<small>4 messages</small>
+					</span>
+					<span class="icons">⌕ </span>
+				</div>
+
+				<div class="bubble intro">
+					What can this bot do?<br />
+					AI Bot. Can generate text and images using gemma4 or imagen-4
+				</div>
+
+				<div class="day">Today</div>
+
+				<div class="bubble mine">
+					hey lets have a conversation! <span class="stamp">09:42 PM ✓</span>
+				</div>
+
+				<div class="bubble theirs">
+					<div class="from">Sean</div>
+					<blockquote>hey lets have a conversation!</blockquote>
+					Hello! It's great to meet you. :) I'm always happy to chat about whatever's on your mind.
+					What topic would you like to talk about? I can help with:
+					<ul>
+						<li>Answering questions</li>
+						<li>Writing or editing content</li>
+						<li>Or just having a casual conversation!</li>
+					</ul>
+					Feel free to ask me anything!
+					<span class="stamp">09:42 PM</span>
+				</div>
+
+				<div class="bubble mine">
+					lets learn new things. teach me something about telegram
+					<span class="stamp">09:43 PM ✓</span>
+				</div>
+
+				<div class="bubble theirs">
+					<div class="from">Sean</div>
+					<blockquote>lets learn new things. teach me something about telegram</blockquote>
+					<p>Here's something interesting about Telegram! :)</p>
+					<p>
+						Did you know that Telegram has **over 1 billion monthly active users**? It grew from 100
+						million in 2016 to a billion in 9 years.
+					</p>
+					<p>
+						And its supergroups hold up to **200,000 members** — with **unlimited subscribers** on
+						channels, too.
+					</p>
+					<span class="stamp">09:43 PM</span>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

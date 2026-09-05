@@ -11,9 +11,13 @@
 export interface FeaturedProject {
 	/** Stable URL segment under /projects. */
 	slug: string;
-	/** Repository name under github.com/codebam */
-	repo: string;
-	/** Year the repo was created; refreshed from GitHub at build time */
+	/**
+	 * Repository name under github.com/codebam. Left out for work that is not
+	 * on GitHub — a row for it still earns its place on the strength of what it
+	 * does, and the source link and star count simply do not appear.
+	 */
+	repo?: string;
+	/** Year the work started. Refreshed from the repo for what has one. */
 	since: string;
 	title: string;
 	description: string;

@@ -7,15 +7,18 @@ const project = featuredProjects.find((candidate) => candidate.slug === Astro.pa
 if (!project) return Astro.rewrite('/404');
 
 const canonical = `${SITES.codebam.url}/projects/${project.slug}`;
-const source = `https://github.com/codebam/${project.repo}`;
+const source = project.repo ? `https://github.com/codebam/${project.repo}` : null;
 const schema = JSON.stringify({
 	'@context': 'https://schema.org',
-	'@type': 'SoftwareSourceCode',
+	// Everything featured here is open source except the one row that runs a
+	// paid service. Announcing a repository it does not have is the sort of
+	// thing a crawler checks.
+	'@type': source ? 'SoftwareSourceCode' : 'SoftwareApplication',
 	'@id': `${canonical}#software`,
 	name: project.title,
 	description: project.description,
 	url: canonical,
-	codeRepository: source,
+	...(source ? { codeRepository: source } : {}),
 	programmingLanguage: project.language,
 	dateCreated: project.since,
 	author: { '@id': 'https://seanbehan.ca/#person' },
@@ -42,9 +45,23 @@ const schema = JSON.stringify({
 			</p>
 
 			<p class="enter mt-8 flex flex-wrap items-center gap-6" style="--enter-delay:100ms">
-				<a class="btn" href={source}>View source</a>
 				{
-					project.homepage && (
+					// The source is the point of a case study, so it keeps the primary
+					// button; where there is none, the running service is.
+					source ? (
+						<a class="btn" href={source}>
+							View source
+						</a>
+					) : (
+						project.homepage && (
+							<a class="btn" href={project.homepage}>
+								{project.homepageLabel}
+							</a>
+						)
+					)
+				}
+				{
+					source && project.homepage && (
 						<a class="link-quiet" href={project.homepage}>
 							{project.homepageLabel}
 						</a>
