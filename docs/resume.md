@@ -87,6 +87,12 @@ Two checks in there are load-bearing rather than decorative:
   is one line in the TeX log and a PDF quietly set in DejaVu. CI fails on that
   line.
 
+The bundle download gets three attempts, and only for a `429`: tectonic pulls
+its TeX bundle from `data1.fullyjustified.net`, which throttles shared IPs —
+observed rejecting this build locally, twice in an hour. A build that fails for
+any other reason fails the run at once, because repeating a broken template is
+just a slower way to read the same log.
+
 The PDF is not byte-reproducible — tectonic stamps a creation date — so every
 run republishes, and an etag or hash of the file says nothing about whether the
 content changed.

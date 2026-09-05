@@ -97,11 +97,30 @@ fi
 export PATH="$PATH:$SHIM"
 
 resolve() { # resolve <attr> <binary>
-  local attr="$1" bin="$2" path
+  local attr="$1" bin="$2" path log attempt
   if command -v "$bin" >/dev/null 2>&1; then return 0; fi
   [[ $USE_NIX -eq 1 ]] || die "$bin not found on PATH (--no-nix)"
   note "$bin not on PATH; building nixpkgs#$attr with nix"
-  path="$(nix build --no-link --print-out-paths --impure "nixpkgs#$attr" 2>/dev/null | tail -1)"
+  # Stdout (the store path) and stderr (the progress and the failure) are kept
+  # together because the difference decides whether to try again: substitutes
+  # come from cache.nixos.org and tectonic's release tarball from GitHub, and
+  # both answer 429 to a shared IP before they answer at all. Retrying that is
+  # the fix; retrying a broken expression is only a delay.
+  log="$(mktemp)"
+  for attempt in 1 2 3; do
+    if nix build --no-link --print-out-paths --impure "nixpkgs#$attr" >"$log" 2>&1; then
+      break
+    fi
+    grep -qE '429|Too Many Requests|unexpected HTTP response|failed to download' "$log" || break
+    if [[ $attempt -eq 3 ]]; then
+      cat "$log" >&2
+      die "nix could not provide nixpkgs#$attr after $attempt attempts"
+    fi
+    note "fetching nixpkgs#$attr hit a download error (attempt $attempt); retrying"
+    sleep 15
+  done
+  path="$(tail -1 "$log")"
+  rm -f "$log"
   [[ -n "$path" ]] || die "nix could not provide nixpkgs#$attr"
   mkdir -p "$SHIM"
   local f

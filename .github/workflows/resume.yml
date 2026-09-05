@@ -76,7 +76,27 @@ jobs:
       - name: Build the PDF and the fragment
         run: |
           set -euo pipefail
-          nix run .#resume -- --outdir "$OUT" 2>&1 | tee "$RUNNER_TEMP/resume-build.log"
+
+          # Tectonic downloads its own TeX bundle from one host on the first run
+          # against a cache key, and that host throttles shared IPs — a 429 from
+          # data1.fullyjustified.net was seen building this résumé locally. That
+          # is not a broken resume, so it gets retries; anything that fails for
+          # another reason fails the run immediately rather than three times.
+          built=no
+          for attempt in 1 2 3; do
+            if nix run .#resume -- --outdir "$OUT" 2>&1 |
+              tee "$RUNNER_TEMP/resume-build.log"; then
+              built=yes
+              break
+            fi
+            # Only the throttle is worth another go: everything else failed for a
+            # reason that repeating cannot fix, and the log is already in the open.
+            grep -qE 'Too Many Requests|unexpected HTTP response code' \
+              "$RUNNER_TEMP/resume-build.log" || break
+            echo "attempt $attempt: tectonic could not fetch its TeX bundle"
+            test "$attempt" = 3 || sleep 45
+          done
+          test "$built" = yes
 
           # templates/resume.latex walks a font chain and keeps the engine
           # default rather than failing, so a family fontconfig cannot see is one
