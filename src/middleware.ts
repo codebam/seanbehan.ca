@@ -16,15 +16,20 @@
 import { defineMiddleware } from 'astro:middleware';
 import { edgeCacheKey } from './lib/edgeCache';
 import { SITES, site } from './lib/site';
+import { EDITOR_CSP } from './lib/csp.js';
 
 /**
  * The admin panel is a React application EmDash ships and updates; it is
  * excluded rather than pinned to a policy this file would have to chase.
  *
- * Content-Security-Policy is not here any more: Astro writes it, one source
- * aware of the build, from `security.csp` in astro.config.mjs, and this file
- * used to overwrite it with a policy that refused the page's own inline
- * scripts.
+ * Content-Security-Policy is mostly not here: Astro writes the anonymous
+ * policy (one source aware of the build) from `security.csp` in
+ * astro.config.mjs, and this file used to overwrite it with one that refused
+ * the page's own inline scripts. The one exception now sits just below the
+ * /_emdash block: an editor browsing the site receives EmDash's inline
+ * visual-editing toolbar — injected after Astro hashed the page, so it can
+ * carry no hash of its own — and gets the inline-allowing variant from
+ * src/lib/csp.js instead.
  */
 const SECURITY_HEADERS: Record<string, string> = {
 	'X-Content-Type-Options': 'nosniff',
@@ -225,6 +230,17 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		response.headers.delete('Content-Security-Policy');
 		response.headers.set('Cache-Control', 'private, no-store');
 		return response;
+	}
+
+	// EmDash's visual-editing toolbar is the one inline it injects into a
+	// public page, and only for editors. Astro hashed the page for anonymous
+	// readers and never saw this tool, so it can't carry one of their hashes
+	// (and a hash would not coexist with an inline allowance, per CSP3). The
+	// only browser that ever receives it already resolved a session and is the
+	// one editing, so it gets the inline-allowing policy from the same
+	// directive set; everyone else keeps the strict one.
+	if ((context.locals?.user?.role ?? 0) >= 30) {
+		response.headers.set('Content-Security-Policy', EDITOR_CSP);
 	}
 
 	if (!response.headers.has('Cache-Control')) {

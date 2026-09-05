@@ -12,3 +12,6 @@ worker-configuration.d.ts
 # Vendored: the EmDash template ships these and they are updated by upgrading
 # the package, not by editing them here.
 .agents/
+
+# Agent session artifacts (per-run task state and logs)
+.pi/

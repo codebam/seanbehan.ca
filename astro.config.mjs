@@ -8,6 +8,7 @@ import { defineConfig } from 'astro/config';
 import emdash from 'emdash/astro';
 import { siteFor } from './src/lib/site.data.js';
 import { siteSeo } from './src/plugins/site-seo';
+import { CSP_DIRECTIVES } from './src/lib/csp.js';
 
 const buildSite = siteFor(process.env.PUBLIC_SITE);
 
@@ -40,21 +41,7 @@ export default defineConfig({
 	// their delay the same way. <style> elements instead carry their hash.
 	security: {
 		csp: {
-			directives: [
-				"default-src 'self'",
-				// Media uploaded through the CMS is served from this origin;
-				// data: covers the inline SVG icons.
-				"img-src 'self' data:",
-				"font-src 'self'",
-				"connect-src 'self'",
-				// The résumé is embedded as an <object> from a Cloudflare R2 bucket.
-				"object-src 'self' https://pub-b1fc9705d9cd4b50885284c3ede52d27.r2.dev",
-				"frame-src 'none'",
-				"frame-ancestors 'none'",
-				"base-uri 'self'",
-				"form-action 'self' https://checkout.stripe.com",
-				"manifest-src 'self'"
-			],
+			directives: CSP_DIRECTIVES,
 			styleDirective: {
 				resources: ["'self'", { resource: "'unsafe-inline'", kind: 'attribute' }]
 			}
