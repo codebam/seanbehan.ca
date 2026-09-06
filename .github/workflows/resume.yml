@@ -42,7 +42,7 @@ jobs:
       OUT: resume-out
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # pandoc and tectonic come from the flake rather than from apt or a
       # download: it is the same pinned nixpkgs the repo's own dev shell uses,
@@ -63,7 +63,7 @@ jobs:
           key: tectonic-${{ hashFiles('flake.lock') }}
           restore-keys: tectonic-
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version-file: .node-version
           cache: npm
