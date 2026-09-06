@@ -7,7 +7,7 @@ import PostSearch from '../../components/PostSearch.astro';
 import { getPosts } from '../../lib/posts';
 import { site } from '../../lib/site';
 
-const { posts, cacheHint } = await getPosts();
+const { posts, cacheHint } = await getPosts({ includeBodies: false });
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 ---
 

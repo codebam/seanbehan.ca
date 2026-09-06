@@ -8,7 +8,7 @@ import { displayTag, slugifyTag } from '../../../lib/tags';
 import { site } from '../../../lib/site';
 
 const target = slugifyTag(Astro.params.tag!);
-const { posts: all, cacheHint } = await getPosts();
+const { posts: all, cacheHint } = await getPosts({ includeBodies: false });
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
 const posts = all.filter((post) => post.meta.tags.some((tag) => slugifyTag(tag) === target));

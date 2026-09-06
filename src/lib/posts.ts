@@ -147,8 +147,13 @@ export function toSummary(entry: PostEntry, tags: string[] = [], body?: string):
  *
  * `bodies` hands back the plain prose per slug: reading time already walks the
  * Portable Text, and search wants the very same words without a second query.
+ * Only search.json reads it, so every other caller passes
+ * `{ includeBodies: false }` and skips keeping a second copy of the archive's
+ * words per request. (Reading time still walks each body once — the lists
+ * print it — so the saving is the duplicated strings, not the parse.)
  */
-export async function getPosts() {
+export async function getPosts(opts?: { includeBodies?: boolean }) {
+	const includeBodies = opts?.includeBodies ?? true;
 	const { entries, cacheHint } = await getEmDashCollection('posts', {
 		status: 'published',
 		orderBy: { published_at: 'desc' },
@@ -166,7 +171,7 @@ export async function getPosts() {
 	const posts = list
 		.map((entry) => {
 			const body = plainText(entry.data.content);
-			bodies.set(entry.id, body);
+			if (includeBodies) bodies.set(entry.id, body);
 			return toSummary(
 				entry,
 				(termsByEntry.get(entry.data.id) ?? []).map((term) => term.slug),

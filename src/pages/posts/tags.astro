@@ -6,7 +6,7 @@ import { getPosts, tagCounts } from '../../lib/posts';
 import { displayTag } from '../../lib/tags';
 import { site } from '../../lib/site';
 
-const { posts, cacheHint } = await getPosts();
+const { posts, cacheHint } = await getPosts({ includeBodies: false });
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
 const tags = tagCounts(posts);

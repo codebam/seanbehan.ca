@@ -47,7 +47,7 @@ const newestStamp = (list: PostSummary[]) =>
 	}, '');
 
 export const GET: APIRoute = async () => {
-	const { posts } = await getPosts();
+	const { posts } = await getPosts({ includeBodies: false });
 	const newest = newestStamp(posts) || undefined;
 	const urls = staticPaths().map((path) =>
 		entry(path, path === '/' || path === '/posts' || path === '/posts/tags' ? newest : undefined)

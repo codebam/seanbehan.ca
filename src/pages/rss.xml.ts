@@ -13,7 +13,7 @@ import { renderBodyHtml } from '../lib/renderBody';
 import { getPosts } from '../lib/posts';
 
 export const GET: APIRoute = async () => {
-	const { posts } = await getPosts();
+	const { posts } = await getPosts({ includeBodies: false });
 
 	// One query for the bodies: getPosts() summarises entries and drops the
 	// Portable Text, which is all this needs from them.

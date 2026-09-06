@@ -18,7 +18,7 @@ import { featuredProjects } from '../lib/projects';
 import { site, writingHref, yearsBuilding as yearsSinceStart } from '../lib/site';
 
 const [{ posts, cacheHint }, projects] = await Promise.all([
-	getPosts(),
+	getPosts({ includeBodies: false }),
 	withLiveStats(featuredProjects)
 ]);
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);

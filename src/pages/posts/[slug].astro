@@ -37,7 +37,7 @@ const tags = (await getEntryTerms('posts', entry.data.id, 'tag')).map((term) => 
 const post = toSummary(entry as never, tags);
 const { blocks, headings } = prepareBody(entry.data.content);
 
-const { posts } = await getPosts();
+const { posts } = await getPosts({ includeBodies: false });
 
 /**
  * The posts either side of this one in the archive's order — newest first, so

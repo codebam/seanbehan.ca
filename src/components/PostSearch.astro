@@ -110,20 +110,27 @@ import { Input } from '@cloudflare/kumo/components/input';
 		 * must not claim the archive is empty on account of the network being
 		 * down. An empty query needs no round trip at all — the unsearched
 		 * archive is precisely the whole list — so it is answered locally.
+		 * An aborted request resolves undefined: a newer query superseded it,
+		 * and there is nothing to commit.
 		 */
-		async function fetchOrder(query: string): Promise<string[] | null> {
+		async function fetchOrder(
+			query: string,
+			signal: AbortSignal
+		): Promise<string[] | null | undefined> {
 			if (!query) {
 				showAll();
 				return null;
 			}
 			try {
 				const response = await fetch(`/search.json?q=${encodeURIComponent(query)}`, {
-					headers: { Accept: 'application/json' }
+					headers: { Accept: 'application/json' },
+					signal
 				});
 				if (!response.ok) throw new Error(`search answered ${response.status}`);
 				const body: { slugs: string[] } = await response.json();
 				return body.slugs;
-			} catch {
+			} catch (error) {
+				if (signal.aborted) return undefined;
 				return null;
 			}
 		}
@@ -174,14 +181,17 @@ import { Input } from '@cloudflare/kumo/components/input';
 		}
 
 		// A burst of keystrokes has more requests in flight than there are
-		// answers, and a slow answer for the older query can land after the
-		// fast one for the newer. The ticket numbers them so only the newest
-		// is allowed to arrange the list.
+		// answers. Each new query aborts the previous request so superseded
+		// work stops burning Worker CPU, and the ticket numbers what is left
+		// so only the newest is allowed to arrange the list.
 		let latest = 0;
+		let flight: AbortController | null = null;
 		const search = (query: string) => {
 			const ticket = ++latest;
-			fetchOrder(query).then((slugs) => {
-				if (ticket === latest) commit(query, slugs);
+			flight?.abort();
+			flight = new AbortController();
+			fetchOrder(query, flight.signal).then((slugs) => {
+				if (ticket === latest && slugs !== undefined) commit(query, slugs);
 			});
 		};
 

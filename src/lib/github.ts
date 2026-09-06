@@ -28,6 +28,14 @@ const CACHE_SECONDS = 6 * 60 * 60;
  */
 const TIMEOUT_MS = 1500;
 
+/**
+ * What a cold isolate waits for the whole live-stats fetch before rendering
+ * anyway. The per-fetch timeout above bounds each socket; this bounds the
+ * page: on a slow GitHub day the committed numbers go out and the late answer
+ * still warms the memo below for the next request.
+ */
+const BUDGET_MS = 600;
+
 let memo: { at: number; projects: FeaturedProject[] } | null = null;
 
 export async function withLiveStats(projects: FeaturedProject[]): Promise<FeaturedProject[]> {
@@ -38,7 +46,7 @@ export async function withLiveStats(projects: FeaturedProject[]): Promise<Featur
 	// send a GitHub call per visitor rather than one per repository.
 	memo = { at: Date.now(), projects };
 
-	const withStats = await Promise.all(
+	const fetched = Promise.all(
 		projects.map(async (project) => {
 			if (!project.repo) return project;
 
@@ -68,8 +76,14 @@ export async function withLiveStats(projects: FeaturedProject[]): Promise<Featur
 				return project;
 			}
 		})
+	).then((withStats) => {
+		memo = { at: Date.now(), projects: withStats };
+		return withStats;
+	});
+
+	const budget = new Promise<FeaturedProject[]>((resolve) =>
+		setTimeout(() => resolve(projects), BUDGET_MS)
 	);
 
-	memo = { at: Date.now(), projects: withStats };
-	return withStats;
+	return Promise.race([fetched, budget]);
 }
