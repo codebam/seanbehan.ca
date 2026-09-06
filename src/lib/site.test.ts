@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { SITES } from './site.data.js';
-import { canonicalUrl, projectHref, writingHref, yearsBuilding } from './site';
+import {
+	canonicalUrl,
+	isSiblingHref,
+	projectHref,
+	siblingHost,
+	writingHref,
+	yearsBuilding
+} from './site';
 
 describe('canonicalUrl', () => {
 	it('points published posts at seanbehan.ca from either variant', () => {
@@ -27,6 +34,28 @@ describe('content origins', () => {
 
 	it('sends project case studies to codebam.ca', () => {
 		expect(projectHref('/projects/viewport')).toBe('https://codebam.ca/projects/viewport');
+	});
+});
+
+describe('isSiblingHref', () => {
+	it('flags the other variant origin (the seanbehan build)', () => {
+		expect(isSiblingHref('https://codebam.ca/services')).toBe(true);
+		expect(isSiblingHref('https://codebam.ca')).toBe(true);
+	});
+
+	it('ignores same-origin paths and truly external URLs', () => {
+		expect(isSiblingHref('/posts')).toBe(false);
+		expect(isSiblingHref('https://seanbehan.ca/contact')).toBe(false);
+		expect(isSiblingHref('https://github.com/codebam')).toBe(false);
+		expect(isSiblingHref('mailto:sean@seanbehan.ca')).toBe(false);
+	});
+
+	it('is not fooled by a host that merely starts with ours', () => {
+		expect(isSiblingHref('https://seanbehan.ca.evil.com/posts')).toBe(false);
+	});
+
+	it('names the host a sibling href points at', () => {
+		expect(siblingHost('https://codebam.ca/services')).toBe('codebam.ca');
 	});
 });
 

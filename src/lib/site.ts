@@ -101,6 +101,25 @@ export const writingHref = (path: string) =>
 export const projectHref = (path: string) =>
 	site.id === 'seanbehan' ? `${SITES.codebam.url}${path}` : path;
 
+/**
+ * Whether an href leaves this origin for the repo's other one.
+ *
+ * The middleware redirects whole sections across (writing to seanbehan.ca,
+ * projects and legal to codebam.ca), so chrome links built with writingHref,
+ * projectHref and codebamHref silently change origin on one variant. Truly
+ * external URLs are not siblings — GitHub already announces itself with a new
+ * tab — only the family's own other front door counts.
+ */
+export const isSiblingHref = (href: string) =>
+	/^https?:\/\//.test(href) &&
+	!href.startsWith(site.url) &&
+	Object.values(SITES).some(
+		(variant) => href === variant.url || href.startsWith(`${variant.url}/`)
+	);
+
+/** The host a sibling href points at, for the marker's screen-reader note. */
+export const siblingHost = (href: string) => new URL(href).host;
+
 /** Commercial work ships under the code-first identity. */
 export const codebamHref = (path: string) =>
 	site.id === 'seanbehan' ? `${SITES.codebam.url}${path}` : path;

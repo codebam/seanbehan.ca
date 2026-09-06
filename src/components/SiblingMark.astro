@@ -1,0 +1,39 @@
+---
+/**
+ * The mark on a chrome link that leaves this origin for the repo's other one.
+ *
+ * Writing lives on seanbehan.ca while projects and legal live on codebam.ca,
+ * so some header and footer links silently change origin on one variant. The
+ * arrow says so where the eye is; the host in a visually-hidden span says so
+ * where only the ear is. Content links stay unmarked — flagging every post
+ * row would be noise, and the destination page identifies itself.
+ */
+import { isSiblingHref, siblingHost } from '../lib/site';
+
+interface Props {
+	href: string;
+}
+
+const { href } = Astro.props;
+---
+
+{
+	isSiblingHref(href) && (
+		<>
+			<span class="sibling-mark" aria-hidden="true">
+				&#8599;
+			</span>
+			<span class="sr-only"> (on {siblingHost(href)})</span>
+		</>
+	)
+}
+
+<style>
+	/* Quieter than the label it follows: the destination is a detail, not the
+	   point, and it must never shift the row — inline, muted, no layout. */
+	.sibling-mark {
+		margin-left: 0.3em;
+		font-size: 0.85em;
+		color: var(--muted);
+	}
+</style>

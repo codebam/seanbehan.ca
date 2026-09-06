@@ -44,9 +44,13 @@ proposed, roughly ordered by value within each section.
       exist (`if (!form) return`), so embedding is safe — but the form itself,
       its notification routing, and the `ec-form-*` style integration all need
       doing in the admin first. Standalone task.
-- [ ] Cross-origin jumps have no affordance. Writing lives on seanbehan.ca,
-      projects/products/legal on codebam.ca (`src/middleware.ts:156-179`); nav
-      links cross origins silently. Needs a design decision, not just code.
+- [x] Cross-origin jumps have no affordance. Chrome links that leave for the
+      repo's other origin now carry a quiet ↗ plus a screen-reader host note
+      (`SiblingMark.astro`, `isSiblingHref` in `src/lib/site.ts`), applied to
+      the header nav and footer in `Base.astro`. Content links stay unmarked —
+      flagging every post row would be noise, and the destination page
+      identifies itself. (Unifying the origins behind canonicals remains the
+      alternative; it is an SEO call, not taken here.)
 - [ ] Mobile nav wraps to two rows (`src/layouts/Base.astro:436-445`). Needs a
       design decision.
 - [ ] No manual dark toggle — `prefers-color-scheme` only (DESIGN §2.2). Needs

@@ -13,6 +13,7 @@
 import { EmDashHead, EmDashBodyStart, EmDashBodyEnd } from 'emdash/ui';
 import { createPublicPageContext } from 'emdash/page';
 import { site, absolute, canonicalUrl, codebamHref, writingHref } from '../lib/site';
+import SiblingMark from '../components/SiblingMark.astro';
 import type { PostSummary } from '../lib/types';
 import '../styles/app.css';
 
@@ -200,6 +201,7 @@ const isCurrent = (href: string) =>
 								}
 							>
 								{item.label}
+								<SiblingMark href={item.href} />
 							</a>
 						))
 					}
@@ -229,7 +231,9 @@ const isCurrent = (href: string) =>
 					<p class="footer-label">Site</p>
 					<a class="footer-link" href="/about">About</a>
 					<a class="footer-link" href="/#work">Work</a>
-					<a class="footer-link" href={writingHref('/posts')}>Writing</a>
+					<a class="footer-link" href={writingHref('/posts')}
+						>Writing<SiblingMark href={writingHref('/posts')} /></a
+					>
 					<a class="footer-link" href="/links">Links</a>
 					{
 						site.showResume && (
@@ -242,10 +246,18 @@ const isCurrent = (href: string) =>
 
 				<nav aria-label="Legal">
 					<p class="footer-label">Legal</p>
-					<a class="footer-link" href={codebamHref('/legal/privacy')}>Privacy</a>
-					<a class="footer-link" href={codebamHref('/legal/terms-of-sale')}>Terms</a>
-					<a class="footer-link" href={codebamHref('/legal/refund-policy')}>Refunds</a>
-					<a class="footer-link" href={codebamHref('/legal/product-license')}>License</a>
+					<a class="footer-link" href={codebamHref('/legal/privacy')}
+						>Privacy<SiblingMark href={codebamHref('/legal/privacy')} /></a
+					>
+					<a class="footer-link" href={codebamHref('/legal/terms-of-sale')}
+						>Terms<SiblingMark href={codebamHref('/legal/terms-of-sale')} /></a
+					>
+					<a class="footer-link" href={codebamHref('/legal/refund-policy')}
+						>Refunds<SiblingMark href={codebamHref('/legal/refund-policy')} /></a
+					>
+					<a class="footer-link" href={codebamHref('/legal/product-license')}
+						>License<SiblingMark href={codebamHref('/legal/product-license')} /></a
+					>
 				</nav>
 
 				<nav aria-label="Elsewhere">
@@ -262,7 +274,9 @@ const isCurrent = (href: string) =>
 						target="_blank"
 						rel="me noopener noreferrer">Mastodon</a
 					>
-					<a class="footer-link" href={writingHref('/rss.xml')}>RSS</a>
+					<a class="footer-link" href={writingHref('/rss.xml')}
+						>RSS<SiblingMark href={writingHref('/rss.xml')} /></a
+					>
 					<a class="footer-link" href={`mailto:${site.email}`}>{site.email}</a>
 				</nav>
 			</div>
