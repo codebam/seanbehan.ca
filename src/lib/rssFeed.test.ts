@@ -54,6 +54,28 @@ describe('generateRSSFeed', () => {
 		const feed = generateRSSFeed([], new Map());
 		expect(feed).toContain('xmlns:content="http://purl.org/rss/1.0/modules/content/"');
 	});
+
+	it('dates the build from the newest post, not the render', () => {
+		const older: PostSummary = {
+			...post,
+			path: '/posts/older',
+			slug: 'older',
+			meta: { ...post.meta, date: '2025-01-01' }
+		};
+		const feed = generateRSSFeed([older, post], new Map());
+
+		expect(feed).toContain('<lastBuildDate>Thu, 01 Jan 2026 00:00:00 GMT</lastBuildDate>');
+	});
+
+	it('prefers an updated stamp over a newer publish date', () => {
+		const touched: PostSummary = {
+			...post,
+			meta: { ...post.meta, date: '2025-01-01', updated: '2026-03-01T00:00:00.000Z' }
+		};
+		const feed = generateRSSFeed([touched], new Map());
+
+		expect(feed).toContain('<lastBuildDate>Sun, 01 Mar 2026 00:00:00 GMT</lastBuildDate>');
+	});
 });
 
 describe('absolutizeUrls', () => {
@@ -69,6 +91,22 @@ describe('absolutizeUrls', () => {
 	it('leaves absolute, protocol-relative and fragment URLs alone', () => {
 		const html =
 			'<a href="https://example.com">a</a><img src="//cdn/x.png"/><a href="#section">b</a>';
+
+		expect(absolutizeUrls(html, 'https://seanbehan.ca')).toBe(html);
+	});
+
+	it('prefixes root-relative poster and every entry in srcset', () => {
+		const html =
+			'<video poster="/img/poster.webp"><source srcset="/img/a.webp 1x, /img/b.webp 2x"/></video>';
+
+		expect(absolutizeUrls(html, 'https://seanbehan.ca')).toBe(
+			'<video poster="https://seanbehan.ca/img/poster.webp">' +
+				'<source srcset="https://seanbehan.ca/img/a.webp 1x, https://seanbehan.ca/img/b.webp 2x"/></video>'
+		);
+	});
+
+	it('leaves absolute srcset entries alone', () => {
+		const html = '<img srcset="https://cdn/x.png 1x, //cdn/y.png 2x"/>';
 
 		expect(absolutizeUrls(html, 'https://seanbehan.ca')).toBe(html);
 	});

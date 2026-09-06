@@ -31,17 +31,27 @@ const LANGS = {
 	jsx: () => import('@shikijs/langs/jsx'),
 	svelte: () => import('@shikijs/langs/svelte'),
 	css: () => import('@shikijs/langs/css'),
+	html: () => import('@shikijs/langs/html'),
+	json: () => import('@shikijs/langs/json'),
+	yaml: () => import('@shikijs/langs/yaml'),
 	nix: () => import('@shikijs/langs/nix'),
 	rust: () => import('@shikijs/langs/rust'),
 	toml: () => import('@shikijs/langs/toml'),
 	ini: () => import('@shikijs/langs/ini'),
 	sql: () => import('@shikijs/langs/sql'),
 	nginx: () => import('@shikijs/langs/nginx'),
-	systemd: () => import('@shikijs/langs/systemd')
+	systemd: () => import('@shikijs/langs/systemd'),
+	dockerfile: () => import('@shikijs/langs/dockerfile'),
+	diff: () => import('@shikijs/langs/diff')
 } as const;
 
 /** Fence labels that are not shiki language ids. */
-const ALIASES: Record<string, keyof typeof LANGS> = { conf: 'ini' };
+const ALIASES: Record<string, keyof typeof LANGS> = {
+	conf: 'ini',
+	yml: 'yaml',
+	docker: 'dockerfile',
+	patch: 'diff'
+};
 
 let highlighterPromise: Promise<HighlighterCore> | null = null;
 

@@ -404,7 +404,9 @@ const isCurrent = (href: string) =>
 		font-weight: 600;
 		letter-spacing: 0.16em;
 		text-transform: uppercase;
-		color: var(--dim);
+		/* --dim sits near 3.3:1 on the inverted footer and fails AA for type;
+		   --muted clears 4.5:1 on both footer surfaces. */
+		color: var(--muted);
 		margin-bottom: 0.9rem;
 	}
 	footer nav {

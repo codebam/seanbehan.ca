@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Masthead from '../components/Masthead.astro';
 import { LinkButton } from '@cloudflare/kumo/components/button';
+import { LINKEDIN_URL } from '../lib/site';
 import { SITES } from '../lib/site.data.js';
 
 const serviceSite = SITES.codebam;
@@ -48,7 +49,8 @@ const schema = JSON.stringify({
 	provider: {
 		'@type': 'Person',
 		name: 'Sean Behan',
-		url: serviceSite.url
+		url: serviceSite.url,
+		sameAs: ['https://github.com/codebam', LINKEDIN_URL]
 	},
 	areaServed: 'Worldwide',
 	serviceType: ['Website development', 'Telegram bot development']

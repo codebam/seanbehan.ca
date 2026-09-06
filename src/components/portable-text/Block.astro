@@ -7,6 +7,10 @@
  * They are computed once by `prepareBody` in lib/posts.ts and travel on the
  * block as `headingId`, so nothing here has to count duplicates or depend on
  * the order blocks happen to render in.
+ *
+ * h2/h3 headings also wrap their text in a link to themselves — the `#` mark
+ * in app.css's `.heading-anchor` rules — so a section URL is one click away
+ * with no script involved.
  */
 import type { BlockProps } from 'astro-portabletext/types';
 
@@ -24,11 +28,23 @@ const id = node.headingId;
 		</h1>
 	) : style === 'h2' ? (
 		<h2 id={id} {...attrs}>
-			<slot />
+			{id ? (
+				<a class="heading-anchor" href={`#${id}`}>
+					<slot />
+				</a>
+			) : (
+				<slot />
+			)}
 		</h2>
 	) : style === 'h3' ? (
 		<h3 id={id} {...attrs}>
-			<slot />
+			{id ? (
+				<a class="heading-anchor" href={`#${id}`}>
+					<slot />
+				</a>
+			) : (
+				<slot />
+			)}
 		</h3>
 	) : style === 'h4' ? (
 		<h4 {...attrs}>

@@ -33,43 +33,57 @@ proposed, roughly ordered by value within each section.
 
 ## 2. Content / UX
 
+- [x] Section headings link to themselves. The `.heading-anchor` styles were
+      already in `app.css` but `Block.astro` never rendered the anchor — it
+      does now, with no script involved.
+- [ ] Related fallback. **Declined:** the empty state is deliberate — siblings
+      already cover recency, and a "related" row of unrelated posts misleads
+      (`src/pages/posts/[slug].astro:58-73`).
+- [ ] Contact form. Investigated: `<Form id="…">` from
+      `@emdash-cms/plugin-forms/ui` renders nothing when the form does not
+      exist (`if (!form) return`), so embedding is safe — but the form itself,
+      its notification routing, and the `ec-form-*` style integration all need
+      doing in the admin first. Standalone task.
 - [ ] Cross-origin jumps have no affordance. Writing lives on seanbehan.ca,
       projects/products/legal on codebam.ca (`src/middleware.ts:156-179`); nav
-      links cross origins silently. Mark them or unify.
-- [ ] No contact form despite `formsPlugin` installed — `/contact` is
-      mailto-only (`src/pages/contact.astro`). Adds spam exposure + friction.
-- [ ] TOC has no scrollspy; headings have no copy-link
-      (`src/pages/posts/[slug].astro:160-178`).
-- [ ] `related` is empty when no tags overlap (`src/pages/posts/[slug].astro:58-73`).
-      Fall back to newest posts.
-- [ ] Mobile nav wraps to two rows (`src/layouts/Base.astro:436-445`). Consider
-      a condensed menu.
-- [ ] `reveal` script ships globally (`src/layouts/Base.astro:280-282`) even on
-      pages without `data-reveal`.
-- [ ] No manual dark toggle — `prefers-color-scheme` only (DESIGN §2.2).
+      links cross origins silently. Needs a design decision, not just code.
+- [ ] Mobile nav wraps to two rows (`src/layouts/Base.astro:436-445`). Needs a
+      design decision.
+- [ ] No manual dark toggle — `prefers-color-scheme` only (DESIGN §2.2). Needs
+      a design decision; invariant 2 still requires the no-JS path.
+- [ ] `reveal` ships globally (`src/layouts/Base.astro:280-282`). **Dropped:**
+      one tiny inline bundle per page; scoping it buys nothing measurable.
 - [ ] No newsletter capture, comments/webmentions, or per-post “suggest an edit”
-      link despite a GitHub audience.
-- [ ] Services `Service` schema lacks `offers`/`priceRange`/FAQ
-      (`src/pages/services.astro:41-55`).
+      link. Needs service decisions.
+- [x] Services schema: provider `sameAs` (GitHub, LinkedIn) added
+      (`src/pages/services.astro`). No `offers`/`priceRange`/FAQ — prices are
+      unknown and FAQ copy is unwritten; both need authoring, not code.
 
 ## 3. SEO / feeds
 
-- [ ] `absolutizeUrls()` misses `srcset`/`poster` (`src/lib/rssFeed.ts:32-34`).
-- [ ] `lastBuildDate = now` destabilizes edge caching (`src/lib/rssFeed.ts:79`);
-      use the newest post date.
-- [ ] `managingEditor`/`webMaster` expose the raw email (`src/lib/rssFeed.ts:77-78`).
-- [ ] `twitter:site @seanwbehan` vs handle `codebam` (`src/layouts/Base.astro:152`) —
-      verify which is correct.
-- [ ] Shiki fence labels missing: `json`, `yaml`, `dockerfile`, `diff`, `html`
-      fall back to plaintext silently (`src/lib/highlight.ts:23-44`). Adding
-      grammars grows the Worker bundle — weigh before adding.
+- [x] `absolutizeUrls()` missed `srcset`/`poster` (`src/lib/rssFeed.ts`); every
+      entry in both is now prefixed. Covered in `rssFeed.test.ts`.
+- [x] `lastBuildDate = now` destabilized edge caching; it is the newest
+      post activity (updated, else published) instead. Covered in tests.
+- [ ] `managingEditor`/`webMaster` expose the raw email. **Kept:** RSS wants an
+      address there and readers show the name beside it.
+- [ ] `twitter:site @seanwbehan` vs handle `codebam` (`src/layouts/Base.astro:152`).
+      **Kept:** consistent with the author's long-standing handle; no evidence
+      it is wrong.
+- [x] Shiki fence labels added: `html`, `json`, `yaml` (+`yml`), `dockerfile`
+      (+`docker`), `diff` (+`patch`) (`src/lib/highlight.ts`). Each grammar is
+      a few KB; unknown labels still fall back to plaintext.
 
 ## 4. Accessibility / performance hygiene
 
-- [ ] `footer-label` uses `--dim`, documented as UI-marks-only contrast (DESIGN §2.8).
-      Verify it clears AA for type.
-- [ ] Search label mismatch: visible “Filter” vs `aria-label="Search posts"`
-      (`src/components/PostSearch.astro:21-38`).
-- [ ] Audit Portable Text images: `loading="lazy"`, explicit dimensions (CLS),
-      alt enforcement; audit tables/code overflow in print.
-- [ ] No privacy-friendly analytics; no 500 page (only `404.astro`).
+- [x] `footer-label` used `--dim` for type at ~3.4:1 on the inverted footer —
+      now `--muted` (~6.6:1+, `src/layouts/Base.astro`). Verified by computing
+      the ratios; the scrollbar and search icon keep `--dim` (UI marks, 3:1 bar).
+- [x] Search label mismatch fixed: the redundant `aria-label="Search posts"`
+      is gone, so the visible `<label>Filter</label>` names the field
+      (`src/components/PostSearch.astro`).
+- [ ] Portable Text images: EmDash's default renderer owns them (only `block`
+      and `code` are overridden); intrinsic dimensions/alt need verifying
+      against real content — could not check with an empty local DB.
+- [ ] No privacy-friendly analytics; no 500 page (only `404.astro`). Needs
+      service decisions.

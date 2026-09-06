@@ -30,7 +30,15 @@ const RSS_PATH = '/rss.xml';
  * and prefixing the origin would corrupt it.
  */
 export function absolutizeUrls(html: string, origin: string): string {
-	return html.replace(/\b(src|href)="\/(?!\/)/g, `$1="${origin}/`);
+	// Single-URL attributes.
+	let out = html.replace(/\b(src|href|poster)="\/(?!\/)/g, `$1="${origin}/`);
+	// srcset is a comma-separated list of `URL [descriptor]` pairs, so each
+	// root-relative entry in it needs the origin too.
+	out = out.replace(
+		/\bsrcset="([^"]*)"/g,
+		(_attr, list: string) => `srcset="${list.replace(/(^|,\s*)\/(?!\/)/g, `$1${origin}/`)}"`
+	);
+	return out;
 }
 
 const SITE_URL = site.url;
@@ -65,6 +73,14 @@ export function generateRSSFeed(
 	options: FeedOptions = {}
 ): string {
 	const selfUrl = `${SITE_URL}${options.path ?? RSS_PATH}`;
+	// The feed is a function of the posts, so its build date is the newest
+	// thing in it — not the render time, which would make every response
+	// byte-different and defeat the edge cache for no reader benefit.
+	const latest = posts.reduce((stamp, post) => {
+		const activity = post.meta.updated ?? post.meta.date;
+		return activity > stamp ? activity : stamp;
+	}, '');
+	const buildDate = latest ? new Date(latest).toUTCString() : new Date().toUTCString();
 	return `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
 	<channel>
@@ -76,7 +92,7 @@ export function generateRSSFeed(
 		<!-- RSS wants an address here and readers show the name beside it. -->
 		<managingEditor>${escapeXml(`${site.email} (${site.name})`)}</managingEditor>
 		<webMaster>${escapeXml(`${site.email} (${site.name})`)}</webMaster>
-		<lastBuildDate>${escapeXml(new Date().toUTCString())}</lastBuildDate>
+		<lastBuildDate>${escapeXml(buildDate)}</lastBuildDate>
 		${posts.map((post) => generateRSSItem(post, postHtml.get(post.path))).join('\n')}
 	</channel>
 </rss>`;
