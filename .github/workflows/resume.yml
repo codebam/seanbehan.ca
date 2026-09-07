@@ -215,11 +215,17 @@ jobs:
           set -euo pipefail
           published=no
           for attempt in $(seq 1 15); do
-            if curl -fsS https://seanbehan.ca/resume | grep -q 'resume-doc' &&
-              curl -fsSI https://seanbehan.ca/resume.pdf |
-                grep -qi '^content-type: *application/pdf' &&
-              curl -fsSI https://seanbehan.ca/resume.md |
-                grep -qi '^content-type: *text/markdown'; then
+            # Capture, then grep the capture: `curl | grep -q` is a lie under
+            # pipefail — grep exits the instant it matches, closes the pipe,
+            # and curl's half-written stream dies with exit 23. A pipeline
+            # that fails exactly when the page is right is how this check
+            # once reported a résumé it had just published as missing.
+            page=$(curl -fsS https://seanbehan.ca/resume 2>/dev/null || true)
+            pdf=$(curl -fsSI https://seanbehan.ca/resume.pdf 2>/dev/null || true)
+            md=$(curl -fsSI https://seanbehan.ca/resume.md 2>/dev/null || true)
+            if grep -q 'resume-doc' <<<"$page" &&
+              grep -qi '^content-type: *application/pdf' <<<"$pdf" &&
+              grep -qi '^content-type: *text/markdown' <<<"$md"; then
               published=yes
               break
             fi
