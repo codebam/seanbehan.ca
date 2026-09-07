@@ -61,11 +61,32 @@ const CHECKS = [
 	// answers with bytes this Worker did not produce. Locally it wants
 	// `npm run resume:seed` to have run once.
 	{ path: '/resume', contains: ['resume-doc', 'SEAN BEHAN'] },
+	// The résumé's markdown is the source CI uploaded beside the artifacts this
+	// page and the PDF were built from, so the check is the file's own words.
+	{ path: '/resume.md', type: 'text/markdown', contains: ['EXPERIENCE'] },
+	{
+		path: '/resume',
+		headers: { Accept: 'text/markdown' },
+		type: 'text/markdown',
+		contains: ['EXPERIENCE']
+	},
 	{ path: '/resume.pdf', type: 'application/pdf' },
 	{ path: '/rss.xml', contains: ['<rss version="2.0"', '<content:encoded>'] },
 	{ path: '/posts/tag/nixos/rss.xml', contains: ['<rss version="2.0"'] },
 	{ path: '/sitemap.xml', contains: ['<urlset', '/posts/nixos'] },
 	{ path: '/robots.txt', contains: ['Sitemap:', 'Disallow: /_emdash/'] },
+	// The agent briefing: the formats, the sections, and a recent list whose
+	// links must be the markdown ones.
+	{
+		path: '/llms.txt',
+		type: 'text/plain',
+		contains: [
+			'How to fetch this site',
+			'## Recent writing',
+			'](https://seanbehan.ca/posts/',
+			'/resume.md'
+		]
+	},
 	{ path: '/site.webmanifest', contains: ['"short_name"'] },
 	{ path: '/.well-known/security.txt', contains: ['Contact: mailto:'] },
 	{ path: '/og/nixos.png', type: 'image/png' },

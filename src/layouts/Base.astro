@@ -154,6 +154,10 @@ const isCurrent = (href: string) =>
 		{post && <meta name="twitter:creator" content="@seanwbehan" />}
 		{post?.meta.tags.map((tag) => <meta property="article:tag" content={tag} />)}
 		<link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+		<!-- The llms-txt spec's discovery hint, alongside the alternates the
+		     content pages add themselves: this file describes every page under
+		     the root, and any agent that reads HTML heads finds it here. -->
+		<link rel="describedby" href="/llms.txt" />
 		<link
 			rel="alternate"
 			type="application/rss+xml"
