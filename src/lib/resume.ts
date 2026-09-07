@@ -2,11 +2,12 @@
  * The résumé, as the site serves it.
  *
  * resume/resume.md holds the words. `.github/workflows/resume.yml` turns them
- * into two objects in the `private` bucket with the same pandoc pass:
- * `resume.pdf` to download, and `resume.html` as the fragment /resume renders
- * inline. The page reads both at request time rather than shipping either in
- * the bundle, which is what lets a résumé edit go live with an upload and a
- * purge instead of a redeploy of both origins — and what keeps TeX out of
+ * into three objects in the `private` bucket with the same pandoc pass:
+ * `resume.pdf` to download, `resume.html` as the fragment /resume renders
+ * inline, and `resume.md` — the source itself — for /resume.md. The routes
+ * read all three at request time rather than shipping any of them in the
+ * bundle, which is what lets a résumé edit go live with an upload and a purge
+ * instead of a redeploy of both origins — and what keeps TeX out of
  * `npm run build`.
  *
  * The fragment is injected, not escaped. It is this repo's own build output,
@@ -20,6 +21,7 @@ import { site } from './site';
 /** The keys the workflow writes. The PDF's doubles as its download filename. */
 export const RESUME_PDF_KEY = 'resume.pdf';
 export const RESUME_HTML_KEY = 'resume.html';
+export const RESUME_MD_KEY = 'resume.md';
 
 /** What a bucket `get` hands back, as far as this site is concerned. */
 export type ResumeObjectBody = {
@@ -54,6 +56,17 @@ export async function getResumeFragment(): Promise<ResumeFragment | null> {
 /** The PDF, streamed to the reader by src/pages/resume.pdf.ts. */
 export async function getResumePdf(): Promise<ResumeObjectBody | null> {
 	return env.RESUME.get(RESUME_PDF_KEY);
+}
+
+/**
+ * The source itself, streamed by src/pages/resume.md.ts.
+ *
+ * Not a conversion: the words are written in markdown and CI stores that file
+ * in the bucket beside its two renderings, so a bot gets the same bytes the
+ * fragment and the PDF were made from.
+ */
+export async function getResumeMarkdown(): Promise<ResumeObjectBody | null> {
+	return env.RESUME.get(RESUME_MD_KEY);
 }
 
 /**

@@ -1,24 +1,28 @@
 # The résumé
 
-One Markdown file, two formats, published by CI.
+One Markdown file, published by CI in the three forms a reader asks for: the
+**PDF** to download, the **HTML fragment** to render, and the **source itself**
+for a bot at `/resume.md`.
 
 `resume/resume.md` is the words. Pandoc turns it into a **PDF** for downloading
 and an **HTML fragment** that `/resume` renders inline, in the site's own type —
 instead of the embedded PDF this page used to be, which was unreadable on a
 phone, invisible to a text browser and to anything that indexes the page, and
-set in a typeface no other page here uses.
+set in a typeface no other page here uses. The markdown goes to the same bucket
+unconverted: the words were written in it, so `/resume.md` copies rather than
+translates.
 
 ```
 resume/resume.md ─── filters/resume-entries.lua ── structure, once
-                                │
-              ┌─────────────────┴──────────────────┐
-     templates/resume.latex              templates/resume.html
-     pandoc → tectonic                   pandoc → html5, headings −2
-              │                                  │
-        resume.pdf                          resume.html
-              └──────────── R2: private ─────────┘
-                      │                │
-              /resume.pdf         /resume  (set:html)
+       │                        │
+       │         ┌──────────────┴──────────────┐
+       │ templates/resume.latex      templates/resume.html
+       │ pandoc → tectonic           pandoc → html5, headings −2
+       │              │                          │
+       │        resume.pdf                   resume.html
+       └──────────────── R2: private ────────────┘
+            │                  │                │
+      /resume.md         /resume.pdf      /resume  (set:html)
 ```
 
 Both branches are the same document: one input, one metadata file, one Lua

@@ -69,13 +69,21 @@ describe('negotiatedPath', () => {
 		expect(negotiatedPath(accept, url('/posts'))).toBeNull();
 		expect(negotiatedPath(accept, url('/posts/tag/nixos'))).toBeNull();
 		expect(negotiatedPath(accept, url('/about'))).toBeNull();
-		expect(negotiatedPath(accept, url('/resume'))).toBeNull();
+		expect(negotiatedPath(accept, url('/contact'))).toBeNull();
 		expect(negotiatedPath(accept, url('/projects/viewport'))).toBeNull();
 	});
 
 	it('does not suffix a suffix', () => {
 		expect(negotiatedPath(get('text/markdown'), url('/posts/nixos.md'))).toBeNull();
 		expect(negotiatedPath(get('application/json'), url('/posts/nixos.json'))).toBeNull();
+	});
+
+	it('offers the résumé its source, and nothing else', () => {
+		expect(negotiatedPath(get('text/markdown'), url('/resume'))).toBe('/resume.md');
+		// There is no /resume.json to reach: the answer to that header is the
+		// page that was always there.
+		expect(negotiatedPath(get('application/json'), url('/resume'))).toBeNull();
+		expect(negotiatedPath(get('text/markdown'), url('/resume.md'))).toBeNull();
 	});
 
 	it('answers only safe methods', () => {

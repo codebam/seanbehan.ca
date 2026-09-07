@@ -26,10 +26,18 @@ export type ContentFormat = 'md' | 'json';
 /**
  * Detail pages of the two collections whose words live in the database. Lists
  * and tag archives are navigation rather than content, and the hand-written
- * pages (home, about, the résumé) have no Portable Text body to convert;
- * projects and products belong to the other origin's templates.
+ * templates (home, about, contact) have no stored body to convert; projects and
+ * products belong to the other origin's templates.
  */
 const NEGOTIABLE = /^\/(?:posts|pages)\/[^/]+$/;
+
+/**
+ * The résumé answers in markdown only: its words were written as the file
+ * `/resume.md` serves (see that route), so there is nothing to convert and
+ * less still to hand a bot as JSON. A reader asking for the last is not
+ * refused — just left with the page they were given before this existed.
+ */
+const MD_ONLY = new Set(['/resume']);
 
 /** A request already for one of the variants: nothing left to negotiate. */
 const ALREADY_VARIANT = /\.(md|json)$/i;
@@ -107,7 +115,10 @@ export function requestedFormat(accept: string | null): ContentFormat | null {
  */
 export function negotiatedPath(request: Request, url: URL): string | null {
 	if (request.method !== 'GET' && request.method !== 'HEAD') return null;
-	if (!NEGOTIABLE.test(url.pathname) || ALREADY_VARIANT.test(url.pathname)) return null;
+	if (ALREADY_VARIANT.test(url.pathname)) return null;
 	const format = requestedFormat(request.headers.get('Accept'));
-	return format ? `${url.pathname}.${format}${url.search}` : null;
+	if (!format) return null;
+	if (NEGOTIABLE.test(url.pathname)) return `${url.pathname}.${format}${url.search}`;
+	if (format === 'md' && MD_ONLY.has(url.pathname)) return `${url.pathname}.md${url.search}`;
+	return null;
 }

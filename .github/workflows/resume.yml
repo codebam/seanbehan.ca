@@ -1,9 +1,10 @@
 name: Publish the résumé
 
-# resume/resume.md is the résumé; this workflow is what makes it exist in two
+# resume/resume.md is the résumé; this workflow is what makes it exist in three
 # formats. It builds the PDF and the inline-HTML fragment with the toolchain the
-# flake pins, puts both in the private bucket, and purges the edge so the page
-# picks the new fragment up now rather than in ten minutes.
+# flake pins, puts both alongside the markdown source in the private bucket, and
+# purges the edge so the page picks the new fragment up now rather than in ten
+# minutes.
 #
 # Nothing here deploys a Worker: /resume reads the fragment out of R2 per
 # request, so a résumé edit is an upload, not a release. See docs/resume.md.
@@ -109,7 +110,7 @@ jobs:
             exit 1
           fi
 
-      - name: Check both outputs
+      - name: Check the outputs
         run: |
           set -euo pipefail
 
@@ -152,6 +153,9 @@ jobs:
                 awk '/^Pages:/{print $2}'
             ) pages"
             echo "- \`resume.html\` $(wc -c <"$OUT/resume.html") bytes"
+            # The uploaded source, counted so the summary names all three bucket
+            # keys a reader can fetch.
+            echo "- \`resume.md\` $(wc -c <resume/resume.md) bytes"
           } >>"$GITHUB_STEP_SUMMARY"
 
       # The key the bucket already had under it, so a résumé link someone
@@ -170,6 +174,12 @@ jobs:
           npx wrangler r2 object put "private/resume.html" \
             --file "$OUT/resume.html" \
             --content-type "text/html; charset=utf-8" \
+            --remote
+          # The source beside its renderings, so /resume.md answers with the
+          # very file these were built from rather than a lossy conversion.
+          npx wrangler r2 object put "private/resume.md" \
+            --file resume/resume.md \
+            --content-type "text/markdown; charset=utf-8" \
             --remote
 
       # On a pull request nothing reaches the bucket, so leave the two files
@@ -207,7 +217,9 @@ jobs:
           for attempt in $(seq 1 15); do
             if curl -fsS https://seanbehan.ca/resume | grep -q 'resume-doc' &&
               curl -fsSI https://seanbehan.ca/resume.pdf |
-                grep -qi '^content-type: *application/pdf'; then
+                grep -qi '^content-type: *application/pdf' &&
+              curl -fsSI https://seanbehan.ca/resume.md |
+                grep -qi '^content-type: *text/markdown'; then
               published=yes
               break
             fi

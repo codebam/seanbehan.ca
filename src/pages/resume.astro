@@ -64,6 +64,10 @@ const updated = resume
 	description={`Résumé for ${site.name}, full-stack developer.`}
 	ogTitle={`Résumé — ${site.name}`}
 >
+	<!-- The source document, the way a post advertises its markdown: /resume.md
+	     is what the fragment and the PDF were built from, so the two can never
+	     disagree about what they say. -->
+	<link slot="head" rel="alternate" type="text/markdown" href="/resume.md" />
 	<Masthead label="Professional profile" meta="Ontario / Canada">
 		<Fragment slot="title">A résumé for <em>building in the open.</em></Fragment>
 		<p class="masthead-blurb">Full-stack developer in Ontario. {intro}</p>
