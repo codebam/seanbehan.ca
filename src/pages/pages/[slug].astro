@@ -41,6 +41,8 @@ const seo = getSeoMeta(page, {
 	canonical={seo.canonical ?? undefined}
 	content={{ collection: 'pages', id: page.data.id, slug }}
 >
+	<link slot="head" rel="alternate" type="text/markdown" href={`${Astro.url.pathname}.md`} />
+	<link slot="head" rel="alternate" type="application/json" href={`${Astro.url.pathname}.json`} />
 	<article class="panel pt-14 pb-20 md:pt-16">
 		<div class="shell">
 			<header class="enter border-b border-[var(--line)] pb-10">

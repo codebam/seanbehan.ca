@@ -99,6 +99,12 @@ const updated = post.meta.updated
 	post={post}
 	content={{ collection: 'posts', id: entry.data.id, slug }}
 >
+	<!-- The same post for a machine reader, advertised into the head the way the
+	     feed link is: a bot that parses the head learns the formats exist
+	     without being sniffed at, and `Accept: text/markdown` on this URL is
+	     answered by the suffixed route (see lib/accept.ts). -->
+	<link slot="head" rel="alternate" type="text/markdown" href={`${Astro.url.pathname}.md`} />
+	<link slot="head" rel="alternate" type="application/json" href={`${Astro.url.pathname}.json`} />
 	<!-- Reading progress: a 2px accent strip across the top of the viewport,
 	     driven entirely by a scroll timeline in app.css. No scroll listener, and
 	     it is hidden outright for reduced-motion readers. -->

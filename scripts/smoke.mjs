@@ -14,13 +14,46 @@
 
 const base = (process.argv[2] ?? 'http://localhost:4321').replace(/\/$/, '');
 
-/** Each check: a path, the status it must answer with, and what must be in it. */
+/** Each check: a path, optional request headers, the status it must answer
+    with, and what must be in it. */
 const CHECKS = [
 	{ path: '/', contains: ['Latest writing', 'Selected work'] },
 	{ path: '/posts', contains: ['Writing', 'Search posts'] },
 	{ path: '/posts/tags', contains: ['Tags'] },
 	{ path: '/posts/tag/nixos', contains: ['NixOS', 'Subscribe via RSS'] },
 	{ path: '/posts/nixos', contains: ['NixOS Flakes', 'shiki', 'On this page'] },
+	// The machine-readable variants of that post: the suffixed routes directly,
+	// and the header negotiation that reaches the same answer from the HTML URL.
+	{
+		path: '/posts/nixos.md',
+		type: 'text/markdown',
+		contains: ['# ', 'Published:', '```']
+	},
+	{
+		path: '/posts/nixos.json',
+		type: 'application/json',
+		contains: ['"content"', '"content_url"', 'NixOS']
+	},
+	{
+		path: '/posts/nixos',
+		headers: { Accept: 'text/markdown' },
+		type: 'text/markdown',
+		contains: ['# ']
+	},
+	{
+		path: '/posts/nixos',
+		headers: { Accept: 'application/json' },
+		type: 'application/json',
+		contains: ['"url"']
+	},
+	{
+		path: '/posts/nixos',
+		headers: {
+			Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+		},
+		type: 'text/html',
+		contains: ['NixOS Flakes']
+	},
 	{ path: '/contact', contains: ['Say', 'mailto:'] },
 	// The résumé is the page whose words come from neither D1 nor the bundle: the
 	// markup is read out of R2 at request time, so this is the check that notices
@@ -55,7 +88,7 @@ async function attempt(check) {
 	const url = `${base}${check.path}`;
 
 	try {
-		const res = await fetch(url);
+		const res = await fetch(url, check.headers ? { headers: check.headers } : undefined);
 		const problems = [];
 
 		if (res.status !== expected) problems.push(`status ${res.status}, wanted ${expected}`);

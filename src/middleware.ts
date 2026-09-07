@@ -14,6 +14,7 @@
  */
 
 import { defineMiddleware } from 'astro:middleware';
+import { negotiatedPath } from './lib/accept';
 import { edgeCacheKey } from './lib/edgeCache';
 import { SITES, site } from './lib/site';
 import { EDITOR_CSP } from './lib/csp.js';
@@ -192,11 +193,23 @@ export const onRequest = defineMiddleware(async (context, next) => {
 			return Response.redirect(target, 301);
 		}
 	}
+	// A reader that asked for markdown or JSON is served the suffixed variant
+	// of the same page — `/posts/example.md` — rendered by an endpoint rather
+	// than rewritten into another URL. Doing it here, below the redirects, is
+	// what makes it free: the suffixed path is its own edge-cache key and its
+	// own purged entry, so no `Vary` has to be trusted with the shared cache,
+	// and a bot that already knows the suffix arrives at the identical
+	// response without the header at all.
+	const variant = negotiatedPath(context.request, context.url);
+
 	const cache = caches.default;
 	const cacheable = await isCacheable(context);
 	// The match and the put must use this one key, or the second misses the
-	// first.
-	const key = cacheable ? edgeCacheKey(context.url) : null;
+	// first. With a variant, the key is the variant's URL: an unanswered
+	// markdown request must never be served the page a browser cached.
+	const key = cacheable
+		? edgeCacheKey(variant ? new URL(variant, context.url) : context.url)
+		: null;
 
 	if (key) {
 		const hit = await cache.match(key);
@@ -207,7 +220,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		}
 	}
 
-	const response = await next();
+	// The suffixed path rather than a new Request: `next(path)` rewrites the
+	// routing without re-entering this middleware, so negotiation runs exactly
+	// once per request.
+	const response = await next(variant ?? undefined);
 
 	for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
 		response.headers.set(name, value);
