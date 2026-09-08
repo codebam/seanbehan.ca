@@ -43,9 +43,9 @@ character with `entry_separator`, or turn the split off with
 
 ```yaml
 title: "SEAN BEHAN"                    # rendered as the name
-subtitle: "Software Developer · TypeScript & Rust"
+subtitle: "Full-Stack Developer · TypeScript & Rust"
 location: "Greater Toronto Area"
-email: "contact@seanbehan.ca"
+email: "sean@seanbehan.ca"
 website: "https://seanbehan.ca"        # the scheme is trimmed for display
 github: "codebam"                      # shown as github.com/codebam
 linkedin: "sean-behan"

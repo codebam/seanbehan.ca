@@ -1,11 +1,12 @@
 ---
 title: "SEAN BEHAN"
-subtitle: "Software Developer · TypeScript & Rust"
+subtitle: "Full-Stack Developer · TypeScript & Rust"
 location: "Greater Toronto Area"
-email: "contact@seanbehan.ca"
+email: "sean@seanbehan.ca"
 website: "https://seanbehan.ca"
+linkedin: "sean-behan"
 github: "codebam"
-abstract: "Full-stack and systems developer. I ship serverless bots and web apps on Cloudflare Workers, write Rust for Wayland compositors, and keep my machines reproducible with Nix."
+abstract: "Full-stack and systems developer, open to full-time work — remote, or hybrid in the Greater Toronto Area. I ship serverless bots and web apps on Cloudflare Workers, write Rust for Wayland compositors, and keep my machines reproducible with Nix."
 ---
 
 # EXPERIENCE
@@ -13,8 +14,8 @@ abstract: "Full-stack and systems developer. I ship serverless bots and web apps
 ### Independent Developer · Open Source
 *2021 – Present*
 
-- Built and run Codebam Stream, a paid live streaming service: OBS WHIP ingest, browser WHEP playback and RTMPS relay to five providers
-- Runs it on Cloudflare Workers, Durable Objects, D1 and LiveKit, with prepaid Stripe credit, per-customer reconciliation and fail-closed fencing on every relay
+- Built and run Codebam Stream, a paid live-streaming service: OBS WHIP ingest, browser WHEP playback and RTMPS relay to five providers
+- Runs it on Cloudflare Workers, Durable Objects, D1 and LiveKit, with prepaid Stripe credit and per-customer reconciliation across 18k lines of tested TypeScript
 - Wrote @codebam/cf-workers-telegram-bot, a TypeScript bot framework for Cloudflare Workers (325 stars, 214 forks, 120 npm releases), then moved my own bots off it onto grammY
 - Write Rust for Linux userspace across eight public repositories, including a Wayland compositor whose desktop shell is a web page; 170 public repositories overall, on NixOS daily
 
@@ -28,23 +29,23 @@ abstract: "Full-stack and systems developer. I ship serverless bots and web apps
 
 - Kept polling-station computer systems online through the 2019 federal election alongside a team of 10+
 
-### IT Student Advisor · Trent University Information Technology
-*May 2018 – Apr. 2020*
-
-- Diagnosed and repaired student and faculty machines at the library front desk across Windows and macOS
-
 ### Development Intern · AVROD
 *Sept. 2019 – Apr. 2020*
 
 - Built a web store with Django and MySQL, as a course placement at the company
 
-# PERSONAL PROJECTS
+### IT Student Advisor · Trent University Information Technology
+*May 2018 – Apr. 2020*
+
+- Diagnosed and repaired student and faculty machines at the library front desk across Windows and macOS
+
+# SELECTED WORK
 
 ### Codebam Stream · Live Streaming Control Plane
 *[stream.codebam.ca](https://stream.codebam.ca)*
 
-- Cloudflare-native control plane for multistreaming: WHIP ingest from OBS, WHEP playback through LiveKit, and RTMPS relay to YouTube, Twitch, X, Kick and Telegram
-- Prepaid Stripe credit with D1-backed FIFO allocation, per-customer reconcilers and durable refund handling, across 18k lines of tested TypeScript
+- Cloudflare-native control plane for multistreaming, with a Durable Object per provider relay owning that relay's lifecycle
+- Two channels of prepaid credit — destination-hours and browser viewer-hours — allocated FIFO in D1 and reconciled per customer as usage accrues, with durable refund handling
 - Publisher epochs, relay generations and resource-bound capabilities fence every path, so a stale relay can never attach to a replacement broadcast
 
 ### Tux Robot · Telegram Bot on Cloudflare Workers
@@ -110,7 +111,7 @@ abstract: "Full-stack and systems developer. I ship serverless bots and web apps
 ### Trent University
 *Peterborough, ON* | *2016 – 2023*
 
-- Honours B.Sc. Computer Science (not completed)
+- Coursework toward an Honours B.Sc. in Computer Science
 
 # AWARDS AND CERTIFICATES
 
