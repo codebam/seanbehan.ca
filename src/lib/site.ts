@@ -39,11 +39,43 @@ export interface SiteConfig {
 	leadWith: 'work' | 'facts';
 	/** Whether the résumé is linked in the nav and listed in the sitemap. */
 	showResume: boolean;
+	/**
+	 * Whether this variant is hiring-shaped, and what it says about it.
+	 *
+	 * A reader deciding whether to make an offer cannot tell from a portfolio
+	 * whether the person behind it is reachable, and "open to work" buried on
+	 * the contact page answers that question too late. `null` is the handle
+	 * variant, which pitches the code and has no status to declare.
+	 */
+	availability: { label: string; detail: string } | null;
+	/** The hero's primary button. Resolved through `linkHref`. */
+	primaryAction: SiteLink;
+	/**
+	 * Header nav, in order, excluding Contact — Contact is always last and is
+	 * styled as the page's one imperative, so it is rendered by the frame.
+	 *
+	 * Four items, not six: at six the row wrapped to two lines on a phone, and
+	 * the wrap put Résumé — the one page a hiring reader came for — on the
+	 * second of them. Everything dropped is still in the footer.
+	 */
+	nav: SiteLink[];
 	about: {
 		eyebrow: string;
 		headline: string;
 		intro: string;
 	};
+}
+
+/**
+ * A link in the site's own chrome, and the origin it belongs to when that is
+ * not this one. `via` names the resolver rather than spelling out an absolute
+ * URL, so the two variants stay one table of copy and neither has to know
+ * where the other lives.
+ */
+export interface SiteLink {
+	label: string;
+	href: string;
+	via?: 'writing' | 'codebam';
 }
 
 export const LEGAL_NAME = 'Sean Behan';
@@ -123,3 +155,18 @@ export const siblingHost = (href: string) => new URL(href).host;
 /** Commercial work ships under the code-first identity. */
 export const codebamHref = (path: string) =>
 	site.id === 'seanbehan' ? `${SITES.codebam.url}${path}` : path;
+
+/**
+ * Where a chrome link actually points.
+ *
+ * The nav and the hero's primary action are data in site.data.js so that the
+ * two variants differ by copy rather than by branch; this is the half that
+ * still has to know about origins. A link with no `via` is local to whichever
+ * build is rendering it.
+ */
+export const linkHref = (link: SiteLink): string =>
+	link.via === 'writing'
+		? writingHref(link.href)
+		: link.via === 'codebam'
+			? codebamHref(link.href)
+			: link.href;

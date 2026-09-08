@@ -12,7 +12,15 @@
  */
 import { EmDashHead, EmDashBodyStart, EmDashBodyEnd } from 'emdash/ui';
 import { createPublicPageContext } from 'emdash/page';
-import { site, absolute, canonicalUrl, codebamHref, writingHref } from '../lib/site';
+import {
+	site,
+	absolute,
+	canonicalUrl,
+	codebamHref,
+	linkHref,
+	writingHref,
+	LINKEDIN_URL
+} from '../lib/site';
 import SiblingMark from '../components/SiblingMark.astro';
 import type { PostSummary } from '../lib/types';
 import '../styles/app.css';
@@ -99,21 +107,18 @@ const pageCtx = createPublicPageContext({
 	siteUrl: site.url
 });
 
-/** The two variants share a frame but send writing to its canonical origin. */
-const nav = site.showResume
-	? [
-			{ href: '/#work', label: 'Work' },
-			{ href: codebamHref('/services'), label: 'Services' },
-			{ href: writingHref('/posts'), label: 'Writing' },
-			{ href: '/links', label: 'Links' },
-			{ href: '/resume', label: 'Résumé' }
-		]
-	: [
-			{ href: '/#work', label: 'Work' },
-			{ href: codebamHref('/services'), label: 'Services' },
-			{ href: writingHref('/posts'), label: 'Writing' },
-			{ href: '/links', label: 'Links' }
-		];
+/**
+ * The nav is the variant's own list, resolved against origins here. Contact is
+ * not in it: it is always last, and always the page's one imperative, so the
+ * frame renders it rather than trusting a table to keep it in place.
+ *
+ * Four items rather than the six this header used to carry. Six wrapped to two
+ * rows on a phone, and the wrap put Résumé — the one page a hiring reader came
+ * for — on the second row, below the fold of a 640px-tall screen. Everything
+ * dropped is still in the footer, so nothing became unreachable; the header
+ * just stopped competing with itself.
+ */
+const nav = site.nav.map((item) => ({ ...item, href: linkHref(item) }));
 
 /** A cross-origin nav item cannot be current on this page. */
 const isCurrent = (href: string) =>
@@ -235,10 +240,6 @@ const isCurrent = (href: string) =>
 					<p class="footer-label">Site</p>
 					<a class="footer-link" href="/about">About</a>
 					<a class="footer-link" href="/#work">Work</a>
-					<a class="footer-link" href={writingHref('/posts')}
-						>Writing<SiblingMark href={writingHref('/posts')} /></a
-					>
-					<a class="footer-link" href="/links">Links</a>
 					{
 						site.showResume && (
 							<a class="footer-link" href="/resume">
@@ -246,6 +247,15 @@ const isCurrent = (href: string) =>
 							</a>
 						)
 					}
+					<a class="footer-link" href={writingHref('/posts')}
+						>Writing<SiblingMark href={writingHref('/posts')} /></a
+					>
+					<!-- Services and Links left the header to keep the nav on one
+					     row; the footer is where they are reachable from now. -->
+					<a class="footer-link" href={codebamHref('/services')}
+						>Services<SiblingMark href={codebamHref('/services')} /></a
+					>
+					<a class="footer-link" href="/links">Links</a>
 				</nav>
 
 				<nav aria-label="Legal">
@@ -272,6 +282,21 @@ const isCurrent = (href: string) =>
 						target="_blank"
 						rel="me noopener noreferrer">GitHub</a
 					>
+					<!-- Gated on the résumé for the reason the contact page gives:
+					     a recruiter channel does not belong on the variant that
+					     leads with the code. -->
+					{
+						site.showResume && (
+							<a
+								class="footer-link"
+								href={LINKEDIN_URL}
+								target="_blank"
+								rel="me noopener noreferrer"
+							>
+								LinkedIn
+							</a>
+						)
+					}
 					<a
 						class="footer-link"
 						href="https://mstdn.ca/@codebam"

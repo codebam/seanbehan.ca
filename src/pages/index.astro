@@ -11,11 +11,12 @@ import Base from '../layouts/Base.astro';
 import PostList from '../components/PostList.astro';
 import Facts from '../components/home/Facts.astro';
 import Work from '../components/home/Work.astro';
+import Availability from '../components/Availability.astro';
 import { LinkButton } from '@cloudflare/kumo/components/button';
 import { getPosts } from '../lib/posts';
 import { withLiveStats } from '../lib/github';
 import { featuredProjects } from '../lib/projects';
-import { site, writingHref, yearsBuilding as yearsSinceStart } from '../lib/site';
+import { site, linkHref, writingHref, yearsBuilding as yearsSinceStart } from '../lib/site';
 
 const [{ posts, cacheHint }, projects] = await Promise.all([
 	getPosts({ includeBodies: false }),
@@ -26,6 +27,22 @@ if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 const yearsBuilding = yearsSinceStart();
 const intro = site.intro.replace('{years}', String(yearsBuilding));
 const latest = posts.slice(0, 6);
+
+/**
+ * The hero's primary button comes from the variant's own table. Whichever
+ * action is not the button stays in the quiet row below it, so "Read the
+ * writing" is demoted on the hiring origin rather than lost — a reader who
+ * came for the prose still finds it one click away, beside GitHub and email.
+ */
+const primary = site.primaryAction;
+const primaryIsWriting = primary.via === 'writing' && primary.href === '/posts';
+const quietLinks: { label: string; href: string; external: boolean }[] = [
+	...(primaryIsWriting
+		? []
+		: [{ label: 'Read the writing', href: writingHref('/posts'), external: false }]),
+	{ label: 'GitHub', href: 'https://github.com/codebam', external: true },
+	{ label: site.email, href: `mailto:${site.email}`, external: false }
+];
 ---
 
 <Base>
@@ -50,6 +67,13 @@ const latest = posts.slice(0, 6);
 				<div>
 					<p class="eyebrow">{site.eyebrow}</p>
 					<p class="mt-1 text-[0.9rem] text-[var(--muted)]">{site.byline}</p>
+					<!-- The status belongs in the identity block, not in a band of
+					     its own: "who, where, and is he reachable" is one question a
+					     hiring reader asks in the first three seconds, and splitting
+					     the answer across the page makes them ask it twice. -->
+					<div class="mt-2">
+						<Availability availability={site.availability} />
+					</div>
 				</div>
 			</div>
 
@@ -62,21 +86,21 @@ const latest = posts.slice(0, 6);
 			</p>
 
 			<div class="hero-actions enter" style="--enter-delay:140ms">
-				<LinkButton
-					href={writingHref('/posts')}
-					variant="primary"
-					size="lg"
-					className="flat-control"
-				>
-					Read the writing
+				<LinkButton href={linkHref(primary)} variant="primary" size="lg" className="flat-control">
+					{primary.label}
 				</LinkButton>
-				<a
-					href="https://github.com/codebam"
-					target="_blank"
-					rel="noopener noreferrer"
-					class="link-quiet">GitHub</a
-				>
-				<a href={`mailto:${site.email}`} class="link-quiet">{site.email}</a>
+				{
+					quietLinks.map((link) => (
+						<a
+							href={link.href}
+							class="link-quiet"
+							target={link.external ? '_blank' : undefined}
+							rel={link.external ? 'noopener noreferrer' : undefined}
+						>
+							{link.label}
+						</a>
+					))
+				}
 			</div>
 		</div>
 	</section>

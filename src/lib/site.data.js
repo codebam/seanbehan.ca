@@ -32,6 +32,20 @@ const seanbehan = {
 	ogDescription: 'Full-stack developer. Rust, TypeScript, NixOS, and open source.',
 	leadWith: 'facts',
 	showResume: true,
+	availability: {
+		label: 'Open to work',
+		detail: 'Full-time · remote, or hybrid in the Greater Toronto Area'
+	},
+	// This origin is the one an employer reads, so its first ask is the résumé
+	// and its header leads with it. "Read the writing" moves to the quiet row
+	// beside GitHub — still one click away, no longer the primary action.
+	primaryAction: { label: 'View the résumé', href: '/resume' },
+	nav: [
+		{ label: 'Work', href: '/#work' },
+		{ label: 'Résumé', href: '/resume' },
+		{ label: 'Writing', href: '/posts', via: 'writing' },
+		{ label: 'Services', href: '/services', via: 'codebam' }
+	],
 	about: {
 		eyebrow: 'Sean Behan · codebam',
 		headline: 'I build systems from the database to the display server.',
@@ -67,6 +81,15 @@ const codebam = {
 	ogDescription: 'Open source in Rust, TypeScript and NixOS.',
 	leadWith: 'work',
 	showResume: false,
+	// Nobody is being hired through the handle's front door, so there is no
+	// status to declare and nothing to point at but the work and the writing.
+	availability: null,
+	primaryAction: { label: 'Read the writing', href: '/posts', via: 'writing' },
+	nav: [
+		{ label: 'Work', href: '/#work' },
+		{ label: 'Writing', href: '/posts', via: 'writing' },
+		{ label: 'Services', href: '/services' }
+	],
 	about: {
 		eyebrow: '@codebam · Ontario, Canada',
 		headline: 'The handle behind the repositories.',

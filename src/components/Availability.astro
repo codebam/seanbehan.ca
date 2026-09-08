@@ -1,0 +1,66 @@
+---
+/**
+ * The hiring status, stated where a reader will see it.
+ *
+ * It renders on the home page and on the résumé — the two pages a hiring
+ * reader lands on — and renders nothing at all on the variant that has no
+ * status to declare. The copy is data (`site.availability`), so the two front
+ * doors differ by what they say rather than by a branch here.
+ *
+ * The dot is a mark, not an indicator: it does not pulse. A live status light
+ * is a dashboard's grammar, and the site is deliberately a page.
+ */
+import type { SiteConfig } from '../lib/site';
+
+interface Props {
+	availability: SiteConfig['availability'];
+}
+
+const { availability } = Astro.props;
+---
+
+{
+	availability && (
+		<p class="availability">
+			<span class="availability-dot" aria-hidden="true" />
+			<strong>{availability.label}</strong>
+			<span class="availability-detail">{availability.detail}</span>
+		</p>
+	)
+}
+
+<style>
+	.availability {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.2rem 0.6rem;
+		font-size: 0.9rem;
+		line-height: 1.5;
+	}
+	/* The warm accent is the site's voice — the things the page says about
+	   itself — which is exactly what a declared status is. Blue would make it
+	   read as something to click. */
+	.availability-dot {
+		width: 0.5rem;
+		height: 0.5rem;
+		align-self: center;
+		flex-shrink: 0;
+		border-radius: 50%;
+		background: var(--accent-warm);
+		box-shadow: 0 0 0 3px var(--accent-warm-wash);
+	}
+	.availability strong {
+		font-weight: 600;
+		letter-spacing: 0.01em;
+		color: var(--text);
+	}
+	.availability-detail {
+		color: var(--muted);
+	}
+	.availability-detail::before {
+		content: '—';
+		margin-right: 0.6rem;
+		color: var(--line-strong);
+	}
+</style>
