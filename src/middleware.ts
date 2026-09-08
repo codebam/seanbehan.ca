@@ -166,12 +166,19 @@ export const onRequest = defineMiddleware(async (context, next) => {
 			target.host = new URL(SITES.seanbehan.url).host;
 			redirect = true;
 		}
+		// /services joins the list because it was already a codebam.ca page in
+		// every other respect — services.astro pins its canonical there and its
+		// quote request goes to codebam's address — but it answered 200 on
+		// Sean's origin, so a hiring reader who reached it by URL got Sean's
+		// header and footer around a page asking them to email someone else at
+		// another domain. llms.txt has always promised the 301; now it is true.
 		if (
 			site.id === 'seanbehan' &&
 			(target.pathname === '/projects' ||
 				target.pathname.startsWith('/projects/') ||
 				target.pathname === '/products' ||
 				target.pathname.startsWith('/products/') ||
+				target.pathname === '/services' ||
 				target.pathname === '/legal' ||
 				target.pathname.startsWith('/legal/'))
 		) {
