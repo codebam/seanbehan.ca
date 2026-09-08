@@ -60,7 +60,29 @@ export default defineConfig({
 					authorUrl: 'https://seanbehan.ca',
 					githubUrl: 'https://github.com/codebam',
 					mastodonUrl: 'https://mstdn.ca/@codebam',
-					linkedinUrl: 'https://www.linkedin.com/in/sean-behan'
+					linkedinUrl: 'https://www.linkedin.com/in/sean-behan',
+					jobTitle: 'Full-stack developer',
+					homeLocation: {
+						'@type': 'PostalAddress',
+						addressRegion: 'Ontario',
+						addressCountry: 'CA'
+					},
+					// The subjects the writing and the repositories both bear on.
+					// These are literals rather than reads from site.data.js
+					// because this config runs under plain node for both variants
+					// and the Person is the same person on either origin; the
+					// trade is that a change to the skills list has to be made
+					// here too.
+					knowsAbout: [
+						'TypeScript',
+						'Rust',
+						'NixOS',
+						'Cloudflare Workers',
+						'Durable Objects',
+						'Wayland',
+						'Linux',
+						'Serverless architecture'
+					]
 				}),
 				formsPlugin(),
 				// Email transport: EmDash on Workers ships only a dev-console stub, so every
