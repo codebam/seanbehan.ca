@@ -19,9 +19,11 @@
  */
 import Base from '../layouts/Base.astro';
 import Masthead from '../components/Masthead.astro';
+import Availability from '../components/Availability.astro';
 import { LinkButton } from '@cloudflare/kumo/components/button';
 import { getResumeFragment, resumePdfFilename } from '../lib/resume';
-import { site, yearsBuilding } from '../lib/site';
+import { featuredProjects } from '../lib/projects';
+import { site, yearsBuilding, LINKEDIN_URL } from '../lib/site';
 
 if (!site.showResume) return Astro.rewrite('/404');
 
@@ -36,18 +38,34 @@ if (resume && Astro.cache?.enabled) {
 }
 
 const intro = site.intro.replace('{years}', String(yearsBuilding()));
+
+/**
+ * The three things a hiring reader is actually trying to settle before they
+ * read a single dated entry: what the stack is, whether any of it has met
+ * production, and what working with this person is like. The section used to
+ * answer a different question — systems, open source, writing — which is the
+ * question a reader who has already decided to hire asks.
+ *
+ * Every claim here is one the résumé below or the project pages make at
+ * length; this is the summary, not a second set of facts. The star count is
+ * read from projects.ts rather than retyped, because a number written down
+ * twice eventually disagrees with itself and the home page's project row is
+ * the copy a reader will check this against.
+ */
+const botStars = featuredProjects.find((p) => p.slug === 'cloudflare-telegram-bot')?.stars ?? 0;
+
 const profile = [
 	{
-		label: 'Systems',
-		copy: 'Rust, TypeScript, NixOS. Daily-driver Linux, Cloudflare Workers at the edge.'
+		label: 'What I build',
+		copy: 'Web applications from database to frontend in TypeScript and Rust, and services on Cloudflare Workers, Durable Objects, D1 and R2. NixOS on every machine I own, so an environment is a file rather than a memory.'
 	},
 	{
-		label: 'Open source',
-		copy: 'A Wayland compositor, a Telegram bot framework on Workers, and a pastebin on R2.'
+		label: 'What has shipped',
+		copy: `A paid streaming control plane that takes money and relays live video to five providers. A Telegram bot framework with ${botStars} stars and 120 npm releases. A Wayland compositor that composites a web page zero-copy beside native clients.`
 	},
 	{
-		label: 'Writing',
-		copy: 'Linux, containers, NixOS, and the engineering decisions behind software that ships.'
+		label: 'How I work',
+		copy: 'Small systems with explicit failure modes, and write-ups of what broke. The published posts are the clearest evidence I have that I can explain a decision to someone who has to live with it.'
 	}
 ];
 
@@ -61,16 +79,27 @@ const updated = resume
 
 <Base
 	title="Résumé"
-	description={`Résumé for ${site.name}, full-stack developer.`}
+	description={`Résumé for ${site.name}, full-stack developer. ${site.availability?.detail ?? ''}`}
 	ogTitle={`Résumé — ${site.name}`}
 >
 	<!-- The source document, the way a post advertises its markdown: /resume.md
 	     is what the fragment and the PDF were built from, so the two can never
 	     disagree about what they say. -->
 	<link slot="head" rel="alternate" type="text/markdown" href="/resume.md" />
-	<Masthead label="Professional profile" meta="Ontario / Canada">
-		<Fragment slot="title">A résumé for <em>building in the open.</em></Fragment>
-		<p class="masthead-blurb">Full-stack developer in Ontario. {intro}</p>
+	<Masthead label="Résumé · Sean Behan" meta="Remote / Greater Toronto Area">
+		<Fragment slot="title">Full-stack developer, <em>open to work.</em></Fragment>
+		<p class="masthead-blurb">{intro}</p>
+		<div class="masthead-availability">
+			<Availability availability={site.availability} />
+		</div>
+		<!-- The PDF leads rather than the mailto, for the reason the comment at
+		     the top of this file gives: the document is already inline, so what
+		     this page adds is the portable copy a reader forwards. A mailto is
+		     also the one control here that can silently do nothing — no mail
+		     handler, a shared inbox, webmail — and a page whose whole job is to
+		     be handed to someone else should not make that its first ask. The
+		     address is still prominent beside it, and /contact carries a copy
+		     button for the readers mailto fails. -->
 		<p class="masthead-actions">
 			<LinkButton
 				href={RESUME_PDF}
@@ -81,7 +110,16 @@ const updated = resume
 			>
 				Download PDF
 			</LinkButton>
-			<a class="link-quiet" href={`mailto:${site.email}`}>{site.email}</a>
+			<LinkButton
+				href={`mailto:${site.email}?subject=${encodeURIComponent('A role for Sean')}`}
+				variant="secondary"
+				size="lg"
+			>
+				Email {site.email}
+			</LinkButton>
+			<a class="link-quiet" href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer">
+				LinkedIn
+			</a>
 			<a
 				class="link-quiet"
 				href="https://github.com/codebam"
@@ -95,7 +133,7 @@ const updated = resume
 		<div class="shell">
 			<div class="section-heading" data-reveal>
 				<h2 class="display display-lg">Working profile</h2>
-				<p>Full-stack / systems / edge</p>
+				<p>Stack / shipped / method</p>
 			</div>
 			<div class="profile-grid">
 				{
@@ -172,6 +210,11 @@ const updated = resume
 		text-transform: uppercase;
 		color: var(--muted);
 	}
+	/* The status sits between the deck and the buttons: a reader who skipped
+	   both still has to pass it on the way to the PDF. */
+	.masthead-availability {
+		margin-top: 1.5rem;
+	}
 	/* The one line under a heading that is a sentence rather than an eyebrow: it
 	   sits below the rule, in the body's own voice, at the width of the column it
 	   describes. */
@@ -244,6 +287,7 @@ const updated = resume
 	@media print {
 		.profile,
 		.masthead-blurb,
+		.masthead-availability,
 		.masthead-actions,
 		.document .section-heading,
 		.document-note,
