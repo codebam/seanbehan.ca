@@ -1,8 +1,18 @@
 ---
 import Base from '../layouts/Base.astro';
 import Masthead from '../components/Masthead.astro';
+import Availability from '../components/Availability.astro';
 import { site, LINKEDIN_URL } from '../lib/site';
 
+/**
+ * Ordered by who is reading, not by how interesting the channel is.
+ *
+ * The list used to run Email, GitHub, Mastodon, Matrix, LinkedIn, PGP — which
+ * is the order a fellow enthusiast would want, and puts the two channels a
+ * hiring manager actually uses behind three they do not. Email and LinkedIn
+ * lead on the variant that pitches the person; the rest keep their order,
+ * because on the handle's front door they are the point.
+ */
 const channels = [
 	{
 		label: 'Email',
@@ -10,6 +20,18 @@ const channels = [
 		href: `mailto:${site.email}`,
 		note: 'Best for anything that needs a reply'
 	},
+	// Same reasoning as the résumé: a recruiter channel does not belong on the
+	// variant that leads with the code.
+	...(site.showResume
+		? [
+				{
+					label: 'LinkedIn',
+					value: 'Sean Behan',
+					href: LINKEDIN_URL,
+					note: 'Work history and references'
+				}
+			]
+		: []),
 	{
 		label: 'GitHub',
 		value: '@codebam',
@@ -28,18 +50,6 @@ const channels = [
 		href: 'https://matrix.to/#/@codebam:matrix.org',
 		note: 'End-to-end encrypted chat'
 	},
-	// Same reasoning as the résumé: a recruiter channel does not belong on the
-	// variant that leads with the code.
-	...(site.showResume
-		? [
-				{
-					label: 'LinkedIn',
-					value: 'Sean Behan',
-					href: LINKEDIN_URL,
-					note: 'For the recruiters'
-				}
-			]
-		: []),
 	{
 		label: 'PGP',
 		value: 'publickey.txt',
@@ -47,17 +57,33 @@ const channels = [
 		note: 'Encrypt anything sensitive'
 	}
 ];
+
+/**
+ * What to write in a first email, so the reply is useful on the first turn
+ * rather than the third. Only on the hiring variant: a reader who came for the
+ * code has nothing to fill in.
+ *
+ * No response time is promised anywhere in this section. A stated turnaround is
+ * the kind of claim that ages badly — the first week it slips, the page is
+ * lying to the person it is trying to convince. If a real figure is wanted it
+ * belongs in site.data.js, beside the availability it would qualify.
+ */
+const askingFor = site.showResume
+	? [
+			'The role, and whether it is full-time or contract',
+			'Remote, hybrid, or on-site — and where',
+			'The stack, or the problem if the stack is not settled',
+			'A link to the posting, if there is one'
+		]
+	: null;
 ---
 
 <Base
 	title="Contact"
-	description={`Get in touch with ${site.name} — email, GitHub, Mastodon.`}
+	description={`Get in touch with ${site.name} — email${site.showResume ? ', LinkedIn' : ''}, GitHub.`}
 	ogTitle={`Contact — ${site.name}`}
 >
-	<Masthead
-		label={site.showResume ? 'Open to work / Ontario' : 'Ontario / Canada'}
-		meta="Replies by email"
-	>
+	<Masthead label="Ontario / Canada" meta="Replies by email">
 		<Fragment slot="title">Say <em>hello.</em></Fragment>
 		<div class="masthead-profile">
 			<img src="/profile.webp" alt={site.name} width="180" height="180" />
@@ -69,10 +95,41 @@ const channels = [
 				}
 			</p>
 		</div>
+		<div class="masthead-availability">
+			<Availability availability={site.availability} />
+		</div>
 		<p class="masthead-actions">
 			<a class="link-accent" href={`mailto:${site.email}`}>{site.email}</a>
+			<!-- Left empty on purpose: scripts/copy-address.ts fills it with a
+			     button, so a reader without JS gets no control that cannot work
+			     and the mailto link beside it is still the whole story. -->
+			<span data-copy-text={site.email}></span>
 		</p>
 	</Masthead>
+
+	{
+		askingFor && (
+			<section class="brief panel-alt">
+				<div class="shell">
+					<div class="section-heading" data-reveal>
+						<h2 class="display display-lg">What to include</h2>
+						<p>One email is enough</p>
+					</div>
+					<div class="brief-grid">
+						<p class="brief-copy" data-reveal>
+							A short note is all it takes. I read everything that is not a form-letter blast, and I
+							would rather answer questions than have you guess.
+						</p>
+						<ul class="brief-list" data-reveal data-reveal-delay="60">
+							{askingFor.map((item) => (
+								<li>{item}</li>
+							))}
+						</ul>
+					</div>
+				</div>
+			</section>
+		)
+	}
 
 	<section class="channels panel">
 		<div class="shell">
@@ -122,6 +179,46 @@ const channels = [
 	.channels {
 		padding-block: clamp(4.5rem, 9vw, 8rem);
 		border-top: 1px solid var(--line);
+	}
+	.masthead-availability {
+		margin-top: 1.5rem;
+	}
+	/* The one section on this page that asks something of the reader, so it
+	   takes the alt fill the other pages give their closing brief. */
+	.brief {
+		padding-block: clamp(4.5rem, 9vw, 8rem);
+		border-top: 1px solid var(--line);
+	}
+	.brief-grid {
+		display: grid;
+		gap: 2rem 3.5rem;
+		margin-top: clamp(2.5rem, 5vw, 4rem);
+	}
+	.brief-copy {
+		max-width: 46ch;
+		font-family: var(--font-serif);
+		font-size: 1.05rem;
+		line-height: 1.7;
+		color: var(--body);
+	}
+	.brief-list {
+		display: grid;
+		gap: 0.6rem;
+		align-content: start;
+		list-style: none;
+		font-size: 0.95rem;
+		line-height: 1.5;
+		color: var(--body);
+	}
+	.brief-list li::before {
+		content: '—';
+		margin-right: 0.65rem;
+		color: var(--accent);
+	}
+	@media (width >= 48rem) {
+		.brief-grid {
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		}
 	}
 	.section-heading {
 		display: flex;
@@ -221,3 +318,7 @@ const channels = [
 		}
 	}
 </style>
+
+<script>
+	import '../scripts/copy-address';
+</script>

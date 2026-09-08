@@ -10,6 +10,7 @@
  * the number of blocks varies post to post, and the listener has to survive
  * whatever the highlighter emitted inside them.
  */
+import { copyText } from './clipboard';
 
 function decorate(container: HTMLElement) {
 	// <pre> only inside the article body, so an injected button never lands on a
@@ -34,36 +35,6 @@ function decorate(container: HTMLElement) {
 		button.textContent = 'Copy';
 
 		block.append(button, status, pre);
-	}
-}
-
-function copyFallback(text: string): boolean {
-	const area = document.createElement('textarea');
-	area.value = text;
-	area.setAttribute('readonly', '');
-	// Off the layout but still selectable: select() refuses a display:none box.
-	area.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
-	document.body.append(area);
-	area.select();
-	let copied = false;
-	try {
-		document.execCommand('copy');
-		copied = true;
-	} catch {
-		// An execCommand that cannot copy simply did not.
-	}
-	area.remove();
-	return copied;
-}
-
-async function copyText(text: string): Promise<boolean> {
-	try {
-		await navigator.clipboard.writeText(text);
-		return true;
-	} catch {
-		// Insecure context, or a clipboard denial — the fallback still gets the
-		// text onto the clipboard where the API will not.
-		return copyFallback(text);
 	}
 }
 

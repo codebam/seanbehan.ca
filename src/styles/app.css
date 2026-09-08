@@ -916,6 +916,41 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
+   Address-copy button
+   Same injected-not-shipped rule as the code button, and the
+   same quiet face, but always up: a code block reveals its
+   button because the pointer is already inside the thing being
+   copied, whereas an address sits in a line of links with no
+   block to hover, and a control that only appears on hover is a
+   control a reader cannot find. Injected by
+   scripts/copy-address.ts beside the mailto link it supports.
+   ═══════════════════════════════════════════════════════════ */
+.copy-address {
+	font-family: var(--font-sans);
+	font-size: 0.75rem;
+	font-weight: 500;
+	line-height: 1;
+	color: var(--muted);
+	background: var(--surface-alt);
+	border: 1px solid var(--line);
+	border-radius: 3px;
+	padding: 0.3rem 0.6rem;
+	transition:
+		color 0.15s ease,
+		border-color 0.15s ease;
+}
+.copy-address:hover {
+	color: var(--accent);
+	border-color: var(--accent);
+}
+.copy-address.is-failed {
+	color: var(--accent);
+}
+.copy-address:disabled {
+	cursor: default;
+}
+
+/* ═══════════════════════════════════════════════════════════
    Motion
 
    House rules for everything below: nothing moves more than a
