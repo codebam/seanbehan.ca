@@ -141,6 +141,17 @@ stays a word.
 `:root` (8% blue). The 22% is the selection's weight — heavy enough to read
 as chosen, light enough that the text underneath keeps the ground.
 
+**6. The availability mark.** `Availability.astro` puts a dot and a sentence
+in the home hero's identity block and on the résumé's masthead: who, where,
+and is he reachable, answered in one place instead of three. The dot is
+`--accent-warm` with the wash token as its ring, not green, because a status
+is something the page says about itself and warm is the voice — green would
+be a new token doing a job the split already assigned. It does not pulse. A
+blinking indicator is a dashboard's way of saying "this is live", and the
+site is a page; the status is a fact, not a feed. The copy is
+`site.availability` in `site.data.js`, `null` on the variant that pitches the
+code, so the component renders nothing there rather than branching.
+
 **Known seams.** Three bands now sit between the same two fills on two
 pages (services: alt / alt / bg; the kit: bg / alt / alt), so one adjacent
 pair on each shares a fill and rests on the hairline between them. It is the

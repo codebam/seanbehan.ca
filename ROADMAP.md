@@ -44,6 +44,12 @@ proposed, roughly ordered by value within each section.
       exist (`if (!form) return`), so embedding is safe — but the form itself,
       its notification routing, and the `ec-form-*` style integration all need
       doing in the admin first. Standalone task.
+      The cheap half of the problem is now done without it: `/contact` leads
+      with Email and LinkedIn instead of burying them behind Mastodon, Matrix
+      and PGP, and the address carries a copy button
+      (`scripts/copy-address.ts`) for the readers `mailto:` silently fails —
+      webmail, a shared inbox, no mail handler. The form would replace the
+      mailto, not the ordering.
 - [x] Cross-origin jumps have no affordance. Chrome links that leave for the
       repo's other origin now carry a quiet ↗ plus a screen-reader host note
       (`SiblingMark.astro`, `isSiblingHref` in `src/lib/site.ts`), applied to
@@ -51,8 +57,13 @@ proposed, roughly ordered by value within each section.
       flagging every post row would be noise, and the destination page
       identifies itself. (Unifying the origins behind canonicals remains the
       alternative; it is an SEO call, not taken here.)
-- [ ] Mobile nav wraps to two rows (`src/layouts/Base.astro:436-445`). Needs a
-      design decision.
+- [x] Mobile nav wraps to two rows. The decision was subtraction, not a menu
+      widget: the header now carries four items plus Contact, chosen per
+      variant in `site.data.js` (`nav`, resolved by `linkHref`). Links and
+      Services moved to the footer, where both already were or now are, so
+      nothing became unreachable. On seanbehan.ca the reorder matters more
+      than the count — Résumé was fifth of six, which put the one page a
+      hiring reader came for on the wrapped second row.
 - [ ] No manual dark toggle — `prefers-color-scheme` only (DESIGN §2.2). Needs
       a design decision; invariant 2 still requires the no-JS path.
 - [ ] `reveal` ships globally (`src/layouts/Base.astro:280-282`). **Dropped:**
@@ -64,6 +75,14 @@ proposed, roughly ordered by value within each section.
       unknown and FAQ copy is unwritten; both need authoring, not code.
 
 ## 3. SEO / feeds
+
+- [x] `/services` was duplicate content on two origins. The middleware sent
+      `/projects`, `/products` and `/legal` from seanbehan.ca across to
+      codebam.ca, but not `/services` — which `services.astro` already pinned
+      its canonical to. So the page answered 200 on Sean's origin wearing
+      Sean's header and footer, told Google it was codebam.ca's, and asked the
+      reader to email codebam@codebam.ca. `llms.txt` has always promised every
+      cross-origin section 301s; it does now.
 
 - [x] `absolutizeUrls()` missed `srcset`/`poster` (`src/lib/rssFeed.ts`); every
       entry in both is now prefixed. Covered in `rssFeed.test.ts`.
