@@ -39,6 +39,13 @@ interface Props {
 	canonical?: string;
 	/** Content reference, so plugins and visual editing can find the entry. */
 	content?: { collection: string; id: string; slug?: string | null };
+	/**
+	 * Draw the home page's masthead — a centred nameplate between rules, the
+	 * folio line above it — instead of the running header every other page
+	 * keeps. The redesign is the front page, not the whole paper: the archive,
+	 * the résumé and the rest still open with the same small running head.
+	 */
+	broadsheet?: boolean;
 }
 
 const {
@@ -50,7 +57,8 @@ const {
 	image,
 	robots,
 	canonical: canonicalOverride,
-	content
+	content,
+	broadsheet = false
 } = Astro.props;
 
 const path = Astro.url.pathname;
@@ -123,6 +131,34 @@ const nav = site.nav.map((item) => ({ ...item, href: linkHref(item) }));
 /** A cross-origin nav item cannot be current on this page. */
 const isCurrent = (href: string) =>
 	href.startsWith('/') && !href.startsWith('/#') && (path === href || path.startsWith(`${href}/`));
+
+/**
+ * The nav resolved once for both headers. `aria-current` is 'true' for Work,
+ * which is a section of this page rather than a page of its own, and 'page'
+ * for the routes that are.
+ */
+const navItems = nav.map((item) => ({
+	...item,
+	current: (item.href === '/#work'
+		? path === '/'
+			? 'true'
+			: undefined
+		: isCurrent(item.href)
+			? 'page'
+			: undefined) as 'page' | 'true' | undefined
+}));
+
+/**
+ * The folio's dateline. Month and year, not the day: the page is cached and a
+ * date that silently ages behind the cache reads as a stale site, where a
+ * month is still true a few weeks on. UTC because the Worker renders it, not
+ * the reader's machine.
+ */
+const dateline = new Date().toLocaleDateString('en-CA', {
+	month: 'long',
+	year: 'numeric',
+	timeZone: 'UTC'
+});
 ---
 
 <!doctype html>
@@ -184,44 +220,72 @@ const isCurrent = (href: string) =>
 
 		<a href="#main" class="skip-link">Skip to content</a>
 
-		<header class="border-b border-[var(--line)]">
-			<div class="site-header shell flex items-baseline gap-x-6 gap-y-3 py-5 md:py-6">
-				<a href="/" class="wordmark mr-auto" aria-current={path === '/' ? 'page' : undefined}>
-					{site.name}<span class="wordmark-mark" aria-hidden="true">.</span>
-				</a>
+		{
+			broadsheet ? (
+				<header class="masthead">
+					<div class="shell">
+						<p class="masthead-folio">
+							<span>Ontario, Canada</span>
+							<span>{dateline}</span>
+						</p>
 
-				<nav
-					aria-label="Primary"
-					class="primary-nav flex flex-wrap items-baseline gap-x-5 gap-y-2 md:gap-x-6"
-				>
-					{
-						nav.map((item) => (
+						<a href="/" class="nameplate" aria-current={path === '/' ? 'page' : undefined}>
+							{site.name}
+							<span class="nameplate-mark" aria-hidden="true">
+								.
+							</span>
+						</a>
+						<p class="masthead-sub">{site.eyebrow}</p>
+
+						<nav aria-label="Primary" class="masthead-nav">
+							{navItems.map((item) => (
+								<a href={item.href} class="nav-link" aria-current={item.current}>
+									{item.label}
+									<SiblingMark href={item.href} />
+								</a>
+							))}
 							<a
-								href={item.href}
-								class="nav-link"
-								aria-current={
-									item.href === '/#work'
-										? path === '/'
-											? 'true'
-											: undefined
-										: isCurrent(item.href)
-											? 'page'
-											: undefined
-								}
+								href="/contact"
+								class="nav-link nav-contact"
+								aria-current={isCurrent('/contact') ? 'page' : undefined}
 							>
-								{item.label}
-								<SiblingMark href={item.href} />
+								Contact
 							</a>
-						))
-					}
-					<a
-						href="/contact"
-						class="nav-link nav-contact"
-						aria-current={isCurrent('/contact') ? 'page' : undefined}>Contact</a
-					>
-				</nav>
-			</div>
-		</header>
+						</nav>
+					</div>
+				</header>
+			) : (
+				<header class="border-b border-[var(--line)]">
+					<div class="site-header shell flex items-baseline gap-x-6 gap-y-3 py-5 md:py-6">
+						<a href="/" class="wordmark mr-auto" aria-current={path === '/' ? 'page' : undefined}>
+							{site.name}
+							<span class="wordmark-mark" aria-hidden="true">
+								.
+							</span>
+						</a>
+
+						<nav
+							aria-label="Primary"
+							class="primary-nav flex flex-wrap items-baseline gap-x-5 gap-y-2 md:gap-x-6"
+						>
+							{navItems.map((item) => (
+								<a href={item.href} class="nav-link" aria-current={item.current}>
+									{item.label}
+									<SiblingMark href={item.href} />
+								</a>
+							))}
+							<a
+								href="/contact"
+								class="nav-link nav-contact"
+								aria-current={isCurrent('/contact') ? 'page' : undefined}
+							>
+								Contact
+							</a>
+						</nav>
+					</div>
+				</header>
+			)
+		}
 
 		<!-- Full-bleed: each page owns its own panels and .shell columns, so a
 		     section can run edge to edge on its own background. -->
@@ -327,6 +391,73 @@ const isCurrent = (href: string) =>
 </html>
 
 <style>
+	/* ── Broadsheet masthead ──
+	   The home page's front page. Where the running header is a row — wordmark
+	   left, nav right — this is a printed nameplate: a folio line, the site
+	   name centred between rules, and the nav as a tracked row beneath it.
+	   The rules do the work the old header's border did, and the nameplate is
+	   allowed to be the largest type in the chrome because on the front page
+	   it is the paper's own title. */
+	.masthead {
+		border-bottom: 1px solid var(--line-strong);
+	}
+	.masthead-folio {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: 0.25rem 1.5rem;
+		padding-block: 0.85rem;
+		border-bottom: 1px solid var(--line);
+		font-size: 0.68rem;
+		font-weight: 600;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
+	.nameplate {
+		display: block;
+		margin-top: clamp(1.6rem, 4vw, 2.8rem);
+		font-family: var(--font-serif);
+		font-size: clamp(2.7rem, 8vw, 4.7rem);
+		font-weight: 500;
+		letter-spacing: -0.025em;
+		line-height: 1;
+		text-align: center;
+		color: var(--text);
+		transition: color 0.2s ease;
+	}
+	.nameplate-mark {
+		color: var(--accent-warm);
+	}
+	.nameplate:hover,
+	.nameplate:focus-visible {
+		color: var(--accent);
+	}
+	.nameplate:hover .nameplate-mark,
+	.nameplate:focus-visible .nameplate-mark {
+		color: var(--text);
+	}
+	.masthead-sub {
+		margin-top: 0.85rem;
+		font-size: 0.72rem;
+		font-weight: 600;
+		letter-spacing: 0.2em;
+		text-transform: uppercase;
+		text-align: center;
+		color: var(--muted);
+	}
+	/* The nav sits on the rule that closes the masthead, centred, with the
+	   contact link keeping the accent it has in the running header. */
+	.masthead-nav {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.35rem 1.9rem;
+		margin-top: clamp(1.4rem, 3vw, 2rem);
+		padding-block: 0.95rem;
+		border-top: 1px solid var(--line);
+	}
+
 	/* The wordmark is the only serif in the chrome: it signs the page the way a
 	   name signs a letter, and the orange full stop is the signature's mark. */
 	.wordmark {

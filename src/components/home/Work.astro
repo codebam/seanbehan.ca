@@ -1,207 +1,299 @@
 ---
 /**
- * SELECTED WORK — one editorial row per project: a hairline, the picture,
- * the story. The rows alternate sides so a page of them reads as a
- * conversation rather than a feed.
+ * SELECTED WORK, as a front-page spread rather than a feed of rows.
+ *
+ * The first project gets the lead: its plate, its title and its story at the
+ * width the page's other lead stories get. The rest run as a two-column index
+ * under it, one ruled entry each, so the page states a hierarchy instead of
+ * repeating one row shape five times. The ordinals are set in the warm accent
+ * for the same reason the plate's mockups number their pages: they are the
+ * page's own way of ordering its material, not a link.
  */
 import { projectHref } from '../../lib/site';
 import type { FeaturedProject } from '../../lib/types';
-import { Badge } from '@cloudflare/kumo/components/badge';
 
 interface Props {
 	projects: FeaturedProject[];
 }
 
 const { projects } = Astro.props;
+const [lead, ...rest] = projects;
+
+const ordinal = (n: number) => String(n).padStart(2, '0');
+/** "2026 · ★ 325" — only the facts a row actually has. */
+const metaLine = (project: FeaturedProject) =>
+	[project.since, project.stars > 0 ? `★ ${project.stars}` : null].filter(Boolean).join(' · ');
 ---
 
-<section id="work" class="work-panel panel scroll-mt-4">
-	<div class="shell">
-		<div class="work-heading" data-reveal>
-			<h2 class="display display-lg">Selected work</h2>
-			<a
-				href="https://github.com/codebam?tab=repositories"
-				target="_blank"
-				rel="noopener noreferrer"
-				class="link-accent whitespace-nowrap">All repositories <span class="arrow">&rarr;</span></a
-			>
-		</div>
+<section id="work" class="work shell scroll-mt-4">
+	<header class="section-head" data-reveal>
+		<h2 class="display display-lg">Selected work</h2>
+		<a
+			href="https://github.com/codebam?tab=repositories"
+			target="_blank"
+			rel="noopener noreferrer"
+			class="link-accent whitespace-nowrap">All repositories <span class="arrow">&rarr;</span></a
+		>
+	</header>
 
-		<div class="work-list">
-			{
-				projects.map((project, i) => (
-					<article class="work-row" data-reveal data-reveal-delay={Math.min(i, 3) * 70}>
-						<a class="row-media" href={projectHref(`/projects/${project.slug}`)} tabindex="-1">
-							<img
-								src={project.mockup}
-								alt={project.mockupAlt}
-								width="1600"
-								height="1000"
-								loading="lazy"
-								decoding="async"
-							/>
-						</a>
+	{
+		lead && (
+			<article class="work-lead" data-reveal>
+				<a class="plate" href={projectHref(`/projects/${lead.slug}`)} tabindex="-1">
+					<img
+						src={lead.mockup}
+						alt={lead.mockupAlt}
+						width="1600"
+						height="1000"
+						loading="eager"
+						decoding="async"
+					/>
+				</a>
 
-						<div class="row-body">
-							<p class="row-meta">
-								<span>{project.since} &mdash;</span>
-								{project.stars > 0 && (
-									<span
-										class="row-stars"
-										title={`${project.stars} ${project.stars === 1 ? 'star' : 'stars'} on GitHub`}
-									>
-										&#9733; {project.stars}
-									</span>
-								)}
-							</p>
+				<div class="work-lead-body">
+					<p class="entry-meta">
+						<span class="ordinal">01</span>
+						{metaLine(lead)}
+					</p>
+					<h3 class="lead-title">
+						<a href={projectHref(`/projects/${lead.slug}`)}>{lead.title}</a>
+					</h3>
+					<p class="lead-copy">{lead.description}</p>
 
-							<h3 class="title">
-								<a href={projectHref(`/projects/${project.slug}`)}>{project.title}</a>
-							</h3>
-							<p class="row-copy">{project.description}</p>
+					<p class="entry-foot">
+						<span>{lead.language}</span>
+						{lead.tags.map((tag) => (
+							<span>
+								<span class="dot" aria-hidden="true">
+									·
+								</span>
+								{tag}
+							</span>
+						))}
+						{lead.repo && (
+							<span>
+								<span class="dot" aria-hidden="true">
+									·
+								</span>
+								<a
+									class="link-quiet"
+									href={`https://github.com/codebam/${lead.repo}`}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									Source
+								</a>
+							</span>
+						)}
+					</p>
 
-							<p class="row-tags">
-								<Badge variant="blue">{project.language}</Badge>
-								{project.tags.map((tag) => (
-									<Badge variant="outline">{tag}</Badge>
-								))}
-							</p>
+					{lead.homepage && (
+						<p class="entry-links">
+							<a class="link-accent" href={lead.homepage} target="_blank" rel="noopener noreferrer">
+								{lead.homepageLabel} <span class="arrow">&rarr;</span>
+							</a>
+						</p>
+					)}
+				</div>
+			</article>
+		)
+	}
 
-							<p class="row-links">
-								{project.repo && (
-									<a
-										href={`https://github.com/codebam/${project.repo}`}
-										target="_blank"
-										rel="noopener noreferrer"
-										class="link-quiet"
-									>
-										Source
-									</a>
-								)}
-								{project.homepage && (
-									<a
-										href={project.homepage}
-										target="_blank"
-										rel="noopener noreferrer"
-										class="link-accent"
-									>
-										{project.homepageLabel} <span class="arrow">&rarr;</span>
-									</a>
-								)}
-							</p>
-						</div>
-					</article>
-				))
-			}
-		</div>
+	<div class="work-index">
+		{
+			rest.map((project, i) => (
+				<article class="work-entry" data-reveal data-reveal-delay={Math.min(i, 3) * 60}>
+					<p class="entry-meta">
+						<span class="ordinal">{ordinal(i + 2)}</span>
+						{metaLine(project)}
+					</p>
+					<h3 class="entry-title">
+						<a href={projectHref(`/projects/${project.slug}`)}>{project.title}</a>
+					</h3>
+					<p class="entry-copy">{project.description}</p>
+					<p class="entry-foot">
+						<span>{project.language}</span>
+						{project.tags.map((tag) => (
+							<span>
+								<span class="dot" aria-hidden="true">
+									·
+								</span>
+								{tag}
+							</span>
+						))}
+						{project.repo && (
+							<span>
+								<span class="dot" aria-hidden="true">
+									·
+								</span>
+								<a
+									class="link-quiet"
+									href={`https://github.com/codebam/${project.repo}`}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									Source
+								</a>
+							</span>
+						)}
+					</p>
+				</article>
+			))
+		}
 	</div>
 </section>
 
 <style>
-	.work-panel {
-		padding-block: clamp(5rem, 10vw, 9rem);
+	.work {
+		padding-block: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 3vw, 2.5rem);
 	}
-	.work-heading {
+
+	/* The label-and-link head every front-page section shares. */
+	.section-head {
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
 		gap: 2rem;
-		padding-bottom: 1rem;
-		border-bottom: 1px solid var(--line-strong);
+		padding-bottom: 0.9rem;
+		border-bottom: 2px solid var(--text);
 	}
-	.work-list {
+
+	.work-lead {
 		display: grid;
-	}
-	.work-row {
-		display: grid;
-		gap: clamp(2rem, 4vw, 4rem);
-		padding-block: clamp(3rem, 6vw, 5rem);
-		border-bottom: 1px solid var(--line);
+		gap: clamp(1.75rem, 4vw, 3.5rem);
+		padding-block: clamp(2rem, 4vw, 3rem);
 	}
 	@media (width >= 48rem) {
-		.work-row {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
+		.work-lead {
+			grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
 			align-items: center;
 		}
-		/* The picture trades sides down the page. */
-		.work-row:nth-child(even) .row-media {
-			order: 2;
-		}
 	}
-	.row-media {
+
+	/* A plate, not a card: a hairline frame, a small shadow of ground under it,
+	   and no rounding. The mockups are already drawn as printed screens; the
+	   frame should read as the paper they sit on. */
+	.plate {
 		display: block;
 		overflow: hidden;
 		border: 1px solid var(--line-strong);
-		border-radius: 3px;
 		background: var(--panel);
 		transition: border-color 0.25s ease;
 	}
-	/* The same hover cue the related-reading cards give: the frame takes the
-	   accent when the pointer is anywhere in the row, so the picture and the
-	   title read as one link. */
-	.work-row:hover .row-media,
-	.work-row:focus-within .row-media {
+	.work-lead:hover .plate,
+	.work-lead:focus-within .plate {
 		border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
 	}
-	.row-media img {
+	.plate img {
 		display: block;
 		width: 100%;
 		height: auto;
 	}
-	.row-meta {
+
+	.entry-meta {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: baseline;
-		gap: 1.25rem;
-		font-size: 0.7rem;
+		gap: 0.55rem;
+		font-size: 0.68rem;
 		font-weight: 600;
 		letter-spacing: 0.16em;
 		text-transform: uppercase;
 		color: var(--muted);
 	}
-	.row-stars {
+	.ordinal {
+		font-family: var(--font-serif);
+		font-size: 0.95rem;
+		font-weight: 500;
+		letter-spacing: 0;
 		color: var(--accent-warm);
 	}
-	.title {
-		margin-top: 1rem;
+
+	.lead-title,
+	.entry-title {
 		font-family: var(--font-serif);
-		font-size: clamp(1.8rem, 3vw, 2.5rem);
 		font-weight: 500;
 		letter-spacing: -0.02em;
-		line-height: 1.1;
+		text-wrap: balance;
 	}
-	.title a {
+	.lead-title {
+		margin-top: 0.6rem;
+		font-size: clamp(1.9rem, 3.4vw, 2.7rem);
+		line-height: 1.08;
+	}
+	.entry-title {
+		margin-top: 0.35rem;
+		font-size: 1.3rem;
+		line-height: 1.2;
+	}
+	.lead-title a,
+	.entry-title a {
 		color: var(--text);
 		text-decoration: none;
 		transition: color 0.2s ease;
 	}
-	.title a:hover,
-	.title a:focus-visible {
+	.lead-title a:hover,
+	.lead-title a:focus-visible,
+	.entry-title a:hover,
+	.entry-title a:focus-visible {
 		color: var(--accent);
 	}
-	.row-copy {
-		max-width: 52ch;
+
+	.lead-copy {
+		max-width: 54ch;
 		margin-top: 1rem;
 		font-family: var(--font-serif);
 		font-size: 1.08rem;
 		line-height: 1.65;
 		color: var(--body);
+		text-wrap: pretty;
 	}
-	.row-tags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.4rem;
-		margin-top: 1.25rem;
+	.entry-copy {
+		margin-top: 0.55rem;
+		font-family: var(--font-serif);
+		font-size: 0.98rem;
+		line-height: 1.6;
+		color: var(--body);
+		text-wrap: pretty;
 	}
-	.row-links {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.75rem 1.75rem;
-		margin-top: 1.5rem;
-		font-size: 0.95rem;
+
+	.entry-foot {
+		margin-top: 0.9rem;
+		font-size: 0.78rem;
+		color: var(--muted);
 	}
+	.entry-foot .dot {
+		margin-inline: 0.4rem;
+		color: var(--line-strong);
+	}
+	.entry-links {
+		margin-top: 0.7rem;
+		font-size: 0.9rem;
+	}
+
+	/* The index: two columns of ruled entries, reading across then down. The
+	   rule between the columns is a background stripe rather than a border, so
+	   it runs the full height of the block including the gaps. */
+	.work-index {
+		display: grid;
+		column-gap: clamp(2rem, 5vw, 4rem);
+	}
+	@media (width >= 48rem) {
+		.work-index {
+			grid-template-columns: 1fr 1fr;
+			background-image: linear-gradient(var(--line), var(--line));
+			background-size: 1px 100%;
+			background-position: 50% 0;
+			background-repeat: no-repeat;
+		}
+	}
+	.work-entry {
+		padding-block: clamp(1.5rem, 3vw, 2.25rem);
+		border-top: 1px solid var(--line);
+	}
+
 	@media (width < 48rem) {
-		.work-heading {
+		.section-head {
 			flex-wrap: wrap;
 			gap: 0.5rem 2rem;
 		}

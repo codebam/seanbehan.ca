@@ -1,9 +1,12 @@
 ---
 /**
- * Four numbers that stand for the work, set as one hairline-ruled line.
+ * The numbers, as a folio line rather than a band.
  *
- * The fourth cell is a word rather than a number, so it is spelled out instead
- * of being forced into the same shape as the three counts beside it.
+ * On the broadsheet front page these are not a section — they are the line a
+ * paper runs under the masthead to say what is in the issue. So they take a
+ * rule above and below, sit on the page's own ground, and read across as one
+ * sentence instead of four stat cards. The fourth cell is still a word, so it
+ * is still spelled out rather than forced into the shape of the three counts.
  */
 import type { FeaturedProject } from '../../lib/types';
 
@@ -28,58 +31,79 @@ const facts = [
 ];
 ---
 
-<section class="facts">
-	<div class="facts-row shell">
-		{
-			facts.map((fact, i) => (
-				<div class="fact" data-reveal data-reveal-delay={i * 60}>
-					<div class="fact-value">{fact.value}</div>
-					<div class="fact-label">{fact.label}</div>
-				</div>
-			))
-		}
+<section class="folio" aria-label="By the numbers">
+	<div class="shell folio-row">
+		<span class="folio-label">By the numbers</span>
+		<ul class="folio-list">
+			{
+				facts.map((fact, i) => (
+					<li class="folio-item" data-reveal data-reveal-delay={i * 50}>
+						<span class="folio-value">{fact.value}</span>
+						<span class="folio-text">{fact.label}</span>
+					</li>
+				))
+			}
+		</ul>
 	</div>
 </section>
 
 <style>
-	.facts {
+	.folio {
 		border-block: 1px solid var(--line);
 	}
-	.facts-row {
-		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: clamp(2rem, 5vw, 4rem);
-		padding-block: clamp(3rem, 6vw, 4.5rem);
+	.folio-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.6rem 2.5rem;
+		padding-block: 1.15rem;
 	}
-	.fact {
-		min-width: 0;
-		padding-left: 1.25rem;
+	.folio-label {
+		font-size: 0.68rem;
+		font-weight: 600;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
+	.folio-list {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.4rem 2.25rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	/* A rule between the items, drawn as a border on everything after the
+	   first, so the line reads as one run rather than four separate cells. */
+	.folio-item {
+		display: flex;
+		align-items: baseline;
+		gap: 0.5rem;
+	}
+	.folio-item + .folio-item {
+		padding-left: 2.25rem;
 		border-left: 1px solid var(--line-strong);
 	}
 	/* Oldstyle numerals where the face has them — the value set with the
 	   page's voice, not with a dashboard's tabular figures. */
-	.fact-value {
+	.folio-value {
 		font-family: var(--font-serif);
-		font-size: clamp(2.4rem, 4.5vw, 3.6rem);
+		font-size: 1.35rem;
 		font-weight: 500;
-		letter-spacing: -0.02em;
 		line-height: 1;
 		font-variant-numeric: oldstyle-nums;
-		transition: color 0.25s ease;
+		color: var(--text);
 	}
-	.fact-label {
-		max-width: 18ch;
-		margin-top: 0.75rem;
-		font-size: 0.85rem;
-		line-height: 1.45;
+	.folio-text {
+		font-size: 0.82rem;
+		line-height: 1.4;
 		color: var(--muted);
 	}
-	.fact:hover .fact-value {
-		color: var(--accent-warm);
-	}
-	@media (width >= 48rem) {
-		.facts-row {
-			grid-template-columns: repeat(4, minmax(0, 1fr));
+	@media (width < 48rem) {
+		.folio-item + .folio-item {
+			padding-left: 0;
+			border-left: 0;
 		}
 	}
 </style>

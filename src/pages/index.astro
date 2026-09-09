@@ -1,16 +1,18 @@
 ---
 /**
- * Home: the introduction, then the two variable sections, then the latest
- * writing.
+ * Home: the front page of the broadsheet.
  *
- * The order of the middle two is the difference between the variants.
- * seanbehan.ca leads with the numbers band and reads as a profile; codebam.ca
- * leads with the project rows and reads as a body of work.
+ * A lead statement set across two columns, the numbers as a folio line, then
+ * the work and the writing each led by one story and followed by an index. The
+ * order of the middle two is still the difference between the variants —
+ * seanbehan.ca leads with the numbers and reads as a profile, codebam.ca leads
+ * with the work — but the numbers are now a rule rather than a band, so the
+ * variant changes the sequence, not the grammar.
  */
 import Base from '../layouts/Base.astro';
-import PostList from '../components/PostList.astro';
 import Facts from '../components/home/Facts.astro';
 import Work from '../components/home/Work.astro';
+import Writing from '../components/home/Writing.astro';
 import Availability from '../components/Availability.astro';
 import { LinkButton } from '@cloudflare/kumo/components/button';
 import { getPosts } from '../lib/posts';
@@ -29,7 +31,7 @@ const intro = site.intro.replace('{years}', String(yearsBuilding));
 const latest = posts.slice(0, 6);
 
 /**
- * The hero's primary button comes from the variant's own table. Whichever
+ * The lead's primary button comes from the variant's own table. Whichever
  * action is not the button stays in the quiet row below it, so "Read the
  * writing" is demoted on the hiring origin rather than lost — a reader who
  * came for the prose still finds it one click away, beside GitHub and email.
@@ -45,137 +47,168 @@ const quietLinks: { label: string; href: string; external: boolean }[] = [
 ];
 ---
 
-<Base>
-	<!-- One oversized statement gets the visual emphasis; supporting information
-	     stays deliberately quiet so this reads as an introduction, not a dashboard. -->
-	<section class="hero panel">
-		<div class="shell">
-			<!-- Byline: the photo identifies the author rather than decorating the
-			     page, which leaves the headline the full column width. -->
-			<div class="hero-kicker enter flex items-center gap-3.5">
-				<!-- avatar.webp is the 2x crop of profile.webp at the size this
-				     actually renders (1.4 kB against 13 kB). The full 460px
-				     profile.webp is the contact photo and the Person image in JSON-LD. -->
-				<img
-					src="/avatar.webp"
-					alt={site.name}
-					width="56"
-					height="56"
-					fetchpriority="high"
-					class="h-14 w-14 shrink-0 rounded-full border border-[var(--line-strong)] object-cover"
-				/>
-				<div>
-					<p class="eyebrow">{site.eyebrow}</p>
-					<p class="mt-1 text-[0.9rem] text-[var(--muted)]">{site.byline}</p>
-					<!-- The status belongs in the identity block, not in a band of
-					     its own: "who, where, and is he reachable" is one question a
-					     hiring reader asks in the first three seconds, and splitting
-					     the answer across the page makes them ask it twice. -->
-					<div class="mt-2">
-						<Availability availability={site.availability} />
-					</div>
+<Base broadsheet>
+	<article class="front-page">
+		<!-- The lead: the one oversized statement on the page, with the status
+		     and the page's one imperative in the column beside it. The deck
+		     below is set in two columns and opens on a drop cap — the printed
+		     sheet's oldest way of saying "start here". -->
+		<section class="lead shell">
+			<div class="lead-top">
+				<div class="lead-head">
+					<h1 class="display lead-title">
+						{site.headline.before}<em>{site.headline.emphasis}</em>{site.headline.after}
+					</h1>
+					<p class="lead-byline">
+						<img
+							src="/avatar.webp"
+							alt=""
+							width="40"
+							height="40"
+							fetchpriority="high"
+							class="byline-avatar"
+						/>
+						<span>{site.byline} · {yearsBuilding} years building software</span>
+					</p>
 				</div>
-			</div>
 
-			<h1 class="hero-title display">
-				{site.headline.before}<em>{site.headline.emphasis}</em>{site.headline.after}
-			</h1>
-
-			<p class="hero-intro enter" style="--enter-delay:80ms">
-				{intro}
-			</p>
-
-			<div class="hero-actions enter" style="--enter-delay:140ms">
-				<LinkButton href={linkHref(primary)} variant="primary" size="lg" className="flat-control">
-					{primary.label}
-				</LinkButton>
-				{
-					quietLinks.map((link) => (
-						<a
-							href={link.href}
-							class="link-quiet"
-							target={link.external ? '_blank' : undefined}
-							rel={link.external ? 'noopener noreferrer' : undefined}
+				<aside class="lead-aside">
+					<p class="aside-label">At a glance</p>
+					<Availability availability={site.availability} />
+					<div class="aside-actions">
+						<LinkButton
+							href={linkHref(primary)}
+							variant="primary"
+							size="lg"
+							className="flat-control"
 						>
-							{link.label}
-						</a>
-					))
-				}
-			</div>
-		</div>
-	</section>
-
-	{
-		site.leadWith === 'work' ? (
-			<>
-				<Work projects={projects} />
-				<Facts postCount={posts.length} projects={projects} yearsBuilding={yearsBuilding} />
-			</>
-		) : (
-			<>
-				<Facts postCount={posts.length} projects={projects} yearsBuilding={yearsBuilding} />
-				<Work projects={projects} />
-			</>
-		)
-	}
-
-	<section class="latest-writing panel">
-		<div class="shell">
-			<div class="writing-heading" data-reveal>
-				<h2 class="display display-lg">Latest writing</h2>
-				<a href={writingHref('/posts')} class="link-accent whitespace-nowrap"
-					>All {posts.length} posts <span class="arrow">&rarr;</span></a
-				>
+							{primary.label}
+						</LinkButton>
+						{
+							quietLinks.map((link) => (
+								<a
+									href={link.href}
+									class="link-quiet"
+									target={link.external ? '_blank' : undefined}
+									rel={link.external ? 'noopener noreferrer' : undefined}
+								>
+									{link.label}
+								</a>
+							))
+						}
+					</div>
+				</aside>
 			</div>
 
-			<div class="mt-8" data-reveal data-reveal-delay="60">
-				<PostList posts={latest} columns={2} raised />
-			</div>
-		</div>
-	</section>
+			<p class="lead-deck">{intro}</p>
+		</section>
+
+		{
+			site.leadWith === 'work' ? (
+				<>
+					<Work projects={projects} />
+					<Facts postCount={posts.length} projects={projects} yearsBuilding={yearsBuilding} />
+				</>
+			) : (
+				<>
+					<Facts postCount={posts.length} projects={projects} yearsBuilding={yearsBuilding} />
+					<Work projects={projects} />
+				</>
+			)
+		}
+
+		<Writing posts={latest} total={posts.length} />
+	</article>
 </Base>
 
 <style>
-	.hero {
-		padding-block: clamp(5rem, 11vh, 9rem) clamp(5.5rem, 12vh, 10rem);
+	.front-page {
+		padding-bottom: clamp(1rem, 3vw, 2rem);
 	}
-	.hero-title {
-		max-width: 21ch;
-		margin-top: clamp(2.75rem, 6vh, 4.5rem);
-		font-size: clamp(3rem, 7vw, 5.6rem);
-		line-height: 1.02;
+
+	.lead {
+		padding-block: clamp(3rem, 7vw, 5.5rem) clamp(2.5rem, 5vw, 4rem);
+	}
+	.lead-top {
+		display: grid;
+		gap: clamp(2rem, 5vw, 3.5rem);
+	}
+	@media (width >= 60rem) {
+		.lead-top {
+			grid-template-columns: minmax(0, 2.15fr) minmax(15rem, 1fr);
+			align-items: end;
+		}
+	}
+
+	.lead-title {
+		max-width: 20ch;
+		font-size: clamp(2.9rem, 6.2vw, 5rem);
+		line-height: 1.03;
 		letter-spacing: -0.02em;
 	}
-	.hero-intro {
-		max-width: 58ch;
-		margin-top: clamp(1.75rem, 4vh, 2.5rem);
-		font-family: var(--font-serif);
-		font-size: clamp(1.1rem, 1.7vw, 1.3rem);
-		line-height: 1.65;
-		color: var(--body);
-	}
-	.hero-actions {
+
+	.lead-byline {
 		display: flex;
-		flex-wrap: wrap;
 		align-items: center;
-		gap: 1rem 2rem;
-		margin-top: 2.5rem;
+		gap: 0.75rem;
+		margin-top: clamp(1.75rem, 4vw, 2.5rem);
+		font-size: 0.8rem;
+		font-weight: 600;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--muted);
 	}
-	.latest-writing {
-		padding-block: clamp(5rem, 10vw, 9rem);
+	.byline-avatar {
+		width: 2.5rem;
+		height: 2.5rem;
+		flex-shrink: 0;
+		border-radius: 50%;
+		border: 1px solid var(--line-strong);
+		object-fit: cover;
 	}
-	.writing-heading {
+
+	/* The status and the call to action, boxed by a warm rule: the page's own
+	   voice marking what it wants the reader to do next. */
+	.lead-aside {
+		border-top: 2px solid var(--accent-warm);
+		padding-top: 1.1rem;
+	}
+	.aside-label {
+		font-size: 0.68rem;
+		font-weight: 600;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
+	.lead-aside :global(.availability) {
+		margin-top: 0.75rem;
+	}
+	.aside-actions {
 		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 2rem;
-		padding-bottom: 1rem;
-		border-bottom: 1px solid var(--line-strong);
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.9rem;
+		margin-top: 1.5rem;
 	}
-	@media (width < 40rem) {
-		.writing-heading {
-			flex-wrap: wrap;
-			gap: 0.5rem 2rem;
+
+	/* The deck: two columns of serif with the column rule the sheet would have
+	   printed. No drop cap: the intro opens on a number, and a floated "1"
+	   leaves the "2" of "12" behind on the baseline. */
+	.lead-deck {
+		margin-top: clamp(2rem, 4vw, 3rem);
+		padding-top: clamp(1.5rem, 3vw, 2rem);
+		border-top: 1px solid var(--line-strong);
+		font-family: var(--font-serif);
+		font-size: clamp(1.08rem, 1.4vw, 1.22rem);
+		line-height: 1.72;
+		color: var(--body);
+		text-wrap: pretty;
+	}
+	@media (width >= 48rem) {
+		.lead-deck {
+			columns: 2;
+			column-gap: clamp(2.5rem, 4vw, 3.5rem);
+			column-rule: 1px solid var(--line);
 		}
 	}
 </style>
