@@ -75,10 +75,11 @@ const schema = JSON.stringify({
 	ogTitle={`${PRODUCT_NAME} — codebam`}
 	canonical={canonical}
 >
-	<script slot="head" type="application/ld+json" is:inline set:html={schema} />
-
+	<script slot="head" type="application/ld+json" is:inline set:html={schema}></script>
 	<Masthead label="Digital product / Production kit" meta={`$${PRICE} ${CURRENCY} / one-time`}>
-		<Fragment slot="title">Ship the service. <em>Skip the plumbing.</em></Fragment>
+		<Fragment slot="title">
+			Ship the service. <em>Skip the plumbing.</em>
+		</Fragment>
 		<p>
 			A deployment-ready Astro and Cloudflare Workers reference starter with D1, R2, authentication,
 			security, deployment and operating notes wired into one coherent system.
@@ -92,11 +93,10 @@ const schema = JSON.stringify({
 			<span class="checkout-note">Immediate download</span>
 		</div>
 		<p class="purchase-terms masthead-terms">
-			By purchasing, you agree to the <a href="/legal/terms-of-sale">Terms of Sale</a>, <a
-				href="/legal/refund-policy">Refund Policy</a
-			>, and <a href="/legal/product-license">Product License</a>. See the <a href="/legal/privacy"
-				>Privacy Policy</a
-			>.
+			By purchasing, you agree to the <a href="/legal/terms-of-sale">Terms of Sale</a>,{' '}
+			<a href="/legal/refund-policy">Refund Policy</a>, and{' '}
+			<a href="/legal/product-license">Product License</a>. See the{' '}
+			<a href="/legal/privacy">Privacy Policy</a>.
 		</p>
 	</Masthead>
 
@@ -111,14 +111,12 @@ const schema = JSON.stringify({
 			</div>
 
 			<div class="module-grid">
-				{
-					modules.map((module, i) => (
-						<article data-reveal data-reveal-delay={Math.min(i, 4) * 45}>
-							<h3>{module.title}</h3>
-							<p>{module.copy}</p>
-						</article>
-					))
-				}
+				{modules.map((module, i) => (
+					<article data-reveal data-reveal-delay={Math.min(i, 4) * 45}>
+						<h3>{module.title}</h3>
+						<p>{module.copy}</p>
+					</article>
+				))}
 			</div>
 		</div>
 	</section>
@@ -131,15 +129,13 @@ const schema = JSON.stringify({
 			</div>
 
 			<ol class="workflow-list">
-				{
-					steps.map(([title, copy], i) => (
-						<li data-reveal data-reveal-delay={i * 50}>
-							<span class="step-index">{String(i + 1).padStart(2, '0')}</span>
-							<h3>{title}</h3>
-							<p>{copy}</p>
-						</li>
-					))
-				}
+				{steps.map(([title, copy], i) => (
+					<li data-reveal data-reveal-delay={i * 50}>
+						<span class="step-index">{String(i + 1).padStart(2, '0')}</span>
+						<h3>{title}</h3>
+						<p>{copy}</p>
+					</li>
+				))}
 			</ol>
 		</div>
 	</section>
@@ -151,13 +147,21 @@ const schema = JSON.stringify({
 					<p class="eyebrow">One-time purchase</p>
 					<h2 class="display display-lg mt-4">Own the foundation.</h2>
 					<p class="offer-copy">
-						Get the complete release for <strong>${PRICE} {CURRENCY}</strong>. Buyers receive the
-						source tree, written handbook, example application and one year of product updates.
+						Get the complete release for{' '}
+						<strong>
+							${PRICE} {CURRENCY}
+						</strong>
+						. Buyers receive the source tree, written handbook, example application and one year of
+						product updates.
 					</p>
 				</div>
 
 				<aside class="price-card" data-reveal data-reveal-delay="70" aria-label="Purchase terms">
-					<p class="price"><span>$</span>{PRICE}<small> {CURRENCY}</small></p>
+					<p class="price">
+						<span>$</span>
+						{PRICE}
+						<small> {CURRENCY}</small>
+					</p>
 					<ul>
 						<li>Commercial license for one purchaser and their team</li>
 						<li>Complete source tree and downloadable archive</li>
@@ -171,11 +175,11 @@ const schema = JSON.stringify({
 					</form>
 					<p class="purchase-terms terms">
 						Secure checkout through Stripe. Immediate access after payment; applicable tax and local
-						currency are shown at checkout. By purchasing, you agree to the <a
-							href="/legal/terms-of-sale">Terms of Sale</a
-						>, <a href="/legal/refund-policy">Refund Policy</a>, and <a
-							href="/legal/product-license">Product License</a
-						>. See the <a href="/legal/privacy">Privacy Policy</a>.
+						currency are shown at checkout. By purchasing, you agree to the{' '}
+						<a href="/legal/terms-of-sale">Terms of Sale</a>,{' '}
+						<a href="/legal/refund-policy">Refund Policy</a>, and{' '}
+						<a href="/legal/product-license">Product License</a>. See the{' '}
+						<a href="/legal/privacy">Privacy Policy</a>.
 					</p>
 				</aside>
 			</div>
@@ -210,32 +214,21 @@ const schema = JSON.stringify({
 </Base>
 
 <style>
-	.checkout-note,
-	.section-heading > p {
-		font-size: 0.7rem;
+	.checkout-note {
+		font-size: 0.78rem;
 		font-weight: 600;
-		letter-spacing: 0.16em;
+		letter-spacing: 0.06em;
 		text-transform: uppercase;
 		color: var(--muted);
-	}
-	.checkout-note {
 		align-self: center;
-	}
-	.masthead-actions {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 1rem;
-		margin-top: 2rem;
 	}
 	.masthead-terms {
 		max-width: 66ch;
 		margin-top: 1rem;
 	}
 	.purchase-terms {
-		font-family: var(--font-sans);
-		font-size: 0.78rem;
-		line-height: 1.55;
+		font-size: 0.82rem;
+		line-height: 1.6;
 		color: var(--muted);
 	}
 	.purchase-terms a {
@@ -257,105 +250,92 @@ const schema = JSON.stringify({
 	.workflow,
 	.offer,
 	.fit {
-		padding-block: clamp(4.5rem, 9vw, 8rem);
-		border-top: 1px solid var(--line);
-	}
-	.section-heading {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 2rem;
-		padding-bottom: 1rem;
-		border-bottom: 2px solid var(--text);
+		padding-block: clamp(3.5rem, 7vw, 5.5rem);
 	}
 	.module-grid {
 		display: grid;
-		gap: 2.5rem 3.5rem;
-		margin-top: clamp(2.5rem, 5vw, 4rem);
+		gap: 1.25rem;
 	}
 	.module-grid article {
-		min-width: 0;
-		padding-left: 1.25rem;
-		border-left: 1px solid var(--line-strong);
+		padding: 1.5rem;
+		background: var(--panel);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
 	}
 	.module-grid h3,
 	.workflow-list h3,
 	.fit-grid h3 {
-		font-family: var(--font-serif);
-		font-size: clamp(1.35rem, 2.2vw, 1.8rem);
-		font-weight: 500;
-		letter-spacing: -0.01em;
+		font-size: 1.15rem;
+		font-weight: 600;
+		letter-spacing: -0.015em;
 	}
 	.module-grid p,
 	.workflow-list p,
 	.fit-grid p {
-		margin-top: 0.6rem;
-		font-family: var(--font-serif);
-		font-size: 1rem;
+		margin-top: 0.55rem;
+		font-size: 0.95rem;
 		line-height: 1.65;
 		color: var(--body);
 	}
 	.workflow-list {
 		display: grid;
-		gap: 2.5rem 0;
-		margin-top: clamp(2.5rem, 5vw, 4rem);
+		gap: 1.25rem;
 		list-style: none;
 	}
 	.workflow-list li {
-		padding-left: 1.25rem;
-		border-left: 1px solid var(--line-strong);
+		padding: 1.5rem;
+		background: var(--panel);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
 	}
 	.step-index {
 		display: block;
-		font-size: 0.7rem;
-		font-weight: 600;
-		letter-spacing: 0.16em;
-		color: var(--accent-warm);
+		font-size: 0.8rem;
+		font-weight: 700;
+		color: var(--accent);
 	}
 	.workflow-list h3 {
-		margin-top: 0.6rem;
+		margin-top: 0.5rem;
 	}
 	.offer-grid {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.7fr);
 		align-items: start;
-		gap: clamp(3rem, 8vw, 8rem);
+		gap: 2rem;
 	}
 	.offer-grid h2 {
-		max-width: 12ch;
+		max-width: 14ch;
 	}
 	.offer-copy {
 		max-width: 52ch;
-		margin-top: 1.5rem;
-		font-family: var(--font-serif);
-		font-size: 1.12rem;
+		margin-top: 1.25rem;
+		font-size: 1.05rem;
 		line-height: 1.7;
 		color: var(--body);
 	}
 	.price-card {
-		padding-top: 1.25rem;
-		border-top: 2px solid var(--accent-warm);
+		padding: 1.75rem;
+		background: var(--panel);
+		border: 1px solid var(--line);
+		border-radius: var(--radius-lg);
+		box-shadow: var(--shadow-sm);
 	}
 	.price {
-		font-family: var(--font-serif);
-		font-size: clamp(3.2rem, 6vw, 4.8rem);
-		font-weight: 500;
+		font-size: clamp(2.75rem, 5vw, 3.75rem);
+		font-weight: 700;
 		letter-spacing: -0.03em;
 		line-height: 1;
 	}
 	.price span,
 	.price small {
-		font-family: var(--font-sans);
-		font-size: 0.75rem;
+		font-size: 0.9rem;
 		font-weight: 600;
-		letter-spacing: 0.14em;
 		color: var(--accent-warm);
 	}
 	.price-card ul {
 		display: grid;
 		gap: 0.6rem;
-		margin-block: 1.75rem;
-		padding-top: 1.75rem;
+		margin-block: 1.5rem;
+		padding-top: 1.5rem;
 		border-top: 1px solid var(--line);
 		list-style: none;
 		font-size: 0.92rem;
@@ -371,33 +351,27 @@ const schema = JSON.stringify({
 	}
 	.fit-grid {
 		display: grid;
-		gap: 2.5rem 3.5rem;
-		margin-top: clamp(2.5rem, 5vw, 4rem);
+		gap: 1.25rem;
 	}
 	.fit-grid > div {
-		padding-left: 1.25rem;
-		border-left: 1px solid var(--line-strong);
+		padding: 1.5rem;
+		background: var(--panel);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
 	}
 	@media (width >= 48rem) {
 		.module-grid {
-			grid-template-columns: repeat(3, 1fr);
+			grid-template-columns: repeat(3, minmax(0, 1fr));
 		}
 		.workflow-list {
-			grid-template-columns: repeat(4, 1fr);
-			gap: 0 3rem;
+			grid-template-columns: repeat(4, minmax(0, 1fr));
 		}
 		.fit-grid {
-			grid-template-columns: repeat(2, 1fr);
-		}
-	}
-	@media (width < 48rem) {
-		.section-heading {
-			align-items: flex-start;
-			flex-direction: column;
-			gap: 0.75rem;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 		.offer-grid {
-			grid-template-columns: 1fr;
+			grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.7fr);
+			gap: 4rem;
 		}
 	}
 </style>

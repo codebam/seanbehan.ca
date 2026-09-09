@@ -6,19 +6,10 @@
 
 /* ═══════════════════════════════════════════════════════════
    Fonts
-   Newsreader carries the site: display type, page titles and the
-   reading column are all set in it. Inter is the utility face —
-   navigation, labels, buttons, metadata. Newsreader's italic axis
-   is not optional: it is the voice of every emphasized word in a
-   headline.
-
-   Served from static/fonts rather than imported from
-   Fontsource: the packages declare every subset and the full
-   axis ranges, which is ~330 kB of font for a latin-only site
-   that uses two serif weights. tools/fonts/build-fonts.sh
-   rebuilds these three files — run it when either package is
-   upgraded. Stable filenames, so the document can preload them
-   instead of waiting for this stylesheet to be parsed first.
+   Inter carries the interface: navigation, headings, labels,
+   buttons, metadata. Newsreader is kept for one job only — the
+   body of a long article — because a serif reading column is
+   still the most comfortable way to read a page of prose.
    ═══════════════════════════════════════════════════════════ */
 @font-face {
 	font-family: 'Inter Variable';
@@ -27,8 +18,6 @@
 	font-weight: 400 700;
 	src: url('/fonts/inter-latin.woff2') format('woff2-variations');
 }
-/* Newsreader keeps a live `opsz` axis, which is what makes `font-optical-sizing`
-   in `.display` do anything. */
 @font-face {
 	font-family: 'Newsreader Variable';
 	font-style: normal;
@@ -44,10 +33,7 @@
 	src: url('/fonts/newsreader-latin-italic.woff2') format('woff2-variations');
 }
 
-/* Metric-matched stand-ins for the two webfaces, so the swap does not reflow.
-   The numbers are computed from the real font files against the local face each
-   one names — regenerate them with tools/fonts/fallback-metrics.py if either
-   webfont is rebuilt. */
+/* Metric-matched stand-ins for the two webfaces, so the swap does not reflow. */
 @font-face {
 	font-family: 'Inter Variable Fallback';
 	src: local('Arial');
@@ -68,21 +54,13 @@
 /* ═══════════════════════════════════════════════════════════
    Design tokens
 
-   One set of names, two palettes. Light is warm paper — cream
-   grounds, near-white panels, ink-brown type; dark carries the
-   same warm ink onto a deep espresso surface. Blue does the
-   interactive work — links, focus, targets — and a terracotta
-   is the editorial accent: italic emphasis, the wordmark's dot,
-   the small decorative marks. Nothing outside this block knows
-   which palette is active — components only ever reference the
-   tokens.
+   A neutral, high-contrast palette: white paper, slate ink, a
+   single blue for anything interactive and a warm amber reserved
+   for editorial emphasis (the wordmark dot, an italic phrase).
+   The same names carry both themes; components never branch on
+   the scheme.
    ═══════════════════════════════════════════════════════════ */
 @theme {
-	/* The Fallback families are the local ones with the webfont's metrics forced
-	   onto them (see the @font-face rules above): while the real face is still
-	   in flight under `font-display: swap`, text is drawn in a fallback that
-	   occupies the same box, so the swap changes the letterforms and nothing
-	   else. Without them, every page shifted when the fonts landed. */
 	--font-sans:
 		'Inter Variable', 'Inter Variable Fallback', Inter, ui-sans-serif, system-ui, -apple-system,
 		'Segoe UI', sans-serif;
@@ -94,40 +72,6 @@
 		Consolas, 'Liberation Mono', monospace;
 }
 
-/* The two palettes, written once each so the inverted band below can hand a
-   section the palette it is not currently in. */
-@layer base {
-	:root {
-		--palette-light-bg: #f7f2e8;
-		--palette-light-alt: #efe8da;
-		--palette-light-panel: #fffdf8;
-		--palette-light-line: #ddd3c2;
-		--palette-light-line-strong: #bfb29c;
-		--palette-light-text: #221c15;
-		--palette-light-body: #4b4237;
-		--palette-light-muted: #6c6152;
-		--palette-light-dim: #8d8069;
-		--palette-light-accent: #1d4ed8;
-		--palette-light-accent-hover: #173a9e;
-		--palette-light-accent-on: #fffdf8;
-		--palette-light-warm: #b23f1e;
-
-		--palette-dark-bg: #171310;
-		--palette-dark-alt: #1f1a15;
-		--palette-dark-panel: #211b16;
-		--palette-dark-line: #3a3229;
-		--palette-dark-line-strong: #584c3d;
-		--palette-dark-text: #f4ede0;
-		--palette-dark-body: #d3c7b4;
-		--palette-dark-muted: #a89b86;
-		--palette-dark-dim: #7b6e5c;
-		--palette-dark-accent: #84a9ff;
-		--palette-dark-accent-hover: #aec8ff;
-		--palette-dark-accent-on: #1a120a;
-		--palette-dark-warm: #e8925f;
-	}
-}
-
 @layer base {
 	:root {
 		color-scheme: light dark;
@@ -135,69 +79,80 @@
 		--kumo-button-emphasis-ring: var(--accent-hover);
 
 		/* Surfaces */
-		--bg: #f7f2e8;
-		--surface-alt: #efe8da;
-		--panel: #fffdf8;
-		--line: #ddd3c2;
-		--line-strong: #bfb29c;
+		--bg: #ffffff;
+		--surface-alt: #f8fafc;
+		--panel: #ffffff;
+		--line: #e2e8f0;
+		--line-strong: #cbd5e1;
 
 		/* Text */
-		--text: #221c15;
-		--body: #4b4237;
-		--muted: #6c6152;
-		/* Non-text only — scrollbar thumb, the search icon. It sits at 3.5:1 on
-		   every surface here, which clears the 3:1 bar for UI marks but not the
-		   4.5:1 one for type, and it fails hardest in the inverted footer where
-		   Lighthouse caught it. The faintest *text* tier is --muted. */
-		--dim: #8d8069;
+		--text: #0f172a;
+		--body: #334155;
+		--muted: #64748b;
+		--dim: #94a3b8;
 
 		/* Accent */
-		--accent: #1d4ed8;
-		--accent-hover: #173a9e;
-		--accent-warm: var(--palette-light-warm);
-		/* Text that sits on an accent surface. */
-		--accent-on: var(--palette-light-accent-on);
-		/* Accent at low alpha, for tints that survive both themes */
+		--accent: #2563eb;
+		--accent-hover: #1d4ed8;
+		--accent-on: #ffffff;
+		--accent-warm: #b45309;
 		--accent-wash: color-mix(in srgb, var(--accent) 8%, transparent);
-		/* The same for the warm accent. One definition works in both themes
-		   because the mix resolves against whichever warm is live. */
-		--accent-warm-wash: color-mix(in srgb, var(--accent-warm) 22%, transparent);
+		--accent-warm-wash: color-mix(in srgb, var(--accent-warm) 16%, transparent);
+		--positive: #16a34a;
 
-		/* Inverted pair, used by the primary button: a dark pill on a
-		   light page, a light pill on a dark one. */
-		--invert-bg: #221c15;
-		--invert-text: #f7f2e8;
+		/* Inverted pair, used by the primary button and the footer. */
+		--invert-bg: #0f172a;
+		--invert-text: #f8fafc;
+
+		/* Footer is dark in both themes, so it needs its own small set. */
+		--footer-bg: #0f172a;
+		--footer-text: #e2e8f0;
+		--footer-muted: #94a3b8;
+		--footer-line: #1e293b;
+
+		/* Geometry */
+		--radius-sm: 6px;
+		--radius: 10px;
+		--radius-lg: 16px;
+		--shadow-sm: 0 1px 2px rgb(15 23 42 / 0.06), 0 1px 3px rgb(15 23 42 / 0.08);
+		--shadow-md: 0 4px 12px rgb(15 23 42 / 0.08), 0 2px 4px rgb(15 23 42 / 0.05);
 	}
 
 	@media (prefers-color-scheme: dark) {
 		:root {
-			--bg: #171310;
-			--surface-alt: #1f1a15;
-			--panel: #211b16;
-			--line: #3a3229;
-			--line-strong: #584c3d;
+			--bg: #0b1220;
+			--surface-alt: #0f172a;
+			--panel: #111827;
+			--line: #1e293b;
+			--line-strong: #334155;
 
-			--text: #f4ede0;
-			--body: #d3c7b4;
-			--muted: #a89b86;
-			--dim: #7b6e5c;
+			--text: #f1f5f9;
+			--body: #cbd5e1;
+			--muted: #94a3b8;
+			--dim: #64748b;
 
-			--accent: #84a9ff;
-			--accent-hover: #aec8ff;
-			--accent-warm: var(--palette-dark-warm);
-			--accent-on: var(--palette-dark-accent-on);
-			--accent-wash: color-mix(in srgb, var(--accent) 14%, transparent);
+			--accent: #60a5fa;
+			--accent-hover: #93c5fd;
+			--accent-on: #0b1220;
+			--accent-warm: #fbbf24;
+			--accent-wash: color-mix(in srgb, var(--accent) 16%, transparent);
+			--positive: #4ade80;
 
-			--invert-bg: #f4ede0;
-			--invert-text: #171310;
+			--invert-bg: #f1f5f9;
+			--invert-text: #0b1220;
+
+			--footer-bg: #020617;
+			--footer-text: #e2e8f0;
+			--footer-muted: #94a3b8;
+			--footer-line: #1e293b;
+
+			--shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+			--shadow-md: 0 6px 16px rgb(0 0 0 / 0.45);
 		}
 	}
 
 	html {
 		scroll-behavior: smooth;
-		/* Reserve the scrollbar's width on every page, so a short page and a long
-		   one sit at the same horizontal centre instead of shifting when the
-		   scrollbar appears. */
 		scrollbar-gutter: stable;
 	}
 
@@ -205,32 +160,30 @@
 		background: var(--bg);
 		color: var(--text);
 		font-family: var(--font-sans);
+		font-size: 1rem;
+		line-height: 1.6;
 		min-height: 100vh;
 		-webkit-font-smoothing: antialiased;
 		text-rendering: optimizeLegibility;
-		/* Kerning and the faces' own ligatures. At display sizes this is the
-		   difference between type that was set and text that landed. */
 		font-kerning: normal;
 		font-variant-ligatures: common-ligatures;
 	}
 
-	/* A highlight is an editorial act, so it takes the warm accent's tint;
-	   blue stays reserved for what the hand can reach. */
 	::selection {
-		background: var(--accent-warm-wash);
+		background: var(--accent-wash);
 		color: var(--text);
 	}
 
 	::-webkit-scrollbar {
-		width: 8px;
-		height: 8px;
+		width: 10px;
+		height: 10px;
 	}
 	::-webkit-scrollbar-track {
 		background: var(--bg);
 	}
 	::-webkit-scrollbar-thumb {
 		background: var(--line-strong);
-		border-radius: 4px;
+		border-radius: 6px;
 	}
 	::-webkit-scrollbar-thumb:hover {
 		background: var(--dim);
@@ -255,67 +208,34 @@
 	   Type
 	   ═══════════════════════════════════════════════════════════ */
 
-	/* The display face is the serif: page and section titles are set wide and
-	   quiet, with the optical-sizing axis doing the fine fitting. */
 	.display {
-		font-family: var(--font-serif);
-		font-weight: 500;
-		letter-spacing: -0.015em;
-		line-height: 1.05;
-		font-optical-sizing: auto;
+		font-family: var(--font-sans);
+		font-weight: 700;
+		letter-spacing: -0.02em;
+		line-height: 1.12;
 		text-wrap: balance;
+	}
+	.display-xl {
+		font-size: clamp(2.25rem, 5vw, 3.5rem);
+		line-height: 1.08;
+	}
+	.display-lg {
+		font-size: clamp(1.5rem, 2.6vw, 2rem);
+		line-height: 1.15;
 	}
 
-	/* Line breaking as a typographic decision rather than the container's:
-	   `balance` keeps a heading from ending on an orphaned word, `pretty` does
-	   the same for a paragraph without changing its weight. Browsers that do
-	   not know the property lay the text out exactly as before. */
-	.entry .title,
-	.sibling .title,
-	.work-row .title,
-	.notes-grid h3,
-	.destination-list strong,
-	.channel-list strong,
-	.tag-grid strong {
-		text-wrap: balance;
-	}
-	.hero-intro,
-	.masthead-copy,
-	.row-copy,
-	.entry .desc,
-	.brief-copy,
-	.notes-grid p {
-		text-wrap: pretty;
-	}
-	/* Italic, in the warm orange: the one decorative move a headline gets. */
+	/* Italic, in the warm accent: the one decorative move a headline gets. */
 	.display em {
 		font-style: italic;
 		color: var(--accent-warm);
 	}
 
-	/* Page headline. Fluid rather than stepped, so the line count stays put
-	   between the breakpoints instead of reflowing at each one. The cap is set
-	   to the reading column, not the 1140px shell — at the old 5.2rem the
-	   headline overspans the page it sits on, and the optical-size axis is
-	   what does the fitting at the smaller cap. */
-	.display-xl {
-		font-size: clamp(2.9rem, 6.8vw, 4.6rem);
-		line-height: 1.02;
-	}
-
-	/* Panel heading */
-	.display-lg {
-		font-size: clamp(1.85rem, 3.4vw, 2.6rem);
-		line-height: 1.1;
-	}
-
-	/* Section label: small, uppercase, tracked out. Inter, not the serif —
-	   this is furniture, not copy. */
+	/* Section label: small, uppercase, tracked. Inter, not the serif. */
 	.eyebrow {
 		font-family: var(--font-sans);
-		font-size: 0.7rem;
+		font-size: 0.78rem;
 		font-weight: 600;
-		letter-spacing: 0.16em;
+		letter-spacing: 0.08em;
 		text-transform: uppercase;
 		color: var(--muted);
 	}
@@ -329,62 +249,102 @@
 		color: var(--accent);
 	}
 
-	/* ═══════════════════════════════════════════════════════════
-	   Panels
+	.entry .title,
+	.sibling .title,
+	.work-row .title,
+	.notes-grid h3,
+	.destination-list strong,
+	.channel-list strong,
+	.tag-grid strong,
+	.project-card h3,
+	.post-card h3 {
+		text-wrap: balance;
+	}
+	.hero-lead,
+	.masthead-copy,
+	.row-copy,
+	.entry .desc,
+	.brief-copy,
+	.notes-grid p,
+	.card p {
+		text-wrap: pretty;
+	}
 
-	   The page is one sheet. Mid-page sections no longer alternate fills:
-	   `panel-alt` is kept as the name the templates already use, but it paints
-	   the same ground as `panel` and lets the section's own top rule do the
-	   separating. The footer is the one band that still inverts — the page
-	   ends, and the signature's page is different.
+	/* ═══════════════════════════════════════════════════════════
+	   Layout
 	   ═══════════════════════════════════════════════════════════ */
+
+	.shell {
+		width: 100%;
+		max-width: 1120px;
+		margin-inline: auto;
+		padding-inline: 1.25rem;
+	}
+	@media (width >= 48rem) {
+		.shell {
+			padding-inline: 2rem;
+		}
+	}
+
+	.section {
+		padding-block: clamp(3.5rem, 7vw, 5.5rem);
+	}
 	.panel {
 		background: var(--bg);
 		color: var(--text);
 	}
 	.panel-alt {
-		background: var(--bg);
+		background: var(--surface-alt);
 		color: var(--text);
 	}
-
 	.panel-invert {
-		--bg: var(--palette-dark-bg);
-		--surface-alt: var(--palette-dark-alt);
-		--panel: var(--palette-dark-panel);
-		--line: var(--palette-dark-line);
-		--line-strong: var(--palette-dark-line-strong);
-		--text: var(--palette-dark-text);
-		--body: var(--palette-dark-body);
-		--muted: var(--palette-dark-muted);
-		--dim: var(--palette-dark-dim);
-		--accent: var(--palette-dark-accent);
-		--accent-hover: var(--palette-dark-accent-hover);
-		--accent-warm: var(--palette-dark-warm);
-		--accent-on: var(--palette-dark-accent-on);
-		--invert-bg: var(--palette-dark-text);
-		--invert-text: var(--palette-dark-bg);
+		--bg: var(--footer-bg);
+		--surface-alt: var(--footer-bg);
+		--panel: var(--footer-bg);
+		--line: var(--footer-line);
+		--line-strong: var(--footer-line);
+		--text: var(--footer-text);
+		--body: var(--footer-text);
+		--muted: var(--footer-muted);
+		--dim: var(--footer-muted);
+		--accent: var(--accent);
+		--invert-bg: var(--footer-text);
+		--invert-text: var(--footer-bg);
 		--text-color-kumo-default: var(--text);
 		--color-kumo-fill: var(--line-strong);
 		background: var(--bg);
 		color: var(--text);
 	}
-	@media (prefers-color-scheme: dark) {
-		.panel-invert {
-			--bg: var(--palette-dark-alt);
-		}
-	}
 
-	/* Inner column shared by every panel, and by the pages that are a single
-	   panel of their own. Narrower than a full-bleed grid: the site reads as
-	   a page, not a dashboard. */
-	.shell {
-		max-width: 1140px;
-		margin-inline: auto;
-		padding-inline: 1.5rem;
+	/* The heading row shared by every content section: a title on the left, a
+	   count, link or note on the right, separated from the content below by a
+	   single hairline. */
+	.section-head,
+	.section-heading,
+	.archive-heading {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 1.5rem;
+		padding-bottom: 1rem;
+		margin-bottom: clamp(2rem, 4vw, 3rem);
+		border-bottom: 1px solid var(--line);
 	}
-	@media (width >= 48rem) {
-		.shell {
-			padding-inline: 2.5rem;
+	.section-head > p,
+	.section-heading > p,
+	.archive-heading > p {
+		font-size: 0.8rem;
+		font-weight: 500;
+		color: var(--muted);
+		white-space: nowrap;
+	}
+	@media (width < 48rem) {
+		.section-head,
+		.section-heading,
+		.archive-heading {
+			align-items: flex-start;
+			flex-direction: column;
+			gap: 0.5rem;
 		}
 	}
 
@@ -395,88 +355,80 @@
 	.btn {
 		display: inline-flex;
 		align-items: center;
+		justify-content: center;
 		gap: 0.5rem;
-		border-radius: 2px;
-		background: var(--invert-bg);
-		color: var(--invert-text);
-		padding: 0.7rem 1.35rem;
-		font-size: 0.9rem;
-		font-weight: 500;
-		letter-spacing: 0.01em;
+		border-radius: var(--radius-sm);
+		background: var(--accent);
+		color: var(--accent-on);
+		padding: 0.65rem 1.25rem;
+		font-size: 0.95rem;
+		font-weight: 600;
+		line-height: 1.2;
+		box-shadow: var(--shadow-sm);
 		transition:
 			background 0.2s ease,
-			color 0.2s ease;
+			transform 0.12s ease,
+			box-shadow 0.2s ease;
 	}
 	.btn:hover {
-		background: var(--accent-warm);
-		color: var(--accent-on);
+		background: var(--accent-hover);
+		box-shadow: var(--shadow-md);
 	}
 	.btn:active {
 		transform: translateY(1px);
-		transition-duration: 0.08s;
 	}
 
-	.btn-outline {
+	.btn-outline,
+	.btn-secondary {
 		display: inline-flex;
 		align-items: center;
+		justify-content: center;
 		gap: 0.5rem;
 		border: 1px solid var(--line-strong);
-		border-radius: 2px;
-		padding: 0.55rem 1.1rem;
-		font-size: 0.9rem;
+		border-radius: var(--radius-sm);
+		background: var(--panel);
+		padding: 0.65rem 1.25rem;
+		font-size: 0.95rem;
+		font-weight: 600;
 		color: var(--text);
 		transition:
 			border-color 0.2s ease,
-			color 0.2s ease;
+			color 0.2s ease,
+			background 0.2s ease;
 	}
-	.btn-outline:hover {
+	.btn-outline:hover,
+	.btn-secondary:hover {
 		border-color: var(--accent);
 		color: var(--accent);
 	}
 
-	/* Kumo's buttons are rounder and softer than the house style; every Kumo
-	   control on the site carries this class so the geometry stays square and
-	   quiet without forking the component. */
+	/* Kumo ships rounder, softer controls than the house style; every Kumo
+	   control on the site carries this class so the geometry stays consistent
+	   without forking the component. */
 	.flat-control {
-		border-radius: 2px;
-		box-shadow: none;
+		border-radius: var(--radius-sm) !important;
+		box-shadow: var(--shadow-sm);
 	}
 
-	/* Quiet inline link with a rule under it, for secondary actions.
-	   The resting rule stays put and a second accent rule wipes across it from
-	   the left, so the link gains weight on hover without the text moving. */
 	.link-quiet {
 		position: relative;
-		color: var(--text);
+		color: var(--body);
 		border-bottom: 1px solid var(--line-strong);
 		padding-bottom: 2px;
 		transition: color 0.2s ease;
 	}
-	.link-quiet::after {
-		content: '';
-		position: absolute;
-		left: 0;
-		right: 0;
-		bottom: -1px;
-		height: 1px;
-		background: var(--accent);
-		transform: scaleX(0);
-		transform-origin: left;
-		transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
-	}
 	.link-quiet:hover {
 		color: var(--accent);
-	}
-	.link-quiet:hover::after,
-	.link-quiet:focus-visible::after {
-		transform: scaleX(1);
+		border-color: var(--accent);
 	}
 
-	/* Accent link used for "All repositories →" style affordances. The arrow is
-	   its own span so it can slide without dragging the label with it. */
 	.link-accent {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
 		color: var(--accent);
-		font-size: 0.9rem;
+		font-size: 0.95rem;
+		font-weight: 600;
 		transition: color 0.2s ease;
 	}
 	.link-accent:hover {
@@ -484,7 +436,7 @@
 	}
 	.link-accent .arrow {
 		display: inline-block;
-		transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+		transition: transform 0.25s var(--ease-out-soft);
 	}
 	.link-accent:hover .arrow,
 	.link-accent:focus-visible .arrow {
@@ -494,54 +446,68 @@
 	.input {
 		width: 100%;
 		background: var(--panel);
-		border: 1px solid var(--line);
-		border-radius: 2px;
-		padding: 0.6rem 0.85rem;
+		border: 1px solid var(--line-strong);
+		border-radius: var(--radius-sm);
+		padding: 0.65rem 0.9rem;
 		font-size: 0.95rem;
 		color: var(--text);
 		transition:
 			border-color 0.2s ease,
 			box-shadow 0.2s ease;
 	}
-	/* Placeholders are read as text and carry the same 4.5:1 bar, which --dim
-	   does not clear. */
 	.input::placeholder {
 		color: var(--muted);
 	}
 	.input:focus {
 		outline: none;
 		border-color: var(--accent);
-		box-shadow: 0 0 0 3px var(--accent-warm-wash);
+		box-shadow: 0 0 0 3px var(--accent-wash);
 	}
 
-	/* Tag: language tags name the site's materials in its own voice, the way a
-	   headline's italic emphasis does, so they take the warm accent. The topic
-	   tags stay quiet; interaction blue is reserved for what is clickable. */
+	/* ═══════════════════════════════════════════════════════════
+	   Cards
+	   ═══════════════════════════════════════════════════════════ */
+
+	.card {
+		background: var(--panel);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+		box-shadow: var(--shadow-sm);
+		transition:
+			border-color 0.2s ease,
+			box-shadow 0.2s ease,
+			transform 0.2s ease;
+	}
+	.card:hover {
+		border-color: var(--line-strong);
+		box-shadow: var(--shadow-md);
+		transform: translateY(-2px);
+	}
+
+	/* Tag: language tags name the site's materials, so they take the warm
+	   accent; topic tags stay quiet. Interaction blue is reserved for what is
+	   clickable. */
 	.tag {
-		font-size: 0.8rem;
+		display: inline-flex;
+		align-items: center;
+		border-radius: 999px;
+		background: var(--surface-alt);
+		border: 1px solid var(--line);
+		padding: 0.15rem 0.6rem;
+		font-size: 0.78rem;
+		font-weight: 500;
 		color: var(--muted);
 	}
 	.tag-lang {
 		color: var(--accent-warm);
-		font-weight: 500;
-	}
-
-	/* Kumo renders its badges as pills. The house geometry is square — the same
-	   reason `.flat-control` exists for its buttons — so the tag rows square
-	   them off rather than leave one rounded shape on the page. */
-	.row-tags span,
-	.tags span,
-	.tag-list span {
-		border-radius: 2px;
 	}
 }
 
 /* ═══════════════════════════════════════════════════════════
    Long-form content
    Tailwind's typography plugin, pointed at our tokens so a single
-   `.prose` works in both themes with no `prose-invert` swap.
-   The reading column is set in the serif — the same face as the
-   headlines, which is what makes a page of it read like a page.
+   `.prose` works in both themes with no `prose-invert` swap. The
+   reading column is the serif; the headings around it stay sans.
    ═══════════════════════════════════════════════════════════ */
 .prose {
 	font-family: var(--font-serif);
@@ -554,42 +520,27 @@
 	--tw-prose-bullets: var(--line-strong);
 	--tw-prose-hr: var(--line);
 	--tw-prose-quotes: var(--text);
-	/* A pull quote is an editorial mark, not something to click: it takes the
-	   warm accent, the same as a headline's italic emphasis and the wordmark's
-	   dot. Blue stays for links. */
 	--tw-prose-quote-borders: var(--accent-warm);
 	--tw-prose-captions: var(--muted);
 	--tw-prose-code: var(--text);
 	--tw-prose-pre-code: var(--body);
-	--tw-prose-pre-bg: var(--panel);
+	--tw-prose-pre-bg: var(--surface-alt);
 	--tw-prose-th-borders: var(--line-strong);
 	--tw-prose-td-borders: var(--line);
-}
-
-.prose :where(h1, h2, h3, h4) {
-	font-family: var(--font-serif);
-	font-weight: 500;
-	letter-spacing: -0.015em;
-}
-
-/* A serif at the same point size reads smaller than a sans, so the column
-   takes a little more leading and a little more width than a sans column
-   would. */
-.prose {
-	line-height: 1.72;
-	/* Inherited by every paragraph and list item in the body, so a line does not
-	   end on a single short word. */
+	line-height: 1.75;
 	text-wrap: pretty;
 }
 
-/* Prose links carry a resting rule in a quiet colour; hover moves the rule to
-   the accent rather than moving the text. */
+.prose :where(h1, h2, h3, h4) {
+	font-family: var(--font-sans);
+	font-weight: 700;
+	letter-spacing: -0.02em;
+}
+
 .prose :where(a):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
 	text-decoration: underline;
 	text-decoration-color: var(--line-strong);
 	text-underline-offset: 0.18em;
-	/* Let the face place its own underline: the serif's descenders are deep
-	   enough that a fixed offset clips them at the wrong height. */
 	text-underline-position: from-font;
 	transition:
 		color 0.2s ease,
@@ -600,19 +551,15 @@
 	text-decoration-color: var(--accent);
 }
 
-/* Post images now carry their intrinsic width and height, so the box is
-   reserved before the bytes land. Both of these are needed for that not to
-   distort the picture: the width cap fits it to the column, and `height: auto`
-   keeps the aspect ratio the attributes would otherwise pin. */
 .prose :where(img) {
 	max-width: 100%;
 	height: auto;
+	border-radius: var(--radius);
 }
 
 /* Section headings are wrapped in a link to themselves, so a reader can copy
-   the URL of a section. It must not read as a link: the colour and weight stay
-   the heading's, and only the ¶ mark in the margin appears — on hover, on
-   keyboard focus, and always on touch, where there is no hover to reveal it. */
+   the URL of a section. The ¶ mark appears in the margin on hover and focus,
+   and never on touch, where there is no hover to reveal it. */
 .prose :where(h2, h3) > .heading-anchor {
 	color: inherit;
 	text-decoration: none;
@@ -636,19 +583,17 @@
 		content: none;
 	}
 }
-/* Landing on an anchor should not put the heading under the top edge — or
-   under the reading-progress strip. */
 .prose :where(h2, h3)[id] {
-	scroll-margin-top: 1.5rem;
+	scroll-margin-top: 5rem;
 }
 
 .prose :where(code):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
 	font-family: var(--font-mono);
-	font-size: 0.8em;
+	font-size: 0.82em;
 	font-weight: 400;
-	background: var(--panel);
+	background: var(--surface-alt);
 	border: 1px solid var(--line);
-	border-radius: 3px;
+	border-radius: 5px;
 	padding: 0.1em 0.35em;
 }
 .prose :where(code)::before,
@@ -661,9 +606,8 @@
 	font-size: 0.85em;
 	line-height: 1.65;
 	border: 1px solid var(--line);
-	border-radius: 4px;
+	border-radius: var(--radius);
 }
-/* Nested code inside a pre keeps the block's own background */
 .prose :where(pre code) {
 	background: transparent;
 	border: 0;
@@ -683,11 +627,8 @@
 		color: var(--shiki-dark);
 	}
 }
-
-/* Shiki sets the block background inline from its own theme; override it so code
-   blocks sit on the same panel surface as the rest of the page. */
 .prose :where(pre.shiki) {
-	background-color: var(--panel) !important;
+	background-color: var(--surface-alt) !important;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -706,8 +647,6 @@
    the words — no forced uppercasing — because the PDF does not either.
    ═══════════════════════════════════════════════════════════ */
 .resume-doc {
-	/* The printed measure, not the reading column: an entry is a title and a
-	   date on one line, and 46rem is the width where that stops wrapping. */
 	max-width: 46rem;
 	margin-inline: auto;
 	margin-block-start: clamp(2.5rem, 5vw, 4rem);
@@ -715,11 +654,6 @@
 	color: var(--body);
 }
 
-/* The two rules under the identity block and each section title: a heavy
-   accent line with a hairline floating below it. A background, not a border,
-   because border-bottom is one line and this is two. The heavy line is the
-   editorial accent, not the interactive one — the same split the PDF draws
-   between its `accentcolor` and `linkcolor`. */
 .resume-doc .resume-head,
 .resume-doc .resume-section {
 	padding-bottom: 0.55rem;
@@ -747,8 +681,6 @@
 	font-family: var(--font-sans);
 	font-size: clamp(1.45rem, 4vw, 1.9rem);
 	font-weight: 700;
-	/* The name is set in caps by the source, so the tracking has to pay for the
-	   width the caps take back. */
 	letter-spacing: 0.08em;
 	line-height: 1.1;
 	color: var(--text);
@@ -757,19 +689,17 @@
 .resume-doc .resume-subtitle {
 	margin-top: 0.3rem;
 	font-family: var(--font-sans);
-	font-size: 0.78rem;
-	letter-spacing: 0.16em;
+	font-size: 0.8rem;
+	letter-spacing: 0.1em;
 	color: var(--accent-warm);
 }
 
-/* Stacked, right-aligned, rather than the PDF's pipe-separated run: in a column
-   this narrow the bars just move on down a line by themselves. */
 .resume-doc .resume-contacts {
 	margin: 0;
 	padding: 0;
 	list-style: none;
 	font-family: var(--font-sans);
-	font-size: 0.8rem;
+	font-size: 0.82rem;
 	line-height: 1.55;
 	text-align: right;
 	color: var(--muted);
@@ -793,24 +723,19 @@
 	font-family: var(--font-sans);
 	font-size: 0.95rem;
 	font-weight: 700;
-	letter-spacing: 0.06em;
+	letter-spacing: 0.05em;
 	color: var(--accent-warm);
 }
 
-/* A quiet label, not a second tier of rule: the PDF gives level 2 a tracked
-   accent line with no hairline at all. */
 .resume-doc .resume-subsection {
 	margin-top: 1.3rem;
 	font-family: var(--font-sans);
-	font-size: 0.75rem;
+	font-size: 0.78rem;
 	font-weight: 700;
-	letter-spacing: 0.1em;
+	letter-spacing: 0.08em;
 	color: var(--accent-warm);
 }
 
-/* One entry: role, company, and the date pushed to the right edge. Flex rather
-   than the PDF's \hfill, and the separator carries its own air because flex
-   layout eats the spaces between the spans. */
 .resume-doc .resume-entry {
 	display: flex;
 	flex-wrap: wrap;
@@ -820,8 +745,6 @@
 	font-size: 0.98rem;
 	font-weight: 600;
 	color: var(--text);
-	/* An entry title that lands alone at the foot of a page is the one break
-	   that ruins a printed copy of this page. */
 	break-after: avoid;
 }
 .resume-doc .resume-org {
@@ -837,14 +760,12 @@
 	margin-left: auto;
 	padding-left: 1rem;
 	font-family: var(--font-sans);
-	font-size: 0.8rem;
+	font-size: 0.82rem;
 	font-weight: 400;
 	color: var(--muted);
 	white-space: pre-wrap;
 }
 
-/* The lead-in of a compacted skill row — "Expert:" holding a line of
-   languages. Bold sans against the serif the rest of the page sets. */
 .resume-doc .resume-key {
 	font-family: var(--font-sans);
 	font-weight: 700;
@@ -876,8 +797,6 @@
 	margin-top: 0.1rem;
 }
 
-/* Links take the site's resting rule and move the rule, not the text, on
-   hover — the same contract as .prose. */
 .resume-doc a {
 	color: var(--accent);
 	text-decoration: underline;
@@ -892,17 +811,12 @@
 	text-decoration-color: var(--accent);
 }
 
-/* Where the identity block ran out of column and stacked instead, the
-   contacts follow the text rather than hanging on the right edge. */
 @media (width < 40rem) {
 	.resume-doc .resume-contacts {
 		text-align: left;
 	}
 }
 
-/* A résumé printed from the browser is a second draft of the PDF, so it gets
-   the same thing the TeX template fights for: a section title stranded alone at
-   the foot of a page is the one break that ruins a print. */
 @media print {
 	.resume-doc {
 		margin-block-start: 0;
@@ -936,12 +850,12 @@
 	z-index: 1;
 	font-family: var(--font-sans);
 	font-size: 0.75rem;
-	font-weight: 500;
+	font-weight: 600;
 	line-height: 1;
 	color: var(--muted);
-	background: var(--surface-alt);
+	background: var(--panel);
 	border: 1px solid var(--line);
-	border-radius: 3px;
+	border-radius: var(--radius-sm);
 	padding: 0.3rem 0.6rem;
 	opacity: 0;
 	pointer-events: none;
@@ -982,12 +896,12 @@
 .copy-address {
 	font-family: var(--font-sans);
 	font-size: 0.75rem;
-	font-weight: 500;
+	font-weight: 600;
 	line-height: 1;
 	color: var(--muted);
-	background: var(--surface-alt);
+	background: var(--panel);
 	border: 1px solid var(--line);
-	border-radius: 3px;
+	border-radius: var(--radius-sm);
 	padding: 0.3rem 0.6rem;
 	transition:
 		color 0.15s ease,
@@ -1010,12 +924,8 @@
    House rules for everything below: nothing moves more than a
    few pixels, nothing loops, nothing runs longer than ~0.6s,
    and nothing animates while the reader is trying to read it.
-   Motion is used to say "this is new" and "this is where the
-   click goes" — never for decoration.
    ═══════════════════════════════════════════════════════════ */
 
-/* The one easing curve the site uses: a fast start that settles rather than
-   arriving at a constant speed. */
 :root {
 	--ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -1035,22 +945,12 @@
 	animation: fadeInUp 0.45s ease-out forwards;
 }
 
-/* ── Entrance stagger ──
-   Above-the-fold blocks come in on a short ladder. Delays are small enough
-   that the whole hero has settled well before a reader finishes the headline.
-
-   The ladder is deliberately short: every millisecond of delay here is a
-   millisecond the largest text on the page is transparent, which is time
-   Lighthouse counts against LCP and Speed Index. `both` keeps the pre-delay
-   frame, so the delay is dead time on screen, not just a late start. Nothing
-   above the fold is wrapped in a second page-level fade for the same reason. */
 .enter {
 	animation: fadeInUp 0.4s var(--ease-out-soft) both;
 	animation-delay: var(--enter-delay, 0ms);
 }
 
-/* ── Scroll reveal ──
-   `reveal-pending` is added by the reveal script (src/scripts/reveal.ts),
+/* `reveal-pending` is added by the reveal script (src/scripts/reveal.ts),
    never by markup, so content is visible when JS is not. */
 .reveal-pending {
 	opacity: 0;
@@ -1061,18 +961,15 @@
 	animation-delay: var(--reveal-delay, 0ms);
 }
 
-/* ── Reading progress ──
-   Scroll-driven, so it costs no JS and no scroll listener. Browsers without
-   `animation-timeline` simply never show the bar, which is the correct
-   degradation for a purely informational strip. */
+/* ── Reading progress ── */
 .read-progress {
 	position: fixed;
 	inset: 0 0 auto 0;
-	height: 2px;
+	height: 3px;
 	transform-origin: left;
 	transform: scaleX(0);
 	background: var(--accent);
-	z-index: 40;
+	z-index: 60;
 	pointer-events: none;
 }
 @supports (animation-timeline: scroll()) {
@@ -1087,9 +984,7 @@
 	}
 }
 
-/* ── Cross-page transition ──
-   A short cross-fade for browsers whose navigation layer starts a view
-   transition; browsers without one simply ignore these pseudo-elements. */
+/* ── Cross-page transition ── */
 @keyframes vtFadeOut {
 	to {
 		opacity: 0;
@@ -1138,12 +1033,6 @@
 
 /* ═══════════════════════════════════════════════════════════
    Print
-   Paper is the one surface the site never lays out for: every rule
-   above assumes pixels, hover, and a palette the OS may still have
-   set to dark when the print dialog opens. Nothing here moves
-   anything — it only pins the light palette, strips the
-   screen-only chrome, and keeps a long article from breaking
-   inside its own paragraphs.
    ═══════════════════════════════════════════════════════════ */
 @media print {
 	:root {
@@ -1152,51 +1041,28 @@
 		--bg: #ffffff;
 		--surface-alt: #ffffff;
 		--panel: #ffffff;
-		--line: #e2d9c9;
-		--line-strong: #c9bda8;
+		--line: #e2e8f0;
+		--line-strong: #cbd5e1;
 
-		--text: #221c15;
-		--body: #4b4237;
-		--muted: #5c5344;
-		--dim: #7c6f5d;
+		--text: #0f172a;
+		--body: #334155;
+		--muted: #475569;
+		--dim: #64748b;
 
 		--accent: #1d4ed8;
-		--accent-hover: #173a9e;
-		--accent-warm: #b23f1e;
+		--accent-hover: #1e40af;
+		--accent-warm: #b45309;
 		--accent-on: #ffffff;
 		--accent-wash: transparent;
 
-		--invert-bg: #221c15;
+		--invert-bg: #0f172a;
 		--invert-text: #ffffff;
-	}
-
-	/* The inverted band swaps its own tokens on prefers-color-scheme, which a
-	   dark machine still reports at print time — pin it to the same paper. */
-	.panel-invert {
-		--bg: #ffffff;
-		--surface-alt: #ffffff;
-		--panel: #ffffff;
-		--line: #e2d9c9;
-		--line-strong: #c9bda8;
-		--text: #221c15;
-		--body: #4b4237;
-		--muted: #5c5344;
-		--dim: #7c6f5d;
-		--accent: #1d4ed8;
-		--accent-hover: #173a9e;
-		--accent-warm: #b23f1e;
-		--accent-on: #ffffff;
-		--invert-bg: #221c15;
-		--invert-text: #ffffff;
-		background: #ffffff;
 	}
 
 	* {
 		animation: none !important;
 		transition: none !important;
 	}
-	/* The entrance and reveal styles start hidden; a print taken before a
-	   reveal fired would ship half the page invisible. */
 	.enter,
 	.reveal-in,
 	.reveal-pending {
@@ -1204,8 +1070,6 @@
 		transform: none !important;
 	}
 
-	/* Screen chrome. The TOC stays — it is the article's map, not the header's.
-	   The search field goes with the wrapper that holds its icon. */
 	header,
 	footer,
 	.read-progress,
@@ -1213,24 +1077,22 @@
 	.code-copy,
 	.btn,
 	.btn-outline,
+	.btn-secondary,
 	div:has(> input[type='search']) {
 		display: none !important;
 	}
 
 	body {
 		background: #ffffff;
-		color: #17181a;
+		color: #0f172a;
 		min-height: 0;
 	}
 	.panel,
 	.panel-alt {
 		background: #ffffff;
-		color: #17181a;
+		color: #0f172a;
 	}
 
-	/* Shiki bakes both palettes into every token and this machine may still be
-	   on dark, whose half is light-on-dark — invisible on paper. Keep the light
-	   half only, and the block's own inline background with it. */
 	.shiki,
 	.shiki span {
 		color: var(--shiki-light) !important;
@@ -1240,14 +1102,10 @@
 		border: 1px solid var(--line);
 	}
 
-	/* No hover for a reader to discover the section links; the ¶ is noise. */
 	.prose :where(h2, h3) > .heading-anchor::before {
 		content: none;
 	}
 
-	/* A link prints its destination: on paper the URL is the value, and there
-	   is no following to expect. Internal links stay quiet — the page next to
-	   this one is already in the same paper. */
 	a {
 		color: var(--text);
 		text-decoration: none;
@@ -1259,7 +1117,6 @@
 		word-break: break-all;
 	}
 
-	/* Long fences would otherwise run off the page edge. */
 	pre,
 	code {
 		white-space: pre-wrap !important;
@@ -1271,7 +1128,6 @@
 		padding: 0;
 	}
 
-	/* Keep a heading with its content and a block with itself. */
 	h1,
 	h2,
 	h3 {

@@ -46,16 +46,26 @@ const robots = posts.length < 2 ? 'noindex, follow' : undefined;
 		<Fragment slot="title">{display}</Fragment>
 		<p>Everything filed under this subject, newest first.</p>
 		<p class="masthead-actions">
-			<a class="link-accent" href="/posts/tags">All tags <span class="arrow">&rarr;</span></a>
-			<a class="link-quiet" href={`/posts/tag/${target}/rss.xml`}>Subscribe via RSS</a>
+			<a class="link-accent" href="/posts/tags">
+				All tags <span class="arrow">&rarr;</span>
+			</a>
+			<a class="link-quiet" href={`/posts/tag/${target}/rss.xml`}>
+				Subscribe via RSS
+			</a>
 		</p>
 	</Masthead>
 
-	<section class="panel">
-		<div class="shell pb-24">
+	<section class="panel tag-posts">
+		<div class="shell">
 			<div data-reveal>
 				<PostList posts={posts} headingLevel={2} />
 			</div>
 		</div>
 	</section>
 </Base>
+
+<style>
+	.tag-posts {
+		padding-block: clamp(3.5rem, 7vw, 5.5rem);
+	}
+</style>

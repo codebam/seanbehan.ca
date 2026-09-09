@@ -87,7 +87,9 @@ const updated = resume
 	     disagree about what they say. -->
 	<link slot="head" rel="alternate" type="text/markdown" href="/resume.md" />
 	<Masthead label="Résumé · Sean Behan" meta="Remote / Greater Toronto Area">
-		<Fragment slot="title">Full-stack developer, <em>open to work.</em></Fragment>
+		<Fragment slot="title">
+			Full-stack developer, <em>open to work.</em>
+		</Fragment>
 		<p class="masthead-blurb">{intro}</p>
 		<div class="masthead-availability">
 			<Availability availability={site.availability} />
@@ -124,8 +126,10 @@ const updated = resume
 				class="link-quiet"
 				href="https://github.com/codebam"
 				target="_blank"
-				rel="noopener noreferrer">GitHub</a
+				rel="noopener noreferrer"
 			>
+				GitHub
+			</a>
 		</p>
 	</Masthead>
 
@@ -136,14 +140,12 @@ const updated = resume
 				<p>Stack / shipped / method</p>
 			</div>
 			<div class="profile-grid">
-				{
-					profile.map((item, i) => (
-						<article data-reveal data-reveal-delay={i * 55}>
-							<h3>{item.label}</h3>
-							<p>{item.copy}</p>
-						</article>
-					))
-				}
+				{profile.map((item, i) => (
+					<article data-reveal data-reveal-delay={i * 55}>
+						<h3>{item.label}</h3>
+						<p>{item.copy}</p>
+					</article>
+				))}
 			</div>
 		</div>
 	</section>
@@ -156,35 +158,31 @@ const updated = resume
 					Download the PDF <span class="arrow">&rarr;</span>
 				</a>
 			</div>
-			{
-				updated && (
-					<p class="document-note">Typeset from the same source as the PDF · updated {updated}</p>
-				)
-			}
+			{updated && (
+				<p class="document-note">Typeset from the same source as the PDF · updated {updated}</p>
+			)}
 
-			{
-				resume ? (
-					<Fragment set:html={resume.html} />
-				) : (
-					/* The bucket has no fragment in it: a fresh clone with an empty dev
+			{resume ? (
+				<Fragment set:html={resume.html} />
+			) : (
+				/* The bucket has no fragment in it: a fresh clone with an empty dev
 					   store, or a build that uploaded nothing. Said out loud rather than
 					   left as a hole where the résumé should be. */
-					<div class="document-missing">
-						<p>
-							The inline copy is not available on this build of the site. The PDF is, and it is the
-							same document.
-						</p>
-						<p>
-							Locally: <code>npm run resume</code> then <code>npm run resume:seed</code>.
-						</p>
-						<p>
-							<a class="link-accent" href={RESUME_PDF} download={resumePdfFilename()}>
-								Download the PDF &rarr;
-							</a>
-						</p>
-					</div>
-				)
-			}
+				<div class="document-missing">
+					<p>
+						The inline copy is not available on this build of the site. The PDF is, and it is the
+						same document.
+					</p>
+					<p>
+						Locally: <code>npm run resume</code> then <code>npm run resume:seed</code>.
+					</p>
+					<p>
+						<a class="link-accent" href={RESUME_PDF} download={resumePdfFilename()}>
+							Download the PDF &rarr;
+						</a>
+					</p>
+				</div>
+			)}
 		</div>
 	</section>
 </Base>
@@ -192,69 +190,42 @@ const updated = resume
 <style>
 	.profile,
 	.document {
-		padding-block: clamp(4.5rem, 9vw, 8rem);
-		border-top: 1px solid var(--line);
+		padding-block: clamp(3.5rem, 7vw, 5.5rem);
 	}
-	.section-heading {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 2rem;
-		padding-bottom: 1rem;
-		border-bottom: 2px solid var(--text);
-	}
-	.section-heading > p {
-		font-size: 0.7rem;
-		font-weight: 600;
-		letter-spacing: 0.16em;
-		text-transform: uppercase;
-		color: var(--muted);
-	}
-	/* The status sits between the deck and the buttons: a reader who skipped
-	   both still has to pass it on the way to the PDF. */
-	.masthead-availability {
-		margin-top: 1.5rem;
-	}
-	/* The one line under a heading that is a sentence rather than an eyebrow: it
-	   sits below the rule, in the body's own voice, at the width of the column it
-	   describes. */
 	.document-note {
 		max-width: 46rem;
-		margin: 1rem auto 0;
-		font-family: var(--font-sans);
-		font-size: 0.78rem;
-		letter-spacing: 0.04em;
+		margin: -1.5rem auto 1.5rem;
+		font-size: 0.85rem;
 		color: var(--muted);
 	}
 	.profile-grid {
 		display: grid;
-		gap: 2.5rem 0;
-		margin-top: clamp(2.5rem, 5vw, 4rem);
+		gap: 1.25rem;
 	}
 	.profile-grid article {
-		padding-left: 1.25rem;
-		border-left: 1px solid var(--line-strong);
+		padding: 1.5rem;
+		background: var(--panel);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
 	}
 	.profile-grid h3 {
-		font-family: var(--font-serif);
-		font-size: clamp(1.5rem, 2.5vw, 2rem);
-		font-weight: 500;
+		font-size: 1.2rem;
+		font-weight: 600;
 		letter-spacing: -0.015em;
 	}
 	.profile-grid p {
-		max-width: 48ch;
-		margin-top: 0.75rem;
-		font-family: var(--font-serif);
-		font-size: 1.02rem;
+		margin-top: 0.6rem;
+		font-size: 0.98rem;
 		line-height: 1.65;
 		color: var(--body);
 	}
 	.document-missing {
 		max-width: 46rem;
-		margin: clamp(2.5rem, 5vw, 4rem) auto 0;
-		padding-top: 1.25rem;
-		border-top: 2px solid var(--accent-warm);
-		font-family: var(--font-serif);
+		margin: clamp(2rem, 4vw, 3rem) auto 0;
+		padding: 1.5rem;
+		background: var(--panel);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
 		color: var(--body);
 	}
 	.document-missing p + p {
@@ -267,21 +238,12 @@ const updated = resume
 	}
 	@media (width >= 48rem) {
 		.profile-grid {
-			grid-template-columns: repeat(3, 1fr);
-			gap: 0 3rem;
-		}
-	}
-	@media (width < 48rem) {
-		.section-heading {
-			align-items: flex-start;
-			flex-direction: column;
-			gap: 0.75rem;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
 		}
 	}
 	/* Paper. The fragment carries its own identity block, contacts included, so a
 	   print of this page should hand back the résumé rather than the pitch around
-	   it. The PDF is still the better artifact; this is for the reader who hits
-	   ⌘P anyway. */
+	   it. */
 	@media print {
 		.profile,
 		.masthead-blurb,

@@ -19,7 +19,5 @@ const projects = await withLiveStats(featuredProjects);
 		<Fragment slot="title">Open-source projects</Fragment>
 		<p>Architecture notes and source for the systems I build in the open.</p>
 	</Masthead>
-	<div class="border-t border-[var(--line)]">
-		<Work projects={projects} />
-	</div>
+	<Work projects={projects} />
 </Base>

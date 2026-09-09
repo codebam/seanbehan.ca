@@ -21,50 +21,48 @@ const style = node.style ?? 'normal';
 const id = node.headingId;
 ---
 
-{
-	style === 'h1' ? (
-		<h1 {...attrs}>
-			<slot />
-		</h1>
-	) : style === 'h2' ? (
-		<h2 id={id} {...attrs}>
-			{id ? (
-				<a class="heading-anchor" href={`#${id}`}>
-					<slot />
-				</a>
-			) : (
+{style === 'h1' ? (
+	<h1 {...attrs}>
+		<slot />
+	</h1>
+) : style === 'h2' ? (
+	<h2 id={id} {...attrs}>
+		{id ? (
+			<a class="heading-anchor" href={`#${id}`}>
 				<slot />
-			)}
-		</h2>
-	) : style === 'h3' ? (
-		<h3 id={id} {...attrs}>
-			{id ? (
-				<a class="heading-anchor" href={`#${id}`}>
-					<slot />
-				</a>
-			) : (
+			</a>
+		) : (
+			<slot />
+		)}
+	</h2>
+) : style === 'h3' ? (
+	<h3 id={id} {...attrs}>
+		{id ? (
+			<a class="heading-anchor" href={`#${id}`}>
 				<slot />
-			)}
-		</h3>
-	) : style === 'h4' ? (
-		<h4 {...attrs}>
+			</a>
+		) : (
 			<slot />
-		</h4>
-	) : style === 'h5' ? (
-		<h5 {...attrs}>
-			<slot />
-		</h5>
-	) : style === 'h6' ? (
-		<h6 {...attrs}>
-			<slot />
-		</h6>
-	) : style === 'blockquote' ? (
-		<blockquote {...attrs}>
-			<slot />
-		</blockquote>
-	) : (
-		<p {...attrs}>
-			<slot />
-		</p>
-	)
-}
+		)}
+	</h3>
+) : style === 'h4' ? (
+	<h4 {...attrs}>
+		<slot />
+	</h4>
+) : style === 'h5' ? (
+	<h5 {...attrs}>
+		<slot />
+	</h5>
+) : style === 'h6' ? (
+	<h6 {...attrs}>
+		<slot />
+	</h6>
+) : style === 'blockquote' ? (
+	<blockquote {...attrs}>
+		<slot />
+	</blockquote>
+) : (
+	<p {...attrs}>
+		<slot />
+	</p>
+)}

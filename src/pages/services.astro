@@ -64,10 +64,11 @@ const schema = JSON.stringify({
 	ogDescription="Custom web development and Telegram automation without the agency handoff."
 	canonical={canonical}
 >
-	<script slot="head" type="application/ld+json" is:inline set:html={schema} />
-
+	<script slot="head" type="application/ld+json" is:inline set:html={schema}></script>
 	<Masthead label="Custom project packages / Direct collaboration" meta="Quoted by email">
-		<Fragment slot="title">Your idea, built to <em>work.</em></Fragment>
+		<Fragment slot="title">
+			Your idea, built to <em>work.</em>
+		</Fragment>
 		<p>
 			Custom websites and Telegram bots, taken from a clear scope to a production launch. You work
 			directly with the developer doing the work.
@@ -88,20 +89,18 @@ const schema = JSON.stringify({
 			</div>
 
 			<div class="service-grid">
-				{
-					services.map((service, i) => (
-						<article data-reveal data-reveal-delay={i * 70}>
-							<p class="service-label">{service.label}</p>
-							<h3>{service.title}</h3>
-							<p>{service.copy}</p>
-							<ul>
-								{service.items.map((item) => (
-									<li>{item}</li>
-								))}
-							</ul>
-						</article>
-					))
-				}
+				{services.map((service, i) => (
+					<article data-reveal data-reveal-delay={i * 70}>
+						<p class="service-label">{service.label}</p>
+						<h3>{service.title}</h3>
+						<p>{service.copy}</p>
+						<ul>
+							{service.items.map((item) => (
+								<li>{item}</li>
+							))}
+						</ul>
+					</article>
+				))}
 			</div>
 		</div>
 	</section>
@@ -114,15 +113,13 @@ const schema = JSON.stringify({
 			</div>
 
 			<ol class="process-list">
-				{
-					steps.map(([title, copy], i) => (
-						<li data-reveal data-reveal-delay={i * 50}>
-							<span class="step-index">{String(i + 1).padStart(2, '0')}</span>
-							<h3>{title}</h3>
-							<p>{copy}</p>
-						</li>
-					))
-				}
+				{steps.map(([title, copy], i) => (
+					<li data-reveal data-reveal-delay={i * 50}>
+						<span class="step-index">{String(i + 1).padStart(2, '0')}</span>
+						<h3>{title}</h3>
+						<p>{copy}</p>
+					</li>
+				))}
 			</ol>
 		</div>
 	</section>
@@ -142,9 +139,10 @@ const schema = JSON.stringify({
 					Email {serviceSite.email}
 				</LinkButton>
 				<a class="kit-link link-accent" href="/products/cloudflare-workers-production-kit">
-					Building it yourself? See the production kit <span class="arrow" aria-hidden="true"
-						>&rarr;</span
-					>
+					Building it yourself? See the production kit{' '}
+					<span class="arrow" aria-hidden="true">
+						&rarr;
+					</span>
 				</a>
 			</div>
 		</div>
@@ -153,11 +151,10 @@ const schema = JSON.stringify({
 
 <style>
 	.response-note,
-	.section-heading > p,
 	.service-label {
-		font-size: 0.7rem;
+		font-size: 0.78rem;
 		font-weight: 600;
-		letter-spacing: 0.16em;
+		letter-spacing: 0.06em;
 		text-transform: uppercase;
 		color: var(--muted);
 	}
@@ -167,48 +164,35 @@ const schema = JSON.stringify({
 	.services,
 	.process,
 	.project-brief {
-		padding-block: clamp(4.5rem, 9vw, 8rem);
-		border-top: 1px solid var(--line);
-	}
-	.section-heading {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 2rem;
-		padding-bottom: 1rem;
-		border-bottom: 2px solid var(--text);
+		padding-block: clamp(3.5rem, 7vw, 5.5rem);
 	}
 	.service-grid {
 		display: grid;
-		gap: 3rem 0;
-		margin-top: clamp(2.5rem, 5vw, 4rem);
+		gap: 1.25rem;
 	}
 	.service-grid article {
-		min-width: 0;
-		padding-left: 1.5rem;
-		border-left: 1px solid var(--line-strong);
+		padding: 1.75rem;
+		background: var(--panel);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
 	}
 	.service-grid h3 {
-		max-width: 16ch;
-		margin-top: 0.75rem;
-		font-family: var(--font-serif);
-		font-size: clamp(1.9rem, 3.6vw, 2.9rem);
-		font-weight: 500;
-		letter-spacing: -0.015em;
-		line-height: 1.08;
+		margin-top: 0.6rem;
+		font-size: 1.5rem;
+		font-weight: 600;
+		letter-spacing: -0.02em;
+		line-height: 1.2;
 	}
 	.service-grid article > p {
-		max-width: 52ch;
-		margin-top: 1.25rem;
-		font-family: var(--font-serif);
-		font-size: 1.05rem;
-		line-height: 1.7;
+		margin-top: 0.75rem;
+		font-size: 0.98rem;
+		line-height: 1.65;
 		color: var(--body);
 	}
 	.service-grid ul {
 		display: grid;
-		gap: 0.6rem;
-		margin-top: 1.75rem;
+		gap: 0.55rem;
+		margin-top: 1.25rem;
 		list-style: none;
 		font-size: 0.92rem;
 		color: var(--body);
@@ -220,80 +204,68 @@ const schema = JSON.stringify({
 	}
 	.process-list {
 		display: grid;
-		gap: 2.5rem 0;
-		margin-top: clamp(2.5rem, 5vw, 4rem);
+		gap: 1.25rem;
 		list-style: none;
 	}
 	.process-list li {
-		padding-left: 1.25rem;
-		border-left: 1px solid var(--line-strong);
+		padding: 1.5rem;
+		background: var(--panel);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
 	}
 	.step-index {
 		display: block;
-		font-size: 0.7rem;
-		font-weight: 600;
-		letter-spacing: 0.16em;
-		color: var(--accent-warm);
+		font-size: 0.8rem;
+		font-weight: 700;
+		color: var(--accent);
 	}
 	.process-list h3 {
-		margin-top: 0.6rem;
-		font-family: var(--font-serif);
-		font-size: clamp(1.4rem, 2.2vw, 1.9rem);
-		font-weight: 500;
-		letter-spacing: -0.01em;
+		margin-top: 0.5rem;
+		font-size: 1.15rem;
+		font-weight: 600;
+		letter-spacing: -0.015em;
 	}
 	.process-list p {
-		max-width: 30ch;
-		margin-top: 0.6rem;
+		margin-top: 0.5rem;
 		font-size: 0.95rem;
-		line-height: 1.65;
+		line-height: 1.6;
 		color: var(--body);
 	}
 	.brief-grid {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.7fr);
 		align-items: start;
-		gap: clamp(3rem, 8vw, 8rem);
+		gap: 2rem;
 	}
 	.brief-grid h2 {
-		max-width: 12ch;
+		max-width: 14ch;
 	}
 	.brief-copy {
-		padding-top: 1.25rem;
-		border-top: 1px solid var(--line-strong);
+		padding-top: 1.5rem;
+		border-top: 1px solid var(--line);
 	}
 	.brief-copy > p {
-		font-family: var(--font-serif);
-		font-size: 1.1rem;
+		font-size: 1.05rem;
 		line-height: 1.7;
 		color: var(--body);
 	}
 	.brief-copy :global(a[role='button']) {
-		margin-top: 2rem;
+		margin-top: 1.5rem;
 	}
 	.kit-link {
 		display: block;
 		width: fit-content;
-		margin-top: 1.5rem;
+		margin-top: 1.25rem;
 	}
 	@media (width >= 48rem) {
 		.service-grid {
-			grid-template-columns: repeat(2, 1fr);
-			gap: 0 3.5rem;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 		.process-list {
-			grid-template-columns: repeat(4, 1fr);
-			gap: 0 3rem;
-		}
-	}
-	@media (width < 48rem) {
-		.section-heading {
-			align-items: flex-start;
-			flex-direction: column;
-			gap: 0.75rem;
+			grid-template-columns: repeat(4, minmax(0, 1fr));
 		}
 		.brief-grid {
-			grid-template-columns: 1fr;
+			grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.8fr);
+			gap: 4rem;
 		}
 	}
 </style>

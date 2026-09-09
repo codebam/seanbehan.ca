@@ -14,10 +14,12 @@ import { Input } from '@cloudflare/kumo/components/input';
 ---
 
 <div class="search-frame">
-	<label for="post-search" id="post-search-label">Filter</label>
-	<div class="relative">
+	<label for="post-search" id="post-search-label">
+		Search posts
+	</label>
+	<div class="search-field">
 		<svg
-			class="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[var(--dim)]"
+			class="search-icon"
 			fill="none"
 			viewBox="0 0 24 24"
 			stroke="currentColor"
@@ -27,14 +29,15 @@ import { Input } from '@cloudflare/kumo/components/input';
 			<path
 				stroke-linecap="round"
 				stroke-linejoin="round"
-				d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"></path>
+				d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+			></path>
 		</svg>
 		<Input
 			type="search"
 			id="post-search"
 			placeholder="Search titles, tags and full text…"
 			size="lg"
-			className="flat-control w-full pl-9"
+			className="flat-control w-full pl-10"
 			aria-labelledby="post-search-label"
 		/>
 	</div>
@@ -44,36 +47,38 @@ import { Input } from '@cloudflare/kumo/components/input';
      accessibility tree and nothing would be announced at all. -->
 <p class="sr-only" role="status" aria-live="polite" id="post-search-status"></p>
 
-<p
-	class="border-t border-[var(--line)] py-10 font-serif text-[1.05rem] text-[var(--muted)]"
-	role="status"
-	aria-live="polite"
-	id="post-search-empty"
-	hidden
->
-</p>
+<p class="search-empty" role="status" aria-live="polite" id="post-search-empty" hidden></p>
 
 <style>
 	.search-frame {
-		display: grid;
-		grid-template-columns: auto minmax(0, 1fr);
-		align-items: center;
-		gap: clamp(1rem, 3vw, 2.5rem);
-		padding-block: 1.1rem;
-		border-block: 1px solid var(--line);
+		max-width: 34rem;
+		margin-bottom: clamp(2rem, 4vw, 3rem);
 	}
 	.search-frame label {
-		font-size: 0.7rem;
+		display: block;
+		margin-bottom: 0.5rem;
+		font-size: 0.9rem;
 		font-weight: 600;
-		letter-spacing: 0.16em;
-		text-transform: uppercase;
-		color: var(--accent-warm);
+		color: var(--text);
 	}
-	@media (width < 36rem) {
-		.search-frame {
-			grid-template-columns: 1fr;
-			gap: 0.75rem;
-		}
+	.search-field {
+		position: relative;
+	}
+	.search-icon {
+		position: absolute;
+		top: 50%;
+		left: 0.85rem;
+		width: 1.1rem;
+		height: 1.1rem;
+		transform: translateY(-50%);
+		color: var(--dim);
+		pointer-events: none;
+	}
+	.search-empty {
+		padding-block: 2.5rem;
+		border-top: 1px solid var(--line);
+		font-size: 1rem;
+		color: var(--muted);
 	}
 </style>
 

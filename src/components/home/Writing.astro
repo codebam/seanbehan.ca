@@ -1,12 +1,9 @@
 ---
 /**
- * LATEST WRITING, as a lead essay and an index.
+ * LATEST WRITING
  *
- * The newest post is the lead — its title set at the size a front-page story
- * gets, with its own description under it. Everything after it runs as a
- * stacked index in the next column, ruled entry to ruled entry. The archive
- * still uses PostList; this is the front page's own arrangement, not a second
- * list component pretending to be one.
+ * The newest post is the lead card; the rest run as a grid of smaller cards.
+ * The archive still uses PostList; this is the front page's own arrangement.
  */
 import { writingHref } from '../../lib/site';
 import type { PostSummary } from '../../lib/types';
@@ -27,155 +24,122 @@ const monthYear = (date: string) =>
 
 <section class="writing shell">
 	<header class="section-head" data-reveal>
-		<h2 class="display display-lg">Latest writing</h2>
-		<a href={writingHref('/posts')} class="link-accent whitespace-nowrap"
-			>All {total} posts <span class="arrow">&rarr;</span></a
-		>
+		<div>
+			<h2 class="display display-lg">Latest writing</h2>
+			<p class="section-sub">Notes from whatever I am taking apart.</p>
+		</div>
+		<a href={writingHref('/posts')} class="link-accent">
+			All {total} posts <span class="arrow">&rarr;</span>
+		</a>
 	</header>
 
-	{
-		lead && (
-			<div class="writing-grid">
-				<article class="writing-lead" data-reveal>
-					<p class="entry-meta">
-						<time datetime={lead.meta.date}>{monthYear(lead.meta.date)}</time>
-						{lead.readingMinutes && <span>· {lead.readingMinutes} min read</span>}
-					</p>
-					<h3 class="lead-title">
-						<a href={writingHref(lead.path)}>{lead.meta.title}</a>
-					</h3>
-					{lead.meta.description && <p class="lead-deck">{lead.meta.description}</p>}
-					<p class="lead-more">
-						<a href={writingHref(lead.path)} class="link-accent">
-							Read the post <span class="arrow">&rarr;</span>
-						</a>
-					</p>
-				</article>
+	{lead && (
+		<article class="writing-lead card" data-reveal>
+			<p class="entry-meta">
+				<time datetime={lead.meta.date}>{monthYear(lead.meta.date)}</time>
+				{lead.readingMinutes && <span>· {lead.readingMinutes} min read</span>}
+			</p>
+			<h3 class="writing-lead-title">
+				<a href={writingHref(lead.path)}>{lead.meta.title}</a>
+			</h3>
+			{lead.meta.description && <p class="writing-lead-desc">{lead.meta.description}</p>}
+			<p class="writing-lead-more">
+				<a href={writingHref(lead.path)} class="link-accent">
+					Read the post <span class="arrow">&rarr;</span>
+				</a>
+			</p>
+		</article>
+	)}
 
-				<div class="writing-list">
-					{rest.map((post, i) => (
-						<article class="writing-item" data-reveal data-reveal-delay={Math.min(i, 3) * 60}>
-							<p class="entry-meta">
-								<time datetime={post.meta.date}>{monthYear(post.meta.date)}</time>
-							</p>
-							<h3 class="entry-title">
-								<a href={writingHref(post.path)}>{post.meta.title}</a>
-							</h3>
-							{post.meta.description && <p class="entry-copy">{post.meta.description}</p>}
-						</article>
-					))}
-				</div>
-			</div>
-		)
-	}
+	<div class="writing-grid">
+		{rest.map((post, i) => (
+			<article class="writing-card card" data-reveal data-reveal-delay={Math.min(i, 3) * 60}>
+				<p class="entry-meta">
+					<time datetime={post.meta.date}>{monthYear(post.meta.date)}</time>
+				</p>
+				<h3 class="writing-card-title">
+					<a href={writingHref(post.path)}>{post.meta.title}</a>
+				</h3>
+				{post.meta.description && <p class="writing-card-desc">{post.meta.description}</p>}
+			</article>
+		))}
+	</div>
 </section>
 
 <style>
 	.writing {
-		padding-block: clamp(2.5rem, 5vw, 4rem) clamp(4rem, 8vw, 7rem);
+		padding-block: clamp(3.5rem, 7vw, 5.5rem) clamp(4.5rem, 9vw, 7rem);
 	}
-
-	.section-head {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 2rem;
-		padding-bottom: 0.9rem;
-		border-bottom: 2px solid var(--text);
-	}
-
-	.writing-grid {
-		display: grid;
-		gap: 0 clamp(2rem, 5vw, 4rem);
-	}
-	@media (width >= 48rem) {
-		.writing-grid {
-			grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-		}
-	}
-
-	.writing-lead {
-		padding-block: clamp(1.75rem, 3.5vw, 2.5rem);
-		border-bottom: 1px solid var(--line);
-	}
-	@media (width >= 48rem) {
-		.writing-lead {
-			border-bottom: 0;
-		}
+	.section-sub {
+		margin-top: 0.35rem;
+		font-size: 0.95rem;
+		color: var(--muted);
 	}
 
 	.entry-meta {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: baseline;
-		gap: 0.55rem;
-		font-size: 0.68rem;
-		font-weight: 600;
-		letter-spacing: 0.16em;
-		text-transform: uppercase;
+		gap: 0.4rem;
+		font-size: 0.8rem;
+		font-weight: 500;
 		color: var(--muted);
 	}
 
-	.lead-title,
-	.entry-title {
-		font-family: var(--font-serif);
-		font-weight: 500;
-		letter-spacing: -0.02em;
-		text-wrap: balance;
+	.writing-lead {
+		padding: clamp(1.5rem, 3vw, 2.5rem);
 	}
-	.lead-title {
+	.writing-lead-title {
+		max-width: 30ch;
 		margin-top: 0.6rem;
-		font-size: clamp(1.9rem, 3.4vw, 2.7rem);
-		line-height: 1.08;
-	}
-	.entry-title {
-		margin-top: 0.35rem;
-		font-size: 1.3rem;
+		font-size: clamp(1.5rem, 2.8vw, 2rem);
+		font-weight: 600;
+		letter-spacing: -0.02em;
 		line-height: 1.2;
 	}
-	.lead-title a,
-	.entry-title a {
+	.writing-lead-title a,
+	.writing-card-title a {
 		color: var(--text);
 		text-decoration: none;
 		transition: color 0.2s ease;
 	}
-	.lead-title a:hover,
-	.lead-title a:focus-visible,
-	.entry-title a:hover,
-	.entry-title a:focus-visible {
+	.writing-lead-title a:hover,
+	.writing-lead-title a:focus-visible,
+	.writing-card-title a:hover,
+	.writing-card-title a:focus-visible {
 		color: var(--accent);
 	}
-
-	.lead-deck {
-		max-width: 52ch;
-		margin-top: 0.9rem;
-		font-family: var(--font-serif);
-		font-size: 1.08rem;
+	.writing-lead-desc {
+		max-width: 62ch;
+		margin-top: 0.75rem;
+		font-size: 1.02rem;
 		line-height: 1.65;
 		color: var(--body);
-		text-wrap: pretty;
 	}
-	.lead-more {
-		margin-top: 1.1rem;
+	.writing-lead-more {
+		margin-top: 1.25rem;
 	}
-	.entry-copy {
+
+	.writing-grid {
+		display: grid;
+		gap: 1.25rem;
+		margin-top: 1.25rem;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+	}
+	.writing-card {
+		padding: 1.5rem;
+	}
+	.writing-card-title {
 		margin-top: 0.5rem;
-		font-family: var(--font-serif);
+		font-size: 1.15rem;
+		font-weight: 600;
+		letter-spacing: -0.015em;
+		line-height: 1.3;
+	}
+	.writing-card-desc {
+		margin-top: 0.5rem;
 		font-size: 0.95rem;
-		line-height: 1.55;
+		line-height: 1.6;
 		color: var(--body);
-		text-wrap: pretty;
-	}
-
-	.writing-item {
-		padding-block: clamp(1.35rem, 3vw, 1.9rem);
-		border-top: 1px solid var(--line);
-	}
-
-	@media (width < 48rem) {
-		.section-head {
-			flex-wrap: wrap;
-			gap: 0.5rem 2rem;
-		}
 	}
 </style>

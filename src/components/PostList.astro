@@ -1,16 +1,11 @@
 ---
 /**
- * The list of posts, shared by the home page's writing index, the archive and
- * the tag pages.
+ * The list of posts, shared by the archive, the tag pages and the related
+ * reading under a post.
  *
- * Entries are rows of text separated by hairlines — the search script in
- * PostSearch reorders these server-rendered rows, so the data attributes and
- * the `[data-post-list]` root are load-bearing, not decorative.
- *
- * The rows carry the broadsheet grammar: a tracked folio line, a serif title,
- * a serif deck, and no cards or pills. Tags are set as tracked text rather
- * than Kumo badges, because a pill is a dashboard's shape and this page is a
- * printed sheet.
+ * Entries are cards in a grid. The search script in PostSearch reorders these
+ * server-rendered cards, so the data attributes and the `[data-post-list]` root
+ * are load-bearing, not decorative.
  */
 import { writingHref } from '../lib/site';
 import { displayTag, slugifyTag } from '../lib/tags';
@@ -18,11 +13,11 @@ import type { PostSummary } from '../lib/types';
 
 interface Props {
 	posts: PostSummary[];
-	/** 2 for the archive's paired grid, 1 for a single ruled column */
+	/** 2 for the archive's paired grid, 1 for a single column */
 	columns?: 1 | 2;
 	/** Topic tags are noise next to six posts, useful across twenty-four */
 	showTags?: boolean;
-	/** Enclose entries in quiet ruled blocks (related reading). */
+	/** Kept for callers; cards are the only shape now. */
 	carded?: boolean;
 	/**
 	 * Heading level for an entry title. The default suits the home page, where
@@ -33,7 +28,7 @@ interface Props {
 	headingLevel?: 2 | 3;
 }
 
-const { posts, columns = 1, showTags = false, carded = false, headingLevel = 3 } = Astro.props;
+const { posts, columns = 1, showTags = false, headingLevel = 3 } = Astro.props;
 const Heading = `h${headingLevel}` as 'h2' | 'h3';
 
 /** "Apr 2026" — the day is never what a reader is after in a list. */
@@ -41,160 +36,88 @@ const monthYear = (date: string) =>
 	new Date(date).toLocaleDateString('en-CA', { month: 'short', year: 'numeric', timeZone: 'UTC' });
 ---
 
-<div class:list={['list', columns === 2 && 'paired', carded && 'carded']} data-post-list>
-	{
-		posts.map((post) => (
-			<div
-				class="item post-card"
-				data-post
-				data-slug={post.slug}
-				data-title={post.meta.title}
-				data-description={post.meta.description}
-				data-tags={post.meta.tags.join(',')}
-			>
-				{/* Tags sit outside the link so they can be links without nesting
-				    anchors. The paired grid still takes these wrappers as children. */}
-				<a class="entry" href={writingHref(post.path)}>
-					<p class="meta">
-						<time datetime={post.meta.date}>{monthYear(post.meta.date)}</time>
-						{post.readingMinutes && <span class="read">&middot; {post.readingMinutes} min</span>}
-					</p>
-					<Heading class="title">{post.meta.title}</Heading>
-					{post.meta.description && <p class="desc">{post.meta.description}</p>}
-				</a>
-				{showTags && post.meta.tags.length > 0 && (
-					<p class="tags">
-						{post.meta.tags.map((tag, i) => (
-							<>
-								{i > 0 && (
-									<span class="dot" aria-hidden="true">
-										·
-									</span>
-								)}
-								<a href={writingHref(`/posts/tag/${slugifyTag(tag)}`)}>{displayTag(tag)}</a>
-							</>
-						))}
-					</p>
-				)}
-			</div>
-		))
-	}
+<div class:list={['post-list', columns === 2 && 'post-list-paired']} data-post-list>
+	{posts.map((post) => (
+		<article
+			class="post-card card"
+			data-post
+			data-slug={post.slug}
+			data-title={post.meta.title}
+			data-description={post.meta.description}
+			data-tags={post.meta.tags.join(',')}
+		>
+			<a class="post-card-link" href={writingHref(post.path)}>
+				<p class="post-card-meta">
+					<time datetime={post.meta.date}>{monthYear(post.meta.date)}</time>
+					{post.readingMinutes && <span>· {post.readingMinutes} min read</span>}
+				</p>
+				<Heading class="post-card-title">{post.meta.title}</Heading>
+				{post.meta.description && <p class="post-card-desc">{post.meta.description}</p>}
+			</a>
+			{showTags && post.meta.tags.length > 0 && (
+				<p class="post-card-tags">
+					{post.meta.tags.map((tag) => (
+						<a class="tag" href={writingHref(`/posts/tag/${slugifyTag(tag)}`)}>
+							{displayTag(tag)}
+						</a>
+					))}
+				</p>
+			)}
+		</article>
+	))}
 </div>
 
 <style>
-	/* ── Plain rows ── */
-	.list {
-		border-top: 1px solid var(--line-strong);
+	.post-list {
+		display: grid;
+		gap: 1.25rem;
+	}
+	@media (width >= 48rem) {
+		.post-list-paired {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
 	}
 	.post-card {
-		border-bottom: 1px solid var(--line);
+		padding: 1.5rem;
 	}
-	.entry {
+	.post-card-link {
 		display: block;
-		padding: 1.4rem 0;
 	}
-	.meta {
+	.post-card-meta {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: baseline;
-		gap: 0.6rem;
-		font-size: 0.7rem;
-		font-weight: 600;
-		letter-spacing: 0.16em;
-		text-transform: uppercase;
-		color: var(--muted);
-	}
-	.entry time {
-		transition: color 0.25s ease;
-	}
-	.entry:hover time {
-		color: var(--accent);
-	}
-	/* Same eyebrow treatment as the date. It reads as the secondary fact on the
-	   line through size and tracking rather than colour: --dim does not clear
-	   the 4.5:1 bar for type on any of our surfaces. */
-	.entry .read {
+		gap: 0.4rem;
+		font-size: 0.8rem;
+		font-weight: 500;
 		color: var(--muted);
 	}
 	/* Selector is the class, not the tag: the level varies with where the list
 	   sits in the document outline, the styling does not. */
-	.entry .title {
-		margin-top: 0.45rem;
-		font-family: var(--font-serif);
-		font-size: 1.35rem;
-		font-weight: 500;
-		letter-spacing: -0.01em;
-		line-height: 1.2;
+	.post-card-title {
+		margin-top: 0.5rem;
+		font-family: var(--font-sans);
+		font-size: 1.2rem;
+		font-weight: 600;
+		letter-spacing: -0.015em;
+		line-height: 1.3;
 		color: var(--text);
 		transition: color 0.2s ease;
 	}
-	.entry:hover .title,
-	.entry:focus-visible .title {
+	.post-card:hover .post-card-title,
+	.post-card:focus-within .post-card-title {
 		color: var(--accent);
 	}
-	.entry .desc {
-		max-width: 62ch;
-		margin-top: 0.4rem;
-		font-family: var(--font-serif);
-		color: var(--body);
-		font-size: 0.98rem;
+	.post-card-desc {
+		margin-top: 0.5rem;
+		font-size: 0.95rem;
 		line-height: 1.6;
+		color: var(--body);
 	}
-
-	/* ── Paired grid: two columns of rows, reading across then down ── */
-	.paired {
-		display: grid;
-		gap: 0 3.5rem;
-	}
-	@media (width >= 48rem) {
-		.paired {
-			grid-template-columns: 1fr 1fr;
-		}
-	}
-
-	/* ── Carded: related reading under a post ──
-	   Ruled blocks, not boxes: the top rule is the same one every other index
-	   entry wears, and the hover cue is the title taking the accent rather
-	   than the frame lighting up. */
-	.carded {
-		display: grid;
-		gap: 0 3.5rem;
-		border-top: 0;
-	}
-	@media (width >= 48rem) {
-		.carded {
-			grid-template-columns: 1fr 1fr;
-		}
-	}
-	.carded .post-card {
-		border-top: 1px solid var(--line-strong);
-		border-bottom: 0;
-	}
-	.carded .entry {
-		height: 100%;
-		padding: 1.4rem 0;
-	}
-
-	.tags {
+	.post-card-tags {
 		display: flex;
 		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.15rem 0.55rem;
-		padding-bottom: 1.25rem;
-		font-size: 0.68rem;
-		font-weight: 600;
-		letter-spacing: 0.14em;
-		text-transform: uppercase;
-		color: var(--muted);
-	}
-	.tags .dot {
-		color: var(--line-strong);
-	}
-	.tags a {
-		color: inherit;
-		transition: color 0.2s ease;
-	}
-	.tags a:hover,
-	.tags a:focus-visible {
-		color: var(--accent);
+		gap: 0.4rem;
+		margin-top: 1rem;
 	}
 </style>

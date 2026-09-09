@@ -52,48 +52,44 @@ const downloadHref =
 >
 	<Masthead label="Digital product / Order" meta="Stripe Checkout">
 		<Fragment slot="title">
-			{
-				access.status === 'paid'
-					? 'Payment complete.'
-					: access.status === 'pending'
-						? 'Payment processing.'
-						: unavailable
-							? 'Confirmation unavailable.'
-							: 'Order not found.'
-			}
+			{access.status === 'paid'
+				? 'Payment complete.'
+				: access.status === 'pending'
+					? 'Payment processing.'
+					: unavailable
+						? 'Confirmation unavailable.'
+						: 'Order not found.'}
 		</Fragment>
-		{
-			access.status === 'paid' && downloadHref ? (
-				<>
-					<p>
-						Your v{access.release.version} download is ready. A second access link is being sent to
-						the email used at checkout.
-					</p>
-					<p class="confirmation-actions">
-						<LinkButton href={downloadHref} variant="primary" size="lg" className="flat-control">
-							Download the production kit
-						</LinkButton>
-					</p>
-					<p class="checksum">
-						SHA-256 <code>{access.release.sha256}</code>
-					</p>
-				</>
-			) : access.status === 'pending' ? (
+		{access.status === 'paid' && downloadHref ? (
+			<>
 				<p>
-					Stripe is still confirming the payment. The download link will be emailed when it clears.
+					Your v{access.release.version} download is ready. A second access link is being sent to
+					the email used at checkout.
 				</p>
-			) : unavailable ? (
-				<p>
-					The payment service could not be reached. Refresh this page, or email{' '}
-					<a href="mailto:codebam@codebam.ca">codebam@codebam.ca</a> with your receipt.
+				<p class="confirmation-actions">
+					<LinkButton href={downloadHref} variant="primary" size="lg" className="flat-control">
+						Download the production kit
+					</LinkButton>
 				</p>
-			) : (
-				<p>
-					This confirmation link is invalid. Return to the <a href={PRODUCT.url}>product page</a> or
-					email <a href="mailto:codebam@codebam.ca">codebam@codebam.ca</a> with your receipt.
+				<p class="checksum">
+					SHA-256 <code>{access.release.sha256}</code>
 				</p>
-			)
-		}
+			</>
+		) : access.status === 'pending' ? (
+			<p>
+				Stripe is still confirming the payment. The download link will be emailed when it clears.
+			</p>
+		) : unavailable ? (
+			<p>
+				The payment service could not be reached. Refresh this page, or email{' '}
+				<a href="mailto:codebam@codebam.ca">codebam@codebam.ca</a> with your receipt.
+			</p>
+		) : (
+			<p>
+				This confirmation link is invalid. Return to the <a href={PRODUCT.url}>product page</a> or
+				email <a href="mailto:codebam@codebam.ca">codebam@codebam.ca</a> with your receipt.
+			</p>
+		)}
 	</Masthead>
 </Base>
 

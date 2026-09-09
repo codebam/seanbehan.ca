@@ -17,16 +17,14 @@ interface Props {
 const { href } = Astro.props;
 ---
 
-{
-	isSiblingHref(href) && (
-		<>
-			<span class="sibling-mark" aria-hidden="true">
-				&#8599;
-			</span>
-			<span class="sr-only"> (on {siblingHost(href)})</span>
-		</>
-	)
-}
+{isSiblingHref(href) && (
+	<>
+		<span class="sibling-mark" aria-hidden="true">
+			&#8599;
+		</span>
+		<span class="sr-only"> (on {siblingHost(href)})</span>
+	</>
+)}
 
 <style>
 	/* Quieter than the label it follows: the destination is a detail, not the

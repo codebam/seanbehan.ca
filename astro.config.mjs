@@ -115,6 +115,7 @@ export default defineConfig({
 				'@emdash-cms/plugin-forms/astro',
 				'@portabletext/to-html',
 				'astro/app/manifest',
+				'astro/logger/console',
 				'astro/logger/json',
 				'fuse.js'
 			]
@@ -125,7 +126,10 @@ export default defineConfig({
 			// `.direnv/flake-inputs` symlinks the whole Nix store checkout into
 			// the repo; following it exhausts the inotify watch limit and the
 			// dev server dies before it serves a page.
-			watch: { ignored: ['**/.direnv/**'] }
+			// `.wrangler` and `.emdash` are written on every request (D1,
+			// observability traces, generated types), so watching them turns
+			// normal traffic into a stream of invalidation events.
+			watch: { ignored: ['**/.direnv/**', '**/.wrangler/**', '**/.emdash/**'] }
 		},
 		resolve: {
 			dedupe: ['react', 'react-dom']

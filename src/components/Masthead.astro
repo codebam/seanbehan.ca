@@ -1,8 +1,8 @@
 ---
 /**
- * The page opening shared by every non-home page: a labelled rule, one serif
- * headline, then the deck. The label/meta row reads like a folio line in a
- * printed page — what this is, and one fact about it.
+ * The page opening shared by every non-home page: a small label/meta row, one
+ * headline, then the deck. Kept deliberately quiet — the header above it is
+ * the chrome, and this is where the page states what it is.
  */
 interface Props {
 	label: string;
@@ -12,71 +12,82 @@ interface Props {
 const { label, meta } = Astro.props;
 ---
 
-<section class="masthead panel">
+<section class="page-hero panel">
 	<div class="shell">
-		<p class="masthead-kicker enter">
+		<p class="page-hero-kicker">
 			<span>{label}</span>
-			<span class="masthead-meta">{meta}</span>
+			<span class="page-hero-meta">{meta}</span>
 		</p>
 
-		<h1 class="masthead-title display display-xl"><slot name="title" /></h1>
-		<div class="masthead-copy enter" style="--enter-delay:80ms">
+		<h1 class="display display-xl page-hero-title">
+			<slot name="title" />
+		</h1>
+		<div class="page-hero-copy enter" style="--enter-delay:60ms">
 			<slot />
 		</div>
 	</div>
 </section>
 
 <style>
-	.masthead {
-		padding-block: clamp(2.5rem, 5vw, 4rem) clamp(4rem, 8vw, 7rem);
+	.page-hero {
+		padding-block: clamp(2.75rem, 5vw, 4rem) clamp(2.5rem, 5vw, 4rem);
+		border-bottom: 1px solid var(--line);
 	}
-	/* The folio line: small caps either side of a hairline, the way a printed
-	   page names itself at the top. */
-	.masthead-kicker {
+	.page-hero-kicker {
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
 		gap: 1rem;
-		padding-bottom: 1rem;
-		border-bottom: 1px solid var(--line-strong);
-		font-size: 0.7rem;
+		font-size: 0.78rem;
 		font-weight: 600;
-		letter-spacing: 0.16em;
+		letter-spacing: 0.08em;
 		text-transform: uppercase;
 		color: var(--muted);
 	}
-	.masthead-title {
-		max-width: 16ch;
-		margin-top: clamp(2.5rem, 6vw, 4.5rem);
+	.page-hero-title {
+		max-width: 20ch;
+		margin-top: clamp(1.5rem, 3.5vw, 2.25rem);
 	}
-	.masthead-title :global(em) {
+	.page-hero-title :global(em) {
 		font-style: italic;
 		color: var(--accent-warm);
 	}
-	/* The deck reads as the first paragraph under a headline: the measure of a
-	   comfortable line, no wider, whatever the screen. */
-	.masthead-copy {
-		max-width: 55ch;
-		margin-top: clamp(1.75rem, 4vw, 2.75rem);
-		font-family: var(--font-serif);
-		font-size: clamp(1.1rem, 1.6vw, 1.3rem);
+	.page-hero-copy {
+		max-width: 60ch;
+		margin-top: clamp(1.25rem, 3vw, 1.75rem);
+		font-size: clamp(1.05rem, 1.5vw, 1.2rem);
 		line-height: 1.65;
 		color: var(--body);
 	}
-	.masthead-copy :global(.masthead-actions) {
+	/* Shared action rows inside the hero, so pages do not each restate them. */
+	.page-hero-copy :global(.masthead-actions) {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		gap: 0.75rem 1.5rem;
+		gap: 0.75rem 1.25rem;
 		margin-top: 1.75rem;
-		font-family: var(--font-sans);
-		font-size: 0.95rem;
+	}
+	.page-hero-copy :global(.masthead-availability) {
+		margin-top: 1.5rem;
+	}
+	.page-hero-copy :global(.masthead-blurb) {
+		max-width: 60ch;
+	}
+	.page-hero-copy :global(.masthead-profile) {
+		display: grid;
+		grid-template-columns: 5rem 1fr;
+		align-items: start;
+		gap: 1.25rem;
+	}
+	.page-hero-copy :global(.masthead-profile img) {
+		width: 5rem;
+		aspect-ratio: 1;
+		border-radius: var(--radius);
+		border: 1px solid var(--line);
+		object-fit: cover;
 	}
 	@media (width < 48rem) {
-		.masthead {
-			padding-block: 3.5rem 4.5rem;
-		}
-		.masthead-kicker {
+		.page-hero-kicker {
 			flex-wrap: wrap;
 			gap: 0.35rem 1rem;
 		}

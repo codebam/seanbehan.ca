@@ -2,13 +2,15 @@
 /**
  * The frame every page renders into: head metadata, header, footer.
  *
- * Ported from the SvelteKit layout, and it keeps that file's decisions. EmDash
- * owns canonical, social and structured metadata so plugin contributions and
- * the site's defaults are deduplicated before they reach the document.
+ * EmDash owns canonical, social and structured metadata so plugin contributions
+ * and the site's defaults are deduplicated before they reach the document. The
+ * EmDash pieces — EmDashHead, EmDashBodyStart, EmDashBodyEnd — carry the admin
+ * bar, visual editing and whatever the installed plugins contribute.
  *
- * The EmDash pieces — EmDashHead, EmDashBodyStart, EmDashBodyEnd — carry the
- * admin bar, visual editing and whatever the installed plugins contribute.
- * They stay, and the site's own <meta> tags are written alongside them.
+ * The header is a compact sticky bar: the name on the left, the section links
+ * and one call to action on the right. It replaces the oversized centred
+ * nameplate the site used to carry, which pushed the first screen of every
+ * page below the fold and left the nav as the smallest type on the page.
  */
 import { EmDashHead, EmDashBodyStart, EmDashBodyEnd } from 'emdash/ui';
 import { createPublicPageContext } from 'emdash/page';
@@ -55,12 +57,6 @@ const {
 
 const path = Astro.url.pathname;
 const currentYear = new Date().getFullYear();
-
-/**
- * The home page carries the full nameplate; every other page runs it compact,
- * so the paper is recognisable without the masthead eating the first screen of
- * an article. One header component, two scales — not two headers.
- */
 const isHome = path === '/';
 
 const fullTitle = title
@@ -114,28 +110,13 @@ const pageCtx = createPublicPageContext({
 	siteUrl: site.url
 });
 
-/**
- * The nav is the variant's own list, resolved against origins here. Contact is
- * not in it: it is always last, and always the page's one imperative, so the
- * frame renders it rather than trusting a table to keep it in place.
- *
- * Four items rather than the six this header used to carry. Six wrapped to two
- * rows on a phone, and the wrap put Résumé — the one page a hiring reader came
- * for — on the second row, below the fold of a 640px-tall screen. Everything
- * dropped is still in the footer, so nothing became unreachable; the header
- * just stopped competing with itself.
- */
+/** The nav is the variant's own list, resolved against origins here. */
 const nav = site.nav.map((item) => ({ ...item, href: linkHref(item) }));
 
 /** A cross-origin nav item cannot be current on this page. */
 const isCurrent = (href: string) =>
 	href.startsWith('/') && !href.startsWith('/#') && (path === href || path.startsWith(`${href}/`));
 
-/**
- * The nav resolved once for both headers. `aria-current` is 'true' for Work,
- * which is a section of this page rather than a page of its own, and 'page'
- * for the routes that are.
- */
 const navItems = nav.map((item) => ({
 	...item,
 	current: (item.href === '/#work'
@@ -146,18 +127,6 @@ const navItems = nav.map((item) => ({
 			? 'page'
 			: undefined) as 'page' | 'true' | undefined
 }));
-
-/**
- * The folio's dateline. Month and year, not the day: the page is cached and a
- * date that silently ages behind the cache reads as a stale site, where a
- * month is still true a few weeks on. UTC because the Worker renders it, not
- * the reader's machine.
- */
-const dateline = new Date().toLocaleDateString('en-CA', {
-	month: 'long',
-	year: 'numeric',
-	timeZone: 'UTC'
-});
 ---
 
 <!doctype html>
@@ -167,9 +136,6 @@ const dateline = new Date().toLocaleDateString('en-CA', {
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>{fullTitle}</title>
 
-		<!-- The three faces the page can paint with, ahead of the stylesheet that
-		     names them: app.css is inlined into the document, but a preload still
-		     starts the fetch before the parser reaches the @font-face rules. -->
 		<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
 		<link
 			rel="preload"
@@ -179,24 +145,19 @@ const dateline = new Date().toLocaleDateString('en-CA', {
 			crossorigin
 		/>
 
-		<!-- Browser chrome picks up whichever theme the reader is in. -->
-		<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f2e8" />
-		<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#171310" />
+		<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+		<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b1220" />
 
-		<!-- EmDashHead owns canonical, description, social metadata and the
-		     primary JSON-LD graph. The fields below supplement rather than repeat it. -->
 		<meta property="og:locale" content="en_CA" />
 		<meta property="og:image:alt" content={post ? post.meta.title : site.name} />
-		<!-- Generated cards are all 1200×630, including the site card. -->
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="630" />
 		<meta name="twitter:site" content="@seanwbehan" />
 		{post && <meta name="twitter:creator" content="@seanwbehan" />}
-		{post?.meta.tags.map((tag) => <meta property="article:tag" content={tag} />)}
+		{post?.meta.tags.map((tag) => (
+			<meta property="article:tag" content={tag} />
+		))}
 		<link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
-		<!-- The llms-txt spec's discovery hint, alongside the alternates the
-		     content pages add themselves: this file describes every page under
-		     the root, and any agent that reads HTML heads finds it here. -->
 		<link rel="describedby" href="/llms.txt" />
 		<link
 			rel="alternate"
@@ -209,7 +170,6 @@ const dateline = new Date().toLocaleDateString('en-CA', {
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 		<link rel="manifest" href="/site.webmanifest" />
 
-		<!-- A page with head markup of its own — a tag's feed link, say — puts it here. -->
 		<slot name="head" />
 
 		<EmDashHead page={pageCtx} />
@@ -217,94 +177,124 @@ const dateline = new Date().toLocaleDateString('en-CA', {
 	<body>
 		<EmDashBodyStart page={pageCtx} />
 
-		<a href="#main" class="skip-link">Skip to content</a>
+		<a href="#main" class="skip-link">
+			Skip to content
+		</a>
 
-		{
-			/* The nameplate is the header on every page now, not just the front
-			   one. Interior pages get the compact scale. */
-		}
-		<header class:list={['masthead', !isHome && 'masthead-compact']}>
-			<div class="shell">
-				<p class="masthead-folio">
-					<span>Ontario, Canada</span>
-					<span>{dateline}</span>
-				</p>
-
-				<a href="/" class="nameplate" aria-current={isHome ? 'page' : undefined}>
-					{site.name}
-					<span class="nameplate-mark" aria-hidden="true"> . </span>
+		<header class="site-header">
+			<div class="shell header-inner">
+				<a href="/" class="brand" aria-current={isHome ? 'page' : undefined}>
+					<span class="brand-name">{site.name}</span>
+					<span class="brand-dot" aria-hidden="true">
+						.
+					</span>
 				</a>
-				<p class="masthead-sub">{site.eyebrow}</p>
 
-				<nav aria-label="Primary" class="masthead-nav">
-					{
-						navItems.map((item) => (
-							<a href={item.href} class="nav-link" aria-current={item.current}>
-								{item.label}
-								<SiblingMark href={item.href} />
-							</a>
-						))
-					}
-					<a
-						href="/contact"
-						class="nav-link nav-contact"
-						aria-current={isCurrent('/contact') ? 'page' : undefined}
-					>
-						Contact
-					</a>
+				<nav class="site-nav" aria-label="Primary">
+					{navItems.map((item) => (
+						<a href={item.href} class="nav-link" aria-current={item.current}>
+							{item.label}
+							<SiblingMark href={item.href} />
+						</a>
+					))}
 				</nav>
+
+				<a
+					href="/contact"
+					class="btn header-cta"
+					aria-current={isCurrent('/contact') ? 'page' : undefined}
+				>
+					Get in touch
+				</a>
+
+				<details class="nav-menu">
+					<summary class="nav-toggle">
+						<span class="sr-only">Menu</span>
+						<svg
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							aria-hidden="true"
+						>
+							<path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16"></path>
+						</svg>
+					</summary>
+					<div class="nav-menu-panel">
+						<nav aria-label="Mobile" class="nav-menu-links">
+							{navItems.map((item) => (
+								<a href={item.href} class="nav-link" aria-current={item.current}>
+									{item.label}
+									<SiblingMark href={item.href} />
+								</a>
+							))}
+						</nav>
+						<a href="/contact" class="btn nav-menu-cta">
+							Get in touch
+						</a>
+					</div>
+				</details>
 			</div>
 		</header>
 
-		<!-- Full-bleed: each page owns its own panels and .shell columns, so a
-		     section can run edge to edge on its own background. -->
 		<main id="main">
 			<slot />
 		</main>
 
-		<footer class="panel-invert">
+		<footer class="panel-invert site-footer">
 			<div class="shell footer-grid">
-				<div>
-					<p class="footer-wordmark">{site.name}<span aria-hidden="true">.</span></p>
+				<div class="footer-brand">
+					<p class="footer-wordmark">
+						{site.name}
+						<span aria-hidden="true">.</span>
+					</p>
 					<p class="footer-copy">{site.ogDescription}</p>
 				</div>
 
 				<nav aria-label="Site">
 					<p class="footer-label">Site</p>
-					<a class="footer-link" href="/about">About</a>
-					<a class="footer-link" href="/#work">Work</a>
-					{
-						site.showResume && (
-							<a class="footer-link" href="/resume">
-								Résumé
-							</a>
-						)
-					}
-					<a class="footer-link" href={writingHref('/posts')}
-						>Writing<SiblingMark href={writingHref('/posts')} /></a
-					>
-					<!-- Services and Links left the header to keep the nav on one
-					     row; the footer is where they are reachable from now. -->
-					<a class="footer-link" href={codebamHref('/services')}
-						>Services<SiblingMark href={codebamHref('/services')} /></a
-					>
-					<a class="footer-link" href="/links">Links</a>
+					<a class="footer-link" href="/about">
+						About
+					</a>
+					<a class="footer-link" href="/#work">
+						Work
+					</a>
+					{site.showResume && (
+						<a class="footer-link" href="/resume">
+							Résumé
+						</a>
+					)}
+					<a class="footer-link" href={writingHref('/posts')}>
+						Writing
+						<SiblingMark href={writingHref('/posts')} />
+					</a>
+					<a class="footer-link" href={codebamHref('/services')}>
+						Services
+						<SiblingMark href={codebamHref('/services')} />
+					</a>
+					<a class="footer-link" href="/links">
+						Links
+					</a>
 				</nav>
 
 				<nav aria-label="Legal">
 					<p class="footer-label">Legal</p>
-					<a class="footer-link" href={codebamHref('/legal/privacy')}
-						>Privacy<SiblingMark href={codebamHref('/legal/privacy')} /></a
-					>
-					<a class="footer-link" href={codebamHref('/legal/terms-of-sale')}
-						>Terms<SiblingMark href={codebamHref('/legal/terms-of-sale')} /></a
-					>
-					<a class="footer-link" href={codebamHref('/legal/refund-policy')}
-						>Refunds<SiblingMark href={codebamHref('/legal/refund-policy')} /></a
-					>
-					<a class="footer-link" href={codebamHref('/legal/product-license')}
-						>License<SiblingMark href={codebamHref('/legal/product-license')} /></a
-					>
+					<a class="footer-link" href={codebamHref('/legal/privacy')}>
+						Privacy
+						<SiblingMark href={codebamHref('/legal/privacy')} />
+					</a>
+					<a class="footer-link" href={codebamHref('/legal/terms-of-sale')}>
+						Terms
+						<SiblingMark href={codebamHref('/legal/terms-of-sale')} />
+					</a>
+					<a class="footer-link" href={codebamHref('/legal/refund-policy')}>
+						Refunds
+						<SiblingMark href={codebamHref('/legal/refund-policy')} />
+					</a>
+					<a class="footer-link" href={codebamHref('/legal/product-license')}>
+						License
+						<SiblingMark href={codebamHref('/legal/product-license')} />
+					</a>
 				</nav>
 
 				<nav aria-label="Elsewhere">
@@ -313,40 +303,37 @@ const dateline = new Date().toLocaleDateString('en-CA', {
 						class="footer-link"
 						href="https://github.com/codebam"
 						target="_blank"
-						rel="me noopener noreferrer">GitHub</a
+						rel="me noopener noreferrer"
 					>
-					<!-- Gated on the résumé for the reason the contact page gives:
-					     a recruiter channel does not belong on the variant that
-					     leads with the code. -->
-					{
-						site.showResume && (
-							<a
-								class="footer-link"
-								href={LINKEDIN_URL}
-								target="_blank"
-								rel="me noopener noreferrer"
-							>
-								LinkedIn
-							</a>
-						)
-					}
+						GitHub
+					</a>
+					{site.showResume && (
+						<a class="footer-link" href={LINKEDIN_URL} target="_blank" rel="me noopener noreferrer">
+							LinkedIn
+						</a>
+					)}
 					<a
 						class="footer-link"
 						href="https://mstdn.ca/@codebam"
 						target="_blank"
-						rel="me noopener noreferrer">Mastodon</a
+						rel="me noopener noreferrer"
 					>
-					<a class="footer-link" href={writingHref('/rss.xml')}
-						>RSS<SiblingMark href={writingHref('/rss.xml')} /></a
-					>
-					<a class="footer-link" href={`mailto:${site.email}`}>{site.email}</a>
+						Mastodon
+					</a>
+					<a class="footer-link" href={writingHref('/rss.xml')}>
+						RSS
+						<SiblingMark href={writingHref('/rss.xml')} />
+					</a>
+					<a class="footer-link" href={`mailto:${site.email}`}>
+						{site.email}
+					</a>
 				</nav>
 			</div>
 
 			<div class="shell footer-base">
-				<span>&copy; {currentYear} {site.name}</span>
-				<!-- Colour inherited from the row: --dim failed AA here and is no
-				     longer used for type. -->
+				<span>
+					&copy; {currentYear} {site.name}
+				</span>
 				<span class="footer-colophon">Built with EmDash, hosted on Cloudflare</span>
 			</div>
 		</footer>
@@ -360,206 +347,198 @@ const dateline = new Date().toLocaleDateString('en-CA', {
 </html>
 
 <style>
-	/* ── Masthead ──
-	   The site's header on every page: a folio line, the nameplate centred
-	   between rules, and the nav as a tracked row beneath it. On the home page
-	   the nameplate is the paper's own title and is allowed to be the largest
-	   type in the chrome; on interior pages it runs compact, because there the
-	   page opener below it owns the headline. */
-	.masthead {
-		border-bottom: 1px solid var(--line-strong);
-	}
-	.masthead-folio {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: space-between;
-		gap: 0.25rem 1.5rem;
-		padding-block: 0.85rem;
+	/* ── Header ──
+	   Sticky, translucent, and one row tall. The name is the only brand mark;
+	   the nav is a plain row of links with a single accent button, so the way
+	   in is obvious from any page. */
+	.site-header {
+		position: sticky;
+		top: 0;
+		z-index: 50;
+		background: color-mix(in srgb, var(--bg) 88%, transparent);
+		backdrop-filter: blur(12px);
 		border-bottom: 1px solid var(--line);
-		font-size: 0.68rem;
-		font-weight: 600;
-		letter-spacing: 0.16em;
-		text-transform: uppercase;
-		color: var(--muted);
 	}
-	.nameplate {
-		display: block;
-		margin-top: clamp(1.6rem, 4vw, 2.8rem);
-		font-family: var(--font-serif);
-		font-size: clamp(2.7rem, 8vw, 4.7rem);
-		font-weight: 500;
-		letter-spacing: -0.025em;
-		line-height: 1;
-		text-align: center;
+	.header-inner {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		min-height: 4rem;
+	}
+	.brand {
+		display: inline-flex;
+		align-items: baseline;
+		margin-right: auto;
+		font-size: 1.125rem;
+		font-weight: 700;
+		letter-spacing: -0.02em;
 		color: var(--text);
 		transition: color 0.2s ease;
 	}
-	.nameplate-mark {
+	.brand:hover {
+		color: var(--accent);
+	}
+	.brand-dot {
 		color: var(--accent-warm);
 	}
-	.nameplate:hover,
-	.nameplate:focus-visible {
-		color: var(--accent);
+
+	.site-nav {
+		display: none;
+		align-items: center;
+		gap: 0.125rem;
 	}
-	.nameplate:hover .nameplate-mark,
-	.nameplate:focus-visible .nameplate-mark {
+	.nav-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.2rem;
+		padding: 0.5rem 0.75rem;
+		border-radius: var(--radius-sm);
+		font-size: 0.9rem;
+		font-weight: 500;
+		color: var(--body);
+		transition:
+			background 0.2s ease,
+			color 0.2s ease;
+	}
+	.nav-link:hover {
+		background: var(--surface-alt);
 		color: var(--text);
 	}
-	.masthead-sub {
-		margin-top: 0.85rem;
-		font-size: 0.72rem;
-		font-weight: 600;
-		letter-spacing: 0.2em;
-		text-transform: uppercase;
-		text-align: center;
-		color: var(--muted);
-	}
-	/* The nav sits on the rule that closes the masthead, centred, with the
-	   contact link keeping the accent it has in the running header. */
-	.masthead-nav {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		gap: 0.35rem 1.9rem;
-		margin-top: clamp(1.4rem, 3vw, 2rem);
-		padding-block: 0.95rem;
-		border-top: 1px solid var(--line);
-	}
-
-	/* Interior pages: the same paper at a working size. */
-	.masthead-compact .nameplate {
-		margin-top: 1.1rem;
-		font-size: clamp(1.9rem, 5vw, 2.9rem);
-	}
-	.masthead-compact .masthead-sub {
-		margin-top: 0.45rem;
-		font-size: 0.66rem;
-	}
-	.masthead-compact .masthead-nav {
-		margin-top: 0.9rem;
-		padding-block: 0.8rem;
-	}
-
-	/* Nav and footer links share one quiet behaviour: the label darkens, and a
-	   rule grows out from under it on hover and retracts on the way out, so the
-	   text never shifts and the row height never changes.
-
-	   0.76rem rather than the 0.72 this started at: the nav is furniture, but
-	   tracked uppercase below ~12px is the first thing a reader has to squint
-	   at. The tracking comes down a hair to pay for the extra size, so the row
-	   stays the same width. */
-	.nav-link {
-		position: relative;
-		font-size: 0.76rem;
-		font-weight: 600;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-		color: var(--muted);
-		padding-bottom: 3px;
-		transition: color 0.2s ease;
-	}
-	.nav-link::after,
-	.footer-link::after {
-		content: '';
-		position: absolute;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		height: 1px;
-		background: currentColor;
-		transform: scaleX(0);
-		transform-origin: left;
-		transition: transform 0.28s var(--ease-out-soft);
-	}
-	.footer-link::after {
-		bottom: -2px;
-	}
-	.nav-link:hover,
-	.footer-link:hover {
-		color: var(--accent);
-	}
-	.nav-link:hover::after,
-	.nav-link:focus-visible::after,
-	.footer-link:hover::after,
-	.footer-link:focus-visible::after {
-		transform: scaleX(1);
-	}
-	/* Current section stays legible without a heavier weight shifting layout */
 	.nav-link[aria-current='page'],
 	.nav-link[aria-current='true'] {
 		color: var(--text);
+		background: var(--surface-alt);
 	}
-	/* The current page keeps its rule up permanently, in the warm accent, so
-	   hover state and location state never look like the same thing. */
-	.nav-link[aria-current='page']::after,
-	.nav-link[aria-current='true']::after {
-		background: var(--accent-warm);
-		transform: scaleX(1);
-	}
-	/* Contact reads as the page's one imperative, so it takes the accent at
-	   rest and keeps it on hover — the destination, not a destination. */
-	.nav-contact {
-		color: var(--accent);
-	}
-	.nav-contact:hover,
-	.nav-contact:focus-visible {
-		color: var(--accent-hover);
-	}
-	.nav-contact[aria-current='page'] {
-		color: var(--accent);
+	.header-cta {
+		display: none;
 	}
 
+	.nav-menu {
+		position: relative;
+	}
+	.nav-toggle {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 2.5rem;
+		height: 2.5rem;
+		border: 1px solid var(--line-strong);
+		border-radius: var(--radius-sm);
+		color: var(--text);
+		cursor: pointer;
+		list-style: none;
+	}
+	.nav-toggle::-webkit-details-marker {
+		display: none;
+	}
+	.nav-toggle svg {
+		width: 1.25rem;
+		height: 1.25rem;
+	}
+	.nav-menu[open] .nav-toggle {
+		border-color: var(--accent);
+		color: var(--accent);
+	}
+	.nav-menu-panel {
+		position: absolute;
+		top: calc(100% + 0.75rem);
+		right: 0;
+		width: min(18rem, calc(100vw - 2.5rem));
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		padding: 0.75rem;
+		background: var(--panel);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+		box-shadow: var(--shadow-md);
+	}
+	.nav-menu-links {
+		display: flex;
+		flex-direction: column;
+	}
+	.nav-menu .nav-link {
+		width: 100%;
+		padding: 0.6rem 0.75rem;
+		font-size: 1rem;
+	}
+	.nav-menu-cta {
+		width: 100%;
+		margin-top: 0.25rem;
+	}
+
+	@media (width >= 56rem) {
+		.site-nav {
+			display: flex;
+		}
+		.header-cta {
+			display: inline-flex;
+		}
+		.nav-menu {
+			display: none;
+		}
+	}
+
+	/* ── Footer ── */
+	.site-footer {
+		margin-top: auto;
+	}
 	.footer-grid {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 2.5rem 2rem;
-		padding-block: clamp(3.5rem, 7vw, 5.5rem) 3rem;
+		padding-block: clamp(3rem, 6vw, 4.5rem) 2.5rem;
 	}
 	@media (width >= 48rem) {
 		.footer-grid {
-			grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr));
+			grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr));
+		}
+	}
+	.footer-brand {
+		grid-column: 1 / -1;
+	}
+	@media (width >= 48rem) {
+		.footer-brand {
+			grid-column: auto;
 		}
 	}
 	.footer-wordmark {
-		font-family: var(--font-serif);
-		font-size: 1.3rem;
-		font-weight: 500;
-		letter-spacing: -0.01em;
+		font-size: 1.2rem;
+		font-weight: 700;
+		letter-spacing: -0.02em;
 	}
 	.footer-wordmark span {
 		color: var(--accent-warm);
 	}
 	.footer-copy {
-		max-width: 30ch;
-		margin-top: 0.9rem;
+		max-width: 34ch;
+		margin-top: 0.75rem;
 		font-size: 0.9rem;
 		line-height: 1.6;
-		color: var(--muted);
+		color: var(--footer-muted);
 	}
 	.footer-label {
-		font-size: 0.68rem;
+		font-size: 0.78rem;
 		font-weight: 600;
-		letter-spacing: 0.16em;
+		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		/* --dim sits near 3.3:1 on the inverted footer and fails AA for type;
-		   --muted clears 4.5:1 on both footer surfaces. */
-		color: var(--muted);
+		color: var(--footer-muted);
 		margin-bottom: 0.9rem;
 	}
-	footer nav {
+	.site-footer nav {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
 		gap: 0.55rem;
 	}
 	.footer-link {
-		position: relative;
-		width: fit-content;
 		font-size: 0.9rem;
-		color: var(--body);
+		color: var(--footer-text);
 		transition: color 0.2s ease;
 	}
-
+	.footer-link:hover {
+		color: var(--accent);
+	}
 	.footer-base {
 		display: flex;
 		flex-wrap: wrap;
@@ -567,9 +546,9 @@ const dateline = new Date().toLocaleDateString('en-CA', {
 		justify-content: space-between;
 		gap: 0.5rem 2rem;
 		padding-block: 1.25rem;
-		border-top: 1px solid var(--line);
-		font-size: 0.8rem;
-		color: var(--muted);
+		border-top: 1px solid var(--footer-line);
+		font-size: 0.82rem;
+		color: var(--footer-muted);
 	}
 
 	/* Clipped rather than parked off-left: some screen readers still announce
@@ -588,9 +567,9 @@ const dateline = new Date().toLocaleDateString('en-CA', {
 		border: 0;
 	}
 	.skip-link:focus {
-		left: 0;
-		top: 0;
-		z-index: 50;
+		left: 1rem;
+		top: 1rem;
+		z-index: 100;
 		width: auto;
 		height: auto;
 		margin: 0;
@@ -601,8 +580,9 @@ const dateline = new Date().toLocaleDateString('en-CA', {
 		background: var(--panel);
 		color: var(--text);
 		border: 1px solid var(--line-strong);
-		border-radius: 0 0 4px 0;
+		border-radius: var(--radius-sm);
 		padding: 0.6rem 1rem;
 		font-size: 0.9rem;
+		box-shadow: var(--shadow-md);
 	}
 </style>

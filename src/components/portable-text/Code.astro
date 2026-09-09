@@ -26,14 +26,12 @@ const { node } = Astro.props;
 const html = node?.code ? await highlight(node.code, node.language) : '';
 ---
 
-{
-	node?.code && (
-		<>
-			{node.filename && <p class="code-filename">{node.filename}</p>}
-			<Fragment set:html={html} />
-		</>
-	)
-}
+{node?.code && (
+	<>
+		{node.filename && <p class="code-filename">{node.filename}</p>}
+		<Fragment set:html={html} />
+	</>
+)}
 
 <style>
 	.code-filename {

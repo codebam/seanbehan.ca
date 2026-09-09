@@ -8,7 +8,7 @@
  * doors differ by what they say rather than by a branch here.
  *
  * The dot is a mark, not an indicator: it does not pulse. A live status light
- * is a dashboard's grammar, and the site is deliberately a page.
+ * is a dashboard's grammar, and the site is deliberately calm.
  */
 import type { SiteConfig } from '../lib/site';
 
@@ -19,48 +19,51 @@ interface Props {
 const { availability } = Astro.props;
 ---
 
-{
-	availability && (
-		<p class="availability">
-			<span class="availability-dot" aria-hidden="true" />
+{availability && (
+	<p class="availability">
+		<span class="availability-dot" aria-hidden="true" />
+		<span class="availability-text">
 			<strong>{availability.label}</strong>
 			<span class="availability-detail">{availability.detail}</span>
-		</p>
-	)
-}
+		</span>
+	</p>
+)}
 
 <style>
 	.availability {
 		display: flex;
-		flex-wrap: wrap;
-		align-items: baseline;
-		gap: 0.2rem 0.6rem;
-		font-size: 0.9rem;
-		line-height: 1.5;
+		align-items: flex-start;
+		gap: 0.65rem;
+		padding: 0.8rem 1rem;
+		background: var(--surface-alt);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
 	}
-	/* The warm accent is the site's voice — the things the page says about
-	   itself — which is exactly what a declared status is. Blue would make it
-	   read as something to click. */
+	/* Green is the one signal a reader already knows for "available"; the warm
+	   accent stays for editorial emphasis. */
 	.availability-dot {
 		width: 0.5rem;
 		height: 0.5rem;
-		align-self: center;
+		margin-top: 0.4rem;
 		flex-shrink: 0;
 		border-radius: 50%;
-		background: var(--accent-warm);
-		box-shadow: 0 0 0 3px var(--accent-warm-wash);
+		background: var(--positive);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--positive) 18%, transparent);
+	}
+	.availability-text {
+		display: flex;
+		flex-direction: column;
+		gap: 0.1rem;
+		min-width: 0;
 	}
 	.availability strong {
+		font-size: 0.9rem;
 		font-weight: 600;
-		letter-spacing: 0.01em;
 		color: var(--text);
 	}
 	.availability-detail {
+		font-size: 0.85rem;
+		line-height: 1.5;
 		color: var(--muted);
-	}
-	.availability-detail::before {
-		content: '—';
-		margin-right: 0.6rem;
-		color: var(--line-strong);
 	}
 </style>

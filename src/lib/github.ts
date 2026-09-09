@@ -41,6 +41,11 @@ let memo: { at: number; projects: FeaturedProject[] } | null = null;
 export async function withLiveStats(projects: FeaturedProject[]): Promise<FeaturedProject[]> {
 	if (memo && Date.now() - memo.at < CACHE_SECONDS * 1000) return memo.projects;
 
+	// Local dev has no trusted CA store, so every request to GitHub fails after
+	// a TLS handshake that burns the page's whole stats budget. The committed
+	// numbers are exactly what dev used to fall back to anyway; skip the wait.
+	if (import.meta.env.DEV) return projects;
+
 	// Claim the memo before the requests, not after: the page renders per
 	// request now, and a cold isolate serving several at once would otherwise
 	// send a GitHub call per visitor rather than one per repository.

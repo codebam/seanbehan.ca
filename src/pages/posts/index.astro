@@ -20,17 +20,17 @@ const tags = tagCounts(posts);
 	ogTitle={`Writing — ${site.name}`}
 >
 	<Masthead label="Writing archive" meta={`${posts.length} published`}>
-		<Fragment slot="title">Writing from <em>underneath the stack.</em></Fragment>
+		<Fragment slot="title">
+			Writing from <em>underneath the stack.</em>
+		</Fragment>
 		<p>
 			Notes from whatever I am taking apart: Linux and NixOS, containers and systemd, Rust, and the
 			edge.{' '}
-			{
-				tags.length > 0 && (
-					<a class="link-accent" href="/posts/tags">
-						Browse by tag <span class="arrow">&rarr;</span>
-					</a>
-				)
-			}
+			{tags.length > 0 && (
+				<a class="link-accent" href="/posts/tags">
+					Browse by tag <span class="arrow">&rarr;</span>
+				</a>
+			)}
 		</p>
 	</Masthead>
 
@@ -54,35 +54,9 @@ const tags = tagCounts(posts);
 
 <style>
 	.archive {
-		padding-block: clamp(4.5rem, 9vw, 8rem);
-		border-top: 1px solid var(--line);
-	}
-	.archive-heading {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 2rem;
-		padding-bottom: 1rem;
-		border-bottom: 2px solid var(--text);
-	}
-	.archive-heading p {
-		font-size: 0.7rem;
-		font-weight: 600;
-		letter-spacing: 0.16em;
-		text-transform: uppercase;
-		color: var(--muted);
-	}
-	.archive-search {
-		margin-top: clamp(2.5rem, 5vw, 4rem);
+		padding-block: clamp(3.5rem, 7vw, 5.5rem);
 	}
 	.archive-list {
 		margin-top: 1.75rem;
-	}
-	@media (width < 48rem) {
-		.archive-heading {
-			align-items: flex-start;
-			flex-direction: column;
-			gap: 0.75rem;
-		}
 	}
 </style>
