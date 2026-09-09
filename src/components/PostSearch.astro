@@ -14,7 +14,7 @@ import { Input } from '@cloudflare/kumo/components/input';
 ---
 
 <div class="search-frame">
-	<label for="post-search">Filter</label>
+	<label for="post-search" id="post-search-label">Filter</label>
 	<div class="relative">
 		<svg
 			class="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[var(--dim)]"
@@ -35,6 +35,7 @@ import { Input } from '@cloudflare/kumo/components/input';
 			placeholder="Search titles, tags and full text…"
 			size="lg"
 			className="flat-control w-full pl-9"
+			aria-labelledby="post-search-label"
 		/>
 	</div>
 </div>

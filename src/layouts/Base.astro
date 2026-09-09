@@ -353,12 +353,17 @@ const isCurrent = (href: string) =>
 
 	/* Nav and footer links share one quiet behaviour: the label darkens, and a
 	   rule grows out from under it on hover and retracts on the way out, so the
-	   text never shifts and the row height never changes. */
+	   text never shifts and the row height never changes.
+
+	   0.76rem rather than the 0.72 this started at: the nav is furniture, but
+	   tracked uppercase below ~12px is the first thing a reader has to squint
+	   at. The tracking comes down a hair to pay for the extra size, so the row
+	   stays the same width. */
 	.nav-link {
 		position: relative;
-		font-size: 0.72rem;
+		font-size: 0.76rem;
 		font-weight: 600;
-		letter-spacing: 0.14em;
+		letter-spacing: 0.12em;
 		text-transform: uppercase;
 		color: var(--muted);
 		padding-bottom: 3px;

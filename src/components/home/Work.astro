@@ -134,6 +134,14 @@ const { projects } = Astro.props;
 		border: 1px solid var(--line-strong);
 		border-radius: 3px;
 		background: var(--panel);
+		transition: border-color 0.25s ease;
+	}
+	/* The same hover cue the related-reading cards give: the frame takes the
+	   accent when the pointer is anywhere in the row, so the picture and the
+	   title read as one link. */
+	.work-row:hover .row-media,
+	.work-row:focus-within .row-media {
+		border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
 	}
 	.row-media img {
 		display: block;

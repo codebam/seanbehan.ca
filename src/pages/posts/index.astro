@@ -4,11 +4,14 @@ import Base from '../../layouts/Base.astro';
 import Masthead from '../../components/Masthead.astro';
 import PostList from '../../components/PostList.astro';
 import PostSearch from '../../components/PostSearch.astro';
-import { getPosts } from '../../lib/posts';
+import { getPosts, tagCounts } from '../../lib/posts';
 import { site } from '../../lib/site';
 
 const { posts, cacheHint } = await getPosts({ includeBodies: false });
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+
+/** The tag index is only worth linking to once something is filed under a tag. */
+const tags = tagCounts(posts);
 ---
 
 <Base
@@ -20,9 +23,14 @@ if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 		<Fragment slot="title">Writing from <em>underneath the stack.</em></Fragment>
 		<p>
 			Notes from whatever I am taking apart: Linux and NixOS, containers and systemd, Rust, and the
-			edge. <a class="link-accent" href="/posts/tags"
-				>Browse by tag <span class="arrow">&rarr;</span></a
-			>
+			edge.{' '}
+			{
+				tags.length > 0 && (
+					<a class="link-accent" href="/posts/tags">
+						Browse by tag <span class="arrow">&rarr;</span>
+					</a>
+				)
+			}
 		</p>
 	</Masthead>
 
