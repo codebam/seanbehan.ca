@@ -16,7 +16,6 @@ import { getPosts, prepareBody, toSummary } from '../../lib/posts';
 import { LEGAL_NAME } from '../../lib/site';
 import { slugifyTag } from '../../lib/tags';
 import type { PostSummary } from '../../lib/types';
-import { Badge } from '@cloudflare/kumo/components/badge';
 
 /** How many "keep reading" entries a post ends with. Two fills the row. */
 const RELATED_LIMIT = 2;
@@ -145,11 +144,9 @@ const updated = post.meta.updated
 									<span class="tag-list">
 										{post.meta.tags.map((tag) =>
 											publishedTagSlugs.has(slugifyTag(tag)) ? (
-												<a href={`/posts/tag/${slugifyTag(tag)}`}>
-													<Badge variant="outline">{tag}</Badge>
-												</a>
+												<a href={`/posts/tag/${slugifyTag(tag)}`}>{tag}</a>
 											) : (
-												<Badge variant="secondary">{tag}</Badge>
+												<span>{tag}</span>
 											)
 										)}
 									</span>
@@ -315,8 +312,27 @@ const updated = post.meta.updated
 	.tag-list {
 		display: flex;
 		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.4rem;
+		align-items: baseline;
+		font-size: 0.68rem;
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+	}
+	/* The tags run as one tracked line, a middot between each, rather than as
+	   a row of pills. */
+	.tag-list > * + *::before {
+		content: '·';
+		margin-inline: 0.5rem;
+		color: var(--line-strong);
+	}
+	.tag-list a,
+	.tag-list span {
+		color: var(--muted);
+		transition: color 0.2s ease;
+	}
+	.tag-list a:hover,
+	.tag-list a:focus-visible {
+		color: var(--accent);
 	}
 	.post-body {
 		padding-block: clamp(3.5rem, 7vw, 6rem) clamp(4.5rem, 9vw, 8rem);
@@ -364,14 +380,10 @@ const updated = post.meta.updated
 		display: flex;
 		flex-direction: column;
 		gap: 1.25rem;
-		min-height: 9rem;
-		padding: 1.5rem;
-		border: 1px solid var(--line);
-		border-radius: 3px;
-		background: var(--panel);
-		transition:
-			border-color 0.25s ease,
-			background-color 0.25s ease;
+		min-height: 7rem;
+		padding-top: 1.25rem;
+		border-top: 1px solid var(--line-strong);
+		transition: border-color 0.25s ease;
 	}
 	.sibling.newer {
 		grid-column: 2;
@@ -379,8 +391,7 @@ const updated = post.meta.updated
 	}
 	.sibling:hover,
 	.sibling:focus-visible {
-		border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
-		background: color-mix(in srgb, var(--accent) 4%, var(--panel));
+		border-top-color: var(--accent);
 	}
 	.sibling .title {
 		font-family: var(--font-serif);

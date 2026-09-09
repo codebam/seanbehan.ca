@@ -171,32 +171,31 @@ named, terracotta-on-cream reading as a blog theme, is answered by the same
 thing that kept the site out of the family before: the serif column and the
 two-job accent split, not the hue alone.
 
-**Known seams.** Three bands now sit between the same two fills on two
-pages (services: alt / alt / bg; the kit: bg / alt / alt), so one adjacent
-pair on each shares a fill and rests on the hairline between them. It is the
-cost of a two-fill system — the inversion was the third fill, and the third
-fill was the thing that did not belong. If a future change wants the
-seamlessness back, the answer is not a third fill; it is rules, which is a
-road in section 4.
+**8. The broadsheet front page.** The bands, the facts strip and the
+alternating project rows were three ways of saying the same thing — a
+section starts here — so the front page says it once, with type and rules.
+The masthead is a nameplate between hairlines with a folio line above it; the
+numbers are a single ruled folio line; the work and the writing each lead
+with one story and index the rest as ruled two-column lists. The nameplate is
+now the header on every page, run compact on interior pages so the paper is
+recognisable without the masthead eating the first screen of an article;
+mid-page `panel-alt` fills were removed, so a section is separated by its own
+top rule rather than by a second background. The shared surfaces followed:
+`PostList` is a ruled index, related reading and the post's sibling links are
+ruled rather than boxed, and the Kumo tag pills became tracked text. The road
+in section 4 was taken, and it cost a component rewrite rather than a token
+swap — exactly what the entry predicted.
 
-**The ceiling it does not lift.** Structure. The bands, the folio lines, the
-one-column reading measure: still the family's bones, now on the site's own
-ground. "Broadsheet" below is the road that changes the bones, and it is
-still not taken.
+**The bones it did move.** This is the structural change section 4 used to
+keep on the shelf: the bands are gone, structure is rules and type, and the
+nameplate signs every page. The invariants in section 2 held through it — the
+tokens, both palettes, the serif column, JS-off parity and the two-variant
+rule are untouched, and the footer is still the one inverted band.
 
 ---
 
 ## 4. Roads not taken
 
-- **"Broadsheet" — the site as a printed sheet.** The bands go entirely;
-  structure is rules, not fills; the masthead's site name is the logo
-  between two hairlines; "latest writing" becomes a multi-column index of
-  title / first sentence / date; the facts fold into a folio line. The
-  maximal statement, and the right one if the ambition is _this writer's_
-  site rather than a good website. Turned down on effort (a component
-  rewrite, not a token swap) and on mobile rhythm (a one-column index of
-  rules starts to read as a wall). Kept as the design to reach for when the
-  site wants to say something.
 - **"The Console" — the technical journal, dark-first, mono-voiced.** Dark
   as the default, a monospace display face, a prompt-line masthead, code
   blocks full-bleed. The most truthful for _this_ audience — and the one

@@ -332,16 +332,18 @@
 	/* ═══════════════════════════════════════════════════════════
 	   Panels
 
-	   Full-bleed horizontal bands. `panel-invert` hands a section the palette
-	   the page is *not* in, so the alternation reads as strongly in dark mode
-	   as in light instead of one theme losing all its contrast.
+	   The page is one sheet. Mid-page sections no longer alternate fills:
+	   `panel-alt` is kept as the name the templates already use, but it paints
+	   the same ground as `panel` and lets the section's own top rule do the
+	   separating. The footer is the one band that still inverts — the page
+	   ends, and the signature's page is different.
 	   ═══════════════════════════════════════════════════════════ */
 	.panel {
 		background: var(--bg);
 		color: var(--text);
 	}
 	.panel-alt {
-		background: var(--surface-alt);
+		background: var(--bg);
 		color: var(--text);
 	}
 

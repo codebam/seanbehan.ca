@@ -47,7 +47,7 @@ const quietLinks: { label: string; href: string; external: boolean }[] = [
 ];
 ---
 
-<Base broadsheet>
+<Base>
 	<article class="front-page">
 		<!-- The lead: the one oversized statement on the page, with the status
 		     and the page's one imperative in the column beside it. The deck
@@ -191,10 +191,12 @@ const quietLinks: { label: string; href: string; external: boolean }[] = [
 		margin-top: 1.5rem;
 	}
 
-	/* The deck: two columns of serif with the column rule the sheet would have
-	   printed. No drop cap: the intro opens on a number, and a floated "1"
-	   leaves the "2" of "12" behind on the baseline. */
+	/* The deck: one measured column of serif. It was set in two newspaper
+	   columns, but the intro is a single sentence and the column rule cut it
+	   mid-clause; the printed-sheet look lives in the rules above and below,
+	   not in a break the reader has to bridge. */
 	.lead-deck {
+		max-width: 64ch;
 		margin-top: clamp(2rem, 4vw, 3rem);
 		padding-top: clamp(1.5rem, 3vw, 2rem);
 		border-top: 1px solid var(--line-strong);
@@ -203,12 +205,5 @@ const quietLinks: { label: string; href: string; external: boolean }[] = [
 		line-height: 1.72;
 		color: var(--body);
 		text-wrap: pretty;
-	}
-	@media (width >= 48rem) {
-		.lead-deck {
-			columns: 2;
-			column-gap: clamp(2.5rem, 4vw, 3.5rem);
-			column-rule: 1px solid var(--line);
-		}
 	}
 </style>

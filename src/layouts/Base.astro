@@ -39,13 +39,6 @@ interface Props {
 	canonical?: string;
 	/** Content reference, so plugins and visual editing can find the entry. */
 	content?: { collection: string; id: string; slug?: string | null };
-	/**
-	 * Draw the home page's masthead — a centred nameplate between rules, the
-	 * folio line above it — instead of the running header every other page
-	 * keeps. The redesign is the front page, not the whole paper: the archive,
-	 * the résumé and the rest still open with the same small running head.
-	 */
-	broadsheet?: boolean;
 }
 
 const {
@@ -57,12 +50,18 @@ const {
 	image,
 	robots,
 	canonical: canonicalOverride,
-	content,
-	broadsheet = false
+	content
 } = Astro.props;
 
 const path = Astro.url.pathname;
 const currentYear = new Date().getFullYear();
+
+/**
+ * The home page carries the full nameplate; every other page runs it compact,
+ * so the paper is recognisable without the masthead eating the first screen of
+ * an article. One header component, two scales — not two headers.
+ */
+const isHome = path === '/';
 
 const fullTitle = title
 	? title.includes(site.name)
@@ -221,71 +220,41 @@ const dateline = new Date().toLocaleDateString('en-CA', {
 		<a href="#main" class="skip-link">Skip to content</a>
 
 		{
-			broadsheet ? (
-				<header class="masthead">
-					<div class="shell">
-						<p class="masthead-folio">
-							<span>Ontario, Canada</span>
-							<span>{dateline}</span>
-						</p>
-
-						<a href="/" class="nameplate" aria-current={path === '/' ? 'page' : undefined}>
-							{site.name}
-							<span class="nameplate-mark" aria-hidden="true">
-								.
-							</span>
-						</a>
-						<p class="masthead-sub">{site.eyebrow}</p>
-
-						<nav aria-label="Primary" class="masthead-nav">
-							{navItems.map((item) => (
-								<a href={item.href} class="nav-link" aria-current={item.current}>
-									{item.label}
-									<SiblingMark href={item.href} />
-								</a>
-							))}
-							<a
-								href="/contact"
-								class="nav-link nav-contact"
-								aria-current={isCurrent('/contact') ? 'page' : undefined}
-							>
-								Contact
-							</a>
-						</nav>
-					</div>
-				</header>
-			) : (
-				<header class="border-b border-[var(--line)]">
-					<div class="site-header shell flex items-baseline gap-x-6 gap-y-3 py-5 md:py-6">
-						<a href="/" class="wordmark mr-auto" aria-current={path === '/' ? 'page' : undefined}>
-							{site.name}
-							<span class="wordmark-mark" aria-hidden="true">
-								.
-							</span>
-						</a>
-
-						<nav
-							aria-label="Primary"
-							class="primary-nav flex flex-wrap items-baseline gap-x-5 gap-y-2 md:gap-x-6"
-						>
-							{navItems.map((item) => (
-								<a href={item.href} class="nav-link" aria-current={item.current}>
-									{item.label}
-									<SiblingMark href={item.href} />
-								</a>
-							))}
-							<a
-								href="/contact"
-								class="nav-link nav-contact"
-								aria-current={isCurrent('/contact') ? 'page' : undefined}
-							>
-								Contact
-							</a>
-						</nav>
-					</div>
-				</header>
-			)
+			/* The nameplate is the header on every page now, not just the front
+			   one. Interior pages get the compact scale. */
 		}
+		<header class:list={['masthead', !isHome && 'masthead-compact']}>
+			<div class="shell">
+				<p class="masthead-folio">
+					<span>Ontario, Canada</span>
+					<span>{dateline}</span>
+				</p>
+
+				<a href="/" class="nameplate" aria-current={isHome ? 'page' : undefined}>
+					{site.name}
+					<span class="nameplate-mark" aria-hidden="true"> . </span>
+				</a>
+				<p class="masthead-sub">{site.eyebrow}</p>
+
+				<nav aria-label="Primary" class="masthead-nav">
+					{
+						navItems.map((item) => (
+							<a href={item.href} class="nav-link" aria-current={item.current}>
+								{item.label}
+								<SiblingMark href={item.href} />
+							</a>
+						))
+					}
+					<a
+						href="/contact"
+						class="nav-link nav-contact"
+						aria-current={isCurrent('/contact') ? 'page' : undefined}
+					>
+						Contact
+					</a>
+				</nav>
+			</div>
+		</header>
 
 		<!-- Full-bleed: each page owns its own panels and .shell columns, so a
 		     section can run edge to edge on its own background. -->
@@ -391,13 +360,12 @@ const dateline = new Date().toLocaleDateString('en-CA', {
 </html>
 
 <style>
-	/* ── Broadsheet masthead ──
-	   The home page's front page. Where the running header is a row — wordmark
-	   left, nav right — this is a printed nameplate: a folio line, the site
-	   name centred between rules, and the nav as a tracked row beneath it.
-	   The rules do the work the old header's border did, and the nameplate is
-	   allowed to be the largest type in the chrome because on the front page
-	   it is the paper's own title. */
+	/* ── Masthead ──
+	   The site's header on every page: a folio line, the nameplate centred
+	   between rules, and the nav as a tracked row beneath it. On the home page
+	   the nameplate is the paper's own title and is allowed to be the largest
+	   type in the chrome; on interior pages it runs compact, because there the
+	   page opener below it owns the headline. */
 	.masthead {
 		border-bottom: 1px solid var(--line-strong);
 	}
@@ -458,28 +426,18 @@ const dateline = new Date().toLocaleDateString('en-CA', {
 		border-top: 1px solid var(--line);
 	}
 
-	/* The wordmark is the only serif in the chrome: it signs the page the way a
-	   name signs a letter, and the orange full stop is the signature's mark. */
-	.wordmark {
-		font-family: var(--font-serif);
-		font-size: 1.3rem;
-		font-weight: 500;
-		letter-spacing: -0.01em;
-		line-height: 1;
-		color: var(--text);
-		white-space: nowrap;
-		transition: color 0.2s ease;
+	/* Interior pages: the same paper at a working size. */
+	.masthead-compact .nameplate {
+		margin-top: 1.1rem;
+		font-size: clamp(1.9rem, 5vw, 2.9rem);
 	}
-	.wordmark-mark {
-		color: var(--accent-warm);
+	.masthead-compact .masthead-sub {
+		margin-top: 0.45rem;
+		font-size: 0.66rem;
 	}
-	.wordmark:hover,
-	.wordmark:focus-visible {
-		color: var(--accent);
-	}
-	.wordmark:hover .wordmark-mark,
-	.wordmark:focus-visible .wordmark-mark {
-		color: var(--text);
+	.masthead-compact .masthead-nav {
+		margin-top: 0.9rem;
+		padding-block: 0.8rem;
 	}
 
 	/* Nav and footer links share one quiet behaviour: the label darkens, and a
@@ -612,17 +570,6 @@ const dateline = new Date().toLocaleDateString('en-CA', {
 		border-top: 1px solid var(--line);
 		font-size: 0.8rem;
 		color: var(--muted);
-	}
-
-	@media (width < 40rem) {
-		.site-header {
-			flex-wrap: wrap;
-		}
-		.primary-nav {
-			width: 100%;
-			justify-content: flex-start;
-			gap: 0.35rem 1.1rem;
-		}
 	}
 
 	/* Clipped rather than parked off-left: some screen readers still announce
