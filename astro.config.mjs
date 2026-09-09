@@ -121,7 +121,11 @@ export default defineConfig({
 		},
 		plugins: [tailwindcss()],
 		server: {
-			allowedHosts: ['nixos-desktop.tail7d7a2.ts.net']
+			allowedHosts: ['nixos-desktop.tail7d7a2.ts.net'],
+			// `.direnv/flake-inputs` symlinks the whole Nix store checkout into
+			// the repo; following it exhausts the inotify watch limit and the
+			// dev server dies before it serves a page.
+			watch: { ignored: ['**/.direnv/**'] }
 		},
 		resolve: {
 			dedupe: ['react', 'react-dom']
