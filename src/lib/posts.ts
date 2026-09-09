@@ -151,9 +151,14 @@ export function toSummary(entry: PostEntry, tags: string[] = [], body?: string):
  * `{ includeBodies: false }` and skips keeping a second copy of the archive's
  * words per request. (Reading time still walks each body once — the lists
  * print it — so the saving is the duplicated strings, not the parse.)
+ *
+ * `content` is the raw Portable Text, and it exists for the feed: the archive
+ * query already transferred it, so asking for it here is what lets the feed
+ * render bodies without a second `getEmDashCollection` for the same rows.
  */
-export async function getPosts(opts?: { includeBodies?: boolean }) {
+export async function getPosts(opts?: { includeBodies?: boolean; includeContent?: boolean }) {
 	const includeBodies = opts?.includeBodies ?? true;
+	const includeContent = opts?.includeContent ?? false;
 	const { entries, cacheHint } = await getEmDashCollection('posts', {
 		status: 'published',
 		orderBy: { published_at: 'desc' },
@@ -168,10 +173,12 @@ export async function getPosts(opts?: { includeBodies?: boolean }) {
 	);
 
 	const bodies = new Map<string, string>();
+	const content = new Map<string, unknown>();
 	const posts = list
 		.map((entry) => {
 			const body = plainText(entry.data.content);
 			if (includeBodies) bodies.set(entry.id, body);
+			if (includeContent) content.set(entry.id, entry.data.content);
 			return toSummary(
 				entry,
 				(termsByEntry.get(entry.data.id) ?? []).map((term) => term.slug),
@@ -180,7 +187,7 @@ export async function getPosts(opts?: { includeBodies?: boolean }) {
 		})
 		.sort((a, b) => new Date(b.meta.date).getTime() - new Date(a.meta.date).getTime());
 
-	return { posts, cacheHint, bodies };
+	return { posts, cacheHint, bodies, content };
 }
 
 /** Tag counts across the published posts, most used first. */

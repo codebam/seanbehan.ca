@@ -7,27 +7,20 @@
  * shorter than the gap between posts by some margin.
  */
 import type { APIRoute } from 'astro';
-import { getEmDashCollection } from 'emdash';
 import { generateRSSFeed } from '../lib/rssFeed';
 import { renderBodyHtml } from '../lib/renderBody';
 import { getPosts } from '../lib/posts';
 
 export const GET: APIRoute = async () => {
-	const { posts } = await getPosts({ includeBodies: false });
-
-	// One query for the bodies: getPosts() summarises entries and drops the
-	// Portable Text, which is all this needs from them.
-	const { entries } = await getEmDashCollection('posts', {
-		status: 'published',
-		orderBy: { published_at: 'desc' },
-		limit: 200
-	});
-	const bodies = new Map(entries.map((entry) => [`/posts/${entry.id}`, entry.data.content]));
+	// One query, not two: the archive fetch already carried each entry's
+	// Portable Text, so `includeContent` keeps it instead of throwing it away
+	// and asking D1 for the same rows again.
+	const { posts, content } = await getPosts({ includeBodies: false, includeContent: true });
 
 	const postHtml = new Map<string, string>();
 	await Promise.all(
 		posts.map(async (post) => {
-			postHtml.set(post.path, await renderBodyHtml(bodies.get(post.path)));
+			postHtml.set(post.path, await renderBodyHtml(content.get(post.slug)));
 		})
 	);
 

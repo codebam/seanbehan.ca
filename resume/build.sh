@@ -187,6 +187,14 @@ if [[ $WANT_HTML -eq 1 ]]; then
   )
   note "fragmenting $NAME -> $(basename -- "$HTML_OUTPUT")"
   pandoc "${html[@]}" -o "$HTML_OUTPUT"
+  # --shift-heading-level-by=2 is a flat shift, but the source jumps from a
+  # section (#) straight to an entry (###) with no subsection between, so the
+  # fragment comes out h3 then h5. That skipped level fails a document outline
+  # (Lighthouse's heading-order check). Entries are the only h5 the document
+  # produces, so pull them up to h4 and the outline is sequential. The PDF is
+  # unaffected: it is sectioned by the LaTeX macros, not by these tags.
+  sed -e 's/<h5\([ >]\)/<h4\1/g' -e 's/<\/h5>/<\/h4>/g' "$HTML_OUTPUT" > "$HTML_OUTPUT.tmp"
+  mv "$HTML_OUTPUT.tmp" "$HTML_OUTPUT"
   # A template that lost a variable fails quietly: pandoc substitutes the empty
   # string, exits 0, and the page gets a header with no name in it. Checking for
   # the two anchors the stylesheet hangs on is cheaper than a browser.

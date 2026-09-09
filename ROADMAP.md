@@ -29,7 +29,10 @@ proposed, roughly ordered by value within each section.
 - [ ] Feed renders highlight every code block on every MISS
       (`src/pages/rss.xml.ts`, `src/lib/renderBody.ts`). Hourly MISS × ~20 posts
       of shiki is the heaviest per-request CPU left. Consider caching rendered
-      item HTML or lengthening feed edge time.
+      item HTML or lengthening feed edge time. The route no longer fetches the
+      archive twice: `getPosts({ includeContent: true })` keeps the Portable
+      Text the first query already carried, so a MISS is one collection query
+      plus the highlighting, not two queries.
 
 ## 2. Content / UX
 
@@ -93,6 +96,9 @@ proposed, roughly ordered by value within each section.
 - [ ] `twitter:site @seanwbehan` vs handle `codebam` (`src/layouts/Base.astro:152`).
       **Kept:** consistent with the author's long-standing handle; no evidence
       it is wrong.
+- [x] `robots.txt` emitted two `User-agent: *` groups — mergeable per RFC 9309,
+      but one group is the shape every crawler agrees on. The body now lives in
+      `src/lib/robots.ts` (tested) and the route is three lines.
 - [x] Shiki fence labels added: `html`, `json`, `yaml` (+`yml`), `dockerfile`
       (+`docker`), `diff` (+`patch`) (`src/lib/highlight.ts`). Each grammar is
       a few KB; unknown labels still fall back to plaintext.
@@ -108,5 +114,11 @@ proposed, roughly ordered by value within each section.
 - [ ] Portable Text images: EmDash's default renderer owns them (only `block`
       and `code` are overridden); intrinsic dimensions/alt need verifying
       against real content — could not check with an empty local DB.
-- [ ] No privacy-friendly analytics; no 500 page (only `404.astro`). Needs
-      service decisions.
+- [x] No 500 page (`src/pages/500.astro`): an unhandled error fell back to
+      Astro's bare default. It now matches the 404, offers a retry and a report
+      link, and is noindex.
+- [x] The résumé fragment skipped a heading level (`resume/build.sh`): the flat
+      `--shift-heading-level-by=2` turned a `#` section and a `###` entry into
+      h3 and h5, and Lighthouse's heading-order check failed on `/resume`.
+      Entries are now h4; the PDF is sectioned by the LaTeX macros, not these.
+- [ ] No privacy-friendly analytics. Needs a service decision.

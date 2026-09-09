@@ -1,0 +1,27 @@
+---
+/**
+ * The page Astro serves when a route throws. The 404 says the address is
+ * wrong; this one says the address is right and the render still failed, so it
+ * offers a retry rather than a search — and a way to report it, because a
+ * broken page a reader can describe is a bug that can be fixed.
+ */
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+	title="500"
+	description="Something went wrong rendering this page."
+	robots="noindex, nofollow"
+>
+	<section class="panel shell flex min-h-[55vh] flex-col justify-center py-20">
+		<p class="eyebrow">Error 500</p>
+		<h1 class="display display-xl mt-5 max-w-[18ch]">Something broke on the way here.</h1>
+		<p class="mt-4 max-w-[50ch] font-serif text-[1.1rem] leading-[1.65] text-[var(--body)]">
+			This page failed to render. It is not you. Try again in a moment, or head back home.
+		</p>
+		<p class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+			<a href="/" class="btn">Back home</a>
+			<a href="/contact" class="link-quiet">Report it</a>
+		</p>
+	</section>
+</Base>
