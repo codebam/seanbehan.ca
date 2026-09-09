@@ -68,13 +68,14 @@
 /* ═══════════════════════════════════════════════════════════
    Design tokens
 
-   One set of names, two palettes. Light uses cool paper greys;
-   dark carries the same blue accent onto a deep slate surface.
-   Blue does the interactive work — links, focus, targets — and
-   a warm orange is the editorial accent: italic emphasis, the
-   wordmark's dot, the small decorative marks. Nothing outside
-   this block knows which palette is active — components only
-   ever reference the tokens.
+   One set of names, two palettes. Light is warm paper — cream
+   grounds, near-white panels, ink-brown type; dark carries the
+   same warm ink onto a deep espresso surface. Blue does the
+   interactive work — links, focus, targets — and a terracotta
+   is the editorial accent: italic emphasis, the wordmark's dot,
+   the small decorative marks. Nothing outside this block knows
+   which palette is active — components only ever reference the
+   tokens.
    ═══════════════════════════════════════════════════════════ */
 @theme {
 	/* The Fallback families are the local ones with the webfont's metrics forced
@@ -97,33 +98,33 @@
    section the palette it is not currently in. */
 @layer base {
 	:root {
-		--palette-light-bg: #f1f5f9;
-		--palette-light-alt: #e7edf4;
-		--palette-light-panel: #ffffff;
-		--palette-light-line: #cbd5e1;
-		--palette-light-line-strong: #94a3b8;
-		--palette-light-text: #111827;
-		--palette-light-body: #334155;
-		--palette-light-muted: #52647a;
-		--palette-light-dim: #7a8ba2;
-		--palette-light-accent: #2457d6;
-		--palette-light-accent-hover: #1e46b5;
-		--palette-light-accent-on: #ffffff;
-		--palette-light-warm: #c2410c;
+		--palette-light-bg: #f7f2e8;
+		--palette-light-alt: #efe8da;
+		--palette-light-panel: #fffdf8;
+		--palette-light-line: #ddd3c2;
+		--palette-light-line-strong: #bfb29c;
+		--palette-light-text: #221c15;
+		--palette-light-body: #4b4237;
+		--palette-light-muted: #6c6152;
+		--palette-light-dim: #8d8069;
+		--palette-light-accent: #1d4ed8;
+		--palette-light-accent-hover: #173a9e;
+		--palette-light-accent-on: #fffdf8;
+		--palette-light-warm: #b23f1e;
 
-		--palette-dark-bg: #101827;
-		--palette-dark-alt: #172236;
-		--palette-dark-panel: #172236;
-		--palette-dark-line: #2a3a52;
-		--palette-dark-line-strong: #40536f;
-		--palette-dark-text: #eff6ff;
-		--palette-dark-body: #c2cedd;
-		--palette-dark-muted: #98a8bc;
-		--palette-dark-dim: #64748b;
-		--palette-dark-accent: #60a5fa;
-		--palette-dark-accent-hover: #93c5fd;
-		--palette-dark-accent-on: #081225;
-		--palette-dark-warm: #fb923c;
+		--palette-dark-bg: #171310;
+		--palette-dark-alt: #1f1a15;
+		--palette-dark-panel: #211b16;
+		--palette-dark-line: #3a3229;
+		--palette-dark-line-strong: #584c3d;
+		--palette-dark-text: #f4ede0;
+		--palette-dark-body: #d3c7b4;
+		--palette-dark-muted: #a89b86;
+		--palette-dark-dim: #7b6e5c;
+		--palette-dark-accent: #84a9ff;
+		--palette-dark-accent-hover: #aec8ff;
+		--palette-dark-accent-on: #1a120a;
+		--palette-dark-warm: #e8925f;
 	}
 }
 
@@ -134,25 +135,25 @@
 		--kumo-button-emphasis-ring: var(--accent-hover);
 
 		/* Surfaces */
-		--bg: #f1f5f9;
-		--surface-alt: #e7edf4;
-		--panel: #ffffff;
-		--line: #cbd5e1;
-		--line-strong: #94a3b8;
+		--bg: #f7f2e8;
+		--surface-alt: #efe8da;
+		--panel: #fffdf8;
+		--line: #ddd3c2;
+		--line-strong: #bfb29c;
 
 		/* Text */
-		--text: #111827;
-		--body: #334155;
-		--muted: #52647a;
-		/* Non-text only — scrollbar thumb, the search icon. It sits at 3.3:1 on
+		--text: #221c15;
+		--body: #4b4237;
+		--muted: #6c6152;
+		/* Non-text only — scrollbar thumb, the search icon. It sits at 3.5:1 on
 		   every surface here, which clears the 3:1 bar for UI marks but not the
 		   4.5:1 one for type, and it fails hardest in the inverted footer where
 		   Lighthouse caught it. The faintest *text* tier is --muted. */
-		--dim: #7a8ba2;
+		--dim: #8d8069;
 
 		/* Accent */
-		--accent: #2457d6;
-		--accent-hover: #1e46b5;
+		--accent: #1d4ed8;
+		--accent-hover: #173a9e;
 		--accent-warm: var(--palette-light-warm);
 		/* Text that sits on an accent surface. */
 		--accent-on: var(--palette-light-accent-on);
@@ -164,31 +165,31 @@
 
 		/* Inverted pair, used by the primary button: a dark pill on a
 		   light page, a light pill on a dark one. */
-		--invert-bg: #111827;
-		--invert-text: #f1f5f9;
+		--invert-bg: #221c15;
+		--invert-text: #f7f2e8;
 	}
 
 	@media (prefers-color-scheme: dark) {
 		:root {
-			--bg: #101827;
-			--surface-alt: #172236;
-			--panel: #172236;
-			--line: #2a3a52;
-			--line-strong: #40536f;
+			--bg: #171310;
+			--surface-alt: #1f1a15;
+			--panel: #211b16;
+			--line: #3a3229;
+			--line-strong: #584c3d;
 
-			--text: #eff6ff;
-			--body: #c2cedd;
-			--muted: #98a8bc;
-			--dim: #64748b;
+			--text: #f4ede0;
+			--body: #d3c7b4;
+			--muted: #a89b86;
+			--dim: #7b6e5c;
 
-			--accent: #60a5fa;
-			--accent-hover: #93c5fd;
+			--accent: #84a9ff;
+			--accent-hover: #aec8ff;
 			--accent-warm: var(--palette-dark-warm);
 			--accent-on: var(--palette-dark-accent-on);
 			--accent-wash: color-mix(in srgb, var(--accent) 14%, transparent);
 
-			--invert-bg: #eff6ff;
-			--invert-text: #101827;
+			--invert-bg: #f4ede0;
+			--invert-text: #171310;
 		}
 	}
 
@@ -665,12 +666,14 @@
 
 /* The two rules under the identity block and each section title: a heavy
    accent line with a hairline floating below it. A background, not a border,
-   because border-bottom is one line and this is two. */
+   because border-bottom is one line and this is two. The heavy line is the
+   editorial accent, not the interactive one — the same split the PDF draws
+   between its `accentcolor` and `linkcolor`. */
 .resume-doc .resume-head,
 .resume-doc .resume-section {
 	padding-bottom: 0.55rem;
 	background-image:
-		linear-gradient(var(--accent), var(--accent)),
+		linear-gradient(var(--accent-warm), var(--accent-warm)),
 		linear-gradient(var(--line-strong), var(--line-strong));
 	background-repeat: no-repeat;
 	background-position:
@@ -705,7 +708,7 @@
 	font-family: var(--font-sans);
 	font-size: 0.78rem;
 	letter-spacing: 0.16em;
-	color: var(--accent);
+	color: var(--accent-warm);
 }
 
 /* Stacked, right-aligned, rather than the PDF's pipe-separated run: in a column
@@ -740,7 +743,7 @@
 	font-size: 0.95rem;
 	font-weight: 700;
 	letter-spacing: 0.06em;
-	color: var(--accent);
+	color: var(--accent-warm);
 }
 
 /* A quiet label, not a second tier of rule: the PDF gives level 2 a tracked
@@ -751,7 +754,7 @@
 	font-size: 0.75rem;
 	font-weight: 700;
 	letter-spacing: 0.1em;
-	color: var(--accent);
+	color: var(--accent-warm);
 }
 
 /* One entry: role, company, and the date pushed to the right edge. Flex rather
@@ -772,12 +775,12 @@
 }
 .resume-doc .resume-org {
 	font-weight: 400;
-	color: var(--accent);
+	color: var(--accent-warm);
 }
 .resume-doc .resume-sep {
 	margin-inline: 0.45em;
 	font-weight: 400;
-	color: var(--accent);
+	color: var(--accent-warm);
 }
 .resume-doc .resume-meta {
 	margin-left: auto;
@@ -816,7 +819,7 @@
 	line-height: 1.6;
 }
 .resume-doc li::marker {
-	color: var(--accent);
+	color: var(--accent-warm);
 }
 .resume-doc li > ul {
 	margin-top: 0.1rem;
@@ -1098,21 +1101,21 @@
 		--bg: #ffffff;
 		--surface-alt: #ffffff;
 		--panel: #ffffff;
-		--line: #ddd9d0;
-		--line-strong: #ccc7bb;
+		--line: #e2d9c9;
+		--line-strong: #c9bda8;
 
-		--text: #17181a;
-		--body: #26272a;
-		--muted: #4a4b4f;
-		--dim: #6c6a66;
+		--text: #221c15;
+		--body: #4b4237;
+		--muted: #5c5344;
+		--dim: #7c6f5d;
 
-		--accent: #2457d6;
-		--accent-hover: #1e46b5;
-		--accent-warm: #c2410c;
+		--accent: #1d4ed8;
+		--accent-hover: #173a9e;
+		--accent-warm: #b23f1e;
 		--accent-on: #ffffff;
 		--accent-wash: transparent;
 
-		--invert-bg: #17181a;
+		--invert-bg: #221c15;
 		--invert-text: #ffffff;
 	}
 
@@ -1122,17 +1125,17 @@
 		--bg: #ffffff;
 		--surface-alt: #ffffff;
 		--panel: #ffffff;
-		--line: #ddd9d0;
-		--line-strong: #ccc7bb;
-		--text: #17181a;
-		--body: #26272a;
-		--muted: #4a4b4f;
-		--dim: #6c6a66;
-		--accent: #2457d6;
-		--accent-hover: #1e46b5;
-		--accent-warm: #c2410c;
+		--line: #e2d9c9;
+		--line-strong: #c9bda8;
+		--text: #221c15;
+		--body: #4b4237;
+		--muted: #5c5344;
+		--dim: #7c6f5d;
+		--accent: #1d4ed8;
+		--accent-hover: #173a9e;
+		--accent-warm: #b23f1e;
 		--accent-on: #ffffff;
-		--invert-bg: #17181a;
+		--invert-bg: #221c15;
 		--invert-text: #ffffff;
 		background: #ffffff;
 	}

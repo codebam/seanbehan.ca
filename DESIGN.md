@@ -25,12 +25,12 @@ decorative move: an italic word set in the warm accent. Everything that
 moves is under 0.6 s and a few pixels. The comments in `app.css` are the
 best summary of intent — the site is deliberately a page, not a dashboard.
 
-**The palette.** Cool paper greys in light (`#f1f5f9` / white panels), deep
-slate in dark (`#101827`), two accents on distinct duty (section 3), and ten
-text/surface tiers per palette, written twice (`--palette-light-*`,
-`--palette-dark-*`). The footer is the one band that still carries the
-opposite palette (`panel-invert`); mid-page bands are fills, not
-inversions.
+**The palette.** Warm paper in light (`#f7f2e8` / near-white `#fffdf8`
+panels), deep espresso in dark (`#171310`), two accents on distinct duty
+(section 3), and ten text/surface tiers per palette, written twice
+(`--palette-light-*`, `--palette-dark-*`). The footer is the one band that
+still carries the opposite palette (`panel-invert`); mid-page bands are
+fills, not inversions.
 
 **The composition.** Full-bleed horizontal bands (`panel` / `panel-alt`, and
 the one `panel-invert` footer) with a shared 1140 px inner column
@@ -53,12 +53,12 @@ pointed at the tokens.
 - Variant differences are copy and ordering (`leadWith: 'facts' | 'work'`),
   not CSS.
 
-What was true before the redesign and remains true by choice: the site is
+What was true before the redesign and is no longer true: the site used to be
 recognizably one of a family — cool developer-site greys, a blue that could
-sit on any of them. That was the ceiling the typography kept outgrowing. The
-redesign fixed the accent job-split, the bands, and the facts band; the
-palette floor is still there, and section 4 says what it would take to lift
-it.
+sit on any of them. The split-accent pass fixed the accent job-split, the
+bands, and the facts band; the warm re-ink (section 3.7) then lifted the
+palette off that floor. The bones — the bands, the serif column, the folio
+lines — did not move.
 
 ---
 
@@ -92,13 +92,13 @@ it.
 
 ---
 
-## 3. The design — a split-accent refinement
+## 3. The design — a split-accent refinement, re-inked
 
 The site is 90% right; the redesign is the 10%, itemized. Its whole
 mechanism is one rule: **warm is the site's voice, blue is the user's
-reach.** The warm accent (`--accent-warm`, `#c2410c` light / `#fb923c`
+reach.** The warm accent (`--accent-warm`, `#b23f1e` light / `#e8925f`
 dark) carries the editorial work — things the page says about itself. Blue
-(`#2457d6` / `#60a5fa`) keeps the interactive work — things the hand can
+(`#1d4ed8` / `#84a9ff`) keeps the interactive work — things the hand can
 reach. Two accents doing distinct jobs, on one page, was the site's old way
 of getting neither right: blue was doing the interactive _and_ the
 editorial, so the voice had to shout to be heard.
@@ -152,6 +152,25 @@ site is a page; the status is a fact, not a feed. The copy is
 `site.availability` in `site.data.js`, `null` on the variant that pitches the
 code, so the component renders nothing there rather than branching.
 
+**7. The warm re-ink.** The palette itself moved, which is the change the
+first six items were clearing the ground for. Light is cream paper
+(`--bg #f7f2e8`, panels `#fffdf8`) with ink-brown type (`#221c15` /
+`#4b4237`); dark is a deep espresso (`#171310`) with warm off-white type
+(`#f4ede0` / `#d3c7b4`). The terracotta is the editorial accent in both, the
+blue the interactive one — the split above, on a ground that no longer reads
+as every other developer site. The token block is still the only place a
+component looks for colour; the change reaches the surfaces the tokens cannot
+— the browser `theme-color`, the web app manifest, the generated OG cards
+(`src/pages/og/[slug].png.ts`), the `SB` mark (`tools/favicon/`) and the
+résumé PDF's LaTeX palette (`resume/metadata.yaml`) — so the paper, the card,
+the tab and the page still agree. The résumé page also joined the split it had
+missed: its editorial marks (the rules, section titles and company names) now
+take the warm accent while its links stay blue, which is exactly the
+`accentcolor` / `linkcolor` pair the PDF draws. The one risk the old section 4
+named, terracotta-on-cream reading as a blog theme, is answered by the same
+thing that kept the site out of the family before: the serif column and the
+two-job accent split, not the hue alone.
+
 **Known seams.** Three bands now sit between the same two fills on two
 pages (services: alt / alt / bg; the kit: bg / alt / alt), so one adjacent
 pair on each shares a fill and rests on the hairline between them. It is the
@@ -160,23 +179,15 @@ fill was the thing that did not belong. If a future change wants the
 seamlessness back, the answer is not a third fill; it is rules, which is a
 road in section 4.
 
-**The ceiling it does not lift.** The palette, the greys, the family look:
-still all present. That was the trade the site accepted, and it is named
-here so nobody mistakes the refinement for the destination. It is "a very
-good member of a family, quietly better than the rest of the family." The
-roads that leave the family are below.
+**The ceiling it does not lift.** Structure. The bands, the folio lines, the
+one-column reading measure: still the family's bones, now on the site's own
+ground. "Broadsheet" below is the road that changes the bones, and it is
+still not taken.
 
 ---
 
 ## 4. Roads not taken
 
-- **"Ink & Paper" — the warm re-ink.** Same bones; the whole palette moves
-  to cream paper and warm ink, terracotta as the one saturated accent, blue
-  demoted to interaction. The most identity upside for the least structural
-  risk (the accent split above is roughly its first commit). Turned down
-  _for now_, not in principle: "do no harm" outranked it this round, and its
-  one genuine risk — terracotta-on-cream reading as IndieWeb theme forty-se
-  — is the exact family look the current greys read as SaaS theme nine (IndieWeb blog theme forty-seven).
 - **"Broadsheet" — the site as a printed sheet.** The bands go entirely;
   structure is rules, not fills; the masthead's site name is the logo
   between two hairlines; "latest writing" becomes a multi-column index of

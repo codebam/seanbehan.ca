@@ -21,11 +21,11 @@ titleTracking: 6                # % letter-spacing, section titles
 subtitleTracking: 16
 
 # ---------- colour palette (HTML hex, no leading #) ----------
-accentcolor: 1F3A5F     # navy: rules, section titles, company names
-inkcolor: 1A1D21
-mutedcolor: 5C6672      # dates, contact line
-rulecolor: AEB7C0
-linkcolor: 1F3A5F
+accentcolor: B23F1E     # terracotta: rules, section titles, company names
+inkcolor: 221C15
+mutedcolor: 6C6152      # dates, contact line
+rulecolor: BFB29C
+linkcolor: 1D4ED8
 
 # ---------- behaviour ----------
 links: true             # clickable, colourised links

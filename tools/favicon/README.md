@@ -1,6 +1,6 @@
 # Favicon
 
-The mark is Newsreader `SB` in cream (`#f7f8fa`) on blue (`#2563eb`).
+The mark is Newsreader `SB` in warm paper (`#fffdf8`) on terracotta (`#b23f1e`).
 
 Two scripts regenerate everything in `static/`. Neither runs in CI — run them by
 hand when the mark or the palette changes.

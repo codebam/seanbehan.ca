@@ -30,8 +30,8 @@ TRACKING = -2.0
 BASELINE = 47.0
 RADIUS = 9
 TEXT = 'SB'
-BLUE = '#2563eb'
-GREY = '#f7f8fa'
+ACCENT = '#b23f1e'
+PAPER = '#fffdf8'
 
 ttf = D / '_newsreader.ttf'
 if not ttf.exists():
@@ -69,8 +69,8 @@ for name, adv in zip(names, advances):
     x += adv + TRACKING
 
 svg = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="{RADIUS}" fill="{BLUE}"/>
-  <path fill="{GREY}" d="{' '.join(paths)}"/>
+  <rect width="64" height="64" rx="{RADIUS}" fill="{ACCENT}"/>
+  <path fill="{PAPER}" d="{' '.join(paths)}"/>
 </svg>
 """
 
