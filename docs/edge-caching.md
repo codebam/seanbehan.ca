@@ -137,14 +137,22 @@ with `config.cache?.provider?.name === 'cloudflare'` — and that is what turns
 the hints into a `Cache-Tag` response header and makes
 `Astro.cache.invalidate({ tags })` reach `cache.purge({ tags })`.
 
-A response now carries something like
-`cache-tag: posts,01M12ZDR0A68MZMHFSHAR1EZK,astro-path:/posts`, so a single
+A response carries something like
+`Cache-Tag: posts,01M12ZDR0A68MZMHFSHAR1EZK,astro-path:/posts`, so a single
 post's edit can drop exactly the pages that rendered it:
 
 ```js
 // anywhere the Astro global is in scope, e.g. a content hook
 await Astro.cache.invalidate({ tags: [entry.data.id] });
 ```
+
+**Do not expect to see that header in production.** Cloudflare consumes
+`Cache-Tag` and `Cloudflare-CDN-Cache-Control` at the edge and does not pass
+them to the client, so `curl https://seanbehan.ca/posts` shows neither even
+when the provider is working — which is the two minutes this note exists to
+save. Check it against a local `wrangler dev` on a real build, where nothing
+sits in front of the Worker, or against the build itself: the provider is
+bundled as `dist/server/chunks/_virtual_astro_cache-provider_*.mjs`.
 
 Nothing calls it yet — the ten-minute window is still the trade this site
 makes — but the capability is real rather than described.
