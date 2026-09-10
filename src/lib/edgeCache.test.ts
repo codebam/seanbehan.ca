@@ -25,4 +25,27 @@ describe('edgeCacheKey', () => {
 
 		expect(key.url).toBe('https://seanbehan.ca/posts/example');
 	});
+
+	it('keys the archive on its search term', () => {
+		const searched = edgeCacheKey(new URL('https://seanbehan.ca/posts?q=nixos'));
+		const plain = edgeCacheKey(new URL('https://seanbehan.ca/posts'));
+
+		expect(searched.url).toBe('https://seanbehan.ca/posts?q=nixos');
+		expect(plain.url).toBe('https://seanbehan.ca/posts');
+		expect(searched.url).not.toBe(plain.url);
+	});
+
+	it('folds the query it keys the archive on, and ignores the rest of the URL', () => {
+		const noisy = edgeCacheKey(
+			new URL('https://seanbehan.ca/posts?utm_source=x&nonce=7&q=%20NixOS%20%20Flakes%20')
+		);
+
+		expect(noisy.url).toBe('https://seanbehan.ca/posts?q=nixos%20flakes');
+	});
+
+	it('caps the length of a search key so a flood cannot multiply entries', () => {
+		const long = edgeCacheKey(new URL(`https://seanbehan.ca/posts?q=${'a'.repeat(500)}`));
+
+		expect(new URL(long.url).searchParams.get('q')).toHaveLength(64);
+	});
 });

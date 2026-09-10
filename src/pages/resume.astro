@@ -24,6 +24,7 @@ import { LinkButton } from '@cloudflare/kumo/components/button';
 import { getResumeFragment, resumePdfFilename } from '../lib/resume';
 import { featuredProjects } from '../lib/projects';
 import { site, yearsBuilding, LINKEDIN_URL } from '../lib/site';
+import SiblingMark from '../components/SiblingMark.astro';
 
 if (!site.showResume) return Astro.rewrite('/404');
 
@@ -108,7 +109,7 @@ const updated = resume
 				download={resumePdfFilename()}
 				variant="primary"
 				size="lg"
-				className="flat-control"
+				className="flat-control site-cta"
 			>
 				Download PDF
 			</LinkButton>
@@ -121,6 +122,7 @@ const updated = resume
 			</LinkButton>
 			<a class="link-quiet" href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer">
 				LinkedIn
+				<SiblingMark href={LINKEDIN_URL} newTab />
 			</a>
 			<a
 				class="link-quiet"
@@ -129,11 +131,12 @@ const updated = resume
 				rel="noopener noreferrer"
 			>
 				GitHub
+				<SiblingMark href="https://github.com/codebam" newTab />
 			</a>
 		</p>
 	</Masthead>
 
-	<section class="profile panel">
+	<section class="section profile panel">
 		<div class="shell">
 			<div class="section-heading" data-reveal>
 				<h2 class="display display-lg">Working profile</h2>
@@ -150,7 +153,7 @@ const updated = resume
 		</div>
 	</section>
 
-	<section class="document panel-alt">
+	<section class="section document panel-alt">
 		<div class="shell">
 			<div class="section-heading" data-reveal>
 				<h2 class="display display-lg">The document</h2>
@@ -188,10 +191,6 @@ const updated = resume
 </Base>
 
 <style>
-	.profile,
-	.document {
-		padding-block: clamp(3.5rem, 7vw, 5.5rem);
-	}
 	.document-note {
 		max-width: 46rem;
 		margin: -1.5rem auto 1.5rem;

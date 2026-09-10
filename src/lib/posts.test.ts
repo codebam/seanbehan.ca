@@ -57,9 +57,51 @@ describe('prepareBody', () => {
 		expect((blocks[0] as { headingId?: string }).headingId).toBe(headings[0].id);
 	});
 
-	it('leaves paragraphs and deeper headings without an id', () => {
-		const { blocks } = prepareBody([block('normal', 'words'), block('h4', 'Aside')]);
+	it('leaves paragraphs without an id, and never lists one', () => {
+		const { blocks, headings } = prepareBody([
+			block('normal', 'words'),
+			block('blockquote', 'quoted')
+		]);
 		expect(blocks.every((b) => !('headingId' in b))).toBe(true);
+		expect(headings).toEqual([]);
+	});
+
+	it('gives a deeper heading an id too, re-based like the rest', () => {
+		const { blocks, headings } = prepareBody([block('h4', 'Aside')]);
+
+		expect(headings).toEqual([{ id: 'aside', text: 'Aside', level: 2 }]);
+		expect((blocks[0] as { style?: string }).style).toBe('h2');
+	});
+
+	it('re-bases a stray page-level heading rather than rendering a second h1', () => {
+		const { headings } = prepareBody([block('h1', 'Title again'), block('h2', 'Section')]);
+		expect(headings.map((heading) => heading.level)).toEqual([2, 3]);
+	});
+
+	/**
+	 * Every section in the archive is stored as `###`, which rendered as an `h1`
+	 * title followed by `h3` sections — a skipped level on every post.
+	 */
+	it('re-bases an all-h3 body so its sections sit directly under the page h1', () => {
+		const { blocks, headings } = prepareBody([block('h3', 'Setup'), block('h3', 'Details')]);
+
+		expect(headings.map((heading) => heading.level)).toEqual([2, 2]);
+		expect(blocks.map((b) => (b as { style?: string }).style)).toEqual(['h2', 'h2']);
+	});
+
+	it('keeps the distance between levels when it re-bases them', () => {
+		const { blocks, headings } = prepareBody([block('h3', 'Setup'), block('h3', 'Details')]);
+
+		expect(blocks).toHaveLength(headings.length);
+		const mixed = prepareBody([block('h2', 'Setup'), block('h3', 'Details')]);
+		expect(mixed.headings.map((heading) => heading.level)).toEqual([2, 3]);
+		expect(mixed.blocks.map((b) => (b as { style?: string }).style)).toEqual(['h2', 'h3']);
+	});
+
+	it('leaves a body with no headings alone', () => {
+		const { blocks, headings } = prepareBody([block('normal', 'words')]);
+		expect(headings).toEqual([]);
+		expect((blocks[0] as { style?: string }).style).toBe('normal');
 	});
 });
 

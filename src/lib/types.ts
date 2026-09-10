@@ -40,8 +40,12 @@ export interface Heading {
 	/** The id on the heading element, and the fragment that reaches it. */
 	id: string;
 	text: string;
-	/** 2 for a section, 3 for a subsection. Nothing deeper is listed. */
-	level: 2 | 3;
+	/**
+	 * The level the heading renders at, after `prepareBody` has re-based the
+	 * body so its shallowest heading is an `h2`. 2 is a section; anything
+	 * deeper is a subsection, and is indented under one in the contents list.
+	 */
+	level: number;
 }
 
 /**

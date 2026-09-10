@@ -47,7 +47,10 @@ const newestStamp = (list: PostSummary[]) =>
 	}, '');
 
 export const GET: APIRoute = async () => {
-	const { posts } = await getPosts({ includeBodies: false });
+	const { posts, cacheHint } = await getPosts({ includeBodies: false });
+	// The Astro global is absent where the sandbox runs the endpoint, so the
+	// guard is a typeof rather than a direct read.
+	if (typeof Astro !== 'undefined' && Astro.cache?.enabled) Astro.cache.set(cacheHint);
 	const newest = newestStamp(posts) || undefined;
 	const urls = staticPaths().map((path) =>
 		entry(path, path === '/' || path === '/posts' || path === '/posts/tags' ? newest : undefined)

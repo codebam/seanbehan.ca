@@ -74,14 +74,14 @@ const schema = JSON.stringify({
 			directly with the developer doing the work.
 		</p>
 		<p class="masthead-actions">
-			<LinkButton href={contactHref} variant="primary" size="lg" className="flat-control">
+			<LinkButton href={contactHref} variant="primary" size="lg" className="flat-control site-cta">
 				Request a project quote
 			</LinkButton>
-			<span class="response-note">No checkout / scoped by email</span>
+			<span class="eyebrow response-note">No checkout / scoped by email</span>
 		</p>
 	</Masthead>
 
-	<section class="services panel-alt">
+	<section class="section services panel-alt">
 		<div class="shell">
 			<div class="section-heading" data-reveal>
 				<h2 class="display display-lg">Choose a starting point</h2>
@@ -91,7 +91,7 @@ const schema = JSON.stringify({
 			<div class="service-grid">
 				{services.map((service, i) => (
 					<article data-reveal data-reveal-delay={i * 70}>
-						<p class="service-label">{service.label}</p>
+						<p class="eyebrow service-label">{service.label}</p>
 						<h3>{service.title}</h3>
 						<p>{service.copy}</p>
 						<ul>
@@ -105,7 +105,7 @@ const schema = JSON.stringify({
 		</div>
 	</section>
 
-	<section class="process panel-alt">
+	<section class="section process panel-alt">
 		<div class="shell">
 			<div class="section-heading" data-reveal>
 				<h2 class="display display-lg">One clear path</h2>
@@ -124,7 +124,7 @@ const schema = JSON.stringify({
 		</div>
 	</section>
 
-	<section class="project-brief panel">
+	<section class="section project-brief panel">
 		<div class="shell brief-grid">
 			<div data-reveal>
 				<p class="eyebrow">Have something in mind?</p>
@@ -135,7 +135,12 @@ const schema = JSON.stringify({
 					Send a short note with what you want to make, who it is for, and when you want it live. I
 					will reply with questions and a practical next step.
 				</p>
-				<LinkButton href={contactHref} variant="primary" size="lg" className="flat-control">
+				<LinkButton
+					href={contactHref}
+					variant="primary"
+					size="lg"
+					className="flat-control site-cta"
+				>
 					Email {serviceSite.email}
 				</LinkButton>
 				<a class="kit-link link-accent" href="/products/cloudflare-workers-production-kit">
@@ -150,21 +155,8 @@ const schema = JSON.stringify({
 </Base>
 
 <style>
-	.response-note,
-	.service-label {
-		font-size: 0.78rem;
-		font-weight: 600;
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
-		color: var(--muted);
-	}
 	.response-note {
 		align-self: center;
-	}
-	.services,
-	.process,
-	.project-brief {
-		padding-block: clamp(3.5rem, 7vw, 5.5rem);
 	}
 	.service-grid {
 		display: grid;

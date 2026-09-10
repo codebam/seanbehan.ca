@@ -76,11 +76,11 @@ const publishedTagSlugs = new Set(posts.flatMap((other) => other.meta.tags.map(s
 
 const toc = headings.length >= TOC_MIN_SECTIONS ? headings : [];
 /**
- * Indentation is relative, not absolute: most posts here head their sections
- * with `###` and never use `##` at all, and those lists would otherwise be
- * indented in their entirety with nothing to sit under.
+ * Indentation is relative, and prepareBody has already re-based every body so
+ * its shallowest heading is an `h2` — so the top level is that, whatever the
+ * post was written with, and a deeper heading is the one that gets indented.
  */
-const topLevel = Math.min(...headings.map((heading) => heading.level), 3);
+const topLevel = 2;
 
 const dateFormat = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' } as const;
 const published = new Date(post.meta.date).toLocaleDateString('en-CA', dateFormat);
@@ -112,7 +112,7 @@ const updated = post.meta.updated
 			<div class="shell read-column">
 				<p class="post-kicker enter">
 					<a href="/posts">Writing</a>
-					<span class="kicker-meta">
+					<span>
 						<time datetime={post.meta.date}>{published}</time>
 						{post.readingMinutes && <> &middot; {post.readingMinutes} min read</>}
 					</span>
@@ -168,7 +168,7 @@ const updated = post.meta.updated
 				<nav class="enter toc mt-12" style="--enter-delay:40ms" aria-label="On this page">
 					<details open data-toc>
 						<summary class="eyebrow">On this page</summary>
-						<ol class="mt-4">
+						<ol class="mt-4" role="list">
 							{toc.map((heading) => (
 								<li class={heading.level > topLevel ? 'sub' : undefined}>
 									<a href={`#${heading.id}`}>{heading.text}</a>
@@ -191,15 +191,15 @@ const updated = post.meta.updated
 				/* Suggested by shared tags, not by recency: a reader who finished this
 					   one is looking for more of the same subject, which is exactly what
 					   the sibling links below cannot offer. */
-				<aside class="related mt-20 border-t border-[var(--line)] pt-10">
+				<aside class="mt-20 border-t border-[var(--line)] pt-10">
 					<h2 class="display display-lg">Related reading</h2>
 					<div class="mt-8">
-						<PostList posts={related} columns={2} headingLevel={3} carded />
+						<PostList posts={related} columns={2} headingLevel={3} />
 					</div>
 				</aside>
 			)}
 
-			<footer class="post-footer mt-20 border-t border-[var(--line)] pt-10 text-sm">
+			<footer class="mt-20 border-t border-[var(--line)] pt-10 text-sm">
 				<!-- The archive is newest first, so the older post is the one further
 				     down it — labelled by direction in time rather than by list order,
 				     which is what a reader is actually choosing between. -->

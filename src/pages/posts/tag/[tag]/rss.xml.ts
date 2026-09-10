@@ -13,7 +13,10 @@ import { site } from '../../../../lib/site';
 
 export const GET: APIRoute = async ({ params }) => {
 	const target = slugifyTag(params.tag!);
-	const { posts: all } = await getPosts({ includeBodies: false });
+	const { posts: all, cacheHint } = await getPosts({ includeBodies: false });
+	// The Astro global is absent where the sandbox runs the endpoint, so the
+	// guard is a typeof rather than a direct read.
+	if (typeof Astro !== 'undefined' && Astro.cache?.enabled) Astro.cache.set(cacheHint);
 	const posts = all.filter((post) => post.meta.tags.some((tag) => slugifyTag(tag) === target));
 
 	if (posts.length === 0) {

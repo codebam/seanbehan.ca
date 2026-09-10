@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import Masthead from '../components/Masthead.astro';
 import Availability from '../components/Availability.astro';
 import { site, LINKEDIN_URL } from '../lib/site';
+import SiblingMark from '../components/SiblingMark.astro';
 
 /**
  * Ordered by who is reading, not by how interesting the channel is.
@@ -110,7 +111,7 @@ const askingFor = site.showResume
 	</Masthead>
 
 	{askingFor && (
-		<section class="brief panel-alt">
+		<section class="section brief panel-alt">
 			<div class="shell">
 				<div class="section-heading" data-reveal>
 					<h2 class="display display-lg">What to include</h2>
@@ -131,14 +132,14 @@ const askingFor = site.showResume
 		</section>
 	)}
 
-	<section class="channels panel">
+	<section class="section channels panel">
 		<div class="shell">
 			<div class="section-heading" data-reveal>
 				<h2 class="display display-lg">Open channels</h2>
 				<p>{channels.length} ways to reach me</p>
 			</div>
 
-			<ul class="channel-list">
+			<ul class="channel-list" role="list">
 				{channels.map((channel, i) => (
 					<li data-reveal data-reveal-delay={i * 55}>
 						<a
@@ -151,7 +152,8 @@ const askingFor = site.showResume
 								<span class="channel-note">{channel.note}</span>
 							</span>
 							<span class="channel-end">
-								<span class="channel-label">{channel.label}</span>
+								{channel.href.startsWith('http') && <SiblingMark href={channel.href} newTab />}
+								<span class="eyebrow channel-label">{channel.label}</span>
 								<span class="channel-arrow" aria-hidden="true">
 									&rarr;
 								</span>
@@ -165,10 +167,6 @@ const askingFor = site.showResume
 </Base>
 
 <style>
-	.channels,
-	.brief {
-		padding-block: clamp(3.5rem, 7vw, 5.5rem);
-	}
 	.brief-grid {
 		display: grid;
 		gap: 2rem;
@@ -240,11 +238,6 @@ const askingFor = site.showResume
 		flex-shrink: 0;
 	}
 	.channel-label {
-		font-size: 0.75rem;
-		font-weight: 600;
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
-		color: var(--muted);
 		white-space: nowrap;
 	}
 	.channel-arrow {

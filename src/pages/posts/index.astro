@@ -5,19 +5,34 @@ import Masthead from '../../components/Masthead.astro';
 import PostList from '../../components/PostList.astro';
 import PostSearch from '../../components/PostSearch.astro';
 import { getPosts, tagCounts } from '../../lib/posts';
+import { searchPosts } from '../../lib/search';
 import { site } from '../../lib/site';
 
-const { posts, cacheHint } = await getPosts({ includeBodies: false });
+/**
+ * `?q=` is answered here as well as in the browser, from the one ranking in
+ * lib/search.ts, so a reader with no script gets the same order as one with
+ * it — the difference is whether the list rearranges under their hands or
+ * arrives already arranged.
+ *
+ * Bodies are only asked for when there is a query to rank. The archive itself
+ * does not need them, and carrying every post's prose costs a second copy of
+ * the archive in memory (see the note on getPosts).
+ */
+const query = (Astro.url.searchParams.get('q') ?? '').trim();
+const { posts, bodies, cacheHint } = await getPosts({ includeBodies: Boolean(query) });
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+
+const matched = query ? searchPosts(query, posts, bodies) : null;
 
 /** The tag index is only worth linking to once something is filed under a tag. */
 const tags = tagCounts(posts);
 ---
 
 <Base
-	title="Writing"
+	title={query ? `Search: ${query}` : 'Writing'}
 	description="Posts on Linux, NixOS, Rust, and Cloudflare Workers."
 	ogTitle={`Writing — ${site.name}`}
+	robots={query ? 'noindex, follow' : undefined}
 >
 	<Masthead label="Writing archive" meta={`${posts.length} published`}>
 		<Fragment slot="title">
@@ -34,28 +49,29 @@ const tags = tagCounts(posts);
 		</p>
 	</Masthead>
 
-	<section id="archive" class="archive panel">
+	<section id="archive" class="section panel">
 		<div class="shell">
 			<div class="archive-heading" data-reveal>
 				<h2 class="display display-lg">All posts</h2>
-				<p>{posts.length} entries, newest first</p>
+				<p>
+					{matched
+						? `${matched.length} of ${posts.length} match “${query}”`
+						: `${posts.length} entries, newest first`}
+				</p>
 			</div>
 
-			<div class="archive-search" data-reveal data-reveal-delay="60">
-				<PostSearch />
+			<div data-reveal data-reveal-delay="60">
+				<PostSearch query={query} />
 			</div>
 
 			<div class="archive-list" data-reveal data-reveal-delay="100">
-				<PostList posts={posts} columns={2} showTags headingLevel={2} />
+				<PostList posts={posts} matched={matched} columns={2} showTags headingLevel={3} />
 			</div>
 		</div>
 	</section>
 </Base>
 
 <style>
-	.archive {
-		padding-block: clamp(3.5rem, 7vw, 5.5rem);
-	}
 	.archive-list {
 		margin-top: 1.75rem;
 	}

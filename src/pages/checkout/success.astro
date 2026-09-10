@@ -42,24 +42,32 @@ const downloadHref =
 	access.status === 'paid'
 		? productDownloadUrl(sessionId!, import.meta.env.DEV ? Astro.url.origin : undefined)
 		: null;
+
+/**
+ * One description of the outcome, used for the page title and the headline.
+ * The title used to be the fixed "Order confirmation" while the headline said
+ * which of four things had happened — so the one line a screen reader reads
+ * first, and the one a browser tab shows, announced a completed order on the
+ * 404 and 503 paths as well.
+ */
+const outcome =
+	access.status === 'paid'
+		? { title: 'Payment complete', headline: 'Payment complete.' }
+		: access.status === 'pending'
+			? { title: 'Payment processing', headline: 'Payment processing.' }
+			: unavailable
+				? { title: 'Confirmation unavailable', headline: 'Confirmation unavailable.' }
+				: { title: 'Order not found', headline: 'Order not found.' };
 ---
 
 <Base
-	title="Order confirmation"
+	title={outcome.title}
 	description={`Stripe Checkout confirmation for ${PRODUCT.name}.`}
 	canonical={PRODUCT.url}
 	robots="noindex, nofollow"
 >
 	<Masthead label="Digital product / Order" meta="Stripe Checkout">
-		<Fragment slot="title">
-			{access.status === 'paid'
-				? 'Payment complete.'
-				: access.status === 'pending'
-					? 'Payment processing.'
-					: unavailable
-						? 'Confirmation unavailable.'
-						: 'Order not found.'}
-		</Fragment>
+		<Fragment slot="title">{outcome.headline}</Fragment>
 		{access.status === 'paid' && downloadHref ? (
 			<>
 				<p>
@@ -67,7 +75,12 @@ const downloadHref =
 					the email used at checkout.
 				</p>
 				<p class="confirmation-actions">
-					<LinkButton href={downloadHref} variant="primary" size="lg" className="flat-control">
+					<LinkButton
+						href={downloadHref}
+						variant="primary"
+						size="lg"
+						className="flat-control site-cta"
+					>
 						Download the production kit
 					</LinkButton>
 				</p>

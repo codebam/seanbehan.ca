@@ -103,7 +103,10 @@ export function markdownDocument(entry: ExportEntry, opts: ExportOptions): strin
 	meta.push(`Published: ${longDate(summary.meta.date)}`);
 	if (summary.meta.updated) meta.push(`Updated: ${longDate(summary.meta.updated)}`);
 	if (summary.meta.tags.length) meta.push(`Tags: ${summary.meta.tags.join(', ')}`);
-	if (summary.readingMinutes) meta.push(`Reading time: ${summary.readingMinutes} minutes`);
+	if (summary.readingMinutes)
+		meta.push(
+			`Reading time: ${summary.readingMinutes} minute${summary.readingMinutes === 1 ? '' : 's'}`
+		);
 	if (summary.meta.draft) meta.push('Status: draft');
 
 	const lines = [`# ${summary.meta.title}`, ''];

@@ -117,15 +117,16 @@ const nav = site.nav.map((item) => ({ ...item, href: linkHref(item) }));
 const isCurrent = (href: string) =>
 	href.startsWith('/') && !href.startsWith('/#') && (path === href || path.startsWith(`${href}/`));
 
+/**
+ * "Where am I" for the header. The nav's `/#work` entry used to be marked
+ * current on the home page as well, which gave a screen reader two current
+ * items — the brand's `page` and this one's `true` — and claimed the reader
+ * was at the Work section while they were still at the top of the page, since
+ * nothing here tracks the scroll position. A section anchor is not a location.
+ */
 const navItems = nav.map((item) => ({
 	...item,
-	current: (item.href === '/#work'
-		? path === '/'
-			? 'true'
-			: undefined
-		: isCurrent(item.href)
-			? 'page'
-			: undefined) as 'page' | 'true' | undefined
+	current: isCurrent(item.href) ? ('page' as const) : undefined
 }));
 ---
 
@@ -184,7 +185,7 @@ const navItems = nav.map((item) => ({
 		<header class="site-header">
 			<div class="shell header-inner">
 				<a href="/" class="brand" aria-current={isHome ? 'page' : undefined}>
-					<span class="brand-name">{site.name}</span>
+					{site.name}
 					<span class="brand-dot" aria-hidden="true">
 						.
 					</span>
@@ -252,81 +253,125 @@ const navItems = nav.map((item) => ({
 				</div>
 
 				<nav aria-label="Site">
-					<p class="footer-label">Site</p>
-					<a class="footer-link" href="/about">
-						About
-					</a>
-					<a class="footer-link" href="/#work">
-						Work
-					</a>
-					{site.showResume && (
-						<a class="footer-link" href="/resume">
-							Résumé
-						</a>
-					)}
-					<a class="footer-link" href={writingHref('/posts')}>
-						Writing
-						<SiblingMark href={writingHref('/posts')} />
-					</a>
-					<a class="footer-link" href={codebamHref('/services')}>
-						Services
-						<SiblingMark href={codebamHref('/services')} />
-					</a>
-					<a class="footer-link" href="/links">
-						Links
-					</a>
+					<p class="eyebrow footer-label">Site</p>
+					<ul class="footer-links" role="list">
+						<li>
+							<a class="footer-link" href="/about">
+								About
+							</a>
+						</li>
+						<li>
+							<a class="footer-link" href="/#work">
+								Work
+							</a>
+						</li>
+						{site.showResume && (
+							<li>
+								<a class="footer-link" href="/resume">
+									Résumé
+								</a>
+							</li>
+						)}
+						<li>
+							<a class="footer-link" href={writingHref('/posts')}>
+								Writing
+								<SiblingMark href={writingHref('/posts')} />
+							</a>
+						</li>
+						<li>
+							<a class="footer-link" href={codebamHref('/services')}>
+								Services
+								<SiblingMark href={codebamHref('/services')} />
+							</a>
+						</li>
+						<li>
+							<a class="footer-link" href="/links">
+								Links
+							</a>
+						</li>
+					</ul>
 				</nav>
 
 				<nav aria-label="Legal">
-					<p class="footer-label">Legal</p>
-					<a class="footer-link" href={codebamHref('/legal/privacy')}>
-						Privacy
-						<SiblingMark href={codebamHref('/legal/privacy')} />
-					</a>
-					<a class="footer-link" href={codebamHref('/legal/terms-of-sale')}>
-						Terms
-						<SiblingMark href={codebamHref('/legal/terms-of-sale')} />
-					</a>
-					<a class="footer-link" href={codebamHref('/legal/refund-policy')}>
-						Refunds
-						<SiblingMark href={codebamHref('/legal/refund-policy')} />
-					</a>
-					<a class="footer-link" href={codebamHref('/legal/product-license')}>
-						License
-						<SiblingMark href={codebamHref('/legal/product-license')} />
-					</a>
+					<p class="eyebrow footer-label">Legal</p>
+					<ul class="footer-links" role="list">
+						<li>
+							<a class="footer-link" href={codebamHref('/legal/privacy')}>
+								Privacy
+								<SiblingMark href={codebamHref('/legal/privacy')} />
+							</a>
+						</li>
+						<li>
+							<a class="footer-link" href={codebamHref('/legal/terms-of-sale')}>
+								Terms
+								<SiblingMark href={codebamHref('/legal/terms-of-sale')} />
+							</a>
+						</li>
+						<li>
+							<a class="footer-link" href={codebamHref('/legal/refund-policy')}>
+								Refunds
+								<SiblingMark href={codebamHref('/legal/refund-policy')} />
+							</a>
+						</li>
+						<li>
+							<a class="footer-link" href={codebamHref('/legal/product-license')}>
+								License
+								<SiblingMark href={codebamHref('/legal/product-license')} />
+							</a>
+						</li>
+					</ul>
 				</nav>
 
 				<nav aria-label="Elsewhere">
-					<p class="footer-label">Elsewhere</p>
-					<a
-						class="footer-link"
-						href="https://github.com/codebam"
-						target="_blank"
-						rel="me noopener noreferrer"
-					>
-						GitHub
-					</a>
-					{site.showResume && (
-						<a class="footer-link" href={LINKEDIN_URL} target="_blank" rel="me noopener noreferrer">
-							LinkedIn
-						</a>
-					)}
-					<a
-						class="footer-link"
-						href="https://mstdn.ca/@codebam"
-						target="_blank"
-						rel="me noopener noreferrer"
-					>
-						Mastodon
-					</a>
-					<a class="footer-link" href={writingHref('/rss.xml')}>
-						RSS
-						<SiblingMark href={writingHref('/rss.xml')} />
-					</a>
-					<a class="footer-link" href={`mailto:${site.email}`}>
-						{site.email}
-					</a>
+					<p class="eyebrow footer-label">Elsewhere</p>
+					<ul class="footer-links" role="list">
+						<li>
+							<a
+								class="footer-link"
+								href="https://github.com/codebam"
+								target="_blank"
+								rel="me noopener noreferrer"
+							>
+								GitHub
+								<SiblingMark href="https://github.com/codebam" newTab />
+							</a>
+						</li>
+						{site.showResume && (
+							<li>
+								<a
+									class="footer-link"
+									href={LINKEDIN_URL}
+									target="_blank"
+									rel="me noopener noreferrer"
+								>
+									LinkedIn
+									<SiblingMark href={LINKEDIN_URL} newTab />
+								</a>
+							</li>
+						)}
+						<li>
+							<a
+								class="footer-link"
+								href="https://mstdn.ca/@codebam"
+								target="_blank"
+								rel="me noopener noreferrer"
+							>
+								Mastodon
+								<SiblingMark href="https://mstdn.ca/@codebam" newTab />
+							</a>
+						</li>
+						<li>
+							<a class="footer-link" href={writingHref('/rss.xml')}>
+								RSS
+								<SiblingMark href={writingHref('/rss.xml')} />
+							</a>
+						</li>
+						<li>
+							<a class="footer-link" href={`mailto:${site.email}`}>
+								{site.email}
+							</a>
+						</li>
+					</ul>
 				</nav>
 			</div>
 
@@ -334,7 +379,7 @@ const navItems = nav.map((item) => ({
 				<span>
 					&copy; {currentYear} {site.name}
 				</span>
-				<span class="footer-colophon">Built with EmDash, hosted on Cloudflare</span>
+				<span>Built with EmDash, hosted on Cloudflare</span>
 			</div>
 		</footer>
 
@@ -517,19 +562,21 @@ const navItems = nav.map((item) => ({
 		line-height: 1.6;
 		color: var(--footer-muted);
 	}
+	/* The footer's own eyebrow: .eyebrow carries the type, and --muted resolves
+	   to --footer-muted inside .panel-invert, so only the spacing is local. */
 	.footer-label {
-		font-size: 0.78rem;
-		font-weight: 600;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: var(--footer-muted);
 		margin-bottom: 0.9rem;
 	}
-	.site-footer nav {
+	/* Lists, not a column of loose anchors: a screen reader gets "list, 6 items"
+	   and can jump list to list, and none of the layout changes for it. */
+	.footer-links {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
 		gap: 0.55rem;
+		list-style: none;
+		margin: 0;
+		padding: 0;
 	}
 	.footer-link {
 		font-size: 0.9rem;

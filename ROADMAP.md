@@ -69,7 +69,7 @@ proposed, roughly ordered by value within each section.
       hiring reader came for on the wrapped second row.
 - [ ] No manual dark toggle — `prefers-color-scheme` only (DESIGN §2.2). Needs
       a design decision; invariant 2 still requires the no-JS path.
-- [ ] `reveal` ships globally (`src/layouts/Base.astro:280-282`). **Dropped:**
+- [ ] `reveal` ships globally (`src/layouts/Base.astro`, the `reveal` import at the end of the body). **Dropped:**
       one tiny inline bundle per page; scoping it buys nothing measurable.
 - [ ] No newsletter capture, comments/webmentions, or per-post “suggest an edit”
       link. Needs service decisions.
@@ -93,7 +93,7 @@ proposed, roughly ordered by value within each section.
       post activity (updated, else published) instead. Covered in tests.
 - [ ] `managingEditor`/`webMaster` expose the raw email. **Kept:** RSS wants an
       address there and readers show the name beside it.
-- [ ] `twitter:site @seanwbehan` vs handle `codebam` (`src/layouts/Base.astro:152`).
+- [ ] `twitter:site @seanwbehan` vs handle `codebam` (`src/layouts/Base.astro`, the `twitter:site` meta).
       **Kept:** consistent with the author's long-standing handle; no evidence
       it is wrong.
 - [x] `robots.txt` emitted two `User-agent: *` groups — mergeable per RFC 9309,
@@ -114,6 +114,14 @@ proposed, roughly ordered by value within each section.
 - [ ] Portable Text images: EmDash's default renderer owns them (only `block`
       and `code` are overridden); intrinsic dimensions/alt need verifying
       against real content — could not check with an empty local DB.
+      **Verified Sept 2026** against the live archive (three posts carry an
+      image): the renderer emits `alt` from the block (empty when the source
+      has none) and `loading="lazy" decoding="async"`, but no `width`/`height`,
+      so every body image is a layout shift. Two content fixes belong in the
+      admin, not in code: the DDoS post inlines a 41 kB base64 PNG with no alt
+      text, and the Silverblue post embeds the full 2560×1440 screenshot
+      (204 kB) at column width. Overriding the renderer to carry dimensions
+      needs the media record to have them.
 - [x] No 500 page (`src/pages/500.astro`): an unhandled error fell back to
       Astro's bare default. It now matches the 404, offers a retry and a report
       link, and is noindex.
@@ -122,3 +130,73 @@ proposed, roughly ordered by value within each section.
       h3 and h5, and Lighthouse's heading-order check failed on `/resume`.
       Entries are now h4; the PDF is sectioned by the LaTeX macros, not these.
 - [ ] No privacy-friendly analytics. Needs a service decision.
+
+## 5. Follow-up audit (September 2026) — fixed
+
+A second pass over the whole site, verified against production rather than
+read from the source. Everything below is done; the two items it could not
+close are marked.
+
+- **The redesign had reached two files.** The commit that replaced the
+  broadsheet design updated `app.css` and `Base.astro` and left the social
+  cards, the web manifest, the favicon set, the résumé PDF's palette and the
+  ad creative on the warm palette. The cards were the visible one: every
+  share preview drew `#b23f1e` on `#f7f2e8` while the site was white and
+  blue. All five now carry the shipped tokens, and DESIGN.md section 1 lists
+  them as the surfaces a palette change has to touch.
+- **Every post page skipped a heading level.** Sections are stored as `###`,
+  so a body rendered `h1` then `h3` — on all 25 posts. `prepareBody` now
+  re-bases the level so the shallowest heading is an `h2`, which also turns a
+  stray `#` into a section instead of a second page title.
+- **`Astro.cache.set(cacheHint)` did nothing.** No `cache.provider` was
+  configured, so `Astro.cache.enabled` was false and all fourteen guarded
+  calls were skipped — while `docs/edge-caching.md` promised a targeted purge
+  on the strength of them. The provider is configured now (`name` must be
+  `cloudflare`), responses carry `Cache-Tag`, and a purge by tag is real.
+- **A route's TTL was overwritten on the way into the edge cache.** The
+  stored copy took the HTML window regardless of what the route asked for, so
+  every social card went from a month to ten minutes and satori re-rasterised
+  each one six times an hour. The stored copy now keeps the route's own
+  policy. Verified locally: `/rss.xml` and `/og/*.png` hits carry their own
+  max-age.
+- **Static assets were revalidated on every visit.** `LONG_LIVED` in the
+  middleware never ran for them — Workers Assets answers those paths first —
+  so fonts, icons and mockups shipped `max-age=0, must-revalidate`.
+  `public/_headers` carries the month-long policy now.
+- **Search did not work without JS,** though two documents said it did. The
+  archive answers `?q=` on the server from the same ranking the script uses,
+  and the field is a real form.
+- **Contrast:** the primary CTA's label was 3.47:1 on Kumo's gradient
+  (`.site-cta` re-inks it), the search field's boundary was 1.25:1 and its
+  placeholder 2.58:1 (`.site-field`), the footer's link hover was 3.45:1 from
+  a self-referential `--accent: var(--accent)`, and `--dim` was 2.56:1.
+- **Markup and CSS weight:** 4.7 kB of unread `data-` attributes on the
+  archive (10% of the page), ten classes with no rule anywhere, ~55 lines of
+  dead CSS, an ignored prop, the footer's link groups as loose anchors rather
+  than lists, two `h2` levels on one archive page, a duplicate
+  `aria-current`, unannounced new tabs, an unreachable image link, and a
+  checkout title that said "confirmed" on the 404 and 503 paths.
+- **Docs:** DESIGN.md described the design the redesign replaced, including
+  an invariant the shipped design violated. Rewritten to what ships, with the
+  change recorded. `AGENTS.md` no longer mentions canvas markup, and
+  `docs/edge-caching.md` documents the provider, the tags and the two things
+  that need checking in the Cloudflare dashboard.
+- **Copy:** a card showed "★ 324" above "325 stars" (the prose no longer
+  quotes a star count), and every short post's markdown export said
+  "Reading time: 1 minutes".
+
+Left open on purpose:
+
+- **`<Image>` for the mockups.** `image.layout` and `responsiveStyles` are
+  configured and unused — every image is a raw `<img>` on a file in
+  `public/`, so the 1600×1000 mockups are served whole into ~500 px slots.
+  Converting means moving the binaries into `src/assets`, rewriting
+  `tools/mockups/build.mjs`'s output and putting the Cloudflare Images
+  binding on the critical path for the home page. Worth doing with a
+  production deploy to watch, not from a local build.
+- **The zone's Browser Cache TTL.** Live edge hits for HTML come back
+  `Cache-Control: public, max-age=86400` rather than the origin's
+  `max-age=0, must-revalidate`, so a returning reader's browser may hold a
+  page for a day. `docs/edge-caching.md` says the rule respects origin; the
+  dashboard is the place to settle it.
+- **Body images have no intrinsic dimensions** (see section 4).

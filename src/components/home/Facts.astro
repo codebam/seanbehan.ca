@@ -32,7 +32,7 @@ const facts = [
 <section class="stats" aria-label="By the numbers">
 	<div class="shell stats-grid">
 		{facts.map((fact, i) => (
-			<div class="stat" data-reveal data-reveal-delay={i * 50}>
+			<div data-reveal data-reveal-delay={i * 50}>
 				<span class="stat-value">{fact.value}</span>
 				<span class="stat-label">{fact.label}</span>
 			</div>

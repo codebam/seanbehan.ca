@@ -122,6 +122,27 @@ describe('markdownDocument', () => {
 		expect(md).not.toContain('Tags:');
 		expect(md).not.toContain('Author:');
 	});
+
+	it('singularises a one-minute read', () => {
+		// The fixture body is one minute, and every short post's header read
+		// "Reading time: 1 minutes" for as long as the exports have existed.
+		expect(markdownDocument(entry as never, { path: '/posts/x' })).toContain(
+			'Reading time: 1 minute\n'
+		);
+
+		const long = {
+			...entry,
+			data: {
+				...entry.data,
+				content: Array.from({ length: 400 }, () =>
+					block('normal', [span('ten words in a sentence right here')])
+				)
+			}
+		};
+		const md = markdownDocument(long as never, { path: '/posts/x' });
+		expect(md).toMatch(/Reading time: \d+ minutes\n/);
+		expect(md).not.toContain('1 minutes');
+	});
 });
 
 describe('jsonDocument', () => {

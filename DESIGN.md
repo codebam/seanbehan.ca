@@ -3,9 +3,9 @@
 A working document, not a museum. Section 1 is the machinery that makes the
 design cheap to change. Section 2 is the list of things no change is allowed
 to break — it is the standing gate for whatever comes next. Section 3 is the
-design itself: what it changed and why, with the values as currently
-shipped. Section 4 keeps the roads not taken, in one line each, so the next
-person knows what was ruled out and on what grounds.
+design itself: what it is, what it changed, and why, with the values as
+currently shipped. Section 4 keeps the roads not taken, in one line each, so
+the next person knows what was ruled out and on what grounds.
 
 Nothing here touches the constraints in `AGENTS.md`: server-rendered
 content, the site must work with JS off, one set of CSS tokens feeding both
@@ -18,28 +18,32 @@ copy tables is not a change for this site.
 
 ## 1. The machinery
 
-**The voice.** Newsreader (a serif with a live optical-size axis and a
-genuine italic) does all the writing and the shouting; Inter is furniture
-(eyebrows, buttons, metadata); Fira Code is code. Headlines get exactly one
-decorative move: an italic word set in the warm accent. Everything that
-moves is under 0.6 s and a few pixels. The comments in `app.css` are the
-best summary of intent — the site is deliberately a page, not a dashboard.
+**The voice.** Inter does the interface — navigation, headings, labels,
+buttons, metadata, and the display type. Newsreader does the reading: the
+article body, and the résumé, which is a document. Fira Code (with a mono
+fallback stack) is code. Headlines get exactly one decorative move: an italic
+word set in the warm accent, which is also the colour of the wordmark's dot.
+Everything that moves is under 0.6 s and a few pixels. The comments in
+`app.css` are the best summary of intent — the site is deliberately a page,
+not a dashboard.
 
-**The palette.** Warm paper in light (`#f7f2e8` / near-white `#fffdf8`
-panels), deep espresso in dark (`#171310`), two accents on distinct duty
-(section 3), and ten text/surface tiers per palette, written twice
-(`--palette-light-*`, `--palette-dark-*`). The footer is the one band that
-still carries the opposite palette (`panel-invert`); mid-page bands are
-fills, not inversions.
+**The palette.** White paper in light (`--bg #ffffff`, panels `#ffffff`, alt
+fills `#f8fafc`) with slate ink (`#0f172a` / `#334155` / `#64748b`); dark is a
+deep navy-ink (`#0b1220`, panels `#111827`) with near-white type
+(`#f1f5f9` / `#cbd5e1`). One set of names carries both schemes — there is no
+parallel `--palette-light-*` / `--palette-dark-*` pair to keep in step. The
+footer is the one band that still carries the opposite palette
+(`panel-invert`); mid-page bands are fills, not inversions.
 
-**The composition.** Full-bleed horizontal bands (`panel` / `panel-alt`, and
-the one `panel-invert` footer) with a shared 1140 px inner column
-(`.shell`). The home page is: byline + one oversized serif statement → a
-facts band → project rows → latest writing. Every other page opens with the
-same `Masthead` — a folio line (small caps, label left, meta right, hairline
-under) above a display-xl headline and a serif deck capping at 55 ch.
-Long-form is one serif column at 1.72 leading with Tailwind typography
-pointed at the tokens.
+**The composition.** A shared 1120 px inner column (`.shell`) and one vertical
+rhythm (`.section`: `padding-block: clamp(3.5rem, 7vw, 5.5rem)`) that every
+page-level section uses rather than restating. The home page is: hero (eyebrow,
+statement, one action) → a facts strip → project cards → latest writing, with
+`leadWith` swapping the middle two on the handle-first variant. Every other
+page opens with the same `Masthead` — a folio line (uppercase label left, meta
+right, hairline under) above a display-xl headline and a deck capped at 60 ch.
+Long-form is one serif column (820 px, 1.75 leading) with Tailwind typography
+pointed at the tokens; headings inside it are sans.
 
 **The machinery that makes it cheap to restyle.**
 
@@ -52,29 +56,41 @@ pointed at the tokens.
   (no swap reflow); the build script is `tools/fonts/build-fonts.sh`.
 - Variant differences are copy and ordering (`leadWith: 'facts' | 'work'`),
   not CSS.
+- Kumo supplies the two controls the site earns (the input, the button) and
+  `.flat-control` / `.site-cta` in `app.css` re-ink them; nothing else is
+  borrowed.
 
-What was true before the redesign and is no longer true: the site used to be
-recognizably one of a family — cool developer-site greys, a blue that could
-sit on any of them. The split-accent pass fixed the accent job-split, the
-bands, and the facts band; the warm re-ink (section 3.7) then lifted the
-palette off that floor. The bones — the bands, the serif column, the folio
-lines — did not move.
+**The surfaces the tokens cannot reach.** A palette change is not only a token
+change. These hold a copy of the values and have to be re-inked with them:
+`src/pages/og/[slug].png.ts` (the light values, hard-coded), `src/pages/site.webmanifest.ts`,
+`public/favicon.svg` and `tools/favicon/build-favicon.sh` (regenerate the
+raster set with it), `resume/metadata.yaml` (the PDF's LaTeX palette), and the
+display ads in `public/img/`. `Base.astro`'s two `theme-color` metas take the
+same pair the manifest does. This list exists because the redesign of Sept 2026
+updated `app.css` and `Base.astro` and nothing else, and the social cards, the
+manifest, the favicon, the résumé PDF and the ads spent a commit showing the
+previous design.
 
 ---
 
 ## 2. Invariants — every future change must keep these
 
-1. **Token architecture.** One set of names, palettes as values. A change
+1. **Token architecture.** One set of names, two schemes as values. A change
    that hard-codes colours into components is rejected at review, not
-   debated.
+   debated — including the five surfaces listed in section 1, which are the
+   documented exceptions and must be updated in the same change.
 2. **`prefers-color-scheme`, plus the footer's `panel-invert`.** Both
    palettes must survive without JS.
 3. **Print.** A long article printed in dark mode still has to be legible
    on paper. Whatever the next palette is, the print block gets a matching
    rewrite.
-4. **Serif-first reading column.** The posts are the product. A change that
-   demotes Newsreader below the UI face is re-arguing the site's reason for
-   existing.
+4. **A serif reading column.** The posts are the product, and the column a
+   reader sits in is the serif. Headings, navigation and the display type are
+   the interface face; demoting the _reading_ column to the UI face is
+   re-arguing the site's reason for existing. (Re-worded in Sept 2026: the
+   invariant used to say "serif-first", which the shipped design does not
+   keep — see 3.2 — while the thing it was protecting, the column, still
+   holds.)
 5. **JS-off parity.** Search filtering, the contents list, the copy
    buttons, and the topline work without a script. Motion is enhancement
    only and dies under `prefers-reduced-motion`.
@@ -83,114 +99,86 @@ lines — did not move.
 7. **Two variants, one design.** Any difference between seanbehan.ca and
    codebam.ca must be expressible as data in `site.data.js`, not a branch in
    the CSS.
-8. **Contrast discipline.** The current site was tuned around Lighthouse's
-   complaints (`--dim` is 3.3:1, UI-marks only). New palettes ship their
-   checks with them.
+8. **Contrast discipline.** Text clears 4.5:1 against what it sits on, and
+   anything a reader has to perceive to use the page — a control's boundary,
+   an icon, a focus ring — clears 3:1. `--dim` is the quietest mark the site
+   draws and is set to just clear that bar (`#828d9d`, 3.36:1 on white); it is
+   not a licence to go quieter. New palettes ship their checks with them.
 9. **Perf envelope.** The two-variable-fonts-plus-metric-fallbacks trick,
    the short entrance ladder, and the scroll-driven reading bar stay. New
    assets must not cost more than the ones they replace.
 
 ---
 
-## 3. The design — a split-accent refinement, re-inked
+## 3. The design, as shipped
 
-The site is 90% right; the redesign is the 10%, itemized. Its whole
-mechanism is one rule: **warm is the site's voice, blue is the user's
-reach.** The warm accent (`--accent-warm`, `#b23f1e` light / `#e8925f`
-dark) carries the editorial work — things the page says about itself. Blue
-(`#1d4ed8` / `#84a9ff`) keeps the interactive work — things the hand can
-reach. Two accents doing distinct jobs, on one page, was the site's old way
-of getting neither right: blue was doing the interactive _and_ the
-editorial, so the voice had to shout to be heard.
+**1. The accent split.** Warm is the site's voice, blue is the user's reach.
+The warm accent (`--accent-warm`, `#b45309` light / `#fbbf24` dark) carries the
+editorial work — the italic word in a headline, the wordmark's dot, language
+tags, the résumé's rules and section titles. Blue (`#2563eb` / `#60a5fa`) keeps
+the interactive work — links, focus, buttons, the one call to action. Two
+accents doing distinct jobs is the whole mechanism; the failure mode it avoids
+is one colour doing both, where the voice has to shout to be heard.
 
-**1. The accent split, as shipped.**
+**2. The Sept 2026 redesign — the interface left the serif.** The previous
+design was a broadsheet: a centred nameplate signed every page, the body
+serif carried the headings as well as the prose, tracked uppercase labels
+everywhere, and sections were separated by full-bleed bands. It asked a reader
+to decode a newspaper before they could read a résumé. The shipped design puts
+Inter in charge of the interface — headings included — and keeps Newsreader
+for the reading column and the résumé, which is the invariant 4 above, stated
+as it actually is. The header became a compact sticky bar (name left, four
+links and one action right, a `<details>` menu under 56 rem) so the first
+screen of every page belongs to the page. This is the change that re-worded
+invariant 4 and cost the section-1 list its five stale surfaces; the argument
+is here so the next person finds it by reading rather than by rediscovery.
 
-- `::selection` — `--accent-warm-wash`, one token
-  (`color-mix(in srgb, var(--accent-warm) 22%, transparent)`), which
-  resolves against whichever warm is live, so one definition serves both
-  themes.
-- `.btn:hover` — the house button (404, project pages) takes the warm
-  accent under the pointer. Kumo primaries stay blue: they are actions, and
-  actions are blue duty.
-- `.tag-lang` — language tags, which name the site's materials, sit in the
-  voice. Topic tags stay quiet.
-- `.input:focus` — blue border (it is focus), warm wash around it (it is
-  the page's response).
-- `:focus-visible` outlines and every link stay blue, unchanged.
+**3. The home page.** A two-column hero states who this is, what they build and
+how to reach them: eyebrow, one display-xl statement with a single italic word,
+a lead paragraph, one primary action (the variant's `primaryAction`) and a
+quiet row beside it, with the portrait and the availability mark in the aside.
+The facts strip follows — four figures separated by hairlines on the page's own
+ground — then project cards (one wide feature, then a two-column grid) and the
+writing list (one lead card, then a grid). `leadWith` decides whether the work
+or the numbers come first, so the two variants differ by order, not layout.
 
-**2. The display scale.** `display-xl` is capped at
-`clamp(2.9rem, 6.8vw, 4.6rem)` — the cap is set to the reading column, not
-the 1140 px shell. At the old 5.2 rem the headline overspans the page it
-sits on, and the optical-size axis is what does the fitting at the smaller
-cap.
+**4. The availability mark.** `Availability.astro` puts a dot and a sentence in
+the home hero's identity block and on the résumé's masthead: who, where, and is
+he reachable, answered in one place instead of three. The dot is `--positive`
+green because that is the signal a reader already reads as "available" without
+being taught it; it does not pulse. A blinking indicator is a dashboard's
+grammar, and the site is a page — the status is a fact, not a feed. The copy
+is `site.availability` in `site.data.js`, `null` on the variant that pitches
+the code, so the component renders nothing there rather than branching.
 
-**3. The bands.** The two mid-page inversions (services' `process`, the
-production kit's `workflow`) no longer carry the opposite palette — a band
-that is a darker page inside the page reads as another page inside this
-one. They are `panel-alt` fills in both themes, separated from their
-neighbours by the house hairline. The footer is the one remaining
-inversion: the page ends, and the signature's page is different.
+**5. The footer is the one inversion.** The page ends, and the signature's page
+is different. It carries its own small token set (`--footer-*`) including
+`--footer-accent` (`#60a5fa`, the blue the dark palette already picked for a
+dark ground), because the light scheme's `#2563eb` reads at 3.45:1 on
+`#0f172a` — which is what a self-referential
+`--accent: var(--accent)` silently produced. Its three link groups are real
+lists, for the item counts.
 
-**4. The facts band.** The numbers were the site's one dashboard. The
-`--panel` fill is gone (the band sits on `--bg`, ruled top and bottom), and
-the values set in Newsreader with oldstyle numerals — the face's own
-figures, not a stat card's tabular ones. The fourth cell is a word, so it
-stays a word.
+**6. Contrast, as shipped.** Body copy is 10.4:1 on the light ground and 12.6:1
+on the dark one; `--muted` is 4.76:1 / 7.30:1; `--accent` is 5.17:1 / 7.36:1;
+`--accent-warm` is 5.02:1 / 11.22:1. The print block re-states the light
+palette at `--muted #475569` (7.58:1) so a dark-mode print is still a legible
+page. The two places this had drifted — the primary button, whose Kumo gradient
+put a white label at 3.47:1, and the search field, whose boundary was 1.25:1 —
+are now pinned by `.site-cta` and `.site-field` in `app.css`.
 
-**5. The wash token.** `--accent-warm-wash` sits beside `--accent-wash` in
-`:root` (8% blue). The 22% is the selection's weight — heavy enough to read
-as chosen, light enough that the text underneath keeps the ground.
+**7. Type scale.** `display-xl` is `clamp(2.25rem, 5vw, 3.5rem)`, `display-lg`
+`clamp(1.5rem, 2.6vw, 2rem)`, the article title the same as `display-xl`. The
+reading column is 820 px and the prose sets at 1.75; the section deck caps at
+60 ch. Headings inside a post are re-based by `prepareBody` so the shallowest
+is an `h2`, which is what keeps a body written entirely in `###` from skipping
+a level under the page's `h1`.
 
-**6. The availability mark.** `Availability.astro` puts a dot and a sentence
-in the home hero's identity block and on the résumé's masthead: who, where,
-and is he reachable, answered in one place instead of three. The dot is
-`--accent-warm` with the wash token as its ring, not green, because a status
-is something the page says about itself and warm is the voice — green would
-be a new token doing a job the split already assigned. It does not pulse. A
-blinking indicator is a dashboard's way of saying "this is live", and the
-site is a page; the status is a fact, not a feed. The copy is
-`site.availability` in `site.data.js`, `null` on the variant that pitches the
-code, so the component renders nothing there rather than branching.
-
-**7. The warm re-ink.** The palette itself moved, which is the change the
-first six items were clearing the ground for. Light is cream paper
-(`--bg #f7f2e8`, panels `#fffdf8`) with ink-brown type (`#221c15` /
-`#4b4237`); dark is a deep espresso (`#171310`) with warm off-white type
-(`#f4ede0` / `#d3c7b4`). The terracotta is the editorial accent in both, the
-blue the interactive one — the split above, on a ground that no longer reads
-as every other developer site. The token block is still the only place a
-component looks for colour; the change reaches the surfaces the tokens cannot
-— the browser `theme-color`, the web app manifest, the generated OG cards
-(`src/pages/og/[slug].png.ts`), the `SB` mark (`tools/favicon/`) and the
-résumé PDF's LaTeX palette (`resume/metadata.yaml`) — so the paper, the card,
-the tab and the page still agree. The résumé page also joined the split it had
-missed: its editorial marks (the rules, section titles and company names) now
-take the warm accent while its links stay blue, which is exactly the
-`accentcolor` / `linkcolor` pair the PDF draws. The one risk the old section 4
-named, terracotta-on-cream reading as a blog theme, is answered by the same
-thing that kept the site out of the family before: the serif column and the
-two-job accent split, not the hue alone.
-
-**8. The broadsheet front page.** The bands, the facts strip and the
-alternating project rows were three ways of saying the same thing — a
-section starts here — so the front page says it once, with type and rules.
-The masthead is a nameplate between hairlines with a folio line above it; the
-numbers are a single ruled folio line; the work and the writing each lead
-with one story and index the rest as ruled two-column lists. The nameplate is
-now the header on every page, run compact on interior pages so the paper is
-recognisable without the masthead eating the first screen of an article;
-mid-page `panel-alt` fills were removed, so a section is separated by its own
-top rule rather than by a second background. The shared surfaces followed:
-`PostList` is a ruled index, related reading and the post's sibling links are
-ruled rather than boxed, and the Kumo tag pills became tracked text. The road
-in section 4 was taken, and it cost a component rewrite rather than a token
-swap — exactly what the entry predicted.
-
-**The bones it did move.** This is the structural change section 4 used to
-keep on the shelf: the bands are gone, structure is rules and type, and the
-nameplate signs every page. The invariants in section 2 held through it — the
-tokens, both palettes, the serif column, JS-off parity and the two-variant
-rule are untouched, and the footer is still the one inverted band.
+**8. Motion.** One entrance ladder (`fadeInUp`, 0.4–0.6 s, ≤12 px, staggered by
+`--enter-delay` / `--reveal-delay`), a scroll-driven reading bar with no
+listener, and cross-page view transitions. All of it is off under
+`prefers-reduced-motion`, and the reveal's hidden state is applied by script so
+nothing is ever stuck invisible without JS.
 
 ---
 
@@ -199,7 +187,16 @@ rule are untouched, and the footer is still the one inverted band.
 - **"The Console" — the technical journal, dark-first, mono-voiced.** Dark
   as the default, a monospace display face, a prompt-line masthead, code
   blocks full-bleed. The most truthful for _this_ audience — and the one
-  that inverts invariant 4 by demoting the serif, and the one that
+  that inverts invariant 4 by demoting the reading column, and the one that
   collides with the two-variant rule, since its best reading is codebam
   only. Turned down on those two grounds, and recorded so the collision is
   found by argument next time, not by rediscovery.
+- **The broadsheet, kept.** A newspaper front page is a real design, and the
+  site ran it for a season (commit `fcda5e8` and its neighbours). It lost to
+  the reading it imposed on the one page a hiring reader actually came for:
+  a centred nameplate, 11 px tracked labels, and a serif interface between
+  them and a résumé. Recorded as a road not re-taken, with the argument, so
+  the next person does not rediscover it as an improvement.
+- **A manual dark toggle.** `prefers-color-scheme` only. Invariant 2 still
+  requires the no-JS path, and a toggle that cannot be honoured without a
+  script is a control that lies to a reader who has none.

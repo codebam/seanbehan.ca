@@ -4,13 +4,15 @@
  *
  * The only reason to override EmDash's version is the heading id: the table of
  * contents links to `#some-section`, and both sides have to agree on every id.
- * They are computed once by `prepareBody` in lib/posts.ts and travel on the
- * block as `headingId`, so nothing here has to count duplicates or depend on
- * the order blocks happen to render in.
+ * They are computed once by `prepareBody` in lib/posts.ts — which also re-bases
+ * the level, so a body stored entirely as `###` renders `h2` sections under the
+ * page's `h1` instead of skipping a level — and travel on the block as
+ * `headingId` and a rewritten `style`.
  *
- * h2/h3 headings also wrap their text in a link to themselves — the `#` mark
- * in app.css's `.heading-anchor` rules — so a section URL is one click away
- * with no script involved.
+ * Every heading wraps its text in a link to itself, the `#` mark in app.css's
+ * `.heading-anchor` rules, so a section URL is one click away with no script
+ * involved. There is no `h1` branch: a stray one in a body is re-based to `h2`
+ * before it gets here, because a second page title is not a section.
  */
 import type { BlockProps } from 'astro-portabletext/types';
 
@@ -19,14 +21,13 @@ type Props = Omit<BlockProps, 'node'> & { node: BlockProps['node'] & { headingId
 const { node, index: _index, isInline: _isInline, ...attrs } = Astro.props as Props;
 const style = node.style ?? 'normal';
 const id = node.headingId;
+
+const HEADINGS = { h2: 'h2', h3: 'h3', h4: 'h4', h5: 'h5', h6: 'h6' } as const;
+const Tag = HEADINGS[style as keyof typeof HEADINGS] ?? null;
 ---
 
-{style === 'h1' ? (
-	<h1 {...attrs}>
-		<slot />
-	</h1>
-) : style === 'h2' ? (
-	<h2 id={id} {...attrs}>
+{Tag ? (
+	<Tag id={id} {...attrs}>
 		{id ? (
 			<a class="heading-anchor" href={`#${id}`}>
 				<slot />
@@ -34,29 +35,7 @@ const id = node.headingId;
 		) : (
 			<slot />
 		)}
-	</h2>
-) : style === 'h3' ? (
-	<h3 id={id} {...attrs}>
-		{id ? (
-			<a class="heading-anchor" href={`#${id}`}>
-				<slot />
-			</a>
-		) : (
-			<slot />
-		)}
-	</h3>
-) : style === 'h4' ? (
-	<h4 {...attrs}>
-		<slot />
-	</h4>
-) : style === 'h5' ? (
-	<h5 {...attrs}>
-		<slot />
-	</h5>
-) : style === 'h6' ? (
-	<h6 {...attrs}>
-		<slot />
-	</h6>
+	</Tag>
 ) : style === 'blockquote' ? (
 	<blockquote {...attrs}>
 		<slot />

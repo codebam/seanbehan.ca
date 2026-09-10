@@ -27,13 +27,16 @@ import { displayTag } from '../../lib/tags';
 const WIDTH = 1200;
 const HEIGHT = 630;
 
-// The light palette from app.css. The cards are a fixed surface — a social
-// preview has no reader theme to follow — so the light values are the values.
-const BG = '#f7f2e8';
-const TEXT = '#221c15';
-const MUTED = '#6c6152';
-const ACCENT = '#b23f1e';
-const LINE = '#bfb29c';
+// The light palette from app.css, and the values to change when it does. The
+// cards are a fixed surface — a social preview has no reader theme to follow —
+// so the light values are the values. ACCENT is the warm editorial token
+// rather than the interactive blue: a card has nothing to click, and this is
+// the one mark it makes about itself.
+const BG = '#ffffff';
+const TEXT = '#0f172a';
+const MUTED = '#64748b';
+const ACCENT = '#b45309';
+const LINE = '#cbd5e1';
 
 /**
  * Long titles step down a size rather than wrapping into a fourth line, which
@@ -119,6 +122,11 @@ const card = (post: Card) => ({
  * site serves: satori reads the `fvar` table of a variable font wrong and
  * throws, and a card needs one weight of each face anyway. `.woff` rather than
  * `.woff2` because satori reads ttf, otf and woff.
+ *
+ * The title stays in the serif even though the site's headings are Inter now:
+ * a card is a headline to be read, which is the job the serif still does on
+ * the article body and the résumé, and there is no bold cut of Inter here to
+ * set it in.
  */
 async function fonts(origin: string) {
 	/*
@@ -160,7 +168,10 @@ export const GET: APIRoute = async ({ params, url }) => {
 	} else {
 		// Drafts get a card too: a draft is still reachable by URL, and a shared
 		// link to one should look like the rest of the site.
-		const { entry } = await getEmDashEntry('posts', slug);
+		const { entry, cacheHint } = await getEmDashEntry('posts', slug);
+		// The card is a rendering of the entry, so it belongs to the entry's
+		// tags: a purge for that post should take its card with it.
+		if (typeof Astro !== 'undefined' && Astro.cache?.enabled) Astro.cache.set(cacheHint);
 		if (!entry?.data.title) return new Response('Not found', { status: 404 });
 
 		const tags = ((entry.data.terms?.tag ?? []) as { slug: string }[])

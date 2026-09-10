@@ -55,7 +55,7 @@ const robots = posts.length < 2 ? 'noindex, follow' : undefined;
 		</p>
 	</Masthead>
 
-	<section class="panel tag-posts">
+	<section class="panel section">
 		<div class="shell">
 			<div data-reveal>
 				<PostList posts={posts} headingLevel={2} />
@@ -63,9 +63,3 @@ const robots = posts.length < 2 ? 'noindex, follow' : undefined;
 		</div>
 	</section>
 </Base>
-
-<style>
-	.tag-posts {
-		padding-block: clamp(3.5rem, 7vw, 5.5rem);
-	}
-</style>

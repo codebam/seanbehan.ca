@@ -1,30 +1,38 @@
 ---
 /**
- * The mark on a chrome link that leaves this origin for the repo's other one.
+ * The mark on a chrome link that leaves this origin, or opens a new tab.
  *
  * Writing lives on seanbehan.ca while projects and legal live on codebam.ca,
  * so some header and footer links silently change origin on one variant. The
  * arrow says so where the eye is; the host in a visually-hidden span says so
  * where only the ear is. Content links stay unmarked — flagging every post
  * row would be noise, and the destination page identifies itself.
+ *
+ * `newTab` is the second case: a link with `target="_blank"` takes the
+ * reader's back button away without saying anything, which a sighted reader
+ * learns from the new window and a screen-reader user learns from nowhere.
+ * Anything that opens a tab passes it, and the note is spoken, not drawn —
+ * the visible arrow on those links is already the page's own.
  */
 import { isSiblingHref, siblingHost } from '../lib/site';
 
 interface Props {
 	href: string;
+	/** The anchor carries target="_blank". */
+	newTab?: boolean;
 }
 
-const { href } = Astro.props;
+const { href, newTab = false } = Astro.props;
+const sibling = isSiblingHref(href);
 ---
 
-{isSiblingHref(href) && (
-	<>
-		<span class="sibling-mark" aria-hidden="true">
-			&#8599;
-		</span>
-		<span class="sr-only"> (on {siblingHost(href)})</span>
-	</>
+{sibling && (
+	<span class="sibling-mark" aria-hidden="true">
+		&#8599;
+	</span>
 )}
+{sibling && <span class="sr-only"> (on {siblingHost(href)})</span>}
+{newTab && <span class="sr-only"> (opens in a new tab)</span>}
 
 <style>
 	/* Quieter than the label it follows: the destination is a detail, not the

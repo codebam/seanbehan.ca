@@ -28,7 +28,8 @@ The admin UI is at `http://localhost:4321/_emdash/admin`; localhost signs you in
 | `src/lib/site.ts`        | The variant, canonical/alternate URLs, the identity table                    |
 | `src/lib/highlight.ts`   | shiki on the Worker: JS regex engine, only the grammars the posts use        |
 | `src/layouts/Base.astro` | Head metadata, header, footer — every page renders into it                   |
-| `src/middleware.ts`      | Security headers and the cache policy (was `_headers` on Pages)              |
+| `src/middleware.ts`      | Security headers, redirects, and the cache policy for rendered pages         |
+| `public/_headers`        | The cache policy for static assets, which never reach the Worker             |
 | `seed/seed.json`         | Schema a fresh database is built from. Not the writing.                      |
 | `src/styles/app.css`     | The whole design: tokens, panels, prose, résumé, code blocks                 |
 | `src/lib/resume.ts`      | The résumé artifacts in the `private` bucket, and their download name        |
@@ -40,9 +41,11 @@ The admin UI is at `http://localhost:4321/_emdash/admin`; localhost signs you in
 - `entry.id` is the slug (for URLs). `entry.data.id` is the database ULID (for `getEntryTerms` and friends).
 - Call `Astro.cache.set(cacheHint)` on any page that queries content.
 - The taxonomy is named `tag`, singular, matching the seed.
-- Heading ids come from `prepareBody`, so the contents list and the headings cannot disagree. Do not derive them anywhere else.
-- The public site is plain Astro. Client behaviour goes in `src/scripts`; prefer delegated listeners, and keep decorative canvas markup in Astro components. React remains only because the EmDash admin UI requires it.
-- The page must work with JS off: search filters a server-rendered list, the copy buttons are injected rather than shipped, the contents list starts open.
+- Heading ids come from `prepareBody`, so the contents list and the headings cannot disagree. Do not derive them anywhere else. It also re-bases levels — the shallowest heading in a body becomes an `h2` — so a post written entirely in `###` does not skip a level under the page `h1`. Do not re-level headings anywhere else either.
+- The public site is plain Astro. Client behaviour goes in `src/scripts`; prefer delegated listeners. React remains only because the EmDash admin UI requires it.
+- The page must work with JS off: the archive filters on `?q=` on the server before the script reorders it, the copy buttons are injected rather than shipped, and the contents list starts open.
+- A palette change is not only a token change. `src/pages/og/[slug].png.ts`, `src/pages/site.webmanifest.ts`, `public/favicon.svg` with `tools/favicon/`, `resume/metadata.yaml` and the ads in `public/img/` each hold a copy of the colours and move with them. DESIGN.md section 1 lists them.
+- Asset cache headers belong in `public/_headers`, not in the middleware: Workers Assets answers those paths before the Worker runs.
 - The résumé is the exception to "the words live in D1": `/resume` renders an HTML fragment CI built from `resume/resume.md` and uploaded to R2, styled from `src/styles/app.css` rather than a component. What it says is edited there, never in the admin.
 
 ## Writing style

@@ -17,6 +17,7 @@ import { getPosts } from '../lib/posts';
 import { withLiveStats } from '../lib/github';
 import { featuredProjects } from '../lib/projects';
 import { site, linkHref, writingHref, yearsBuilding as yearsSinceStart } from '../lib/site';
+import SiblingMark from '../components/SiblingMark.astro';
 
 const [{ posts, cacheHint }, projects] = await Promise.all([
 	getPosts({ includeBodies: false }),
@@ -48,7 +49,7 @@ const quietLinks: { label: string; href: string; external: boolean }[] = [
 	<article class="front-page">
 		<section class="hero">
 			<div class="shell hero-inner">
-				<div class="hero-copy">
+				<div>
 					<p class="eyebrow hero-eyebrow">{site.eyebrow}</p>
 					<h1 class="display display-xl hero-title">
 						{site.headline.before}
@@ -62,7 +63,7 @@ const quietLinks: { label: string; href: string; external: boolean }[] = [
 							href={linkHref(primary)}
 							variant="primary"
 							size="lg"
-							className="flat-control"
+							className="flat-control site-cta"
 						>
 							{primary.label}
 						</LinkButton>
@@ -74,6 +75,7 @@ const quietLinks: { label: string; href: string; external: boolean }[] = [
 								rel={link.external ? 'noopener noreferrer' : undefined}
 							>
 								{link.label}
+								{link.external && <SiblingMark href={link.href} newTab />}
 							</a>
 						))}
 					</div>

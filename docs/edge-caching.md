@@ -91,6 +91,12 @@ Notes on the shape of it:
 - **`/rss.xml` is unaffected.** It has an extension, so the expression does not
   match it, and it keeps the `max-age=3600` its route sets. The same goes for
   `/og/<slug>.png`, which is cached for a month.
+- **A route's own TTL is what the Cache API stores.** The stored copy is
+  written with the response's own `Cache-Control` when it has one, and only
+  falls back to `EDGE_SECONDS` when it does not. It used to overwrite every
+  route with `EDGE_SECONDS`, which quietly cut the social cards from a month to
+  ten minutes — satori and resvg re-rasterising every card on the site, six
+  times an hour, for a URL only a scraper ever asks for.
 
 ## Purge on deploy
 
@@ -117,10 +123,59 @@ minutes.
 
 That is the intended behaviour: ten minutes is short enough that it reads as
 "the site catches up", and the alternative is a purge on every content write,
-which would throw away the whole zone's cache each time a typo is fixed. EmDash
-sets a cache tag per entry (`Astro.cache.set(cacheHint)` on every page that
-queries content), so a targeted purge is available if that ever stops being an
-acceptable trade.
+which would throw away the whole zone's cache each time a typo is fixed.
+
+**The targeted purge now works.** It did not until Sept 2026, and the reason is
+worth keeping: every page that queries content calls
+`Astro.cache.set(cacheHint)` with the tags EmDash hands back, and none of it
+did anything, because `astro.config.mjs` never configured Astro's cache
+provider. Without `cache.provider` the Astro global is a `DisabledAstroCache`
+whose `enabled` is false, so every one of those calls was skipped by its own
+guard and the tags were computed and dropped. `cache.provider.name` has to be
+exactly `cloudflare` — the adapter decides whether to register its own provider
+with `config.cache?.provider?.name === 'cloudflare'` — and that is what turns
+the hints into a `Cache-Tag` response header and makes
+`Astro.cache.invalidate({ tags })` reach `cache.purge({ tags })`.
+
+A response now carries something like
+`cache-tag: posts,01M12ZDR0A68MZMHFSHAR1EZK,astro-path:/posts`, so a single
+post's edit can drop exactly the pages that rendered it:
+
+```js
+// anywhere the Astro global is in scope, e.g. a content hook
+await Astro.cache.invalidate({ tags: [entry.data.id] });
+```
+
+Nothing calls it yet — the ten-minute window is still the trade this site
+makes — but the capability is real rather than described.
+
+## Static assets are not this file's business
+
+`src/middleware.ts` sets the policy for responses the Worker renders. Files
+under `public/` never get that far: Workers Assets answers them before the
+Worker is invoked, which is why the fonts, the favicon set and the mockups
+shipped with `max-age=0, must-revalidate` while the middleware's own
+`LONG_LIVED` rule sat there looking correct. Their policy lives in
+`public/_headers` — a month for the stable filenames, with the adapter adding
+the year-long immutable rule for content-hashed `/_astro/*` at build time.
+
+One shape worth knowing: a `*` in `_headers` matches across `/`, so
+`/*.webp` already covers `/img/project-tux.webp`. Adding `/img/*` as well makes
+both rules match and emits `Cache-Control` twice with the same value — legal
+but confusing, and easy to read as a bug. One rule per extension.
+
+## Two things to check in the dashboard, not here
+
+- The Cache Rule's **Browser TTL** is documented above as "Respect origin".
+  Live responses disagree: an edge `HIT` for HTML came back with
+  `Cache-Control: public, max-age=86400` rather than the origin's
+  `max-age=0, must-revalidate`, which means a returning reader's browser may
+  hold a page for a day. Worth confirming against the zone's Browser Cache TTL
+  setting, because it silently undoes the revalidate-every-visit half of the
+  policy this repo writes.
+- `public/_headers` is only read when the Worker is deployed with the assets
+  directory it sits in. `wrangler deploy` prints `Parsed N valid header
+rules`; if that count is not what you expect, the rules are not live.
 
 ## Required tokens
 

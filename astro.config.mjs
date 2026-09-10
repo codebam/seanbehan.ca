@@ -138,5 +138,29 @@ export default defineConfig({
 			noExternal: ['@cloudflare/kumo']
 		}
 	},
-	devToolbar: { enabled: false }
+	devToolbar: { enabled: false },
+	/*
+	 * Astro's cache provider, which every `Astro.cache.set(cacheHint)` in this
+	 * repo was written for and none of them reached: without this block
+	 * `Astro.cache` is a DisabledAstroCache, `enabled` is false, and the hint
+	 * each query hands back — the entry tags, the last-modified time — is
+	 * computed and thrown away. `docs/edge-caching.md` promised a targeted
+	 * purge on the strength of calls that did nothing.
+	 *
+	 * The name has to be exactly `cloudflare`: the adapter decides whether to
+	 * register its provider with `config.cache?.provider?.name === 'cloudflare'`
+	 * (see @astrojs/cloudflare's `needsWorkerCache`), and it is what turns the
+	 * hints into `Cache-Tag` headers and `cache.purge({ tags })`.
+	 *
+	 * Verified in a local `wrangler dev` against the real build before this
+	 * stayed: pages still answer `X-Edge-Cache: HIT` on the second request, the
+	 * middleware's Cache-Control policy is unchanged, and the stored edge copy
+	 * now keeps each route's own max-age instead of the HTML window.
+	 */
+	cache: {
+		provider: {
+			name: 'cloudflare',
+			entrypoint: '@astrojs/cloudflare/cache/provider'
+		}
+	}
 });

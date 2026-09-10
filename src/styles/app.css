@@ -7,9 +7,9 @@
 /* ═══════════════════════════════════════════════════════════
    Fonts
    Inter carries the interface: navigation, headings, labels,
-   buttons, metadata. Newsreader is kept for one job only — the
-   body of a long article — because a serif reading column is
-   still the most comfortable way to read a page of prose.
+   buttons, metadata. Newsreader is kept for reading — the body
+   of a long article, and the résumé, which is a document — because
+   a serif column is still the most comfortable way to read prose.
    ═══════════════════════════════════════════════════════════ */
 @font-face {
 	font-family: 'Inter Variable';
@@ -89,7 +89,11 @@
 		--text: #0f172a;
 		--body: #334155;
 		--muted: #64748b;
-		--dim: #94a3b8;
+		/* Not merely decorative: this is the quietest mark the site draws, and
+		   everything it draws — the search glyph, the scrollbar thumb, the
+		   search field's own boundary — is a UI mark that WCAG 1.4.11 wants at
+		   3:1. #94a3b8 was 2.56:1 on white. */
+		--dim: #828d9d;
 
 		/* Accent */
 		--accent: #2563eb;
@@ -97,18 +101,17 @@
 		--accent-on: #ffffff;
 		--accent-warm: #b45309;
 		--accent-wash: color-mix(in srgb, var(--accent) 8%, transparent);
-		--accent-warm-wash: color-mix(in srgb, var(--accent-warm) 16%, transparent);
 		--positive: #16a34a;
 
-		/* Inverted pair, used by the primary button and the footer. */
-		--invert-bg: #0f172a;
-		--invert-text: #f8fafc;
-
-		/* Footer is dark in both themes, so it needs its own small set. */
+		/* Footer is dark in both themes, so it needs its own small set — the
+		   accent included. --accent is chosen against a light ground and reads
+		   at 3.45:1 on the footer's; the footer takes the blue the dark palette
+		   already picked for a dark ground, which is 7:1 on either footer. */
 		--footer-bg: #0f172a;
 		--footer-text: #e2e8f0;
 		--footer-muted: #94a3b8;
 		--footer-line: #1e293b;
+		--footer-accent: #60a5fa;
 
 		/* Geometry */
 		--radius-sm: 6px;
@@ -137,9 +140,6 @@
 			--accent-warm: #fbbf24;
 			--accent-wash: color-mix(in srgb, var(--accent) 16%, transparent);
 			--positive: #4ade80;
-
-			--invert-bg: #f1f5f9;
-			--invert-text: #0b1220;
 
 			--footer-bg: #020617;
 			--footer-text: #e2e8f0;
@@ -249,9 +249,7 @@
 		color: var(--accent);
 	}
 
-	.entry .title,
 	.sibling .title,
-	.work-row .title,
 	.notes-grid h3,
 	.destination-list strong,
 	.channel-list strong,
@@ -261,9 +259,6 @@
 		text-wrap: balance;
 	}
 	.hero-lead,
-	.masthead-copy,
-	.row-copy,
-	.entry .desc,
 	.brief-copy,
 	.notes-grid p,
 	.card p {
@@ -307,9 +302,10 @@
 		--body: var(--footer-text);
 		--muted: var(--footer-muted);
 		--dim: var(--footer-muted);
-		--accent: var(--accent);
-		--invert-bg: var(--footer-text);
-		--invert-text: var(--footer-bg);
+		/* Reassigned, not self-referenced: `--accent: var(--accent)` resolves to
+		   the guaranteed-invalid value and quietly inherits the light-ground
+		   blue, which put footer link hovers at 3.45:1. */
+		--accent: var(--footer-accent);
 		--text-color-kumo-default: var(--text);
 		--color-kumo-fill: var(--line-strong);
 		background: var(--bg);
@@ -378,28 +374,22 @@
 		transform: translateY(1px);
 	}
 
-	.btn-outline,
-	.btn-secondary {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		gap: 0.5rem;
-		border: 1px solid var(--line-strong);
-		border-radius: var(--radius-sm);
-		background: var(--panel);
-		padding: 0.65rem 1.25rem;
-		font-size: 0.95rem;
-		font-weight: 600;
-		color: var(--text);
-		transition:
-			border-color 0.2s ease,
-			color 0.2s ease,
-			background 0.2s ease;
+	/* Kumo's emphasis button, re-inked to the house pair.
+	   Its variant sets --kumo-button-emphasis-bg, the gradient stops and
+	   `!text-white` as an inline style on the element, so no stylesheet
+	   declaration of those custom properties can win — only the used
+	   properties will, and only with !important, because the utilities that
+	   paint the button live in the layer after this one. That is the deal
+	   .flat-control already makes for the geometry. Without it the label sits
+	   on a gradient mixed 30% toward white: 3.47:1 at the top, 2.68:1 where
+	   the hover layer shows, and white on the dark palette's #60a5fa is 2:1. */
+	.site-cta {
+		background-color: var(--accent) !important;
+		background-image: none !important;
+		color: var(--accent-on) !important;
 	}
-	.btn-outline:hover,
-	.btn-secondary:hover {
-		border-color: var(--accent);
-		color: var(--accent);
+	.site-cta:hover {
+		background-color: var(--accent-hover) !important;
 	}
 
 	/* Kumo ships rounder, softer controls than the house style; every Kumo
@@ -443,25 +433,15 @@
 		transform: translateX(3px);
 	}
 
-	.input {
-		width: 100%;
-		background: var(--panel);
-		border: 1px solid var(--line-strong);
-		border-radius: var(--radius-sm);
-		padding: 0.65rem 0.9rem;
-		font-size: 0.95rem;
-		color: var(--text);
-		transition:
-			border-color 0.2s ease,
-			box-shadow 0.2s ease;
-	}
-	.input::placeholder {
-		color: var(--muted);
-	}
-	.input:focus {
-		outline: none;
-		border-color: var(--accent);
-		box-shadow: 0 0 0 3px var(--accent-wash);
+	/* The archive's search field, which is Kumo's Input.
+	   Kumo draws the control with a 10%-black hairline and fills it white, so
+	   on a white panel the field had no perceptible boundary at all (1.25:1)
+	   and its placeholder resolved to #a1a1a1 (2.58:1). Both are set here:
+	   --dim is the quietest token that still clears 3:1, and the placeholder
+	   takes --muted, which is body-copy weight rather than decoration. */
+	.site-field {
+		--text-color-kumo-placeholder: var(--muted);
+		border: 1px solid var(--dim) !important;
 	}
 
 	/* ═══════════════════════════════════════════════════════════
@@ -531,7 +511,7 @@
 	text-wrap: pretty;
 }
 
-.prose :where(h1, h2, h3, h4) {
+.prose :where(h1, h2, h3, h4, h5, h6) {
 	font-family: var(--font-sans);
 	font-weight: 700;
 	letter-spacing: -0.02em;
@@ -558,15 +538,15 @@
 }
 
 /* Section headings are wrapped in a link to themselves, so a reader can copy
-   the URL of a section. The ¶ mark appears in the margin on hover and focus,
+   the URL of a section. The `#` mark appears in the margin on hover and focus,
    and never on touch, where there is no hover to reveal it. */
-.prose :where(h2, h3) > .heading-anchor {
+.prose :where(h2, h3, h4, h5, h6) > .heading-anchor {
 	color: inherit;
 	text-decoration: none;
 	font-weight: inherit;
 	position: relative;
 }
-.prose :where(h2, h3) > .heading-anchor::before {
+.prose :where(h2, h3, h4, h5, h6) > .heading-anchor::before {
 	content: '#';
 	position: absolute;
 	left: -0.85em;
@@ -574,16 +554,16 @@
 	opacity: 0;
 	transition: opacity 0.2s ease;
 }
-.prose :where(h2, h3):hover > .heading-anchor::before,
-.prose :where(h2, h3) > .heading-anchor:focus-visible::before {
+.prose :where(h2, h3, h4, h5, h6):hover > .heading-anchor::before,
+.prose :where(h2, h3, h4, h5, h6) > .heading-anchor:focus-visible::before {
 	opacity: 1;
 }
 @media (hover: none) {
-	.prose :where(h2, h3) > .heading-anchor::before {
+	.prose :where(h2, h3, h4, h5, h6) > .heading-anchor::before {
 		content: none;
 	}
 }
-.prose :where(h2, h3)[id] {
+.prose :where(h2, h3, h4, h5, h6)[id] {
 	scroll-margin-top: 5rem;
 }
 
@@ -645,6 +625,13 @@
    name. Change one side and the other should follow, or the page and the
    PDF start describing the same career differently. Nothing here rewrites
    the words — no forced uppercasing — because the PDF does not either.
+
+   Two hooks are deliberately styled by nobody: `resume-role` (the role half
+   of "Role · Company") and `resume-id` (the name-and-subtitle block). Both
+   are emitted, and both resolve to a LaTeX macro that is also a no-op —
+   `\resumeEntryRole{#1}` and the untagged block — because the element around
+   them already carries the weight and the size. They are here to keep the
+   two outputs addressable in the same places, not because a rule is missing.
    ═══════════════════════════════════════════════════════════ */
 .resume-doc {
 	max-width: 46rem;
@@ -941,10 +928,6 @@
 	}
 }
 
-.animate-fade-in-up {
-	animation: fadeInUp 0.45s ease-out forwards;
-}
-
 .enter {
 	animation: fadeInUp 0.4s var(--ease-out-soft) both;
 	animation-delay: var(--enter-delay, 0ms);
@@ -1007,7 +990,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.animate-fade-in-up,
 	.enter,
 	.reveal-in {
 		animation: none;
@@ -1054,9 +1036,6 @@
 		--accent-warm: #b45309;
 		--accent-on: #ffffff;
 		--accent-wash: transparent;
-
-		--invert-bg: #0f172a;
-		--invert-text: #ffffff;
 	}
 
 	* {
@@ -1076,8 +1055,7 @@
 	nav[aria-label='Primary'],
 	.code-copy,
 	.btn,
-	.btn-outline,
-	.btn-secondary,
+	.site-cta,
 	div:has(> input[type='search']) {
 		display: none !important;
 	}
@@ -1102,7 +1080,7 @@
 		border: 1px solid var(--line);
 	}
 
-	.prose :where(h2, h3) > .heading-anchor::before {
+	.prose :where(h2, h3, h4, h5, h6) > .heading-anchor::before {
 		content: none;
 	}
 

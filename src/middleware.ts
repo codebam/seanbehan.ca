@@ -45,10 +45,12 @@ const SECURITY_HEADERS: Record<string, string> = {
 const IMMUTABLE = /^\/_astro\//;
 
 /**
- * Stable filenames rather than content-hashed ones: fonts, the favicon set,
- * raster art and the generated social cards. A month of caching, not a year
- * with `immutable`, so a rebuilt file reaches readers within 30 days instead
- * of never.
+ * Stable filenames rather than content-hashed ones, for the one dynamic route
+ * that still lands here: the generated social cards. Everything else this used
+ * to cover — fonts, the favicon set, raster art — is answered by Workers Assets
+ * before the Worker runs, so its policy lives in `public/_headers` instead.
+ * A month, not a year with `immutable`, so a redrawn card reaches readers
+ * within 30 days rather than never.
  */
 const LONG_LIVED = /^\/(fonts|og|img|optimized)\/|\.(webp|png|svg|ico)$/;
 
@@ -266,6 +268,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		response.headers.set('Content-Security-Policy', EDITOR_CSP);
 	}
 
+	// What the route asked for, read before the defaults above can replace it:
+	// a feed wants an hour, a social card a month, and the stored copy has to
+	// honour that or the Cache API expires it on the HTML schedule instead.
+	const routeCache = response.headers.get('Cache-Control');
+
 	if (!response.headers.has('Cache-Control')) {
 		if (IMMUTABLE.test(pathname)) {
 			response.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
@@ -288,13 +295,17 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		// policy — those two are instructions to the reader's own cache, and the
 		// Cache API would honour the zero and store nothing.
 		const stored = new Response(response.clone().body, response);
-		// EmDash image URLs identify immutable source bytes and transform options,
-		// so keeping them for a year avoids decoding the same rendition again.
+		// Three answers, in this order. EmDash image URLs identify immutable
+		// source bytes and transform options, so a year. A route that set its own
+		// policy keeps it — this used to overwrite every one of them with
+		// EDGE_SECONDS, which quietly cut the social cards from a month to ten
+		// minutes and put satori and resvg back to work on every card, every ten
+		// minutes, forever. Everything else is HTML and gets the HTML window.
 		stored.headers.set(
 			'Cache-Control',
 			pathname === '/_image'
 				? `public, max-age=${IMMUTABLE_SECONDS}, immutable`
-				: `public, max-age=${EDGE_SECONDS}`
+				: (routeCache ?? `public, max-age=${EDGE_SECONDS}`)
 		);
 		stored.headers.delete('X-Edge-Cache');
 		// Awaited rather than handed to waitUntil: Astro 6 removed the runtime

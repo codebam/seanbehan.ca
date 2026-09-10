@@ -9,6 +9,7 @@
 import Base from '../layouts/Base.astro';
 import Masthead from '../components/Masthead.astro';
 import { getEmDashCollection } from 'emdash';
+import SiblingMark from '../components/SiblingMark.astro';
 
 interface LinkEntry {
 	id: string;
@@ -67,7 +68,7 @@ const added = (date: Date | null | undefined) =>
 		<p>Places and writing worth finding again: the ones I have actually come back to.</p>
 	</Masthead>
 
-	<section class="link-archive panel">
+	<section class="section panel">
 		<div class="shell">
 			<div class="archive-heading" data-reveal>
 				<h2 class="display display-lg">Filed links</h2>
@@ -79,10 +80,10 @@ const added = (date: Date | null | undefined) =>
 					Nothing has been filed here yet.
 				</p>
 			) : (
-				<ol class="link-list" data-reveal data-reveal-delay="60">
+				<ol class="link-list" role="list" data-reveal data-reveal-delay="60">
 					{links.map((entry) => (
 						<li>
-							<a class="link-entry" href={entry.data.url} target="_blank" rel="noopener">
+							<a class="link-entry" href={entry.data.url} target="_blank" rel="noopener noreferrer">
 								<p class="facts">
 									{added(entry.data.createdAt) && (
 										<time datetime={entry.data.createdAt?.toISOString()}>
@@ -92,7 +93,10 @@ const added = (date: Date | null | undefined) =>
 									<span class="domain">{domainOf(entry.data.url)}</span>
 								</p>
 								<div class="title-row">
-									<h3>{entry.data.title}</h3>
+									<h3>
+										{entry.data.title}
+										<SiblingMark href={entry.data.url} newTab />
+									</h3>
 									<span class="external" aria-hidden="true">
 										&nearr;
 									</span>
@@ -108,9 +112,6 @@ const added = (date: Date | null | undefined) =>
 </Base>
 
 <style>
-	.link-archive {
-		padding-block: clamp(3.5rem, 7vw, 5.5rem);
-	}
 	.link-list {
 		display: grid;
 		gap: 1rem;

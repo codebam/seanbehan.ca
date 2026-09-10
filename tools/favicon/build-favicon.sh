@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
-# Renders the favicon (warm-paper serif SB on terracotta) at every size we ship.
+# Renders the favicon (white serif SB on the warm accent) at every size we ship.
+#
+# The two colours are the site's own: #b45309 is --accent-warm and #ffffff is
+# --accent-on's light value, the same pair the header wordmark's dot draws from.
+# Re-ink them here and in public/favicon.svg together, or the tab and the
+# manifest start disagreeing with the page.
 #
 # Each size is rendered natively by Chromium rather than downscaled from one
 # master, so the small sizes get their own hinting pass instead of inheriting
@@ -25,9 +30,9 @@ html,body{margin:0;padding:0;background:transparent}
 svg{display:block;width:100vw;height:100vw}
 </style></head><body>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="$5" fill="#b23f1e"/>
+  <rect width="64" height="64" rx="$5" fill="#b45309"/>
   <text x="32" y="$6" text-anchor="middle" font-family="Newsreader" font-weight="$3"
-    font-size="$2" fill="#fffdf8" letter-spacing="$4">SB</text>
+    font-size="$2" fill="#ffffff" letter-spacing="$4">SB</text>
 </svg></body></html>
 EOF
 }

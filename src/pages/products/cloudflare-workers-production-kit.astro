@@ -86,11 +86,11 @@ const schema = JSON.stringify({
 		</p>
 		<div class="masthead-actions">
 			<form method="post" action={PRODUCT.checkoutPath}>
-				<Button type="submit" variant="primary" size="lg" className="flat-control">
+				<Button type="submit" variant="primary" size="lg" className="flat-control site-cta">
 					Buy the production kit
 				</Button>
 			</form>
-			<span class="checkout-note">Immediate download</span>
+			<span class="eyebrow checkout-note">Immediate download</span>
 		</div>
 		<p class="purchase-terms masthead-terms">
 			By purchasing, you agree to the <a href="/legal/terms-of-sale">Terms of Sale</a>,{' '}
@@ -121,7 +121,7 @@ const schema = JSON.stringify({
 		</div>
 	</section>
 
-	<section class="workflow panel-alt">
+	<section class="section workflow panel-alt">
 		<div class="shell">
 			<div class="section-heading" data-reveal>
 				<h2 class="display display-lg">Clone to deploy</h2>
@@ -140,7 +140,7 @@ const schema = JSON.stringify({
 		</div>
 	</section>
 
-	<section class="offer panel-alt">
+	<section class="section offer panel-alt">
 		<div class="shell">
 			<div class="offer-grid">
 				<div data-reveal>
@@ -169,7 +169,7 @@ const schema = JSON.stringify({
 						<li>Updates for one year</li>
 					</ul>
 					<form method="post" action={PRODUCT.checkoutPath}>
-						<Button type="submit" variant="primary" size="lg" className="flat-control">
+						<Button type="submit" variant="primary" size="lg" className="flat-control site-cta">
 							Buy the production kit
 						</Button>
 					</form>
@@ -186,7 +186,7 @@ const schema = JSON.stringify({
 		</div>
 	</section>
 
-	<section class="fit panel">
+	<section class="section fit panel">
 		<div class="shell">
 			<div class="section-heading" data-reveal>
 				<h2 class="display display-lg">Built for</h2>
@@ -215,11 +215,6 @@ const schema = JSON.stringify({
 
 <style>
 	.checkout-note {
-		font-size: 0.78rem;
-		font-weight: 600;
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
-		color: var(--muted);
 		align-self: center;
 	}
 	.masthead-terms {
@@ -247,11 +242,6 @@ const schema = JSON.stringify({
 		width: 100%;
 	}
 	.modules,
-	.workflow,
-	.offer,
-	.fit {
-		padding-block: clamp(3.5rem, 7vw, 5.5rem);
-	}
 	.module-grid {
 		display: grid;
 		gap: 1.25rem;

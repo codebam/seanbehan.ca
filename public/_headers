@@ -1,0 +1,35 @@
+# Asset cache policy.
+#
+# This has to live here rather than in src/middleware.ts, which is where the
+# rest of the site's cache policy lives. Workers Assets answers these paths
+# before the Worker is ever invoked, so a rule down there is never reached —
+# the fonts and the mockups shipped with `max-age=0, must-revalidate` and every
+# repeat visit revalidated ten files.
+#
+# Stable filenames rather than content-hashed ones, so a month of caching and
+# not a year with `immutable`: a rebuilt font, favicon or mockup should reach
+# readers within 30 days instead of never.
+#
+# The patterns are extensions at the root and nothing else, because a `*` here
+# matches across `/` — `/*.webp` already covers `/img/project-tux.webp`, and a
+# second `/img/*` rule would match the same file twice and emit the header
+# twice. Add one rule per extension, not one per directory.
+#
+# `/_astro/*` is deliberately absent: those files are content-hashed, and the
+# Astro Cloudflare adapter writes its own year-long immutable rule for them
+# into this file at build time.
+
+/*.ico
+  Cache-Control: public, max-age=2592000
+
+/*.svg
+  Cache-Control: public, max-age=2592000
+
+/*.png
+  Cache-Control: public, max-age=2592000
+
+/*.webp
+  Cache-Control: public, max-age=2592000
+
+/*.woff2
+  Cache-Control: public, max-age=2592000

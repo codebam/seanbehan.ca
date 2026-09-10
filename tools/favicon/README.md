@@ -1,9 +1,12 @@
 # Favicon
 
-The mark is Newsreader `SB` in warm paper (`#fffdf8`) on terracotta (`#b23f1e`).
+The mark is Newsreader `SB` in white (`#ffffff`) on the warm accent (`#b45309`)
+— `--accent-warm` and `--accent-on`'s light value in `src/styles/app.css`.
+Re-ink both files below when the palette moves, or the tab stops matching the
+page.
 
-Two scripts regenerate everything in `static/`. Neither runs in CI — run them by
-hand when the mark or the palette changes.
+Two scripts regenerate the set. Neither runs in CI — run them by hand when the
+mark or the palette changes.
 
 ## `build-favicon.sh`
 
@@ -23,7 +26,7 @@ PNG payloads. The format is trivial and it avoids an ImageMagick dependency.
 
 ## `trace-favicon.py`
 
-Converts the lettering to SVG outlines, so `favicon.svg` carries no font
+Converts the lettering to SVG outlines, so `public/favicon.svg` carries no font
 dependency. Needs fonttools and brotli:
 
 ```sh
@@ -36,13 +39,17 @@ It decompresses the woff2 from `node_modules`, pins the variable font at
 flips the y axis. Keep its constants in sync with the tuned variant in
 `build-favicon.sh` — the two are meant to produce the same shape.
 
+Only the two `fill` values need re-running for a palette change; the outlines
+are the same shape.
+
 ## Installing the output
 
 ```sh
-cp tools/favicon/out/favicon.svg tools/favicon/out/favicon.ico \
-   tools/favicon/out/favicon*.png tools/favicon/out/apple-touch-icon.png \
-   tools/favicon/out/android-chrome-*.png static/
+cp tools/favicon/out/favicon.ico tools/favicon/out/favicon-*.png \
+   tools/favicon/out/apple-touch-icon.png tools/favicon/out/android-chrome-*.png \
+   public/
 ```
 
-`src/app.html` declares the SVG first, then the `.ico`, then the sized PNGs.
-`static/site.webmanifest` carries the same colours.
+`src/layouts/Base.astro` declares the SVG first, then the `.ico`, then the
+touched icons. `src/pages/site.webmanifest.ts` carries the same colours as the
+layout's `<meta name="theme-color">`.

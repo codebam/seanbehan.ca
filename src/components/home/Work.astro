@@ -7,6 +7,7 @@
  * can be scanned by picture rather than read line by line.
  */
 import { projectHref } from '../../lib/site';
+import SiblingMark from '../SiblingMark.astro';
 import type { FeaturedProject } from '../../lib/types';
 
 interface Props {
@@ -16,12 +17,14 @@ interface Props {
 const { projects } = Astro.props;
 const [lead, ...rest] = projects;
 
-/** "2026 · ★ 325" — only the facts a row actually has. */
+/** "2026 · ★ 324" — only the facts a row actually has. The count is the
+ *  row's one live number (github.ts refreshes it), which is why no other
+ *  line on the card is allowed to quote a star count of its own. */
 const metaLine = (project: FeaturedProject) =>
 	[project.since, project.stars > 0 ? `★ ${project.stars}` : null].filter(Boolean).join(' · ');
 ---
 
-<section id="work" class="work shell">
+<section id="work" class="section work shell">
 	<header class="section-head" data-reveal>
 		<div>
 			<h2 class="display display-lg">Selected work</h2>
@@ -34,18 +37,19 @@ const metaLine = (project: FeaturedProject) =>
 			class="link-accent"
 		>
 			All repositories <span class="arrow">&rarr;</span>
+			<SiblingMark href="https://github.com/codebam?tab=repositories" newTab />
 		</a>
 	</header>
 
 	{lead && (
 		<article class="project-feature card" data-reveal>
-			<a class="project-media" href={projectHref(`/projects/${lead.slug}`)} tabindex="-1">
+			<a class="project-media" href={projectHref(`/projects/${lead.slug}`)}>
 				<img
 					src={lead.mockup}
 					alt={lead.mockupAlt}
 					width="1600"
 					height="1000"
-					loading="eager"
+					loading="lazy"
 					decoding="async"
 				/>
 			</a>
@@ -65,6 +69,7 @@ const metaLine = (project: FeaturedProject) =>
 					{lead.homepage && (
 						<a class="link-accent" href={lead.homepage} target="_blank" rel="noopener noreferrer">
 							{lead.homepageLabel} <span class="arrow">&rarr;</span>
+							<SiblingMark href={lead.homepage} newTab />
 						</a>
 					)}
 					{lead.repo && (
@@ -75,6 +80,7 @@ const metaLine = (project: FeaturedProject) =>
 							rel="noopener noreferrer"
 						>
 							Source
+							<SiblingMark href={`https://github.com/codebam/${lead.repo}`} newTab />
 						</a>
 					)}
 				</p>
@@ -85,7 +91,7 @@ const metaLine = (project: FeaturedProject) =>
 	<div class="project-grid">
 		{rest.map((project, i) => (
 			<article class="project-card card" data-reveal data-reveal-delay={Math.min(i, 3) * 60}>
-				<a class="project-media" href={projectHref(`/projects/${project.slug}`)} tabindex="-1">
+				<a class="project-media" href={projectHref(`/projects/${project.slug}`)}>
 					<img
 						src={project.mockup}
 						alt={project.mockupAlt}
@@ -116,6 +122,7 @@ const metaLine = (project: FeaturedProject) =>
 								rel="noopener noreferrer"
 							>
 								{project.homepageLabel} <span class="arrow">&rarr;</span>
+								<SiblingMark href={project.homepage} newTab />
 							</a>
 						)}
 						{project.repo && (
@@ -126,6 +133,7 @@ const metaLine = (project: FeaturedProject) =>
 								rel="noopener noreferrer"
 							>
 								Source
+								<SiblingMark href={`https://github.com/codebam/${project.repo}`} newTab />
 							</a>
 						)}
 					</p>
@@ -137,7 +145,6 @@ const metaLine = (project: FeaturedProject) =>
 
 <style>
 	.work {
-		padding-block: clamp(3.5rem, 7vw, 5.5rem);
 		scroll-margin-top: 5rem;
 	}
 	.section-sub {

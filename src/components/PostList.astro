@@ -4,8 +4,11 @@
  * reading under a post.
  *
  * Entries are cards in a grid. The search script in PostSearch reorders these
- * server-rendered cards, so the data attributes and the `[data-post-list]` root
- * are load-bearing, not decorative.
+ * server-rendered cards, so `data-post`, `data-slug` and the `[data-post-list]`
+ * root are load-bearing, not decorative. The titles and descriptions used to
+ * ride along as `data-` attributes for a client-side search that no longer
+ * exists — the ranking moved to the server, and the attributes were 10% of the
+ * archive's HTML by weight with nothing reading them.
  */
 import { writingHref } from '../lib/site';
 import { displayTag, slugifyTag } from '../lib/tags';
@@ -13,23 +16,41 @@ import type { PostSummary } from '../lib/types';
 
 interface Props {
 	posts: PostSummary[];
+	/**
+	 * Ranked slugs for the current `?q=`, or null when there is no query. The
+	 * matches render first and the rest render `hidden`, so the page filters
+	 * with no script at all — and the script still finds the whole list to
+	 * restore when the box is cleared.
+	 */
+	matched?: string[] | null;
 	/** 2 for the archive's paired grid, 1 for a single column */
 	columns?: 1 | 2;
 	/** Topic tags are noise next to six posts, useful across twenty-four */
 	showTags?: boolean;
-	/** Kept for callers; cards are the only shape now. */
-	carded?: boolean;
 	/**
 	 * Heading level for an entry title. The default suits the home page, where
 	 * the list sits under an h2 section heading. A page whose list is the
-	 * content itself — the archive, a tag — follows its h1 directly and must
-	 * pass 2, or the document skips a level.
+	 * content itself — a tag — follows its h1 directly and must pass 2, or the
+	 * document skips a level. The archive has a section heading of its own and
+	 * passes 3, so "All posts" and a post title are not the same rank.
 	 */
 	headingLevel?: 2 | 3;
 }
 
-const { posts, columns = 1, showTags = false, headingLevel = 3 } = Astro.props;
+const { posts, matched = null, columns = 1, showTags = false, headingLevel = 3 } = Astro.props;
 const Heading = `h${headingLevel}` as 'h2' | 'h3';
+
+const matchedSet = matched ? new Set(matched) : null;
+const bySlug = new Map(posts.map((post) => [post.slug, post]));
+/** Matches in rank order, then everything else — hidden, but still shipped. */
+const rows = matchedSet
+	? [
+			...matched!
+				.map((slug) => bySlug.get(slug))
+				.filter((post): post is PostSummary => Boolean(post)),
+			...posts.filter((post) => !matchedSet.has(post.slug))
+		]
+	: posts;
 
 /** "Apr 2026" — the day is never what a reader is after in a list. */
 const monthYear = (date: string) =>
@@ -37,14 +58,12 @@ const monthYear = (date: string) =>
 ---
 
 <div class:list={['post-list', columns === 2 && 'post-list-paired']} data-post-list>
-	{posts.map((post) => (
+	{rows.map((post) => (
 		<article
 			class="post-card card"
 			data-post
 			data-slug={post.slug}
-			data-title={post.meta.title}
-			data-description={post.meta.description}
-			data-tags={post.meta.tags.join(',')}
+			hidden={matchedSet ? !matchedSet.has(post.slug) : undefined}
 		>
 			<a class="post-card-link" href={writingHref(post.path)}>
 				<p class="post-card-meta">
@@ -55,13 +74,15 @@ const monthYear = (date: string) =>
 				{post.meta.description && <p class="post-card-desc">{post.meta.description}</p>}
 			</a>
 			{showTags && post.meta.tags.length > 0 && (
-				<p class="post-card-tags">
+				<ul class="post-card-tags" role="list">
 					{post.meta.tags.map((tag) => (
-						<a class="tag" href={writingHref(`/posts/tag/${slugifyTag(tag)}`)}>
-							{displayTag(tag)}
-						</a>
+						<li>
+							<a class="tag" href={writingHref(`/posts/tag/${slugifyTag(tag)}`)}>
+								{displayTag(tag)}
+							</a>
+						</li>
 					))}
-				</p>
+				</ul>
 			)}
 		</article>
 	))}

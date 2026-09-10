@@ -14,7 +14,7 @@ const { label, meta } = Astro.props;
 
 <section class="page-hero panel">
 	<div class="shell">
-		<p class="page-hero-kicker">
+		<p class="eyebrow page-hero-kicker">
 			<span>{label}</span>
 			<span class="page-hero-meta">{meta}</span>
 		</p>
@@ -33,16 +33,17 @@ const { label, meta } = Astro.props;
 		padding-block: clamp(2.75rem, 5vw, 4rem) clamp(2.5rem, 5vw, 4rem);
 		border-bottom: 1px solid var(--line);
 	}
+	/* .eyebrow carries the type; this is only the row it sits in. */
 	.page-hero-kicker {
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
 		gap: 1rem;
-		font-size: 0.78rem;
-		font-weight: 600;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: var(--muted);
+	}
+	/* The meta half is a count or a place — breaking it across two lines makes
+	   the folio line read as two facts instead of one line of them. */
+	.page-hero-meta {
+		white-space: nowrap;
 	}
 	.page-hero-title {
 		max-width: 20ch;

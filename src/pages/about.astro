@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Masthead from '../components/Masthead.astro';
 import { site, LEGAL_NAME, LINKEDIN_URL, writingHref } from '../lib/site';
+import SiblingMark from '../components/SiblingMark.astro';
 
 const notes = [
 	{
@@ -44,7 +45,7 @@ const destinations = [
 		</div>
 	</Masthead>
 
-	<section class="notes panel">
+	<section class="section notes panel">
 		<div class="shell">
 			<div class="section-heading" data-reveal>
 				<h2 class="display display-lg">Working notes</h2>
@@ -62,14 +63,14 @@ const destinations = [
 		</div>
 	</section>
 
-	<section class="elsewhere panel-alt">
+	<section class="section elsewhere panel-alt">
 		<div class="shell">
 			<div class="section-heading" data-reveal>
 				<h2 class="display display-lg">Elsewhere</h2>
 				<p>{destinations.length} destinations</p>
 			</div>
 
-			<ul class="destination-list">
+			<ul class="destination-list" role="list">
 				{destinations.map((destination, i) => (
 					<li data-reveal data-reveal-delay={i * 45}>
 						<a
@@ -81,6 +82,7 @@ const destinations = [
 							<span class="destination-arrow" aria-hidden="true">
 								&rarr;
 							</span>
+							{destination.external && <SiblingMark href={destination.href} newTab />}
 						</a>
 					</li>
 				))}
@@ -90,10 +92,6 @@ const destinations = [
 </Base>
 
 <style>
-	.notes,
-	.elsewhere {
-		padding-block: clamp(3.5rem, 7vw, 5.5rem);
-	}
 	.notes-grid {
 		display: grid;
 		gap: 1.25rem;

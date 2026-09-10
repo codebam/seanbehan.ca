@@ -54,15 +54,24 @@ export function plainText(value: unknown): string {
  * heading: the contents list and the headings themselves have to agree on
  * every id, and a renderer that numbered duplicates as it went would depend on
  * render order and on nothing else having rendered first.
+ *
+ * Heading levels are re-based to the page, not left as stored: every section
+ * in the archive was written as `###`, so a post body rendered an `h1` title
+ * followed by `h3` sections and skipped a level — on all twenty-five posts,
+ * and on the CMS pages too. The shallowest heading present becomes `h2`, and
+ * anything deeper keeps its distance from it. A body that stores real `##`
+ * headings gets them unchanged, because then the shallowest already is one,
+ * and a stray `#` becomes an `h2` rather than a second page title.
  */
 export function prepareBody(value: unknown) {
 	if (!Array.isArray(value)) return { blocks: [] as PTBlock[], headings: [] as Heading[] };
 
 	const seen = new Map<string, number>();
-	const list: Heading[] = [];
+	const collected: { id: string; text: string; level: number; index: number }[] = [];
 
-	const blocks = (value as PTBlock[]).map((block) => {
-		if (block?._type !== 'block' || (block.style !== 'h2' && block.style !== 'h3')) return block;
+	const blocks = (value as PTBlock[]).map((block, index) => {
+		const level = headingLevel(block?.style);
+		if (block?._type !== 'block' || level === null) return block;
 
 		const text = (block.children ?? [])
 			.map((child) => child?.text ?? '')
@@ -77,12 +86,36 @@ export function prepareBody(value: unknown) {
 		seen.set(base, count + 1);
 		const id = count === 0 ? base : `${base}-${count}`;
 
-		list.push({ id, text, level: block.style === 'h3' ? 3 : 2 });
-		return { ...block, headingId: id };
+		collected.push({ id, text, level, index });
+		return block;
 	});
 
-	return { blocks, headings: list };
+	// One level, computed from the whole body before anything is re-based: a
+	// heading cannot know how deep the document around it is.
+	const shallowest = collected.length ? Math.min(...collected.map((h) => h.level)) : 2;
+	const shift = shallowest - 2;
+
+	const headings: Heading[] = collected.map((h) => ({
+		id: h.id,
+		text: h.text,
+		level: h.level - shift
+	}));
+	const relocated = new Map(collected.map((h) => [h.index, h]));
+
+	return {
+		blocks: blocks.map((block, index) => {
+			const heading = relocated.get(index);
+			return heading
+				? { ...block, style: `h${heading.level - shift}`, headingId: heading.id }
+				: block;
+		}),
+		headings
+	};
 }
+
+/** The stored heading styles, as levels. Anything else is not a heading. */
+const headingLevel = (style: unknown): number | null =>
+	typeof style === 'string' && /^h[1-6]$/.test(style) ? Number(style.slice(1)) : null;
 
 /**
  * The id form for a heading: lowercase, punctuation dropped, spaces hyphenated.

@@ -21,11 +21,15 @@ titleTracking: 6                # % letter-spacing, section titles
 subtitleTracking: 16
 
 # ---------- colour palette (HTML hex, no leading #) ----------
-accentcolor: B23F1E     # terracotta: rules, section titles, company names
-inkcolor: 221C15
-mutedcolor: 6C6152      # dates, contact line
-rulecolor: BFB29C
-linkcolor: 1D4ED8
+# The site's light tokens, so the PDF and the /resume page it is built beside
+# describe the same document in the same colours: accentcolor is --accent-warm
+# (the editorial mark) and linkcolor is --accent (the interactive one).
+# src/styles/app.css is the source of truth; change both together.
+accentcolor: B45309     # warm accent: rules, section titles, company names
+inkcolor: 0F172A
+mutedcolor: 64748B      # dates, contact line
+rulecolor: CBD5E1
+linkcolor: 2563EB
 
 # ---------- behaviour ----------
 links: true             # clickable, colourised links

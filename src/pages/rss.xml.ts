@@ -15,7 +15,13 @@ export const GET: APIRoute = async () => {
 	// One query, not two: the archive fetch already carried each entry's
 	// Portable Text, so `includeContent` keeps it instead of throwing it away
 	// and asking D1 for the same rows again.
-	const { posts, content } = await getPosts({ includeBodies: false, includeContent: true });
+	const { posts, content, cacheHint } = await getPosts({
+		includeBodies: false,
+		includeContent: true
+	});
+	// The Astro global is absent where the sandbox runs the endpoint, so the
+	// guard is a typeof rather than a direct read.
+	if (typeof Astro !== 'undefined' && Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
 	const postHtml = new Map<string, string>();
 	await Promise.all(
