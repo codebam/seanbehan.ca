@@ -15,8 +15,8 @@ const seanbehan = {
 	id: 'seanbehan',
 	url: 'https://seanbehan.ca',
 	name: 'Sean Behan',
-	title: 'Sean Behan — Full-stack developer',
-	eyebrow: 'Full-stack developer · Linux',
+	title: 'Sean Behan — Senior full-stack developer',
+	eyebrow: 'Senior full-stack developer · Linux',
 	byline: 'Sean Behan · Ontario, Canada',
 	headline: {
 		before: 'I build software that lives ',
@@ -33,11 +33,11 @@ const seanbehan = {
 	// read — and the stack keywords live in the description rather than the
 	// card, where there is room for them.
 	description:
-		'Sean Behan — full-stack developer in Ontario, Canada. Rust, TypeScript, NixOS and Cloudflare Workers; open to full-time work, remote or GTA hybrid.',
+		'Sean Behan — senior full-stack developer in Ontario, Canada. Rust, TypeScript, NixOS and Cloudflare Workers; open to full-time work, remote or GTA hybrid.',
 	ogTitle: 'Sean Behan',
 	// Kept near the length of the line it replaces: this string is the
 	// social card's tagline, set at 26px beside the host on a 1200px card.
-	ogDescription: 'Full-stack developer · Ontario, Canada · Open to work.',
+	ogDescription: 'Senior full-stack developer · Ontario, Canada · Open to work.',
 	leadWith: 'facts',
 	showResume: true,
 	availability: {
@@ -94,7 +94,7 @@ const seanbehan = {
 		eyebrow: 'Sean Behan · codebam',
 		headline: 'I build systems from the database to the display server.',
 		intro:
-			'I am a full-stack developer in Ontario, Canada. Since 2014 I have worked across web applications, Linux infrastructure and open source, with a current focus on Rust, TypeScript, NixOS and Cloudflare Workers.'
+			'I am a senior full-stack developer in Ontario, Canada. Since 2014 I have worked across web applications, Linux infrastructure and open source, with a current focus on Rust, TypeScript, NixOS and Cloudflare Workers.'
 	}
 };
 

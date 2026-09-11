@@ -1,36 +1,39 @@
 # The résumé
 
-One Markdown file, published by CI in the three forms a reader asks for: the
-**PDF** to download, the **HTML fragment** to render, and the **source itself**
-for a bot at `/resume.md`.
+One Markdown file, published by CI in the four forms a reader asks for: the
+**PDF** to download, the **HTML fragment** to render, the **plain text** an
+application form or an ATS reads, and the **source itself** for a bot at
+`/resume.md`.
 
-`resume/resume.md` is the words. Pandoc turns it into a **PDF** for downloading
-and an **HTML fragment** that `/resume` renders inline, in the site's own type —
-instead of the embedded PDF this page used to be, which was unreadable on a
-phone, invisible to a text browser and to anything that indexes the page, and
-set in a typeface no other page here uses. The markdown goes to the same bucket
-unconverted: the words were written in it, so `/resume.md` copies rather than
-translates.
+`resume/resume.md` is the words. Pandoc turns it into a **PDF** for downloading,
+an **HTML fragment** that `/resume` renders inline, in the site's own type, and
+a **plain-text** file with the styling stripped out. The fragment is the answer
+to the embedded PDF this page used to be, which was unreadable on a phone,
+invisible to a text browser and to anything that indexes the page, and set in a
+typeface no other page here uses; the text is the answer to an ATS reading a
+two-column PDF. The markdown goes to the same bucket unconverted: the words were
+written in it, so `/resume.md` copies rather than translates.
 
 ```
 resume/resume.md ─── filters/resume-entries.lua ── structure, once
        │                        │
-       │         ┌──────────────┴──────────────┐
-       │ templates/resume.latex      templates/resume.html
-       │ pandoc → tectonic           pandoc → html5, headings −2
-       │              │                          │
-       │        resume.pdf                   resume.html
-       └──────────────── R2: private ────────────┘
-            │                  │                │
-      /resume.md         /resume.pdf      /resume  (set:html)
+       │    ┌───────────────────┼───────────────────┐
+       │ templates/resume.latex   templates/resume.html   templates/resume.txt
+       │ pandoc → tectonic        pandoc → html5, −2      pandoc → plain
+       │        │                     │                      │
+       │   resume.pdf            resume.html            resume.txt
+       └───────────────── R2: private ─────────────────────┘
+            │                  │               │               │
+      /resume.md         /resume.pdf     /resume         /resume.txt
 ```
 
-Both branches are the same document: one input, one metadata file, one Lua
+All three branches are the same document: one input, one metadata file, one Lua
 filter. They differ in two places and no more — the fragment carries classes
-where the PDF carries LaTeX macros, and its headings start two levels lower so the
-résumé's sections sit underneath the page's own `h2`. That is the property to defend when editing
-anything here: the page and the PDF should never disagree about what 2021
-looked like.
+where the PDF carries LaTeX macros and its headings start two levels lower so
+the résumé's sections sit underneath the page's own `h2`, and the text puts each
+date on its own line instead of flushing it into a right-hand column. That is
+the property to defend when editing anything here: the page, the PDF and the
+text should never disagree about what 2021 looked like.
 
 ## The pieces
 
@@ -40,19 +43,21 @@ looked like.
 | `resume/filters/resume-entries.lua` | Structure: entry rows, the date column, compacted skill lines, contacts. |
 | `resume/templates/resume.latex`     | The PDF's typography.                                                    |
 | `resume/templates/resume.html`      | The fragment's markup. A fragment on purpose: no `<head>`, no CSS.       |
-| `resume/metadata.yaml`              | Page, fonts, colours for the PDF; the filter's switches for both.        |
-| `resume/build.sh`                   | The driver. `--outdir`, `--pdf`, `--html`, `--font`, `--keep-tex`.       |
-| `src/lib/resume.ts`                 | Reading the two objects, and the download filename.                      |
+| `resume/templates/resume.txt`       | The plain text's header block. The body is the writer's own `plain`.     |
+| `resume/metadata.yaml`              | Page, fonts, colours for the PDF; the filter's switches for all three.   |
+| `resume/build.sh`                   | The driver. `--outdir`, `--pdf`, `--html`, `--txt`, `--font`.            |
+| `src/lib/resume.ts`                 | Reading the bucket objects, and the download filenames.                  |
 | `src/pages/resume.astro`            | The page around it.                                                      |
 | `src/pages/resume.pdf.ts`           | Streaming the PDF, with its etag and disposition.                        |
+| `src/pages/resume.txt.ts`           | Streaming the plain text, the same way.                                  |
 | `src/styles/app.css`                | `.resume-doc` — the résumé's typography on screen.                       |
 | `.github/workflows/resume.yml`      | Build, verify, upload, purge.                                            |
 
 ## Building it
 
 ```bash
-npm run resume        # nix run .#resume → resume/out/{resume.pdf,resume.html}
-npm run resume:seed   # …and put both in the local dev bucket
+npm run resume        # nix run .#resume → resume/out/{resume.pdf,resume.html,resume.txt}
+npm run resume:seed   # …and put all three in the local dev bucket
 ```
 
 `resume/out/` is ignored: the copy that matters is in R2, and a second one in
@@ -76,16 +81,20 @@ already on `PATH`.
 ## Publishing
 
 `.github/workflows/resume.yml` runs on a push to `master` that touches
-`resume/**`, `flake.nix` or `flake.lock`. It builds both outputs, checks them,
-writes them to bucket `private` under the keys the Worker reads, and purges
-`seanbehan.ca` so the new fragment is what readers get next request rather than
-in ten minutes. The same build on a pull request stops before the upload: a
-résumé that no longer typesets should be caught by whoever broke it.
+`resume/**`, `flake.nix` or `flake.lock`. It builds all three outputs, checks
+them, writes them to bucket `private` under the keys the Worker reads, and
+purges `seanbehan.ca` so the new fragment is what readers get next request
+rather than in ten minutes. The same build on a pull request stops before the
+upload: a résumé that no longer typesets should be caught by whoever broke it.
 
-Two checks in there are load-bearing rather than decorative:
+Three checks in there are load-bearing rather than decorative:
 
 - **No `\resume` in the fragment.** If `tex_markup=false` ever stops reaching the
   filter, the HTML fills with LaTeX macros and the page prints them.
+- **No `\resume` in the text, and a contact line in it.** The plain pass is the
+  one where a lost `tex_markup=false` would post macros into the file an ATS
+  reads; a template that lost its header renders a body with no address. Both
+  are errors.
 - **No font fell back.** `templates/resume.latex` walks a candidate chain and
   keeps the engine default rather than failing the build, so a missing typeface
   is one line in the TeX log and a PDF quietly set in DejaVu. CI fails on that
@@ -104,17 +113,18 @@ content changed.
 ## Serving
 
 The Worker holds a `RESUME` binding on bucket `private`, which has no public
-domain of its own. That is why both artifacts are read at request time and why
-the download is `/resume.pdf` rather than a bucket hostname:
+domain of its own. That is why the artifacts are read at request time and why
+the downloads are `/resume.pdf` and `/resume.txt` rather than a bucket hostname:
 
 - A résumé edit is an upload plus a purge, not a deploy. Neither Worker is
   rebuilt, so `npm run build` never needs TeX.
 - The link stays same-origin. `object-src` no longer opens the CSP to an r2.dev
   domain — it is `'none'` now, because nothing is embedded any more.
 - `resume.pdf` keeps its existing object key, so a link pasted into an inbox
-  last month still resolves. What the reader's machine calls the file is a
-  separate matter: `resumePdfFilename()` builds `Sean-Behan-Resume.pdf` from the
-  site's identity, and the route sends it as `Content-Disposition`.
+  last month still resolves; `resume.txt` is new beside it. What the reader's
+  machine calls each file is a separate matter: `resumePdfFilename()` and
+  `resumeTxtFilename()` build `Sean-Behan-Resume.pdf` and `.txt` from the site's
+  identity, and both routes send them as `Content-Disposition`.
 
 The page is honest about an empty bucket: `/resume` says the inline copy is
 missing and offers the PDF, which is the state of a fresh clone until someone

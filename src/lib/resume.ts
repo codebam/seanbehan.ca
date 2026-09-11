@@ -2,10 +2,11 @@
  * The résumé, as the site serves it.
  *
  * resume/resume.md holds the words. `.github/workflows/resume.yml` turns them
- * into three objects in the `private` bucket with the same pandoc pass:
+ * into four objects in the `private` bucket with the same pandoc pass:
  * `resume.pdf` to download, `resume.html` as the fragment /resume renders
- * inline, and `resume.md` — the source itself — for /resume.md. The routes
- * read all three at request time rather than shipping any of them in the
+ * inline, `resume.txt` as the plain text an application form or an ATS reads,
+ * and `resume.md` — the source itself — for /resume.md. The routes read all
+ * four at request time rather than shipping any of them in the
  * bundle, which is what lets a résumé edit go live with an upload and a purge
  * instead of a redeploy of both origins — and what keeps TeX out of
  * `npm run build`.
@@ -21,6 +22,7 @@ import { site } from './site';
 /** The keys the workflow writes. The PDF's doubles as its download filename. */
 export const RESUME_PDF_KEY = 'resume.pdf';
 export const RESUME_HTML_KEY = 'resume.html';
+export const RESUME_TXT_KEY = 'resume.txt';
 export const RESUME_MD_KEY = 'resume.md';
 
 /** What a bucket `get` hands back, as far as this site is concerned. */
@@ -70,17 +72,37 @@ export async function getResumeMarkdown(): Promise<ResumeObjectBody | null> {
 }
 
 /**
- * "Sean Behan" → "Sean-Behan-Resume.pdf".
+ * The plain-text rendering, streamed by src/pages/resume.txt.ts.
  *
- * The object key stays `resume.pdf` — it predates this repo's CI, and a
- * résumé URL someone already pasted into an inbox is worth keeping alive.
- * What a reader's machine calls the file is a separate question, answered here
- * from the site's own identity rather than from a string in the bucket.
+ * This is the copy an application form or an ATS reads: the same words as the
+ * page and the PDF, with no column for a parser to reconstruct. It is a
+ * rendering, not the source — the markdown is what CI uploads unconverted.
  */
-export function resumePdfFilename(name: string = site.name): string {
+export async function getResumeText(): Promise<ResumeObjectBody | null> {
+	return env.RESUME.get(RESUME_TXT_KEY);
+}
+
+/**
+ * "Sean Behan" → "Sean-Behan-Resume.<extension>".
+ *
+ * The object keys stay `resume.pdf` and `resume.txt` — they predate this
+ * repo's CI, and a résumé URL someone already pasted into an inbox is worth
+ * keeping alive. What a reader's machine calls the file is a separate question,
+ * answered here from the site's own identity rather than from a string in the
+ * bucket.
+ */
+function resumeFilename(extension: string, name: string = site.name): string {
 	const slug = name
 		.trim()
 		.replace(/[^\p{L}\p{N}]+/gu, '-')
 		.replace(/^-+|-+$/g, '');
-	return `${slug || 'resume'}-Resume.pdf`;
+	return `${slug || 'resume'}-Resume.${extension}`;
+}
+
+export function resumePdfFilename(name: string = site.name): string {
+	return resumeFilename('pdf', name);
+}
+
+export function resumeTxtFilename(name: string = site.name): string {
+	return resumeFilename('txt', name);
 }

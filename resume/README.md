@@ -1,14 +1,16 @@
 # `resume/` — the résumé source
 
-`resume.md` in, two formats out: the PDF people download and the HTML fragment
-`/resume` renders inline. How the artifacts reach the site — bucket, Worker
-routes, CI, credentials — is [`docs/resume.md`](../docs/resume.md). This file is
-about writing the document and about the knobs that change how it looks.
+`resume.md` in, three formats out: the PDF people download, the HTML fragment
+`/resume` renders inline, and the plain text an application form or an ATS
+reads. How the artifacts reach the site — bucket, Worker routes, CI,
+credentials — is [`docs/resume.md`](../docs/resume.md). This file is about
+writing the document and about the knobs that change how it looks.
 
 ```bash
-npm run resume                    # from the repo root; both outputs into resume/out/
-./build.sh                        # from here; both outputs into .
+npm run resume                    # from the repo root; all three outputs into resume/out/
+./build.sh                        # from here; all three outputs into .
 ./build.sh --html --outdir /tmp/o # just the fragment: pandoc, no TeX, no bundle
+./build.sh --txt --outdir /tmp/o  # just the plain text: pandoc, no TeX, no bundle
 ./build.sh --pdf --keep-tex       # just the PDF, and the .tex it came from
 ./build.sh --font "TeX Gyre Heros"
 ./build.sh --open
@@ -17,15 +19,15 @@ PANDOC=pandoc ./lint-template.sh  # compile-check the LaTeX template alone
 
 ## Writing the Markdown
 
-The filter reads intent out of ordinary Markdown. Nothing here is a syntax the
-PDF understands and the page does not — both get the same structure.
+The filter reads intent out of ordinary Markdown. Nothing here is a syntax one
+output understands and another does not — all three get the same structure.
 
 | Written                             | Becomes
 | ----------------------------------- | ------------------------------------------------
 | `# EXPERIENCE`                      | A section: accent title, double rule beneath.
 | `## LANGUAGES`                      | A quiet subsection label, no rule.
 | `### Role · Company`                | One entry: bold role, accent company.
-| `*Apr. 2021 – Oct. 2021*` under it  | That entry's right-hand column.
+| `*Apr. 2021 – Oct. 2021*` under it  | That entry's right-hand column; its own line in the text.
 | `*Peterborough, ON* \| *2016 – 2023*` | Both parts, in the same column.
 | `**Expert:**` then `- short items`  | One line: `Expert: TypeScript · Rust · Nix`.
 | `- a longer item`                   | A real bullet list, kept as bullets.
@@ -43,7 +45,7 @@ character with `entry_separator`, or turn the split off with
 
 ```yaml
 title: "SEAN BEHAN"                    # rendered as the name
-subtitle: "Full-Stack Developer · TypeScript & Rust"
+subtitle: "Senior Full-Stack Developer · TypeScript & Rust"
 location: "Greater Toronto Area"
 email: "sean@seanbehan.ca"
 website: "https://seanbehan.ca"        # the scheme is trimmed for display
@@ -55,8 +57,8 @@ abstract: "One paragraph under the header rule."
 
 Those six contact keys are normalised into the header line in the order above,
 and whatever is absent is simply not there — on the PDF they separate with
-pipes, on the page they stack to the right. `title`, `subtitle` and `abstract`
-are the only front matter the body does not see.
+pipes, in the text with `·`, and on the page they stack to the right. `title`,
+`subtitle` and `abstract` are the only front matter the body does not see.
 
 ## Knobs
 
@@ -84,13 +86,15 @@ defines.
 The filter's own switches, each `true` unless noted: `dash_lists`, `drop_rules`,
 `date_rows`, `split_entries`, `entry_separator` (`·`), `inline_bullets`,
 `inline_bullet_max` (30), `inline_bullet_join` (`·`), `uppercase_sections`
-(`false`), `build_contacts`.
+(`false`), `build_contacts`, `plain_text` (`false`; `build.sh` sets it for the
+txt pass).
 
-`tex_markup` is the one that decides between the two outputs — `true` for the
-PDF's macros, `false` for the fragment's classes. `build.sh` sets it; leave it
-alone unless you are adding a third format, in which case the hooks are
-`hook()` in the filter and the five `.resume-*` classes in
-`src/styles/app.css`.
+`tex_markup` decides between two of the three outputs — `true` for the PDF's
+macros, `false` for the fragment's classes and the text. `plain_text` is the
+other half of the txt pass: it moves each entry's date out of the right-hand
+column and onto its own line, because plain text has no column and a parser
+would otherwise read "AssetDashApr. 2021". `build.sh` sets both; the hooks are
+`hook()` in the filter and the five `.resume-*` classes in `src/styles/app.css`.
 
 Fonts are resolved through **fontconfig**, so a family has to be visible to the
 system or to `XDG_DATA_DIRS` — which is what `nix run .#resume` arranges and
@@ -101,8 +105,9 @@ on the page and loud in the TeX log; CI treats that line as an error.
 
 - The current content is 2 pages. The last page's footer reports the total via
   `lastpage`.
-- `pdftotext resume.pdf -` extracts in reading order, which is what ATS parsers
-  want. With `icons: true` the glyphs are decorative and do not extract.
+- `pdftotext resume.pdf -` extracts in reading order, and `resume.txt` is the
+  deliberate ATS copy: the same words, each date on its own line, no layout to
+  reconstruct. With `icons: true` the glyphs are decorative and do not extract.
 - PDF bookmarks come from the headings and carry the plain entry text.
 - `★`, `✓`, `●`, `■`, `◆` and friends are mapped onto AMS symbols by the LaTeX
   template, so a pasted star count renders whatever the body font is. On the

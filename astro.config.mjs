@@ -67,7 +67,7 @@ export default defineConfig({
 					githubUrl: 'https://github.com/codebam',
 					mastodonUrl: 'https://mstdn.ca/@codebam',
 					linkedinUrl: 'https://www.linkedin.com/in/sean-behan',
-					jobTitle: 'Full-stack developer',
+					jobTitle: 'Senior full-stack developer',
 					homeLocation: {
 						'@type': 'PostalAddress',
 						addressRegion: 'Ontario',

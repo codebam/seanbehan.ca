@@ -64,6 +64,9 @@ const CHECKS = [
 	// The résumé's markdown is the source CI uploaded beside the artifacts this
 	// page and the PDF were built from, so the check is the file's own words.
 	{ path: '/resume.md', type: 'text/markdown', contains: ['EXPERIENCE'] },
+	// The plain-text rendering, for the application forms a PDF is a poor fit
+	// for; same bucket as the other two artifacts.
+	{ path: '/resume.txt', type: 'text/plain', contains: ['EXPERIENCE', 'sean@seanbehan.ca'] },
 	{
 		path: '/resume',
 		headers: { Accept: 'text/markdown' },
@@ -84,7 +87,8 @@ const CHECKS = [
 			'How to fetch this site',
 			'## Recent writing',
 			'](https://seanbehan.ca/posts/',
-			'/resume.md'
+			'/resume.md',
+			'/resume.txt'
 		]
 	},
 	{ path: '/site.webmanifest', contains: ['"short_name"'] },

@@ -1,10 +1,10 @@
 name: Publish the résumé
 
-# resume/resume.md is the résumé; this workflow is what makes it exist in three
-# formats. It builds the PDF and the inline-HTML fragment with the toolchain the
-# flake pins, puts both alongside the markdown source in the private bucket, and
-# purges the edge so the page picks the new fragment up now rather than in ten
-# minutes.
+# resume/resume.md is the résumé; this workflow is what makes it exist in four
+# formats. It builds the PDF, the inline-HTML fragment and the plain text with
+# the toolchain the flake pins, puts all three alongside the markdown source in
+# the private bucket, and purges the edge so the page picks the new fragment up
+# now rather than in ten minutes.
 #
 # Nothing here deploys a Worker: /resume reads the fragment out of R2 per
 # request, so a résumé edit is an upload, not a release. See docs/resume.md.
@@ -74,7 +74,7 @@ jobs:
       # `npx` decides to fetch.
       - run: npm ci
 
-      - name: Build the PDF and the fragment
+      - name: Build the PDF, the fragment and the plain text
         run: |
           set -euo pipefail
 
@@ -145,6 +145,23 @@ jobs:
             exit 1
           fi
 
+          # The plain-text copy is the one an ATS reads, so it gets the checks
+          # that do not need a browser: it has words, it has the contact line
+          # (which is how a template that lost its header fails), and it has
+          # no LaTeX macro from the filter's other spelling.
+          test -s "$OUT/resume.txt" || {
+            echo 'resume.txt is empty — templates/resume.txt did not render' >&2
+            exit 1
+          }
+          grep -q '@' "$OUT/resume.txt" || {
+            echo 'resume.txt has no contact line — is the template still rendering contacts?' >&2
+            exit 1
+          }
+          if grep -q '\\resume' "$OUT/resume.txt"; then
+            echo 'resume.txt still carries LaTeX macros; build.sh must pass -M tex_markup=false' >&2
+            exit 1
+          fi
+
           {
             echo "### Résumé"
             echo
@@ -153,7 +170,8 @@ jobs:
                 awk '/^Pages:/{print $2}'
             ) pages"
             echo "- \`resume.html\` $(wc -c <"$OUT/resume.html") bytes"
-            # The uploaded source, counted so the summary names all three bucket
+            echo "- \`resume.txt\` $(wc -c <"$OUT/resume.txt") bytes"
+            # The uploaded source, counted so the summary names all four bucket
             # keys a reader can fetch.
             echo "- \`resume.md\` $(wc -c <resume/resume.md) bytes"
           } >>"$GITHUB_STEP_SUMMARY"
@@ -175,6 +193,10 @@ jobs:
             --file "$OUT/resume.html" \
             --content-type "text/html; charset=utf-8" \
             --remote
+          npx wrangler r2 object put "private/resume.txt" \
+            --file "$OUT/resume.txt" \
+            --content-type "text/plain; charset=utf-8" \
+            --remote
           # The source beside its renderings, so /resume.md answers with the
           # very file these were built from rather than a lossy conversion.
           npx wrangler r2 object put "private/resume.md" \
@@ -182,8 +204,8 @@ jobs:
             --content-type "text/markdown; charset=utf-8" \
             --remote
 
-      # On a pull request nothing reaches the bucket, so leave the two files
-      # where someone can open the PDF before it becomes the live one.
+      # On a pull request nothing reaches the bucket, so leave the files where
+      # someone can open the PDF before it becomes the live one.
       - uses: actions/upload-artifact@v7
         if: github.event_name == 'pull_request'
         with:
@@ -191,6 +213,7 @@ jobs:
           path: |
             ${{ env.OUT }}/resume.pdf
             ${{ env.OUT }}/resume.html
+            ${{ env.OUT }}/resume.txt
           retention-days: 14
 
       # /resume is held at the edge for ten minutes and the PDF for an hour, so
@@ -222,9 +245,11 @@ jobs:
             # once reported a résumé it had just published as missing.
             page=$(curl -fsS https://seanbehan.ca/resume 2>/dev/null || true)
             pdf=$(curl -fsSI https://seanbehan.ca/resume.pdf 2>/dev/null || true)
+            txt=$(curl -fsSI https://seanbehan.ca/resume.txt 2>/dev/null || true)
             md=$(curl -fsSI https://seanbehan.ca/resume.md 2>/dev/null || true)
             if grep -q 'resume-doc' <<<"$page" &&
               grep -qi '^content-type: *application/pdf' <<<"$pdf" &&
+              grep -qi '^content-type: *text/plain' <<<"$txt" &&
               grep -qi '^content-type: *text/markdown' <<<"$md"; then
               published=yes
               break

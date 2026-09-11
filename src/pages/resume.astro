@@ -21,7 +21,7 @@ import Base from '../layouts/Base.astro';
 import Masthead from '../components/Masthead.astro';
 import Availability from '../components/Availability.astro';
 import { LinkButton } from '@cloudflare/kumo/components/button';
-import { getResumeFragment, resumePdfFilename } from '../lib/resume';
+import { getResumeFragment, resumePdfFilename, resumeTxtFilename } from '../lib/resume';
 import { featuredProjects } from '../lib/projects';
 import { site, yearsBuilding, LINKEDIN_URL } from '../lib/site';
 import SiblingMark from '../components/SiblingMark.astro';
@@ -80,16 +80,19 @@ const updated = resume
 
 <Base
 	title="Résumé"
-	description={`Résumé for ${site.name}, full-stack developer. ${site.availability?.detail ?? ''}`}
+	description={`Résumé for ${site.name}, senior full-stack developer. ${site.availability?.detail ?? ''}`}
 	ogTitle={`Résumé — ${site.name}`}
 >
 	<!-- The source document, the way a post advertises its markdown: /resume.md
 	     is what the fragment and the PDF were built from, so the two can never
 	     disagree about what they say. -->
 	<link slot="head" rel="alternate" type="text/markdown" href="/resume.md" />
+	<!-- The plain-text rendering, advertised the same way: it is a format
+	     /resume serves, not a page of its own. -->
+	<link slot="head" rel="alternate" type="text/plain" href="/resume.txt" />
 	<Masthead label="Résumé · Sean Behan" meta="Remote / Greater Toronto Area">
 		<Fragment slot="title">
-			Full-stack developer, <em>open to work.</em>
+			Senior full-stack developer, <em>open to work.</em>
 		</Fragment>
 		<p class="masthead-blurb">{intro}</p>
 		<div class="masthead-availability">
@@ -120,6 +123,12 @@ const updated = resume
 			>
 				Email {site.email}
 			</LinkButton>
+			<!-- The ATS copy of the document, beside the PDF. Quiet because the
+			     PDF is still what a reader forwards; this is what an application
+			     form or a parser would rather have. -->
+			<a class="link-quiet" href="/resume.txt" download={resumeTxtFilename()}>
+				Plain text (.txt)
+			</a>
 			<a class="link-quiet" href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer">
 				LinkedIn
 				<SiblingMark href={LINKEDIN_URL} newTab />

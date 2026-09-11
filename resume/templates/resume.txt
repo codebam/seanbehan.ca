@@ -1,0 +1,26 @@
+$-- resume.txt -- the plain-text twin of templates/resume.latex and
+$-- templates/resume.html.
+$--
+$-- The ATS copy: no fonts, no columns, no macros.  What the PDF expresses with
+$-- a flush-right date column arrives here on its own line, so a parser never
+$-- reads "AssetDashApr. 2021"; what the fragment expresses with classed spans
+$-- arrives here as the words themselves.  Same source, same Lua filter, same
+$-- metadata.yaml as the other two -- build.sh runs this pass with
+$-- plain_text=true and tex_markup=false.  See docs/resume.md.
+$--
+$-- The contact line is the filter's own `contacts` list, in the order the
+$-- filter normalised it, so the text, the page and the PDF list the same facts
+$-- in the same order.
+$title$
+$if(subtitle)$
+$subtitle$
+$endif$
+$if(contacts)$
+$for(contacts)$$if(contacts.text)$$contacts.text$$else$$contacts$$endif$$sep$ · $endfor$
+$endif$
+
+$if(abstract)$
+$abstract$
+
+$endif$
+$body$

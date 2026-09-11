@@ -1,9 +1,10 @@
 --[[ resume-entries.lua -- structural clean-up for Pandoc resumes.
 
 Turns the flat Markdown a resume is written in into the shapes the templates
-style, in two output formats: the LaTeX one for the PDF and the HTML one for
-the résumé as a web page.  Both are built from this single pass, which is what
-keeps the page and the PDF from drifting apart.
+style, in three output formats: the LaTeX one for the PDF, the HTML one for the
+résumé as a web page, and the plain text an application form or an ATS reads.
+All three are built from this single pass, which is what keeps the page, the
+PDF and the text from drifting apart.
 
 The five styling hooks have two spellings and one meaning: a `tex` raw inline
 carrying the macro the LaTeX template defines, or a Span whose class is what the
@@ -59,7 +60,12 @@ way to put it in the right-hand column.
 Every behaviour has a metadata switch (set it to false to opt out):
   dash_lists, drop_rules, date_rows, split_entries, entry_separator,
   inline_bullets, inline_bullet_max, inline_bullet_join, uppercase_sections,
-  build_contacts, tex_markup.
+  build_contacts, plain_text, tex_markup.
+
+`plain_text` is for the plain writer: an entry's date becomes its own paragraph
+rather than a flush-right column, so a parser never reads "AssetDashApr. 2021".
+Pair it with `tex_markup: false` -- that is what turns the hooks' LaTeX macros
+into the plain words the writer can print.
 --]]
 
 ---------------------------------------------------------------------------
@@ -76,6 +82,7 @@ local opt = {
   inline_bullet_join = '·',
   uppercase_sections = false,
   build_contacts = true,
+  plain_text = false,
   tex_markup = true,
 }
 
@@ -410,7 +417,16 @@ local function transform_blocks(blocks)
         and opt.entry_separator ~= ''
         and find_separator(content, opt.entry_separator) ~= nil
       if meta_inlines or has_sep then
-        out[#out + 1] = pandoc.Header(blk.level, entry_row(content, meta_inlines), blk.attr)
+        if opt.plain_text and meta_inlines then
+          -- Plain text has no column to flush the date into, and pandoc's
+          -- plain writer turns a LineBreak inside a heading into a space. The
+          -- entry stays a heading and the date becomes its own paragraph, so a
+          -- parser reads the employer and the dates on separate lines.
+          out[#out + 1] = pandoc.Header(blk.level, entry_row(content, nil), blk.attr)
+          out[#out + 1] = pandoc.Para(meta_inlines)
+        else
+          out[#out + 1] = pandoc.Header(blk.level, entry_row(content, meta_inlines), blk.attr)
+        end
         if leftover then
           for _, b in ipairs(transform_blocks(leftover)) do out[#out + 1] = b end
         end
@@ -526,6 +542,7 @@ function Pandoc(doc)
   opt.inline_bullet_join = setting(meta, 'inline_bullet_join', '·')
   opt.uppercase_sections = setting(meta, 'uppercase_sections', false)
   opt.build_contacts     = setting(meta, 'build_contacts', true)
+  opt.plain_text         = setting(meta, 'plain_text', false)
   opt.tex_markup         = setting(meta, 'tex_markup', true)
 
   doc.blocks = pandoc.Blocks(transform_blocks(doc.blocks))

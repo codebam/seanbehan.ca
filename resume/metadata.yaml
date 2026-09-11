@@ -46,3 +46,5 @@ inline_bullets: true            # collapse short bullet lists onto one line
 inline_bullet_max: 30           # "short" threshold, in characters
 uppercase_sections: false       # set true if headings are written lowercase
 build_contacts: true            # phone/email/website -> template header
+# plain_text is set true by build.sh for the .txt pass only: it moves the
+# entry date onto its own line so nothing reads "AssetDashApr. 2021".

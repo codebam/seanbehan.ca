@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# build.sh -- render a Markdown resume to a PDF and an inline-HTML fragment.
+# build.sh -- render a Markdown resume to a PDF, an HTML fragment and plain text.
 #
-#   ./build.sh                       resume.md -> resume.pdf + resume.html
-#   ./build.sh --outdir out          write both into out/
+#   ./build.sh                       resume.md -> resume.pdf + resume.html + resume.txt
+#   ./build.sh --outdir out          write all three into out/
 #   ./build.sh --pdf                 only the PDF (needs tectonic)
 #   ./build.sh --html                only the fragment (needs pandoc alone)
+#   ./build.sh --txt                 only the plain text (needs pandoc alone)
 #   ./build.sh -o out.pdf            name the PDF; the fragment lands beside it
 #   ./build.sh -i other.md           custom input
 #   ./build.sh --font "TeX Gyre Heros"  override the body font
@@ -17,12 +18,13 @@
 # pandoc and tectonic are taken from PATH when present, otherwise fetched
 # with nix (pkgs.pandoc, pkgs.tectonic), so this works on a bare checkout.
 #
-# Both outputs are one pandoc pass over one document with one filter: the PDF to
-# print, the fragment for /resume. They differ in exactly two ways -- the
-# fragment carries classes where the PDF carries LaTeX macros, and its headings
-# start two levels lower so the résumé's sections sit underneath the page's own
-# -- and nothing else, which is the property that keeps the two from ever
-# telling different stories about the same career.
+# All three outputs are one pandoc pass over one document with one filter: the
+# PDF to print, the fragment for /resume, and the plain text for a form or an
+# ATS. The fragment carries classes where the PDF carries LaTeX macros and its
+# headings start two levels lower so the résumé's sections sit underneath the
+# page's own; the text drops the styling and puts each date on its own line
+# instead of a flush-right column. Nothing else differs, which is the property
+# that keeps the three from telling different stories about the same career.
 
 set -euo pipefail
 
@@ -32,6 +34,7 @@ HERE="$(pwd)"
 # runs through `nix run`, where ROOT is a store path); output goes to cwd.
 TEMPLATE="$ROOT/templates/resume.latex"
 HTML_TEMPLATE="$ROOT/templates/resume.html"
+TXT_TEMPLATE="$ROOT/templates/resume.txt"
 FILTER="$ROOT/filters/resume-entries.lua"
 METADATA="$ROOT/metadata.yaml"
 SHIM="${XDG_CACHE_HOME:-$HOME/.cache}/resume-toolchain/bin"
@@ -41,9 +44,11 @@ KEEP_TEX=0
 USE_NIX=1
 WANT_PDF=1
 WANT_HTML=1
+WANT_TXT=1
 INPUT=""
 OUTPUT=""
 HTML_OUTPUT=""
+TXT_OUTPUT=""
 OUTDIR=""
 
 die() { printf '\033[31merror:\033[0m %s\n' "$*" >&2; exit 1; }
@@ -55,20 +60,21 @@ while [[ $# -gt 0 ]]; do
     -o|--output)   OUTPUT="$2"; shift 2 ;;
     --html-output) HTML_OUTPUT="$2"; shift 2 ;;
     -O|--outdir)   OUTDIR="$2"; shift 2 ;;
-    --pdf)         WANT_PDF=1; WANT_HTML=0; shift ;;
-    --html)        WANT_PDF=0; WANT_HTML=1; shift ;;
+    --pdf)         WANT_PDF=1; WANT_HTML=0; WANT_TXT=0; shift ;;
+    --html)        WANT_PDF=0; WANT_HTML=1; WANT_TXT=0; shift ;;
+    --txt)         WANT_PDF=0; WANT_HTML=0; WANT_TXT=1; shift ;;
     -f|--font)     MAINFONT="$2"; shift 2 ;;
     --open)        OPEN=1; shift ;;
     --keep-tex)    KEEP_TEX=1; shift ;;
     --no-nix)      USE_NIX=0; shift ;;
-    -h|--help)     sed -n '3,18p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -h|--help)     sed -n '3,20p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *)             die "unknown argument: $1 (see --help)" ;;
   esac
 done
 
 # ---------------------------------------------------------------- paths
 # Named after the input, in the cwd, unless something above said otherwise;
-# the fragment always defaults to sitting beside the PDF.
+# the fragment and the text always default to sitting beside the PDF.
 [[ -n "$INPUT" ]] || { INPUT="$HERE/resume.md"; [[ -f "$INPUT" ]] || INPUT="$ROOT/resume.md"; }
 [[ -f "$INPUT" ]] || die "no such input file: $INPUT"
 NAME="$(basename -- "${INPUT%.*}")"
@@ -81,15 +87,23 @@ if [[ -z "$HTML_OUTPUT" ]]; then
     *)     HTML_OUTPUT="$HERE/$NAME.html" ;;
   esac
 fi
+if [[ -z "$TXT_OUTPUT" ]]; then
+  case "$OUTPUT" in
+    *.pdf) TXT_OUTPUT="${OUTPUT%.pdf}.txt" ;;
+    *)     TXT_OUTPUT="$HERE/$NAME.txt" ;;
+  esac
+fi
 if [[ -n "$OUTDIR" ]]; then
   mkdir -p "$OUTDIR"
   OUTPUT="$OUTDIR/$(basename -- "$OUTPUT")"
   HTML_OUTPUT="$OUTDIR/$(basename -- "$HTML_OUTPUT")"
+  TXT_OUTPUT="$OUTDIR/$(basename -- "$TXT_OUTPUT")"
 fi
 
-[[ $WANT_PDF -eq 1 || $WANT_HTML -eq 1 ]] || die "nothing to build (--pdf, --html)"
+[[ $WANT_PDF -eq 1 || $WANT_HTML -eq 1 || $WANT_TXT -eq 1 ]] || die "nothing to build (--pdf, --html, --txt)"
 [[ $WANT_PDF -eq 0 || -f "$TEMPLATE" ]] || die "missing template: $TEMPLATE"
 [[ $WANT_HTML -eq 0 || -f "$HTML_TEMPLATE" ]] || die "missing template: $HTML_TEMPLATE"
+[[ $WANT_TXT -eq 0 || -f "$TXT_TEMPLATE" ]] || die "missing template: $TXT_TEMPLATE"
 
 # ---------------------------------------------------------------- toolchain
 # Appended, so a toolchain the caller already put on PATH (nix develop,
@@ -201,6 +215,32 @@ if [[ $WANT_HTML -eq 1 ]]; then
   grep -q 'class="resume-doc"'   "$HTML_OUTPUT" || die "$HTML_OUTPUT has no .resume-doc root"
   grep -q 'class="resume-name"'  "$HTML_OUTPUT" || die "$HTML_OUTPUT has no .resume-name"
   built+=("$HTML_OUTPUT")
+fi
+
+if [[ $WANT_TXT -eq 1 ]]; then
+  txt=(
+    "${common[@]}"
+    # --standalone is what makes pandoc consult --template at all; the
+    # template is the whole file, header block included.
+    --standalone
+    -t plain
+    --template="$TXT_TEMPLATE"
+    # The date moves to its own line and the hooks arrive as words rather
+    # than LaTeX macros. Both are the filter's decision, not this script's.
+    -M plain_text=true
+    -M tex_markup=false
+  )
+  note "plain-texting $NAME -> $(basename -- "$TXT_OUTPUT")"
+  pandoc "${txt[@]}" -o "$TXT_OUTPUT"
+  # A pass that lost tex_markup=false prints raw \resume macros at a reader;
+  # a template that lost its contacts still exits 0. Check both, plus the
+  # email that proves the contact list arrived.
+  [[ -s "$TXT_OUTPUT" ]] || die "$TXT_OUTPUT is empty"
+  if grep -q '\\resume' "$TXT_OUTPUT"; then
+    die "$TXT_OUTPUT still carries LaTeX macros; pass -M tex_markup=false"
+  fi
+  grep -q '@' "$TXT_OUTPUT" || die "$TXT_OUTPUT has no contact line"
+  built+=("$TXT_OUTPUT")
 fi
 
 # ---------------------------------------------------------------- report

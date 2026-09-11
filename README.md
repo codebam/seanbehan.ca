@@ -99,18 +99,18 @@ search indexes are derived data — after a restore, rebuild each with
 ## Résumé
 
 `resume/resume.md` is the résumé, and it is a build rather than a page: pandoc
-typesets it to PDF with tectonic and renders the same pass to an HTML fragment.
-CI does both on a push that touches `resume/` — `.github/workflows/resume.yml`
-builds, checks, and writes `resume.pdf` and `resume.html` to the `private`
-bucket, then purges the zone.
+typesets it to PDF with tectonic and renders the same pass to an HTML fragment
+and a plain-text copy. CI does all three on a push that touches `resume/` —
+`.github/workflows/resume.yml` builds, checks, and writes `resume.pdf`,
+`resume.html` and `resume.txt` to the `private` bucket, then purges the zone.
 
-The page renders the fragment inline; `/resume.pdf` streams the file out of the
-same bucket, which is why the download is a path on this origin and not a
-hostname. A résumé edit therefore goes live with an upload, not a deploy, and
-`npm run build` never needs TeX.
+The page renders the fragment inline; `/resume.pdf` streams the PDF out of the
+same bucket and `/resume.txt` the ATS copy, which is why the downloads are paths
+on this origin and not a hostname. A résumé edit therefore goes live with an
+upload, not a deploy, and `npm run build` never needs TeX.
 
 ```bash
-npm run resume        # both artifacts into resume/out/, via nix
+npm run resume        # all three artifacts into resume/out/, via nix
 npm run resume:seed   # …and into the local dev bucket, for npm run dev
 ```
 

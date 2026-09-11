@@ -77,7 +77,7 @@ How to fetch this site:
 - [Post feed](${WRITING}/rss.xml): recent posts with full text, HTML.
 - [Tags](${WRITING}/posts/tags): the topic index with counts; each tag has its own feed under ${WRITING}/posts/tag/.
 - [Search](${site.url}/search.json): ranked slugs for a query in \`?q=\`; words are matched over titles, descriptions, tags and bodies.
-- [Résumé](${WRITING}/resume.md): the CV in its source markdown — the same file the HTML page and the PDF are generated from. The PDF is ${WRITING}/resume.pdf.
+- [Résumé](${WRITING}/resume.md): the CV in its source markdown — the same file the HTML page, the PDF and the plain text are generated from. The PDF is ${WRITING}/resume.pdf; the plain text is ${WRITING}/resume.txt.
 
 ## Work
 
