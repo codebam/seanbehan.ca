@@ -26,10 +26,18 @@ const seanbehan = {
 	intro:
 		'{years} years of web applications, from database to frontend. I daily-drive NixOS, write Rust and TypeScript, and build everything in the open — a Wayland compositor, bots on Cloudflare Workers, and a pastebin on R2.',
 	email: 'sean@seanbehan.ca',
+	// The two lines below are the ones a hiring reader meets before the page:
+	// Google's snippet, the social card, the footer and /llms.txt all quote
+	// them. Both name the place and the status, because a recruiter filtering
+	// for "Toronto" or "open to work" has nothing else on the first screen to
+	// read — and the stack keywords live in the description rather than the
+	// card, where there is room for them.
 	description:
-		'Sean Behan — full-stack developer working in Rust, TypeScript and NixOS. Writing about Linux, Cloudflare Workers, and building software.',
+		'Sean Behan — full-stack developer in Ontario, Canada. Rust, TypeScript, NixOS and Cloudflare Workers; open to full-time work, remote or GTA hybrid.',
 	ogTitle: 'Sean Behan',
-	ogDescription: 'Full-stack developer. Rust, TypeScript, NixOS, and open source.',
+	// Kept near the length of the line it replaces: this string is the
+	// social card's tagline, set at 26px beside the host on a 1200px card.
+	ogDescription: 'Full-stack developer · Ontario, Canada · Open to work.',
 	leadWith: 'facts',
 	showResume: true,
 	availability: {
@@ -45,6 +53,42 @@ const seanbehan = {
 		{ label: 'Résumé', href: '/resume' },
 		{ label: 'Writing', href: '/posts', via: 'writing' },
 		{ label: 'Services', href: '/services', via: 'codebam' }
+	],
+	// The home page's work history, condensed from resume/resume.md — that
+	// file is the source, and this follows it the way projects.ts does: when
+	// a date or a number here stops matching the résumé, this is the copy
+	// that is wrong. Newest first.
+	experience: [
+		{
+			role: 'Independent Developer',
+			org: 'Open Source',
+			period: '2021 – Present',
+			note: 'Built and run Codebam Stream, a paid live-streaming control plane on Cloudflare; wrote the Telegram bot framework with 214 forks and 120 npm releases.'
+		},
+		{
+			role: 'Frontend Web Developer',
+			org: 'AssetDash',
+			period: 'Apr. 2021 – Oct. 2021',
+			note: 'Rebuilt the company site on Next.js, TypeScript and React with a Firebase backend; bounce rate down 15%, user engagement up 20%.'
+		},
+		{
+			role: 'Assistant Automation Coordinator',
+			org: 'Elections Canada',
+			period: 'Oct. 2019',
+			note: 'Kept polling-station computer systems online through the 2019 federal election alongside a team of 10+.'
+		},
+		{
+			role: 'Development Intern',
+			org: 'AVROD',
+			period: 'Sept. 2019 – Apr. 2020',
+			note: 'Built a web store with Django and MySQL as a course placement at the company.'
+		},
+		{
+			role: 'IT Student Advisor',
+			org: 'Trent University IT',
+			period: 'May 2018 – Apr. 2020',
+			note: 'Diagnosed and repaired student and faculty machines at the library front desk across Windows and macOS.'
+		}
 	],
 	about: {
 		eyebrow: 'Sean Behan · codebam',
@@ -90,6 +134,9 @@ const codebam = {
 		{ label: 'Writing', href: '/posts', via: 'writing' },
 		{ label: 'Services', href: '/services' }
 	],
+	// No résumé on this origin, so there is no history to shorten into a
+	// section; it renders nothing rather than an empty heading.
+	experience: null,
 	about: {
 		eyebrow: '@codebam · Ontario, Canada',
 		headline: 'The handle behind the repositories.',

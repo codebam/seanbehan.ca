@@ -64,6 +64,14 @@ export interface SiteConfig {
 		headline: string;
 		intro: string;
 	};
+	/**
+	 * The home page's work history, newest first, between the numbers and
+	 * the project rows. Follows `resume/resume.md` the way `projects.ts`
+	 * does — the résumé is the source, and copy here that stops matching it
+	 * is the copy that is wrong. `null` on the variant with no résumé to
+	 * shorten, which renders no section rather than an empty heading.
+	 */
+	experience: SiteExperience[] | null;
 }
 
 /**
@@ -76,6 +84,22 @@ export interface SiteLink {
 	label: string;
 	href: string;
 	via?: 'writing' | 'codebam';
+}
+
+/**
+ * One dated row of the home page's work history.
+ *
+ * The résumé is the detailed telling; these rows are the same facts at one
+ * line each, in the same order. See `experience` on SiteConfig.
+ */
+export interface SiteExperience {
+	role: string;
+	/** Employer, or `Open Source` for self-directed work. */
+	org: string;
+	/** The date range as the résumé writes it, e.g. `Apr. 2021 – Oct. 2021`. */
+	period: string;
+	/** One line, drawn from the same entry in resume/resume.md. */
+	note: string;
 }
 
 export const LEGAL_NAME = 'Sean Behan';

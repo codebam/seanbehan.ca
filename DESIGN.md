@@ -140,16 +140,26 @@ quiet row beside it, with the portrait and the availability mark in the aside.
 The facts strip follows — four figures separated by hairlines on the page's own
 ground — then project cards (one wide feature, then a two-column grid) and the
 writing list (one lead card, then a grid). `leadWith` decides whether the work
-or the numbers come first, so the two variants differ by order, not layout.
+or the numbers come first, so the two variants differ by order, not layout. On the hiring variant a
+condensed work history sits between the numbers and the projects: five dated
+rows, the employer in the warm accent, one line each, because "has anyone paid
+him?" is the question a hiring reader asks before the project rows mean
+anything. It is `site.experience` in `site.data.js`, `null` on the code-first
+variant, and it follows `resume/resume.md` the way `projects.ts` does — the
+résumé gets the detail.
 
 **4. The availability mark.** `Availability.astro` puts a dot and a sentence in
-the home hero's identity block and on the résumé's masthead: who, where, and is
-he reachable, answered in one place instead of three. The dot is `--positive`
-green because that is the signal a reader already reads as "available" without
-being taught it; it does not pulse. A blinking indicator is a dashboard's
-grammar, and the site is a page — the status is a fact, not a feed. The copy
-is `site.availability` in `site.data.js`, `null` on the variant that pitches
-the code, so the component renders nothing there rather than branching.
+the home hero's identity block, on the résumé's masthead, and on About: who,
+where, and is he reachable, answered in one place instead of three. On a phone
+the home aside reverses, so the mark sits above the portrait rather than below
+it — measured on the live page, the portrait had pushed the one line a hiring
+reader needs to y=852 on a 390×844 screen, eight pixels past the fold. The dot
+is `--positive` green because that is the signal a reader already reads as
+"available" without being taught it; it does not pulse. A blinking indicator is
+a dashboard's grammar, and the site is a page — the status is a fact, not a
+feed. The copy is `site.availability` in `site.data.js`, `null` on the variant
+that pitches the code, so the component renders nothing there rather than
+branching.
 
 **5. The footer is the one inversion.** The page ends, and the signature's page
 is different. It carries its own small token set (`--footer-*`) including

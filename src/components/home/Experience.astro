@@ -1,0 +1,104 @@
+---
+/**
+ * WHERE I'VE WORKED
+ *
+ * The résumé's EXPERIENCE section, condensed to one line per role and set on
+ * the page's own ground rather than in cards: the section that follows is the
+ * projects, and a second card grid would read as more of the same. Dated rows
+ * separated by hairlines, the employer in the warm accent the résumé already
+ * sets company names in.
+ *
+ * Hiring variant only. `site.experience` is null where there is no résumé to
+ * shorten, so those builds render no section rather than an empty heading.
+ */
+import type { SiteExperience } from '../../lib/site';
+
+interface Props {
+	experience: SiteExperience[];
+}
+
+const { experience } = Astro.props;
+---
+
+<section id="experience" class="section experience shell">
+	<header class="section-head" data-reveal>
+		<div>
+			<h2 class="display display-lg">Where I've worked</h2>
+			<p class="section-sub">Newest first — the résumé has the detail.</p>
+		</div>
+		<a href="/resume" class="link-accent">
+			Full résumé <span class="arrow">&rarr;</span>
+		</a>
+	</header>
+
+	<ol class="experience-list">
+		{experience.map((item, i) => (
+			<li class="experience-row" data-reveal data-reveal-delay={Math.min(i, 4) * 45}>
+				<p class="experience-period">{item.period}</p>
+				<div>
+					<h3 class="experience-role">
+						{item.role}
+						<span class="experience-sep" aria-hidden="true">
+							{' '}
+							·{' '}
+						</span>
+						<span class="experience-org">{item.org}</span>
+					</h3>
+					<p class="experience-note">{item.note}</p>
+				</div>
+			</li>
+		))}
+	</ol>
+</section>
+
+<style>
+	.experience {
+		scroll-margin-top: 5rem;
+	}
+	.section-sub {
+		margin-top: 0.35rem;
+		font-size: 0.95rem;
+		color: var(--muted);
+	}
+
+	.experience-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		border-top: 1px solid var(--line);
+	}
+	.experience-row {
+		display: grid;
+		gap: 0.3rem 2rem;
+		padding-block: 1.15rem;
+		border-bottom: 1px solid var(--line);
+	}
+	@media (width >= 48rem) {
+		.experience-row {
+			grid-template-columns: 11rem minmax(0, 1fr);
+		}
+	}
+	.experience-period {
+		font-size: 0.85rem;
+		font-weight: 500;
+		color: var(--muted);
+		white-space: nowrap;
+	}
+	.experience-role {
+		font-size: 1.05rem;
+		font-weight: 600;
+		letter-spacing: -0.01em;
+		line-height: 1.35;
+		color: var(--text);
+	}
+	.experience-org {
+		color: var(--accent-warm);
+	}
+	.experience-note {
+		max-width: 70ch;
+		margin-top: 0.25rem;
+		font-size: 0.95rem;
+		line-height: 1.6;
+		color: var(--body);
+	}
+</style>

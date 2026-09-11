@@ -94,6 +94,18 @@ describe('the hiring variant', () => {
 		expect(SITES.codebam.availability).toBeNull();
 	});
 
+	it('tells the work history on the hiring origin only', () => {
+		const experience = SITES.seanbehan.experience;
+		expect(experience?.length).toBeGreaterThan(0);
+		expect(SITES.codebam.experience).toBeNull();
+		for (const row of experience ?? []) {
+			expect(row.role).toBeTruthy();
+			expect(row.org).toBeTruthy();
+			expect(row.period).toBeTruthy();
+			expect(row.note).toBeTruthy();
+		}
+	});
+
 	it('makes the résumé the home page’s primary action', () => {
 		expect(SITES.seanbehan.primaryAction).toEqual({ label: 'View the résumé', href: '/resume' });
 	});

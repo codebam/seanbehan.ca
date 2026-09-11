@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Masthead from '../components/Masthead.astro';
+import Availability from '../components/Availability.astro';
 import { site, LEGAL_NAME, LINKEDIN_URL, writingHref } from '../lib/site';
 import SiblingMark from '../components/SiblingMark.astro';
 
@@ -43,6 +44,15 @@ const destinations = [
 			<img src="/profile.webp" alt={LEGAL_NAME} width="180" height="180" />
 			<p>{site.about.intro}</p>
 		</div>
+		{/* The About page is the other door a hiring reader comes through, so
+		    the status follows them here too. `availability` is null on the
+		    code-first variant, and the guard keeps its empty wrapper — and the
+		    margin that goes with it — out of the flow there. */}
+		{site.availability && (
+			<div class="masthead-availability">
+				<Availability availability={site.availability} />
+			</div>
+		)}
 	</Masthead>
 
 	<section class="section notes panel">

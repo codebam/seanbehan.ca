@@ -3,13 +3,16 @@
  * Home: a clear front door.
  *
  * A two-column hero states who this is, what they build and how to reach them,
- * with the availability and one primary action beside it. The numbers, the work
- * and the writing follow in that order — or work before numbers on the variant
- * that leads with the code.
+ * with the availability and one primary action beside it. Below it the numbers
+ * and the project rows follow — or the work before the numbers on the variant
+ * that leads with the code — with the condensed work history in between on the
+ * hiring variant, because it is the question a résumé answers and the one an
+ * employer asks before the projects mean anything.
  */
 import Base from '../layouts/Base.astro';
 import Facts from '../components/home/Facts.astro';
 import Work from '../components/home/Work.astro';
+import Experience from '../components/home/Experience.astro';
 import Writing from '../components/home/Writing.astro';
 import Availability from '../components/Availability.astro';
 import { LinkButton } from '@cloudflare/kumo/components/button';
@@ -95,16 +98,22 @@ const quietLinks: { label: string; href: string; external: boolean }[] = [
 			</div>
 		</section>
 
+		{/* The numbers and the project rows keep the variant's order; the work
+		    history sits between them on the hiring variant. The résumé is still
+		    the full telling — these rows are what a reader gets before deciding to
+		    open it. */}
 		{site.leadWith === 'work' ? (
-			<>
-				<Work projects={projects} />
-				<Facts postCount={posts.length} projects={projects} yearsBuilding={yearsBuilding} />
-			</>
+			<Work projects={projects} />
 		) : (
-			<>
-				<Facts postCount={posts.length} projects={projects} yearsBuilding={yearsBuilding} />
-				<Work projects={projects} />
-			</>
+			<Facts postCount={posts.length} projects={projects} yearsBuilding={yearsBuilding} />
+		)}
+
+		{site.experience && <Experience experience={site.experience} />}
+
+		{site.leadWith === 'work' ? (
+			<Facts postCount={posts.length} projects={projects} yearsBuilding={yearsBuilding} />
+		) : (
+			<Work projects={projects} />
 		)}
 
 		<Writing posts={latest} total={posts.length} />
@@ -166,7 +175,16 @@ const quietLinks: { label: string; href: string; external: boolean }[] = [
 		border: 1px solid var(--line);
 		box-shadow: var(--shadow-md);
 	}
+	/* On a phone the aside stacks under the hero text, and the portrait alone
+	   is tall enough to push the availability mark past the fold — measured on
+	   the live page at 390x844, the mark began at y=852, eight pixels below the
+	   bottom of the screen. Reversed, the status is on the first screen and the
+	   portrait follows it; on wider screens the aside is a column again and the
+	   portrait leads, as designed. */
 	@media (width < 60rem) {
+		.hero-aside {
+			flex-direction: column-reverse;
+		}
 		.hero-photo {
 			max-width: 14rem;
 		}
