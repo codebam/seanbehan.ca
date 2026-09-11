@@ -8,6 +8,8 @@
  * the shape the post views pass around.
  */
 
+import type { ImageMetadata } from 'astro';
+
 export interface FeaturedProject {
 	/** Stable URL segment under /projects. */
 	slug: string;
@@ -27,7 +29,7 @@ export interface FeaturedProject {
 	homepage?: string;
 	homepageLabel?: string;
 	/** Presentation image used on the home page and project case study. */
-	mockup: string;
+	mockup: ImageMetadata;
 	mockupAlt: string;
 	tags: string[];
 	challenge: string;

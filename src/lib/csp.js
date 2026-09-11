@@ -28,7 +28,9 @@ export const CSP_DIRECTIVES = [
 	// data: covers the inline SVG icons.
 	"img-src 'self' data:",
 	"font-src 'self'",
-	"connect-src 'self'",
+	// Cloudflare Web Analytics posts its beacon data to this origin; the script
+	// itself is allowed through `scriptDirective` in astro.config.mjs.
+	"connect-src 'self' https://cloudflareinsights.com",
 	// Nothing is embedded any more. The résumé used to arrive as a PDF in an
 	// <object> from the bucket's r2.dev domain, which needed this origin on the
 	// list; it is inline HTML now and the PDF is a download, so the plugin slot
@@ -43,7 +45,7 @@ export const CSP_DIRECTIVES = [
 
 /** 'style' attribute and inline `<script>`/`<style>` are allowed. */
 export const EDITOR_INLINE_DIRECTIVES = [
-	"script-src 'self' 'unsafe-inline'",
+	"script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com",
 	"style-src 'self' 'unsafe-inline'"
 ];
 

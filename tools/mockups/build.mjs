@@ -19,14 +19,14 @@
  */
 
 import { execFileSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
+import { existsSync, mkdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const out = resolve(here, '../../public/img');
+const out = resolve(here, '../../src/assets/projects');
 
-/** Page file → image name in public/img, in the order the rows appear. */
+/** Page file → image name in src/assets/projects, in the order the rows appear. */
 const pages = [
 	['stream.html', 'project-stream.webp'],
 	['viewport.html', 'project-viewport.webp'],
@@ -34,6 +34,8 @@ const pages = [
 	['tux.html', 'project-tux.webp'],
 	['pastebin.html', 'project-pastebin.webp']
 ];
+
+mkdirSync(out, { recursive: true });
 
 for (const [page, image] of pages) {
 	const source = join(here, page);

@@ -14,7 +14,7 @@ This policy explains how Sean Behan, operating as codebam ("codebam"), handles p
 
 ### Site visits
 
-Cloudflare processes technical request information needed to deliver and protect the site. This can include your IP address, browser and device information, requested URL, timestamps, and security signals. codebam does not use advertising pixels or third-party analytics and does not intentionally set analytics or advertising cookies. Cloudflare may use strictly necessary security technologies as part of its service.
+Cloudflare processes technical request information needed to deliver and protect the site. This can include your IP address, browser and device information, requested URL, timestamps, and security signals. codebam uses Cloudflare Web Analytics to understand aggregate site performance and usage; Cloudflare states that this service is cookieless, does not access browser storage, and discards the visitor IP address at the nearest data centre. codebam does not use advertising pixels and does not intentionally set analytics or advertising cookies. Cloudflare may also use strictly necessary security technologies as part of its service.
 
 ### Purchases
 
@@ -45,7 +45,7 @@ Where applicable law requires a legal basis, processing is based on performing t
 
 ## Service providers and disclosure
 
-codebam uses [Stripe](https://stripe.com/privacy) for Checkout, payments, tax handling, fraud controls, and transaction records, and [Cloudflare](https://www.cloudflare.com/privacypolicy/) for hosting, storage, database services, security, observability, and fulfillment email. These providers process information under their own terms and privacy policies and may process it outside your province or country.
+codebam uses [Stripe](https://stripe.com/privacy) for Checkout, payments, tax handling, fraud controls, and transaction records, and [Cloudflare](https://www.cloudflare.com/privacypolicy/) for hosting, storage, database services, security, observability, analytics, and fulfillment email. These providers process information under their own terms and privacy policies and may process it outside your province or country.
 
 codebam does not sell or rent personal information. Information may be disclosed when required by law, to protect rights or security, to investigate fraud or abuse, or as part of a business transfer subject to appropriate protections.
 

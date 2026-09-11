@@ -12,9 +12,13 @@ picture of what it used to be; these say what the row claims.
 npm run mockups        # or: node tools/mockups/build.mjs
 ```
 
-Chromium writes WebP when the screenshot file ends in `.webp`, so the only
-requirement is a `chromium` on `PATH`. Nothing runs this in CI — redraw by hand
-when a row changes.
+The screenshots land in `src/assets/projects/`, where `src/lib/projects.ts`
+imports them. `Work.astro` and `projects/[slug].astro` render them through
+`astro:assets`, so Astro generates the responsive `srcset` and the browser
+downloads a card-sized variant instead of the 1600×1000 original. Chromium
+writes WebP when the screenshot file ends in `.webp`, so the only requirement
+is a `chromium` on `PATH`. Nothing runs this in CI — redraw by hand when a row
+changes.
 
 ## Layout
 
@@ -22,9 +26,10 @@ when a row changes.
 ordinal at the left, the stack at the right, and one bordered surface. A page
 styles only what goes inside that surface, so the set stays a set.
 
-The surface is 1444x787 and the page is fixed at 1600x1000, which is the box
-`Work.astro` and `projects/[slug].astro` ask the image for. Content that does
-not fit is clipped by the card rather than scrolling, so check that it fits:
+The surface is 1444x787 and the page is fixed at 1600x1000. That is the
+source box; Astro's image pipeline generates the widths the templates'
+`sizes` attributes ask for. Content that does not fit is clipped by the card
+rather than scrolling, so check that it fits:
 
 ```sh
 # prints OVERFLOW:<px> for each page; 0 means the picture is complete

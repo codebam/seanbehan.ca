@@ -17,11 +17,13 @@ export const GET: APIRoute = async () => {
 			{ src: '/android-chrome-512x512.png', sizes: '512x512', type: 'image/png' },
 			{ src: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }
 		],
-		theme_color: '#b23f1e',
-		background_color: '#f7f2e8',
+		// The same pair as the theme-color metas in Base.astro; app.css owns the
+		// values, so this is the surface to change when the palette does.
+		theme_color: '#ffffff',
+		background_color: '#ffffff',
 		theme_colors: [
-			{ color: '#f7f2e8', media: '(prefers-color-scheme: light)' },
-			{ color: '#171310', media: '(prefers-color-scheme: dark)' }
+			{ color: '#ffffff', media: '(prefers-color-scheme: light)' },
+			{ color: '#0b1220', media: '(prefers-color-scheme: dark)' }
 		],
 		display: 'standalone',
 		scope: '/'

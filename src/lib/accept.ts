@@ -11,10 +11,13 @@
  *
  * The answer is a path, not a response: `/posts/nixos` asked as markdown is
  * served by `/posts/nixos.md`, an endpoint of its own. One URL per variant
- * keeps the edge cache honest — the existing key is built from the pathname,
- * so each format is stored and evicted under its own entry, with no `Vary`
- * for the Cache API to lose track of — and it means a bot may skip the header
- * dance entirely and append the suffix, which is how several of them probe.
+ * keeps the Worker's own Cache API key honest — the key is built from the
+ * pathname, so each format is stored under its own entry — and it means a bot
+ * may skip the header dance entirely and append the suffix, which is how
+ * several of them probe. Cloudflare's shared edge cache still sits in front of
+ * the Worker for the bare URL, though, so the middleware marks the negotiated
+ * pages with `Vary: Accept`; `docs/edge-caching.md` pairs that with the Cache
+ * Rule that makes Cloudflare honour it.
  *
  * (One rule for edits to this file: a wildcard media range cannot be written
  * literally inside a block comment. Its slash-star closes the comment early.)
@@ -41,6 +44,14 @@ const MD_ONLY = new Set(['/resume']);
 
 /** A request already for one of the variants: nothing left to negotiate. */
 const ALREADY_VARIANT = /\.(md|json)$/i;
+
+/**
+ * Whether this path can answer in more than one format. The middleware uses
+ * it to attach `Vary: Accept` to both the HTML and negotiated responses; the
+ * format decision itself stays in `requestedFormat` below.
+ */
+export const isNegotiablePath = (pathname: string) =>
+	!ALREADY_VARIANT.test(pathname) && (NEGOTIABLE.test(pathname) || MD_ONLY.has(pathname));
 
 /** One parsed token of an Accept header. */
 interface Range {

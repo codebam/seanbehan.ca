@@ -13,8 +13,9 @@
  * The field is inside a real `<form>` because it is a real search: with JS the
  * list reorders as you type, and with no JS — or when a reader presses Enter —
  * the same query is answered by /posts, which filters the server-rendered list
- * with the identical ranking. Nothing here needs a submit button: a form with
- * one text field submits on Enter in every browser.
+ * with the identical ranking. The submit button is visually hidden because the
+ * visible field is enough for a pointer, but WCAG H32 and a screen reader's
+ * form navigation both expect one; Enter still works for everyone else.
  */
 import { Input } from '@cloudflare/kumo/components/input';
 
@@ -53,6 +54,9 @@ const { query = '' } = Astro.props;
 			className="flat-control site-field w-full pl-10"
 		/>
 	</div>
+	<button type="submit" class="sr-only">
+		Search
+	</button>
 </form>
 
 <!-- Off-screen rather than hidden: `display: none` would take it out of the

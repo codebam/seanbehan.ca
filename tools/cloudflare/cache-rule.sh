@@ -9,6 +9,11 @@
 # the script look the zone id up by name. Wrangler's own OAuth token is not
 # enough: it carries zone:read and nothing that can write a ruleset.
 #
+# The rule also configures Vary for Accept. The Worker sends `Vary: Accept` on
+# negotiated pages; without this Cache Rule setting Cloudflare ignores that
+# header and a cached HTML copy can answer a markdown or JSON request before the
+# Worker runs. See docs/edge-caching.md.
+#
 # Idempotent. A rule with the same description is updated in place rather than
 # added again, so re-running after an edit here does the right thing.
 set -euo pipefail
@@ -87,6 +92,24 @@ payload="$(
 		        # from the origin is the whole answer.
 		        'edge_ttl': {'mode': 'respect_origin'},
 		        'browser_ttl': {'mode': 'respect_origin'},
+		        # The Worker sends `Vary: Accept` on `/posts/<slug>`, `/pages/<slug>`
+		        # and `/resume`. Normalizing it keeps browser Accept strings together
+		        # and keeps text/html, text/markdown and application/json distinct.
+		        'vary': {
+		            'default': {'action': 'bypass'},
+		            'headers': {
+		                'accept': {
+		                    'action': 'normalize',
+		                    'media_types': [
+		                        'text/html',
+		                        'application/xhtml+xml',
+		                        'application/xml',
+		                        'text/markdown',
+		                        'application/json'
+		                    ]
+		                }
+		            }
+		        },
 		    },
 		    'enabled': True,
 		}

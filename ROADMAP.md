@@ -129,7 +129,9 @@ proposed, roughly ordered by value within each section.
       `--shift-heading-level-by=2` turned a `#` section and a `###` entry into
       h3 and h5, and Lighthouse's heading-order check failed on `/resume`.
       Entries are now h4; the PDF is sectioned by the LaTeX macros, not these.
-- [ ] No privacy-friendly analytics. Needs a service decision.
+- [x] Cloudflare Web Analytics is allowed through the CSP (`scriptDirective` in
+      `astro.config.mjs`, `connect-src` in `src/lib/csp.js`) and the privacy
+      policy now says so.
 
 ## 5. Follow-up audit (September 2026) — fixed
 
@@ -185,15 +187,18 @@ close are marked.
   quotes a star count), and every short post's markdown export said
   "Reading time: 1 minutes".
 
+- **Responsive project mockups.** The five 1600×1000 originals moved to
+  `src/assets/projects/`; `src/lib/projects.ts` imports them and `Work.astro`
+  and `projects/[slug].astro` render them through `astro:assets` with explicit
+  `widths`/`sizes`. The Cloudflare Images binding now serves the responsive
+  variants from `/_image`.
+- **Negotiated formats survived the edge cache.** The Worker sends
+  `Vary: Accept` on negotiable paths and `tools/cloudflare/cache-rule.sh`
+  configures the matching Cloudflare Vary action, so a cached HTML copy can no
+  longer answer a markdown or JSON request before the Worker rewrites it.
+
 Left open on purpose:
 
-- **`<Image>` for the mockups.** `image.layout` and `responsiveStyles` are
-  configured and unused — every image is a raw `<img>` on a file in
-  `public/`, so the 1600×1000 mockups are served whole into ~500 px slots.
-  Converting means moving the binaries into `src/assets`, rewriting
-  `tools/mockups/build.mjs`'s output and putting the Cloudflare Images
-  binding on the critical path for the home page. Worth doing with a
-  production deploy to watch, not from a local build.
 - **The zone's Browser Cache TTL.** Live edge hits for HTML come back
   `Cache-Control: public, max-age=86400` rather than the origin's
   `max-age=0, must-revalidate`, so a returning reader's browser may hold a

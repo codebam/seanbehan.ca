@@ -14,7 +14,7 @@
  */
 
 import { defineMiddleware } from 'astro:middleware';
-import { negotiatedPath } from './lib/accept';
+import { isNegotiablePath, negotiatedPath } from './lib/accept';
 import { edgeCacheKey } from './lib/edgeCache';
 import { SITES, site } from './lib/site';
 import { EDITOR_CSP } from './lib/csp.js';
@@ -40,6 +40,18 @@ const SECURITY_HEADERS: Record<string, string> = {
 	'Permissions-Policy':
 		'accelerometer=(), ambient-light-sensor=(), autoplay=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), hid=(), idle-detection=(), magnetometer=(), microphone=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), serial=(), usb=(), web-share=(), xr-spatial-tracking=()'
 };
+
+/** Adds a header to an existing `Vary` list without discarding the others. */
+function addVary(headers: Headers, name: string) {
+	const current = headers.get('Vary');
+	const values =
+		current
+			?.split(',')
+			.map((value) => value.trim())
+			.filter(Boolean) ?? [];
+	if (!values.some((value) => value.toLowerCase() === name.toLowerCase())) values.push(name);
+	headers.set('Vary', values.join(', '));
+}
 
 /** Assets whose bytes never change under a given URL. */
 const IMMUTABLE = /^\/_astro\//;
@@ -205,10 +217,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	// A reader that asked for markdown or JSON is served the suffixed variant
 	// of the same page — `/posts/example.md` — rendered by an endpoint rather
 	// than rewritten into another URL. Doing it here, below the redirects, is
-	// what makes it free: the suffixed path is its own edge-cache key and its
-	// own purged entry, so no `Vary` has to be trusted with the shared cache,
-	// and a bot that already knows the suffix arrives at the identical
-	// response without the header at all.
+	// what makes it free: the suffixed path is the Worker's own cache key and
+	// purge entry, and a bot that already knows the suffix arrives at the
+	// identical response without the header at all. Cloudflare's outer cache
+	// still sees the bare URL, so the Vary added below and the Cache Rule in
+	// docs/edge-caching.md keep its HTML copy away from the other formats.
 	const variant = negotiatedPath(context.request, context.url);
 
 	const cache = caches.default;
@@ -236,6 +249,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
 	for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
 		response.headers.set(name, value);
+	}
+	// Cloudflare's edge cache is consulted before this Worker runs, so the bare
+	// URL needs to tell it that Accept changes the answer. The Cache Rule in
+	// docs/edge-caching.md turns this into a cache-key dimension; without that
+	// rule Cloudflare ignores the header and a cached HTML copy could answer a
+	// markdown request.
+	if (variant || isNegotiablePath(pathname)) {
+		addVary(response.headers, 'Accept');
 	}
 	if (COMMERCE_PRIVATE.test(pathname)) {
 		response.headers.set('Cache-Control', 'private, no-store');

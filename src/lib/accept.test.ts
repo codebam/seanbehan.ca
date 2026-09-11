@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { negotiatedPath, requestedFormat } from './accept';
+import { isNegotiablePath, negotiatedPath, requestedFormat } from './accept';
 
 const url = (path: string) => new URL(`https://seanbehan.ca${path}`);
 const get = (accept?: string, method = 'GET') =>
@@ -44,6 +44,22 @@ describe('requestedFormat', () => {
 	it('ignores malformed q values', () => {
 		expect(requestedFormat('text/markdown;q=nonsense')).toBeNull();
 		expect(requestedFormat('text/markdown;Q=0.9')).toBe('md');
+	});
+});
+
+describe('isNegotiablePath', () => {
+	it('marks the paths the middleware has to vary for', () => {
+		expect(isNegotiablePath('/posts/nixos')).toBe(true);
+		expect(isNegotiablePath('/pages/about-site')).toBe(true);
+		expect(isNegotiablePath('/resume')).toBe(true);
+	});
+
+	it('leaves HTML-only paths and existing variants alone', () => {
+		expect(isNegotiablePath('/')).toBe(false);
+		expect(isNegotiablePath('/posts')).toBe(false);
+		expect(isNegotiablePath('/posts/tag/nixos')).toBe(false);
+		expect(isNegotiablePath('/resume.md')).toBe(false);
+		expect(isNegotiablePath('/posts/nixos.json')).toBe(false);
 	});
 });
 

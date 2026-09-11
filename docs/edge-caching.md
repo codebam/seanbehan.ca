@@ -74,6 +74,22 @@ The script is idempotent — it reads the existing cache ruleset, replaces any
 rule with the same description, and writes the set back, so re-running after an
 edit updates in place instead of stacking duplicates.
 
+### Vary for negotiated content
+
+The Worker sets `Vary: Accept` on `/posts/<slug>`, `/pages/<slug>` and
+`/resume` — the paths `isNegotiablePath()` recognises in `src/lib/accept.ts`.
+Cloudflare only honours that header when the Cache Rule's `vary` setting is
+configured; if the setting is absent, Cloudflare ignores the origin header and
+can serve a cached HTML copy to a request that asked for `text/markdown` or
+`application/json` before the Worker gets to rewrite it. The script above
+writes a `vary` block that normalises `Accept` against the formats the site
+serves, so browser, markdown and JSON variants key separately without
+fragmenting on each browser's full Accept string.
+
+Run the script once after deploying this change. Without it the smoke test's
+Accept-header checks are the regression detector: they ask the deployed site for
+the same URL in each format and fail if HTML comes back instead.
+
 Notes on the shape of it:
 
 - **Extension match, not `/*`.** Everything under `/_astro` is content-hashed

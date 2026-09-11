@@ -44,6 +44,12 @@ export default defineConfig({
 			directives: CSP_DIRECTIVES,
 			styleDirective: {
 				resources: ["'self'", { resource: "'unsafe-inline'", kind: 'attribute' }]
+			},
+			// Cloudflare injects its Web Analytics beacon into pages proxied by the
+			// zone. Allow the script origin here; csp.js allows the data endpoint in
+			// connect-src.
+			scriptDirective: {
+				resources: ["'self'", 'https://static.cloudflareinsights.com']
 			}
 		}
 	},

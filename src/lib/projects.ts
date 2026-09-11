@@ -1,3 +1,8 @@
+import streamMockup from '../assets/projects/project-stream.webp';
+import viewportMockup from '../assets/projects/project-viewport.webp';
+import telegramMockup from '../assets/projects/project-telegram-sdk.webp';
+import tuxMockup from '../assets/projects/project-tux.webp';
+import pastebinMockup from '../assets/projects/project-pastebin.webp';
 import type { FeaturedProject } from './types';
 
 /**
@@ -30,7 +35,7 @@ export const featuredProjects: FeaturedProject[] = [
 		stars: 0,
 		homepage: 'https://stream.codebam.ca',
 		homepageLabel: 'Open the dashboard',
-		mockup: '/img/project-stream.webp',
+		mockup: streamMockup,
 		mockupAlt: 'Codebam Stream control room with one program feed and five relay destinations',
 		tags: ['durable-objects', 'livekit', 'rtmps'],
 		challenge:
@@ -55,7 +60,7 @@ export const featuredProjects: FeaturedProject[] = [
 			'A Wayland compositor in Rust on Smithay whose entire shell — wallpaper, dock, window frames and titlebars — is a web page, composited zero-copy alongside native clients. Five interchangeable engine backends render that same page: WPE, WebKitGTK, Chromium, CEF and Servo.',
 		language: 'Rust',
 		stars: 4,
-		mockup: '/img/project-viewport.webp',
+		mockup: viewportMockup,
 		mockupAlt: 'Viewport desktop shell showing its keyboard controls',
 		tags: ['wayland', 'smithay', 'wpe-webkit'],
 		challenge:
@@ -82,7 +87,7 @@ export const featuredProjects: FeaturedProject[] = [
 		stars: 324,
 		homepage: 'https://cf-workers-telegram-bot.codebam.ca',
 		homepageLabel: 'Read the docs',
-		mockup: '/img/project-telegram-sdk.webp',
+		mockup: telegramMockup,
 		mockupAlt: 'The package page and a Worker that hands its fetch handler to the bot',
 		tags: ['cloudflare', 'telegram', 'npm'],
 		challenge:
@@ -109,7 +114,7 @@ export const featuredProjects: FeaturedProject[] = [
 		stars: 0,
 		homepage: 'https://t.me/TuxRobot',
 		homepageLabel: 'Message the bot',
-		mockup: '/img/project-tux.webp',
+		mockup: tuxMockup,
 		mockupAlt: 'Tux Robot holding a conversation in Telegram',
 		tags: ['cloudflare', 'telegram', 'grammy'],
 		challenge:
@@ -136,7 +141,7 @@ export const featuredProjects: FeaturedProject[] = [
 		stars: 4,
 		homepage: 'https://paste.codebam.ca',
 		homepageLabel: 'Open pastebin',
-		mockup: '/img/project-pastebin.webp',
+		mockup: pastebinMockup,
 		mockupAlt: 'Pastebin R2 editor and command-line usage',
 		tags: ['cloudflare', 'r2', 'hono'],
 		challenge:
