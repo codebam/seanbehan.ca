@@ -224,3 +224,10 @@ discrepancies. Both were real.
   public repositories; GitHub reports 273. The number is prose the résumé
   workflow typesets into the PDF, fragment and text, so it is corrected in the
   source and republished like every other fact there.
+
+- **The `/pages/<slug>` namespace was named but not shown.** The rewritten
+  fetch bullet pointed at CMS pages as a sibling of a post, but an agent cannot
+  enumerate `/pages/<slug>` — there is no index route and no page is published
+  — so the pattern was a smaller version of the same over-promise. The brief
+  now names the namespace only when a published page is behind it, and lists
+  those pages under a **Pages** heading when it does.

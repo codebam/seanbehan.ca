@@ -16,6 +16,7 @@
  * place in a context window, and the detail lives behind the links.
  */
 import type { APIRoute } from 'astro';
+import { getEmDashCollection } from 'emdash';
 import { getPosts } from '../lib/posts';
 import { LEGAL_NAME, SITES, site } from '../lib/site';
 
@@ -26,11 +27,27 @@ const WORK = SITES.codebam.url;
 /** How many recent posts to name. Enough to steer; small enough to stay in. */
 const RECENT_LIMIT = 10;
 
+/** CMS pages are added one at a time and are rare; the brief names them all. */
+const PAGE_LIMIT = 50;
+
 export const GET: APIRoute = async () => {
 	const { posts, cacheHint } = await getPosts({ includeBodies: false });
+	// CMS pages are the other collection whose entries answer in three forms;
+	// see the Pages section below for why they are fetched but not always named.
+	const { entries: cmsEntries, cacheHint: pagesHint } = await getEmDashCollection('pages', {
+		status: 'published',
+		orderBy: { updated_at: 'desc' },
+		limit: PAGE_LIMIT
+	});
 	// The Astro global is absent where the sandbox runs the endpoint, so the
 	// guard is a typeof rather than a direct read.
-	if (typeof Astro !== 'undefined' && Astro.cache?.enabled) Astro.cache.set(cacheHint);
+	if (typeof Astro !== 'undefined' && Astro.cache?.enabled) {
+		Astro.cache.set(cacheHint);
+		Astro.cache.set(pagesHint);
+	}
+
+	/** Entries with a slug; a page without one has no URL to name. */
+	const cmsPages = cmsEntries.filter((page) => page.id);
 
 	const recent = posts
 		.slice(0, RECENT_LIMIT)
@@ -40,6 +57,29 @@ export const GET: APIRoute = async () => {
 			return `- [${post.meta.title}](${WRITING}${post.path}.md): ${when}.${tags}`;
 		})
 		.join('\n');
+
+	/**
+	 * An agent cannot enumerate `/pages/<slug>` — there is no index route, and
+	 * the only listing is the sitemap — so the brief names the namespace only
+	 * when a published page is behind it, and lists those pages when it does.
+	 * Naming a pattern with no discoverable member is the same over-promise the
+	 * fetch section was rewritten to avoid.
+	 */
+	const cmsClause = cmsPages.length
+		? ', and every CMS page (`/pages/<slug>`, listed under **Pages**)'
+		: '';
+
+	const pagesSection = cmsPages.length
+		? `## Pages
+
+CMS pages are written in the admin rather than the repository — the site's own
+pages are templates — and each is a stored entry served at \`/pages/<slug>\` on
+the writing origin, answering in the same three forms as a post. Published:
+
+${cmsPages.map((page) => `- [${page.data.title}](${WRITING}/pages/${page.id}.md)`).join('\n')}
+
+`
+		: '';
 
 	const body = `# ${site.name}
 
@@ -55,7 +95,7 @@ How to fetch this site:
 
 - Entries that live in the database answer in three forms of one stored
   source: the HTML page, a markdown document, and JSON. That is every post
-  (\`/posts/<slug>\`) and every CMS page (\`/pages/<slug>\`). Append \`.md\` or
+  (\`/posts/<slug>\`)${cmsClause}. Append \`.md\` or
   \`.json\` to the entry's URL, or request it with \`Accept: text/markdown\` or
   \`Accept: application/json\`. HTML stays the answer for browsers, for
   \`*/*\`, and for any client that does not name a format — there is no
@@ -88,7 +128,7 @@ How to fetch this site:
 - [Search](${site.url}/search.json): ranked slugs for a query in \`?q=\`; words are matched over titles, descriptions, tags and bodies.
 - [Résumé](${WRITING}/resume.md): the CV in its source markdown — the same file the HTML page, the PDF and the plain text are generated from. The PDF is ${WRITING}/resume.pdf; the plain text is ${WRITING}/resume.txt.
 
-## Work
+${pagesSection}## Work
 
 - [Projects](${WORK}/projects): case studies of the software that runs, with what each one had to survive.
 - [Products](${WORK}/products): paid work, with prices.
