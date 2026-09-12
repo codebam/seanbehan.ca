@@ -53,18 +53,27 @@ rather than guessing which door serves what.
 
 How to fetch this site:
 
-- Every post and CMS page answers in three forms of one stored source: the
-  HTML page, a markdown document, and JSON. Append \`.md\` or \`.json\` to the
-  page's URL, or request it with \`Accept: text/markdown\` or
+- Entries that live in the database answer in three forms of one stored
+  source: the HTML page, a markdown document, and JSON. That is every post
+  (\`/posts/<slug>\`) and every CMS page (\`/pages/<slug>\`). Append \`.md\` or
+  \`.json\` to the entry's URL, or request it with \`Accept: text/markdown\` or
   \`Accept: application/json\`. HTML stays the answer for browsers, for
   \`*/*\`, and for any client that does not name a format — there is no
   user-agent sniffing to trip over.
+- Everything else is HTML only, and appending a suffix is a 404 rather than a
+  variant. The section pages — the home page, \`/about\`, \`/contact\` and
+  \`/links\`, plus \`/projects\`, \`/products\` and \`/services\` on the work
+  origin — are hand-written templates with no stored entry behind them; the
+  archive \`/posts\` and the tag index \`/posts/tags\` are navigation over the
+  entries. A post's markdown and JSON hang off the post's own URL, never the
+  archive's. The résumé is the one section page that also answers as a
+  document (below).
 - The markdown forms open with a metadata header (canonical URL, author,
   published and updated dates, tags, reading time) and carry the body with
   fenced code and absolute image URLs. The JSON forms hold the same facts as
   fields, the markdown body in \`content\`, and the page's heading anchors in
   \`sections\`.
-- HTML pages advertise their alternates with \`<link rel="alternate">\` and
+- Content pages advertise their alternates with \`<link rel="alternate">\` and
   this file with \`<link rel="describedby">\`.
 - The RSS feed carries the full text of recent posts in \`content:encoded\`,
   which answers questions about the corpus in one request rather than ten.

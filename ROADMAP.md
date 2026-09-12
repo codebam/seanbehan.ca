@@ -205,3 +205,22 @@ Left open on purpose:
   page for a day. `docs/edge-caching.md` says the rule respects origin; the
   dashboard is the place to settle it.
 - **Body images have no intrinsic dimensions** (see section 4).
+
+## 6. Outside review (fixed)
+
+A third-party agent read the live site and the GitHub profile and reported two
+discrepancies. Both were real.
+
+- **`/llms.txt` read as promising more than the site answers.** The brief said
+  "every post and CMS page answers in three forms", which is exactly the scope
+  of `src/lib/accept.ts` -- but an agent cannot tell a CMS page from a
+  hand-written one, tried `/about.md`, `/projects.md` and `/posts.json`, and
+  got 404s. Those pages have no stored entry to convert (home, about, contact
+  and links; and projects, products and services on the work origin), so the
+  fix was to say so rather than invent a body: the brief now names the entry
+  URLs that carry `.md`/`.json` siblings and lists the section pages that are
+  HTML only, and `scripts/smoke.mjs` asserts the boundary.
+- **The résumé's repository count was stale.** `resume/resume.md` said 170
+  public repositories; GitHub reports 273. The number is prose the résumé
+  workflow typesets into the PDF, fragment and text, so it is corrected in the
+  source and republished like every other fact there.

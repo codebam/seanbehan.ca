@@ -54,6 +54,10 @@ const CHECKS = [
 		type: 'text/html',
 		contains: ['NixOS Flakes']
 	},
+	// The section pages are HTML only -- the alternates exist for stored
+	// entries, not for the hand-written templates llms.txt now names as such.
+	// Appending a suffix here must stay a 404, not quietly grow a variant.
+	{ path: '/about.md', status: 404 },
 	{ path: '/contact', contains: ['Say', 'mailto:'] },
 	// The résumé is the page whose words come from neither D1 nor the bundle: the
 	// markup is read out of R2 at request time, so this is the check that notices
