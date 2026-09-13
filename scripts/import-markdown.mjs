@@ -23,6 +23,7 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync, mkdirSync, readdirSync } from 'node:fs';
 import { join, resolve, basename } from 'node:path';
+import { unwrapSoftBreaks } from './repair-post-paragraphs.mjs';
 
 const ROOT = resolve(import.meta.dirname, '..');
 const POSTS_DIR = resolve(ROOT, '../src/routes/posts');
@@ -120,8 +121,12 @@ const posts = readdirSync(POSTS_DIR)
 	.sort()
 	.map((file) => {
 		const slug = basename(file, '.md');
-		const { meta, body } = parseFrontmatter(readFileSync(join(POSTS_DIR, file), 'utf8'));
+		const { meta, body: rawBody } = parseFrontmatter(readFileSync(join(POSTS_DIR, file), 'utf8'));
 		if (!meta.title || !meta.date) throw new Error(`${file}: missing title or date`);
+		// The markdown was hard-wrapped, and EmDash's converter reads every
+		// single newline as a block break. Re-flow the prose first; the repair
+		// script is reused so the live corpus and this import path cannot drift.
+		const body = unwrapSoftBreaks(rawBody);
 		return {
 			slug,
 			body,
