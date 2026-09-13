@@ -306,6 +306,16 @@ const navItems = nav.map((item) => ({
 								<SiblingMark href={codebamHref('/services')} />
 							</a>
 						</li>
+						{site.id === 'codebam' && (
+							// The paid product is this origin's point; on the hiring
+							// variant /products redirects off-origin, so the hiring
+							// footer's Site list stays exactly as it was.
+							<li>
+								<a class="footer-link" href={codebamHref('/products')}>
+									Products
+								</a>
+							</li>
+						)}
 						<li>
 							<a class="footer-link" href="/links">
 								Links
