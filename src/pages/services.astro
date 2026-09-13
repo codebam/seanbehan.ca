@@ -3,9 +3,50 @@ import Base from '../layouts/Base.astro';
 import Masthead from '../components/Masthead.astro';
 import { LinkButton } from '@cloudflare/kumo/components/button';
 import { LINKEDIN_URL } from '../lib/site';
-import { SITES } from '../lib/site.data.js';
+import { COMMERCE, SITES } from '../lib/site.data.js';
 
 const serviceSite = SITES.codebam;
+const operator = COMMERCE.codebam;
+const availability = serviceSite.availability;
+
+/**
+ * The commercial facts, with a number-free fallback for every field the
+ * operator has not supplied. `COMMERCE` in src/lib/site.data.js is the
+ * switch: a string there replaces the fallback sentence with no template
+ * change, and nothing here invents a price, a duration or a booking state.
+ */
+const facts = [
+	{
+		label: 'Pricing',
+		value:
+			operator.startingPrice ??
+			'Quoted by email. There is no fixed price list; the quote follows a short scope.'
+	},
+	{
+		label: 'Timeline',
+		value: operator.timeline ?? 'Discussed alongside the quote before anything starts.'
+	},
+	{
+		label: 'Availability',
+		value: availability
+			? `${availability.label} — ${availability.detail}`
+			: 'Ask for the next opening by email.'
+	},
+	{
+		label: 'Reply',
+		value: operator.replyWindow ?? 'Replies by email.'
+	}
+];
+
+/**
+ * CLIENT PROOF SLOT — operator content only.
+ *
+ * Add real, permissioned outcomes here (2–3 of them, each with a quote and
+ * an attributable name) and the section below renders itself. It stays
+ * empty until then on purpose: a placeholder testimonial is a fabricated
+ * reference, which is worse than no proof at all.
+ */
+const outcomes: { quote: string; name: string; detail: string }[] = [];
 const canonical = `${serviceSite.url}/services`;
 const contactHref = `mailto:${serviceSite.email}?subject=${encodeURIComponent('Website or Telegram bot project')}`;
 
@@ -71,7 +112,7 @@ const schema = JSON.stringify({
 		</Fragment>
 		<p>
 			Custom websites and Telegram bots, taken from a clear scope to a production launch. You work
-			directly with the developer doing the work.
+			directly with <a href="/about">Sean Behan</a>, the developer doing the work.
 		</p>
 		<p class="masthead-actions">
 			<LinkButton href={contactHref} variant="primary" size="lg" className="flat-control site-cta">
@@ -102,6 +143,26 @@ const schema = JSON.stringify({
 					</article>
 				))}
 			</div>
+		</div>
+	</section>
+
+	<section class="section quote panel">
+		<div class="shell">
+			<div class="section-head" data-reveal>
+				<div>
+					<h2 class="display display-lg">Price and timing</h2>
+					<p class="section-sub">What is known before work starts</p>
+				</div>
+			</div>
+
+			<dl class="quote-grid">
+				{facts.map((fact, i) => (
+					<div data-reveal data-reveal-delay={i * 45}>
+						<dt>{fact.label}</dt>
+						<dd>{fact.value}</dd>
+					</div>
+				))}
+			</dl>
 		</div>
 	</section>
 
@@ -143,6 +204,17 @@ const schema = JSON.stringify({
 				>
 					Email {serviceSite.email}
 				</LinkButton>
+				<p class="brief-links">
+					<a class="link-accent" href="/projects">
+						Read a case study{' '}
+						<span class="arrow" aria-hidden="true">
+							&rarr;
+						</span>
+					</a>
+					<a class="link-quiet" href="/about">
+						About Sean
+					</a>
+				</p>
 				<a class="kit-link link-accent" href="/products/cloudflare-workers-production-kit">
 					Building it yourself? See the production kit{' '}
 					<span class="arrow" aria-hidden="true">
@@ -152,6 +224,30 @@ const schema = JSON.stringify({
 			</div>
 		</div>
 	</section>
+
+	{outcomes.length > 0 && (
+		<section class="section outcomes panel-alt">
+			<div class="shell">
+				<div class="section-head" data-reveal>
+					<div>
+						<h2 class="display display-lg">Client outcomes</h2>
+						<p class="section-sub">Published with permission</p>
+					</div>
+				</div>
+				<div class="outcome-grid">
+					{outcomes.map((outcome, i) => (
+						<figure class="card" data-reveal data-reveal-delay={i * 55}>
+							<blockquote>{outcome.quote}</blockquote>
+							<figcaption>
+								{outcome.name}
+								<span>{outcome.detail}</span>
+							</figcaption>
+						</figure>
+					))}
+				</div>
+			</div>
+		</section>
+	)}
 </Base>
 
 <style>
@@ -258,6 +354,69 @@ const schema = JSON.stringify({
 		.brief-grid {
 			grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.8fr);
 			gap: 4rem;
+		}
+	}
+	.quote-grid {
+		display: grid;
+		gap: 1.25rem;
+		margin-top: 1.5rem;
+	}
+	.quote-grid > div {
+		padding: 1.5rem;
+		background: var(--panel);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+	}
+	.quote-grid dt {
+		font-size: 0.8rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--accent);
+	}
+	.quote-grid dd {
+		margin-top: 0.6rem;
+		font-size: 0.95rem;
+		line-height: 1.65;
+		color: var(--body);
+	}
+	.brief-links {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 1rem 1.5rem;
+		margin-top: 1.5rem;
+	}
+	.outcome-grid {
+		display: grid;
+		gap: 1.25rem;
+		margin-top: 1.5rem;
+	}
+	.outcome-grid figure {
+		padding: 1.75rem;
+	}
+	.outcome-grid blockquote {
+		font-family: var(--font-serif);
+		font-size: 1.1rem;
+		line-height: 1.65;
+		color: var(--text);
+	}
+	.outcome-grid figcaption {
+		margin-top: 1rem;
+		font-size: 0.9rem;
+		font-weight: 600;
+		color: var(--text);
+	}
+	.outcome-grid figcaption span {
+		display: block;
+		margin-top: 0.15rem;
+		font-weight: 400;
+		color: var(--muted);
+	}
+	@media (width >= 48rem) {
+		.quote-grid,
+		.outcome-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 	}
 </style>

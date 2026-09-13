@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { SITES } from './site.data.js';
+import { featuredProjects } from './projects';
 import {
 	canonicalUrl,
 	isSiblingHref,
@@ -68,6 +69,21 @@ describe('yearsBuilding', () => {
 	});
 });
 
+describe('project search descriptions', () => {
+	it('keeps every project snippet short enough not to be truncated', () => {
+		for (const project of featuredProjects) {
+			expect(project.seoDescription.length).toBeGreaterThan(0);
+			expect(project.seoDescription.length).toBeLessThanOrEqual(155);
+		}
+	});
+
+	it('keeps the long-form copy for the case-study body', () => {
+		for (const project of featuredProjects) {
+			expect(project.description.length).toBeGreaterThan(project.seoDescription.length);
+		}
+	});
+});
+
 describe('linkHref', () => {
 	it('leaves a local link alone', () => {
 		expect(linkHref({ label: 'Work', href: '/#work' })).toBe('/#work');
@@ -124,11 +140,28 @@ describe('the hiring variant', () => {
 		expect(SITES.codebam.nav.length).toBeLessThanOrEqual(4);
 	});
 
-	it('points the codebam hero at the writing, on the writing’s own origin', () => {
-		expect(SITES.codebam.primaryAction).toEqual({
-			label: 'Read the writing',
-			href: '/posts',
-			via: 'writing'
+	it('points the codebam hero at a local commercial offer', () => {
+		const primary = SITES.codebam.primaryAction;
+		expect(primary.href.startsWith('/')).toBe(true);
+		expect(primary.via).toBeUndefined();
+		expect(primary.href).toBe('/services');
+	});
+
+	it('lists the paid product in the codebam nav', () => {
+		expect(SITES.codebam.nav).toContainEqual({
+			label: 'Products',
+			href: '/products/cloudflare-workers-production-kit'
 		});
+	});
+
+	it('does not claim dated experience the résumé cannot support', () => {
+		// H3: the first dated role is May 2018, so neither the 2014 start nor
+		// the interpolated year count may come back into the copy tables.
+		for (const variant of Object.values(SITES)) {
+			expect(variant.intro).not.toContain('{years}');
+			expect(variant.intro).not.toContain('2014');
+		}
+		expect(SITES.seanbehan.about.intro).not.toContain('2014');
+		expect(SITES.codebam.headline.before).toContain('Most of what I build');
 	});
 });

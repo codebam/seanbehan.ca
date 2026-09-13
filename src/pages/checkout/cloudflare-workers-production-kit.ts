@@ -9,7 +9,13 @@ const headers = {
 	'Referrer-Policy': 'no-referrer'
 };
 
-export const POST: APIRoute = async ({ request, url }) => {
+export const GET: APIRoute = ({ redirect }) => {
+	if (site.id !== 'codebam') return new Response('Not found', { status: 404, headers });
+
+	return redirect(`/products/${PRODUCT.id}`, 303);
+};
+
+export const POST: APIRoute = async ({ request, url, rewrite }) => {
 	if (site.id !== 'codebam') return new Response('Not found', { status: 404, headers });
 
 	const origin = request.headers.get('Origin');
@@ -41,9 +47,9 @@ export const POST: APIRoute = async ({ request, url }) => {
 		});
 	} catch (error) {
 		console.error('Stripe Checkout Session creation failed', safeErrorDetails(error));
-		return new Response('Checkout is temporarily unavailable. Please try again.', {
-			status: 503,
-			headers
-		});
+
+		// Render the site's own error state, then keep the 503 this handler owns.
+		const page = await rewrite('/checkout/unavailable');
+		return new Response(page.body, { status: 503, headers: { ...page.headers, ...headers } });
 	}
 };

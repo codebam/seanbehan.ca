@@ -3,11 +3,61 @@ import Base from '../../layouts/Base.astro';
 import Masthead from '../../components/Masthead.astro';
 import { Button } from '@cloudflare/kumo/components/button';
 import { PRODUCT } from '../../lib/product';
+import { site } from '../../lib/site';
+import { SITES } from '../../lib/site.data.js';
 
 const PRODUCT_NAME = PRODUCT.name;
 const PRICE = PRODUCT.price;
 const CURRENCY = PRODUCT.currency;
 const canonical = PRODUCT.url;
+
+const release = PRODUCT.currentRelease;
+const releasedAt = new Date(release.releasedAt * 1000);
+const releaseDate = releasedAt.toLocaleDateString('en-CA', {
+	day: 'numeric',
+	month: 'long',
+	year: 'numeric',
+	timeZone: 'UTC'
+});
+const archiveSize = `${Math.ceil(release.size / 1024)} KiB`;
+const ogImage = `${SITES.codebam.url}/og/${PRODUCT.id}.png`;
+
+/** Sanitized from `unzip -l` of releases/…-v1.0.0.zip; lockfiles elided. */
+const fileTree = [
+	'cloudflare-workers-production-kit/',
+	'├─ .github/workflows/   ci.yml · deploy.yml',
+	'├─ docs/                architecture · configuration · deployment · security · operations',
+	'├─ migrations/          0001_initial.sql',
+	'├─ public/              favicon.svg',
+	'├─ scripts/             release-check.mjs',
+	'├─ src/',
+	'│  ├─ layouts/          Base.astro',
+	'│  ├─ lib/              auth · config · crypto · db · github · http · validation',
+	'│  ├─ pages/            api/files · api/health · auth · dashboard.astro · index.astro',
+	'│  ├─ styles/           global.css',
+	'│  ├─ env.d.ts · middleware.ts',
+	'├─ test/                crypto.test.ts · validation.test.ts',
+	'├─ CHANGELOG.md · PRODUCT-LICENSE.md · THIRD-PARTY-NOTICES.md · README.md',
+	'└─ astro.config.mjs · package.json · tsconfig.json · vitest.config.ts · wrangler.jsonc'
+].join('\n');
+
+/** The v1.0.0 entry from the archive's CHANGELOG.md. */
+const changelog = [
+	'Initial Astro and Cloudflare Worker reference application.',
+	'D1 users, hashed sessions and owner-scoped file metadata.',
+	'GitHub OAuth with state, PKCE and an optional numeric-ID allowlist.',
+	'Private R2 upload, download and delete flow.',
+	'Origin checks, security headers and rate-limit bindings.',
+	'CI, deployment workflow, tests, release scan and operations handbook.'
+];
+
+/** Trust-boundary notes from the archive's docs/architecture.md. */
+const handbookSample = [
+	'GitHub numeric ID is durable identity. Login name is display metadata.',
+	'D1 is the authorization record. R2 metadata never grants access.',
+	'The R2 bucket stays private; downloads pass through the owner check in the Worker.',
+	'APP_ORIGIN is deployment configuration, never inferred from request headers.'
+];
 
 const modules = [
 	{
@@ -57,6 +107,7 @@ const schema = JSON.stringify({
 	description:
 		'A deployment-ready Astro and Cloudflare Workers reference starter with D1, R2, authentication, security, deployment and operations guidance.',
 	url: canonical,
+	image: ogImage,
 	brand: { '@type': 'Brand', name: 'codebam' },
 	offers: {
 		'@type': 'Offer',
@@ -74,9 +125,13 @@ const schema = JSON.stringify({
 	description="Ship an Astro service on Cloudflare Workers with D1, R2, authentication, security and deployment already wired together."
 	ogTitle={`${PRODUCT_NAME} — codebam`}
 	canonical={canonical}
+	image={`/og/${PRODUCT.id}.png`}
 >
 	<script slot="head" type="application/ld+json" is:inline set:html={schema}></script>
-	<Masthead label="Digital product / Production kit" meta={`$${PRICE} ${CURRENCY} / one-time`}>
+	<Masthead
+		label="Digital product / Production kit"
+		meta={`$${PRICE} ${CURRENCY} / one-time · v${release.version}`}
+	>
 		<Fragment slot="title">
 			Ship the service. <em>Skip the plumbing.</em>
 		</Fragment>
@@ -92,6 +147,10 @@ const schema = JSON.stringify({
 			</form>
 			<span class="eyebrow checkout-note">Immediate download</span>
 		</div>
+		<p class="purchase-terms masthead-terms">
+			Questions or delivery trouble: <a href={`mailto:${site.email}`}>{site.email}</a> — email
+			support, no guaranteed response time.
+		</p>
 		<p class="purchase-terms masthead-terms">
 			By purchasing, you agree to the <a href="/legal/terms-of-sale">Terms of Sale</a>,{' '}
 			<a href="/legal/refund-policy">Refund Policy</a>, and{' '}
@@ -117,6 +176,51 @@ const schema = JSON.stringify({
 						<p>{module.copy}</p>
 					</article>
 				))}
+			</div>
+		</div>
+	</section>
+
+	<!-- OPERATOR CONTENT: the product has no stills today — public/img holds
+	     marketing ads, not screenshots — so this section shows the real archive
+	     structure and text instead of a stand-in image. Add 2–3 real stills
+	     (handbook page, code, dashboard) here with alt text and dimensions. -->
+	<section class="section inside panel">
+		<div class="shell">
+			<div class="section-heading" data-reveal>
+				<h2 class="display display-lg">What&rsquo;s inside</h2>
+				<p>
+					v{release.version} · released {releaseDate}
+				</p>
+			</div>
+
+			<div class="inside-grid">
+				<div data-reveal>
+					<h3>Sanitized file tree</h3>
+					<pre class="file-tree"><code>{fileTree}</code></pre>
+					<p class="inside-note">
+						44 files in 16 directories; {archiveSize} archive. Lockfiles elided above. SHA-256
+						<code>{release.sha256}</code>.
+					</p>
+				</div>
+				<div data-reveal data-reveal-delay="60">
+					<h3>Changelog — v{release.version}</h3>
+					<ul class="changelog-list">
+						{changelog.map((item) => (
+							<li>{item}</li>
+						))}
+					</ul>
+					<details class="handbook-sample">
+						<summary>Sample the handbook: trust boundaries</summary>
+						<p>
+							From <code>docs/architecture.md</code> in the archive:
+						</p>
+						<ul>
+							{handbookSample.map((item) => (
+								<li>{item}</li>
+							))}
+						</ul>
+					</details>
+				</div>
 			</div>
 		</div>
 	</section>
@@ -162,6 +266,11 @@ const schema = JSON.stringify({
 						{PRICE}
 						<small> {CURRENCY}</small>
 					</p>
+					<p class="refund-note">
+						Digital download, delivered immediately. Refunds cover duplicate purchase, failed
+						delivery and material defects — not a change of mind. See the{' '}
+						<a href="/legal/refund-policy">Refund Policy</a>.
+					</p>
 					<ul>
 						<li>Commercial license for one purchaser and their team</li>
 						<li>Complete source tree and downloadable archive</li>
@@ -173,6 +282,10 @@ const schema = JSON.stringify({
 							Buy the production kit
 						</Button>
 					</form>
+					<p class="purchase-terms">
+						Questions or delivery trouble: <a href={`mailto:${site.email}`}>{site.email}</a> — email
+						support, no guaranteed response time.
+					</p>
 					<p class="purchase-terms terms">
 						Secure checkout through Stripe. Immediate access after payment; applicable tax and local
 						currency are shown at checkout. By purchasing, you agree to the{' '}
@@ -199,13 +312,14 @@ const schema = JSON.stringify({
 					<p>
 						Developers shipping an API, SaaS, content service or internal tool on Cloudflare who
 						want to own straightforward source instead of adopting a platform-sized framework.
+						Cloudflare experience still helps.
 					</p>
 				</div>
 				<div data-reveal data-reveal-delay="55">
 					<h3>Not a fit</h3>
 					<p>
 						A visual page builder, managed backend, generic component library or promise that one
-						architecture fits every workload. Cloudflare experience still helps.
+						architecture fits every workload.
 					</p>
 				</div>
 			</div>
@@ -362,6 +476,99 @@ const schema = JSON.stringify({
 		.offer-grid {
 			grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.7fr);
 			gap: 4rem;
+		}
+	}
+	.inside-grid {
+		display: grid;
+		gap: 2rem;
+		margin-top: 1.5rem;
+	}
+	.inside-grid h3 {
+		font-size: 1.15rem;
+		font-weight: 600;
+		letter-spacing: -0.015em;
+	}
+	.file-tree {
+		margin-top: 1rem;
+		overflow-x: auto;
+		padding: 1.25rem;
+		background: var(--surface-alt);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+		font-family: var(--font-mono);
+		font-size: 0.78rem;
+		line-height: 1.7;
+		color: var(--body);
+	}
+	.inside-note {
+		margin-top: 0.85rem;
+		font-size: 0.82rem;
+		line-height: 1.6;
+		color: var(--muted);
+	}
+	.inside-note code {
+		word-break: break-all;
+	}
+	.changelog-list {
+		display: grid;
+		gap: 0.5rem;
+		margin-top: 1rem;
+		list-style: none;
+		font-size: 0.92rem;
+		line-height: 1.6;
+		color: var(--body);
+	}
+	.changelog-list li::before {
+		content: '—';
+		margin-right: 0.65rem;
+		color: var(--accent);
+	}
+	.handbook-sample {
+		margin-top: 1.5rem;
+		padding: 1.25rem;
+		background: var(--surface-alt);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+	}
+	.handbook-sample summary {
+		cursor: pointer;
+		font-size: 0.92rem;
+		font-weight: 600;
+		color: var(--text);
+	}
+	.handbook-sample p,
+	.handbook-sample ul {
+		margin-top: 0.85rem;
+		font-size: 0.9rem;
+		line-height: 1.65;
+		color: var(--body);
+	}
+	.handbook-sample ul {
+		display: grid;
+		gap: 0.45rem;
+		list-style: none;
+	}
+	.handbook-sample li::before {
+		content: '—';
+		margin-right: 0.65rem;
+		color: var(--accent);
+	}
+	.refund-note {
+		margin-top: 0.75rem;
+		font-size: 0.82rem;
+		line-height: 1.6;
+		color: var(--muted);
+	}
+	.refund-note a {
+		color: var(--text);
+		text-decoration: underline;
+		text-decoration-color: var(--line-strong);
+		text-underline-offset: 0.18em;
+	}
+	@media (width >= 48rem) {
+		.inside-grid {
+			grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+			gap: 3rem;
 		}
 	}
 </style>

@@ -24,7 +24,7 @@ const seanbehan = {
 		after: ' and ships to the edge.'
 	},
 	intro:
-		'{years} years of web applications, from database to frontend. I daily-drive NixOS, write Rust and TypeScript, and build everything in the open — a Wayland compositor, bots on Cloudflare Workers, and a pastebin on R2.',
+		'Professional web experience since 2018, from database to frontend. I daily-drive NixOS, write Rust and TypeScript, and ship most of what I build in the open — a Wayland compositor, bots on Cloudflare Workers, and a pastebin on R2. The paid Stream control plane is the exception.',
 	email: 'sean@seanbehan.ca',
 	// The two lines below are the ones a hiring reader meets before the page:
 	// Google's snippet, the social card, the footer and /llms.txt all quote
@@ -94,7 +94,7 @@ const seanbehan = {
 		eyebrow: 'Sean Behan · codebam',
 		headline: 'I build systems from the database to the display server.',
 		intro:
-			'I am a senior full-stack developer in Ontario, Canada. Since 2014 I have worked across web applications, Linux infrastructure and open source, with a current focus on Rust, TypeScript, NixOS and Cloudflare Workers.'
+			'I am a senior full-stack developer in Ontario, Canada. I have worked across web applications, Linux infrastructure and open source since my first dated professional role in 2018, with a current focus on Rust, TypeScript, NixOS and Cloudflare Workers.'
 	}
 };
 
@@ -112,12 +112,12 @@ const codebam = {
 	eyebrow: 'Open source · Linux',
 	byline: '@codebam · Ontario, Canada',
 	headline: {
-		before: 'Everything I build ships ',
+		before: 'Most of what I build ships ',
 		emphasis: 'in the open',
 		after: ' — compositors, workers, and the odd bot.'
 	},
 	intro:
-		'{years} years of building software, most of it public. I daily-drive NixOS, write Rust and TypeScript, and put the results on GitHub — a Wayland compositor, bots on Cloudflare Workers, and a pastebin on R2.',
+		'Building software since 2018, most of it in public. I daily-drive NixOS, write Rust and TypeScript, and put the results on GitHub — a Wayland compositor, bots on Cloudflare Workers, and a pastebin on R2. The paid Stream control plane stays private.',
 	email: 'codebam@codebam.ca',
 	description:
 		'codebam — open source in Rust, TypeScript and NixOS. A Wayland compositor, Cloudflare Workers, and writing about Linux.',
@@ -128,9 +128,10 @@ const codebam = {
 	// Nobody is being hired through the handle's front door, so there is no
 	// status to declare and nothing to point at but the work and the writing.
 	availability: null,
-	primaryAction: { label: 'Read the writing', href: '/posts', via: 'writing' },
+	primaryAction: { label: 'Work with me', href: '/services' },
 	nav: [
 		{ label: 'Work', href: '/#work' },
+		{ label: 'Products', href: '/products/cloudflare-workers-production-kit' },
 		{ label: 'Writing', href: '/posts', via: 'writing' },
 		{ label: 'Services', href: '/services' }
 	],
@@ -150,6 +151,32 @@ const codebam = {
  * @type {Record<string, SiteConfig>}
  */
 export const SITES = { seanbehan, codebam };
+
+/**
+ * Commercial facts only the operator can approve.
+ *
+ * A null field is deliberate: the services and contact pages render a
+ * number-free fallback for it today, and the supplied string verbatim once it
+ * is set here. Nothing in a template has to change when that happens, and no
+ * price, timeline or reply window is invented to fill the gap.
+ *
+ * @typedef {{
+ *   startingPrice: string | null,
+ *   timeline: string | null,
+ *   replyWindow: string | null
+ * }} CommerceFacts
+ */
+/** @type {{ codebam: CommerceFacts }} */
+export const COMMERCE = {
+	codebam: {
+		// OPERATOR: an honest starting price or band, e.g. 'Projects start at $2,000 CAD'.
+		startingPrice: null,
+		// OPERATOR: a typical timeline, e.g. 'Typically 2–4 weeks from an approved scope'.
+		timeline: null,
+		// OPERATOR: a reply window, e.g. 'Replies within 1–2 business days'.
+		replyWindow: null
+	}
+};
 
 /**
  * Falling back rather than throwing is deliberate: an unset or mistyped

@@ -133,6 +133,7 @@ ${pagesSection}## Work
 - [Projects](${WORK}/projects): case studies of the software that runs, with what each one had to survive.
 - [Products](${WORK}/products): paid work, with prices.
 - [Services](${WORK}/services): what kind of engagements are taken on.
+- [Legal](${WORK}/legal): the terms, refund, license and privacy policies in one index.
 - [Contact](${site.url}/contact): the forms and the address.
 
 ## Recent writing

@@ -1,0 +1,14 @@
+---
+import ErrorState from './_ErrorState.astro';
+
+Astro.response.status = 409;
+Astro.response.headers.set('Cache-Control', 'private, no-store');
+Astro.response.headers.set('Referrer-Policy', 'no-referrer');
+---
+
+<ErrorState title="Payment processing" headline="Payment is still processing.">
+	<p>
+		Stripe has not confirmed this payment yet. Refresh this page in a moment, or use the download
+		link in the email once the payment clears.
+	</p>
+</ErrorState>

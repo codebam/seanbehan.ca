@@ -90,6 +90,18 @@ export function safeErrorDetails(error: unknown) {
 	};
 }
 
+/**
+ * Whether a thrown Stripe error means "this Checkout Session does not exist"
+ * rather than "Stripe is down". A forged or expired download link gets the
+ * invalid-link page; everything else keeps the outage page. This only chooses
+ * the response — no access check is skipped or relaxed by it.
+ */
+export function isMissingStripeSession(error: unknown): boolean {
+	const value =
+		typeof error === 'object' && error ? (error as { statusCode?: unknown; code?: unknown }) : {};
+	return value.statusCode === 404 || value.code === 'resource_missing';
+}
+
 export function inspectProductSession(
 	session: Stripe.Checkout.Session,
 	priceId: string
