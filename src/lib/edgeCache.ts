@@ -46,5 +46,13 @@ export function edgeCacheKey(url: URL): Request {
 		: QUERY_FILTERED.test(url.pathname)
 			? filteredQuery(url)
 			: '';
-	return new Request(`${url.origin}${url.pathname}${search}`, { method: 'GET' });
+	/*
+	 * The zone's shared cache matches entries by path, not host: an apex HTML
+	 * copy could answer a www request, and a cached response never reaches the
+	 * middleware that would 301 it. Prefixing the key path with the host keeps
+	 * the Worker's per-host cache hits while making an apex key unmatchable
+	 * from www. The marker never reaches a rendered page — it exists only in
+	 * the Cache API key.
+	 */
+	return new Request(`${url.origin}/__host/${url.host}${url.pathname}${search}`, { method: 'GET' });
 }
