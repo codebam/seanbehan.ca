@@ -10,13 +10,14 @@
  *
  * Reading time is computed here too. It used to come from the raw markdown
  * file; the words now live in Portable Text, so they are walked out of the
- * blocks instead. Code blocks are excluded deliberately: a 60-line shell
- * transcript is not read at prose speed, and counting it made every Linux post
- * claim twice the minutes it needs.
+ * blocks instead. Code is charged at readingTime's half weight rather than
+ * dropped: a 60-line shell transcript is not prose, but it is also not
+ * nothing, and dropping it made exactly the tutorial posts the blog is
+ * proudest of understate their length.
  */
 
 import { getEmDashCollection, getTermsForEntries } from 'emdash';
-import { readingMinutes } from './readingTime';
+import { countWords, weightedReadingMinutes } from './readingTime';
 import { slugifyTag } from './tags';
 import type { Heading, PostSummary } from './types';
 
@@ -24,15 +25,18 @@ import type { Heading, PostSummary } from './types';
 interface PTBlock {
 	_type: string;
 	style?: string;
-	children?: { _type?: string; text?: string }[];
+	children?: { _type?: string; text?: string; marks?: string[] }[];
+	/** Code blocks carry their text here rather than in children. */
+	code?: string;
 	[key: string]: unknown;
 }
 
 /**
- * Prose contained in a Portable Text body, as one string.
+ * Prose contained in a Portable Text body, as one string — the search index.
  *
  * Only spans inside `block` nodes are collected: an image block carries no
- * words, and a `code` block carries words nobody reads end to end.
+ * words, and code is left to `bodyWordCounts`, which is where the reading
+ * label goes looking for it.
  */
 export function plainText(value: unknown): string {
 	if (!Array.isArray(value)) return '';
@@ -44,6 +48,31 @@ export function plainText(value: unknown): string {
 		}
 	}
 	return out.join(' ');
+}
+
+/**
+ * The words in a Portable Text body the way readingTime counts markdown: prose
+ * spans as prose, fenced code blocks and inline-code marks as code. Exported
+ * rather than folded into `toSummary` so `getPosts` can hand over counts it
+ * already has instead of walking each body twice.
+ */
+export function bodyWordCounts(value: unknown): { prose: number; code: number } {
+	if (!Array.isArray(value)) return { prose: 0, code: 0 };
+	const prose: string[] = [];
+	const code: string[] = [];
+	for (const block of value as PTBlock[]) {
+		if (block?._type === 'code' && typeof block.code === 'string') {
+			code.push(block.code);
+			continue;
+		}
+		if (block?._type !== 'block') continue;
+		for (const child of block.children ?? []) {
+			if (typeof child?.text !== 'string') continue;
+			if (child.marks?.includes('code')) code.push(child.text);
+			else prose.push(child.text);
+		}
+	}
+	return { prose: countWords(prose.join(' ')), code: countWords(code.join(' ')) };
 }
 
 /**
@@ -146,9 +175,14 @@ interface PostEntry {
 }
 
 /** One entry as the list and detail views read it. */
-export function toSummary(entry: PostEntry, tags: string[] = [], body?: string): PostSummary {
+export function toSummary(
+	entry: PostEntry,
+	tags: string[] = [],
+	counts?: { prose: number; code: number }
+): PostSummary {
 	const published = entry.data.publishedAt ?? entry.data.createdAt ?? null;
 	const updated = entry.data.updatedAt ?? null;
+	const words = counts ?? bodyWordCounts(entry.data.content);
 
 	return {
 		path: `/posts/${entry.id}`,
@@ -168,7 +202,7 @@ export function toSummary(entry: PostEntry, tags: string[] = [], body?: string):
 			draft: entry.data.status !== 'published',
 			image: entry.data.featured_image?.src ?? undefined
 		},
-		readingMinutes: readingMinutes(body ?? plainText(entry.data.content))
+		readingMinutes: weightedReadingMinutes(words.prose, words.code)
 	};
 }
 
@@ -178,12 +212,11 @@ export function toSummary(entry: PostEntry, tags: string[] = [], body?: string):
  * Tags come from one batched lookup rather than a query per post: the archive
  * draws 20-odd rows, and a round trip each would be the page's whole budget.
  *
- * `bodies` hands back the plain prose per slug: reading time already walks the
- * Portable Text, and search wants the very same words without a second query.
- * Only search.json reads it, so every other caller passes
- * `{ includeBodies: false }` and skips keeping a second copy of the archive's
- * words per request. (Reading time still walks each body once — the lists
- * print it — so the saving is the duplicated strings, not the parse.)
+ * `bodies` hands back the plain prose per slug: search wants exactly the words
+ * `plainText` collects, and reading time wants the code too, so both walks
+ * share this one query. Only search.json reads the map, so every other caller
+ * passes `{ includeBodies: false }` and skips keeping a second copy of the
+ * archive's words per request.
  *
  * `content` is the raw Portable Text, and it exists for the feed: the archive
  * query already transferred it, so asking for it here is what lets the feed
@@ -215,7 +248,7 @@ export async function getPosts(opts?: { includeBodies?: boolean; includeContent?
 			return toSummary(
 				entry,
 				(termsByEntry.get(entry.data.id) ?? []).map((term) => term.slug),
-				body
+				bodyWordCounts(entry.data.content)
 			);
 		})
 		.sort((a, b) => new Date(b.meta.date).getTime() - new Date(a.meta.date).getTime());

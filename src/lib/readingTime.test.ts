@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { countWords, splitWords, readingMinutes } from './readingTime';
+import { countWords, splitWords, readingMinutes, weightedReadingMinutes } from './readingTime';
 
 const words = (n: number) => Array.from({ length: n }, (_, i) => `word${i}`).join(' ');
 const fence = (n: number) => `\`\`\`sh\n${words(n)}\n\`\`\``;
@@ -63,5 +63,13 @@ describe('readingMinutes', () => {
 	it('does not charge full prose rate for a wall of code', () => {
 		// 5000 code words would be 25 minutes at prose rate; at 0.5 it is 13.
 		expect(readingMinutes(fence(5000))).toBe(13);
+	});
+});
+
+describe('weightedReadingMinutes', () => {
+	it('weights counts separated by the caller, as Portable Text does', () => {
+		expect(weightedReadingMinutes(200, 0)).toBe(1);
+		expect(weightedReadingMinutes(200, 400)).toBe(2);
+		expect(weightedReadingMinutes(0, 0)).toBe(1);
 	});
 });

@@ -1,0 +1,32 @@
+---
+/**
+ * Body images with the attributes the layout and the reader need.
+ *
+ * EmDash's default image renderer asks the media provider for responsive URLs
+ * and reads dimensions from the media record; the bodies here store the URL
+ * and (after the content repair) top-level `width`/`height` and a `variants`
+ * array, so this renders what the block actually carries. A block with only
+ * `asset.url` is what every image looked like before the repair and must keep
+ * rendering unchanged.
+ */
+import { imageAttributes, type PortableTextImageNode } from './image';
+
+export interface Props {
+	node: PortableTextImageNode;
+}
+
+const attrs = imageAttributes(Astro.props.node);
+---
+
+{attrs && (
+	<img
+		src={attrs.src}
+		alt={attrs.alt}
+		width={attrs.width}
+		height={attrs.height}
+		srcset={attrs.srcset}
+		sizes={attrs.sizes}
+		loading="lazy"
+		decoding="async"
+	/>
+)}

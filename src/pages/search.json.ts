@@ -7,7 +7,7 @@
  */
 import type { APIRoute } from 'astro';
 import { getPosts } from '../lib/posts';
-import { searchPosts } from '../lib/search';
+import { isSearchableQuery, searchPosts } from '../lib/search';
 
 /**
  * The archive as search reads it, held per isolate.
@@ -31,7 +31,9 @@ async function getSearchIndex() {
 
 export const GET: APIRoute = async ({ url }) => {
 	const query = (url.searchParams.get('q') ?? '').trim();
-	if (query.length < 2) return json({ slugs: [] });
+	// The same floor the archive uses; a one-character query is answered, not
+	// emptied, so the JS path cannot disagree with the no-JS one.
+	if (!isSearchableQuery(query)) return json({ slugs: [] });
 
 	const { posts, cacheHint, bodies } = await getSearchIndex();
 	// The Astro global is absent where the sandbox runs the endpoint, so the

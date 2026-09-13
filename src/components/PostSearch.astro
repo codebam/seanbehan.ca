@@ -22,12 +22,23 @@ import { Input } from '@cloudflare/kumo/components/input';
 interface Props {
 	/** The `?q=` this page was rendered for, so the field shows it back. */
 	query?: string;
+	/**
+	 * The shortest query the server ranks. Rendered onto the form so the script
+	 * enforces the same floor as /search.json instead of keeping its own copy.
+	 */
+	minQueryLength?: number;
 }
 
-const { query = '' } = Astro.props;
+const { query = '', minQueryLength = 1 } = Astro.props;
 ---
 
-<form class="search-frame" method="get" action="/posts" role="search">
+<form
+	class="search-frame"
+	method="get"
+	action="/posts"
+	role="search"
+	data-min-query-length={minQueryLength}
+>
 	<label for="post-search">Search posts</label>
 	<div class="search-field">
 		<svg
@@ -54,7 +65,11 @@ const { query = '' } = Astro.props;
 			className="flat-control site-field w-full pl-10"
 		/>
 	</div>
-	<button type="submit" class="sr-only">
+	<!-- Kept for WCAG H32 and screen-reader form navigation, but out of the
+	     tab order: its visible box is 1×1, so the focus ring S2 adds to the
+	     field would otherwise land again on nothing. Enter in the field submits
+	     the form on its own. -->
+	<button type="submit" class="sr-only" tabindex="-1">
 		Search
 	</button>
 </form>
@@ -105,11 +120,16 @@ const { query = '' } = Astro.props;
 	}
 
 	const input = document.querySelector<HTMLInputElement>('#post-search');
+	const frame = document.querySelector<HTMLFormElement>('.search-frame');
 	const status = document.querySelector<HTMLElement>('#post-search-status');
 	const empty = document.querySelector<HTMLElement>('#post-search-empty');
 	const list = document.querySelector<HTMLElement>('[data-post-list]');
+	const count = document.querySelector<HTMLElement>('[data-count]');
 
 	if (input && status && empty && list) {
+		// The server writes its floor onto the form, so there is one rule, not a
+		// browser copy that drifts from /search.json.
+		const minQueryLength = Number(frame?.dataset.minQueryLength ?? 1);
 		const rows: Row[] = [...list.querySelectorAll<HTMLElement>('[data-post]')].map((el) => ({
 			el,
 			slug: el.dataset.slug ?? ''
@@ -121,6 +141,7 @@ const { query = '' } = Astro.props;
 			for (const row of rows) row.el.hidden = false;
 			empty!.hidden = true;
 			status!.textContent = '';
+			if (count) count.textContent = `${rows.length} entries, newest first`;
 		}
 
 		/**
@@ -174,6 +195,15 @@ const { query = '' } = Astro.props;
 			empty!.hidden = kept.length > 0;
 			empty!.textContent = kept.length > 0 ? '' : `No posts match “${query}”.`;
 
+			// The heading is server-rendered from the original query, so without
+			// this it would sit above the reordered cards still saying “25 entries,
+			// newest first” (or counting a query the reader has since changed).
+			if (count) {
+				count.textContent = query
+					? `${kept.length} of ${rows.length} match “${query}”`
+					: `${rows.length} entries, newest first`;
+			}
+
 			/*
 			 * Announced rather than only drawn: the list swaps out under a screen
 			 * reader with nothing said about it otherwise. Left empty when nothing
@@ -211,6 +241,12 @@ const { query = '' } = Astro.props;
 			const ticket = ++latest;
 			flight?.abort();
 			flight = new AbortController();
+			if (query.length < minQueryLength) {
+				// Below the server's floor there is nothing to rank; the whole
+				// archive is what the no-JS page shows for the same URL.
+				showAll();
+				return;
+			}
 			fetchOrder(query, flight.signal).then((slugs) => {
 				if (ticket === latest && slugs !== undefined) commit(query, slugs);
 			});

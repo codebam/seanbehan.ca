@@ -52,11 +52,19 @@ export function splitWords(markdown: string): { prose: number; code: number } {
 }
 
 /**
- * Estimated minutes to read a markdown body. Always at least 1: "0 min read"
- * reads as a bug, and a post short enough to round to zero still costs a
- * reader the click.
+ * Minutes from counts that have already been separated.
+ *
+ * Portable Text bodies are not markdown, so the CMS path cannot hand them to
+ * `readingMinutes`; it counts the blocks itself and weights them here. Always
+ * at least 1: "0 min read" reads as a bug, and a post short enough to round to
+ * zero still costs a reader the click.
  */
+export function weightedReadingMinutes(prose: number, code: number): number {
+	return Math.max(1, Math.ceil((prose + code * CODE_WEIGHT) / WORDS_PER_MINUTE));
+}
+
+/** Estimated minutes to read a markdown body. */
 export function readingMinutes(markdown: string): number {
 	const { prose, code } = splitWords(markdown);
-	return Math.max(1, Math.ceil((prose + code * CODE_WEIGHT) / WORDS_PER_MINUTE));
+	return weightedReadingMinutes(prose, code);
 }
