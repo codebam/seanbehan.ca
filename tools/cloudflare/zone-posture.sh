@@ -17,6 +17,7 @@
 #   CF_API_TOKEN=… bash tools/cloudflare/zone-posture.sh            # report
 #   CF_API_TOKEN=… bash tools/cloudflare/zone-posture.sh --apply    # apply + purge
 #   CF_API_TOKEN=… bash tools/cloudflare/zone-posture.sh --apply --www-only
+#   CF_API_TOKEN=… bash tools/cloudflare/zone-posture.sh --apply --drop-legacy-cache
 #   CF_API_TOKEN=… bash tools/cloudflare/zone-posture.sh --apply codebam.ca
 #
 # --www-only is for a token that holds Page Rules Edit and Cache Purge but not
@@ -30,11 +31,13 @@ set -euo pipefail
 
 APPLY=0
 WWW_ONLY=0
+DROP_LEGACY=0
 ZONES=()
 for arg in "$@"; do
 case "$arg" in
 --apply) APPLY=1 ;;
 --www-only) WWW_ONLY=1 ;;
+--drop-legacy-cache) DROP_LEGACY=1 ;;
 -h | --help)
 sed -n '2,30p' "$0"
 exit 0
@@ -123,6 +126,27 @@ if succeeded "$page_rules"; then
 page_read=1
 existing="$(printf '%s' "$page_rules" | json "print(', '.join(((r.get('targets') or [{}])[0].get('constraint') or {}).get('value','?') for r in d['result']) or 'none')")"
 echo "page rules: $existing"
+printf '%s' "$page_rules" | json "
+for r in d['result']:
+    targets = '; '.join(str(((t.get('constraint') or {}).get('value','?'))) for t in (r.get('targets') or []))
+    actions = ', '.join(str(a.get('id')) + '=' + str(a.get('value')) for a in (r.get('actions') or []))
+    print('  -', r.get('id'), '|', targets, '|', actions)
+"
+legacy_ids="$(printf '%s' "$page_rules" | json "print(' '.join(r['id'] for r in d['result'] if any(a.get('id') == 'cache_level' and 'cache_everything' in str(a.get('value')) for a in (r.get('actions') or []))))")"
+if [ "$APPLY" = 1 ] && [ "$DROP_LEGACY" = 1 ]; then
+if [ -n "$legacy_ids" ]; then
+for rule_id in $legacy_ids; do
+result="$(api DELETE "/zones/$zone_id/pagerules/$rule_id")"
+if succeeded "$result"; then
+echo "deleted legacy cache-everything page rule $rule_id"
+else
+echo "warning: could not delete page rule $rule_id: $(printf '%s' "$result" | json "print(d.get('errors'))")" >&2
+fi
+done
+else
+echo "no cache-everything page rule found"
+fi
+fi
 else
 echo "page rules: token cannot read them (needs Zone → Page Rules → Read)" >&2
 fi
