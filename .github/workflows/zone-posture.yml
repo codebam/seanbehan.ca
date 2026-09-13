@@ -1,0 +1,30 @@
+name: Zone posture
+
+# Zone-level settings that the Worker cannot set and the deploy must not drift
+# away from. Report mode is the default; apply mode also purges both zones.
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: Apply Browser Cache TTL and HSTS, then purge both zones
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  posture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Report or apply zone posture
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+        run: |
+          if [ "${{ inputs.apply }}" = "true" ]; then
+            bash tools/cloudflare/zone-posture.sh --apply
+          else
+            bash tools/cloudflare/zone-posture.sh
+          fi
