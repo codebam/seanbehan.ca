@@ -4,7 +4,6 @@
  * <link rel="alternate">, which is how a reader's extension finds it.
  */
 import type { APIRoute } from 'astro';
-import { getEmDashCollection } from 'emdash';
 import { generateRSSFeed } from '../../../../lib/rssFeed';
 import { renderBodyHtml } from '../../../../lib/renderBody';
 import { getPosts } from '../../../../lib/posts';
@@ -13,27 +12,36 @@ import { site } from '../../../../lib/site';
 
 export const GET: APIRoute = async ({ params }) => {
 	const target = slugifyTag(params.tag!);
-	const { posts: all, cacheHint } = await getPosts({ includeBodies: false });
+	// One query, not two: `getPosts` already carried each entry's Portable Text,
+	// so `includeContent` keeps it instead of asking D1 for the same rows again
+	// — the same reason rss.xml.ts does it.
+	const {
+		posts: all,
+		content,
+		cacheHint
+	} = await getPosts({
+		includeBodies: false,
+		includeContent: true
+	});
 	// The Astro global is absent where the sandbox runs the endpoint, so the
 	// guard is a typeof rather than a direct read.
 	if (typeof Astro !== 'undefined' && Astro.cache?.enabled) Astro.cache.set(cacheHint);
 	const posts = all.filter((post) => post.meta.tags.some((tag) => slugifyTag(tag) === target));
 
 	if (posts.length === 0) {
-		return new Response(`No posts tagged "${params.tag}"`, { status: 404 });
+		return new Response(`No posts tagged "${params.tag}"`, {
+			status: 404,
+			headers: {
+				'Cache-Control': 'public, max-age=60',
+				'Content-Type': 'text/plain; charset=utf-8'
+			}
+		});
 	}
-
-	const { entries } = await getEmDashCollection('posts', {
-		status: 'published',
-		orderBy: { published_at: 'desc' },
-		limit: 200
-	});
-	const bodies = new Map(entries.map((entry) => [`/posts/${entry.id}`, entry.data.content]));
 
 	const postHtml = new Map<string, string>();
 	await Promise.all(
 		posts.map(async (post) => {
-			postHtml.set(post.path, await renderBodyHtml(bodies.get(post.path)));
+			postHtml.set(post.path, await renderBodyHtml(content.get(post.slug)));
 		})
 	);
 

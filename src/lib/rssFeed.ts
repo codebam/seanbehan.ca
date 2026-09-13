@@ -15,6 +15,20 @@ export function escapeXml(value: string): string {
 		.replace(/'/g, '&apos;');
 }
 
+/**
+ * Make editor text safe for a CDATA section.
+ *
+ * A CDATA section ends at the first `]]>` regardless of what the surrounding
+ * code intended, and a title or description is whatever the editor typed.
+ * Splitting the terminator across two sections is the XML idiom; escaping
+ * inside CDATA instead would double-escape entities that are already literal
+ * text there. `content:encoded` cannot contain the sequence today because
+ * renderBody escapes `>`, but the same call keeps it safe if that changes.
+ */
+export function escapeCdata(value: string): string {
+	return value.replace(/\]\]>/g, ']]]]><![CDATA[>');
+}
+
 const RSS_PATH = '/rss.xml';
 
 /**
@@ -103,11 +117,11 @@ function generateRSSItem(post: PostSummary, html: string | undefined): string {
 	const categories = post.meta.tags.map((tag) => `<category>${escapeXml(tag)}</category>`).join('');
 	return `<item>
 		<guid isPermaLink="true">${escapeXml(url)}</guid>
-		<title><![CDATA[${post.meta.title}]]></title>
-		${post.meta.description ? `<description><![CDATA[${post.meta.description}]]></description>` : ''}
+		<title><![CDATA[${escapeCdata(post.meta.title)}]]></title>
+		${post.meta.description ? `<description><![CDATA[${escapeCdata(post.meta.description)}]]></description>` : ''}
 		<link>${escapeXml(url)}</link>
 		<pubDate>${escapeXml(new Date(post.meta.date).toUTCString())}</pubDate>
 		${categories}
-		${html ? `<content:encoded><![CDATA[${absolutizeUrls(html, SITE_URL)}]]></content:encoded>` : ''}
+		${html ? `<content:encoded><![CDATA[${escapeCdata(absolutizeUrls(html, SITE_URL))}]]></content:encoded>` : ''}
 	</item>`;
 }
