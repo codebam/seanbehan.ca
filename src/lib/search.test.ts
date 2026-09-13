@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { rank } from './search';
+import { MIN_QUERY_LENGTH, isSearchableQuery, rank } from './search';
 
 const records = [
 	{
@@ -45,5 +45,32 @@ describe('rank', () => {
 
 	it('leaves out a post that matches nothing', () => {
 		expect(rank('quantum entanglement', records)).not.toContain('garden');
+	});
+
+	it('finds a term deep in a long body, past Fuse’s default location window', () => {
+		// Fuse's default location scoring gives the first 100 characters all the
+		// weight; this term is ~2,400 characters in, so without ignoreLocation
+		// there is no match — the live bug behind `toolbox`/`sbctl`.
+		const filler = Array.from({ length: 400 }, (_, i) => `word${i}`).join(' ');
+		const long = [
+			{
+				slug: 'deep',
+				title: 'Deep in the stack',
+				description: '',
+				tags: [],
+				body: `${filler} sbctl holds the keys`
+			}
+		];
+
+		expect(rank('sbctl', long)).toEqual(['deep']);
+	});
+
+	it('applies one minimum-length rule to the form and the JSON endpoint', () => {
+		// The no-JS form accepted a one-character query; /search.json answered
+		// `{"slugs":[]}` for it, so with JS every card disappeared. Both paths
+		// read this predicate now, and one character is above the floor.
+		expect(MIN_QUERY_LENGTH).toBe(1);
+		expect(isSearchableQuery('r')).toBe(true);
+		expect(isSearchableQuery('  ')).toBe(false);
 	});
 });

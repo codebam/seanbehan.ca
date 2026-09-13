@@ -42,8 +42,28 @@ const options = {
 		{ name: 'body', weight: 0.5 }
 	],
 	threshold: 0.4,
-	minMatchCharLength: 2
+	minMatchCharLength: 2,
+	/*
+	 * Fuse scores a match partly by where it is: by default the first 100
+	 * characters hold all the weight, and title/description/tags do not cover a
+	 * term buried in a 600-line post. Live, that made `toolbox`, `sbctl` and
+	 * `authentication` — each in a body on this site — answer "0 of 25". The
+	 * field asks for full text, so position carries no signal here.
+	 */
+	ignoreLocation: true
 };
+
+/**
+ * The shortest query either search path answers. One character is a real
+ * prefix search, and the no-JS form has always accepted it, so /search.json
+ * must not invent a stricter rule of its own — that mismatch made `/posts?q=r`
+ * say "6 of 25 match" while a browser with JS hid every card. Both paths call
+ * this one predicate so the floor cannot drift apart again.
+ */
+export const MIN_QUERY_LENGTH = 1;
+
+/** Whether either search path should rank this query at all. */
+export const isSearchableQuery = (query: string) => query.trim().length >= MIN_QUERY_LENGTH;
 
 /**
  * Pure and synchronous on purpose: the endpoint supplies the records and this

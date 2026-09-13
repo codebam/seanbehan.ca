@@ -12,6 +12,7 @@ import Base from '../../layouts/Base.astro';
 import PostList from '../../components/PostList.astro';
 import Block from '../../components/portable-text/Block.astro';
 import Code from '../../components/portable-text/Code.astro';
+import Image from '../../components/portable-text/Image.astro';
 import { getPosts, prepareBody, toSummary } from '../../lib/posts';
 import { LEGAL_NAME } from '../../lib/site';
 import { slugifyTag } from '../../lib/tags';
@@ -184,7 +185,10 @@ const updated = post.meta.updated
 				style="--enter-delay:60ms"
 				data-prose
 			>
-				<PortableText value={blocks} components={{ block: Block, type: { code: Code } }} />
+				<PortableText
+					value={blocks}
+					components={{ block: Block, type: { code: Code, image: Image } }}
+				/>
 			</div>
 
 			{related.length > 0 && (

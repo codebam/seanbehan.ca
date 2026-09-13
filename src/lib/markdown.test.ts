@@ -77,6 +77,29 @@ describe('bodyMarkdown', () => {
 		);
 	});
 
+	it('leaves URLs that are already absolute alone', () => {
+		// A data: URI prefixed with the origin was the live corruption: the
+		// newest post's only image became `https://seanbehan.cadata:image/...`.
+		const shapes = [
+			'data:image/png;base64,iVBORw0KGgo=',
+			'blob:https://seanbehan.ca/1234',
+			'//cdn.example.com/a.png',
+			'https://example.com/a.png'
+		];
+
+		for (const url of shapes) {
+			expect(bodyMarkdown([{ _type: 'image', _key: 'i', alt: 'A', asset: { url } }])).toBe(
+				`![A](${url})\n`
+			);
+		}
+	});
+
+	it('gives a relative image path the origin and the missing slash', () => {
+		expect(
+			bodyMarkdown([{ _type: 'image', _key: 'i', alt: 'A', asset: { url: 'img/a.png' } }])
+		).toBe('![A](https://seanbehan.ca/img/a.png)\n');
+	});
+
 	it('gives a named code block its filename above the fence', () => {
 		const md = bodyMarkdown([
 			{ _type: 'code', _key: 'c', language: 'nix', code: 'inputs = {};', filename: 'flake.nix' }

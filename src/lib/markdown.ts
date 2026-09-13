@@ -60,8 +60,10 @@ function fitBlocks(value: unknown): PortableTextBlock[] {
 	for (const block of value as PortableTextBlock[]) {
 		if (block?._type === 'image') {
 			// The feed renderer reads `src`; the converter and the stored bodies
-			// read `asset.url`. Accept either, and absolutize whatever is found:
-			// a bot reads the document far from this origin, as in the feed.
+			// read `asset.url`. Accept either, and absolutize the app paths: a bot
+			// reads the document far from this origin, as in the feed. `absolute`
+			// passes `data:`, `blob:`, `//cdn` and full URLs through untouched, so a
+			// stored data URI is not prefixed into a broken `https://hostdata:`.
 			const stored =
 				(block.asset as { url?: string } | undefined)?.url ?? (block as { src?: string }).src;
 			out.push({ ...block, asset: { url: stored ? absolute(stored) : '' } });

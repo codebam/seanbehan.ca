@@ -128,10 +128,20 @@ export const site: SiteConfig = siteFor(import.meta.env.PUBLIC_SITE);
 /** Every variant, for the places that need to reason about both. */
 export { SITES };
 
-/** Absolute URL for a path on this site, for canonical tags and feeds. */
+/**
+ * Absolute URL for a path on this site, for canonical tags and feeds.
+ *
+ * Anything already carrying a scheme or a protocol-relative `//` is absolute
+ * already, and prefixing the origin corrupts it — a body image stored as
+ * `data:image/png;base64,…` became `https://seanbehan.cadata:image/png;…` in
+ * the markdown and JSON exports. Only app paths get the origin; a relative path
+ * gains the missing leading slash rather than being glued onto the host.
+ */
 export const absolute = (path: string) => {
-	if (/^https?:\/\//.test(path)) return path;
-	const normalized = path === '/' ? '' : path.replace(/\/+$/, '');
+	if (/^[a-z][a-z0-9+.-]*:/i.test(path) || path.startsWith('//')) return path;
+	const rooted =
+		path.startsWith('/') || path.startsWith('#') || path.startsWith('?') ? path : `/${path}`;
+	const normalized = rooted === '/' ? '' : rooted.replace(/\/+$/, '');
 	return `${site.url}${normalized}`;
 };
 

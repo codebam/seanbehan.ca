@@ -5,7 +5,7 @@ import Masthead from '../../components/Masthead.astro';
 import PostList from '../../components/PostList.astro';
 import PostSearch from '../../components/PostSearch.astro';
 import { getPosts, tagCounts } from '../../lib/posts';
-import { searchPosts } from '../../lib/search';
+import { MIN_QUERY_LENGTH, isSearchableQuery, searchPosts } from '../../lib/search';
 import { site } from '../../lib/site';
 
 /**
@@ -19,17 +19,20 @@ import { site } from '../../lib/site';
  * the archive in memory (see the note on getPosts).
  */
 const query = (Astro.url.searchParams.get('q') ?? '').trim();
-const { posts, bodies, cacheHint } = await getPosts({ includeBodies: Boolean(query) });
+const searchable = isSearchableQuery(query);
+// The same floor /search.json applies; below it there is no query to rank and
+// the whole archive is the answer both paths give.
+const { posts, bodies, cacheHint } = await getPosts({ includeBodies: searchable });
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
-const matched = query ? searchPosts(query, posts, bodies) : null;
+const matched = searchable ? searchPosts(query, posts, bodies) : null;
 
 /** The tag index is only worth linking to once something is filed under a tag. */
 const tags = tagCounts(posts);
 ---
 
 <Base
-	title={query ? `Search: ${query}` : 'Writing'}
+	title={searchable ? `Search: ${query}` : 'Writing'}
 	description="Posts on Linux, NixOS, Rust, and Cloudflare Workers."
 	ogTitle={`Writing — ${site.name}`}
 	robots={query ? 'noindex, follow' : undefined}
@@ -53,7 +56,7 @@ const tags = tagCounts(posts);
 		<div class="shell">
 			<div class="archive-heading" data-reveal>
 				<h2 class="display display-lg">All posts</h2>
-				<p>
+				<p data-count>
 					{matched
 						? `${matched.length} of ${posts.length} match “${query}”`
 						: `${posts.length} entries, newest first`}
@@ -61,7 +64,7 @@ const tags = tagCounts(posts);
 			</div>
 
 			<div data-reveal data-reveal-delay="60">
-				<PostSearch query={query} />
+				<PostSearch query={query} minQueryLength={MIN_QUERY_LENGTH} />
 			</div>
 
 			<div class="archive-list" data-reveal data-reveal-delay="100">

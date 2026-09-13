@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { plainText, prepareBody, slugifyHeading, tagCounts, toSummary } from './posts';
+import {
+	bodyWordCounts,
+	plainText,
+	prepareBody,
+	slugifyHeading,
+	tagCounts,
+	toSummary
+} from './posts';
 import type { PostSummary } from './types';
 
 const block = (style: string, text: string) => ({
@@ -8,6 +15,8 @@ const block = (style: string, text: string) => ({
 	style,
 	children: [{ _type: 'span', text }]
 });
+
+const words = (n: number) => Array.from({ length: n }, (_, i) => `word${i}`).join(' ');
 
 describe('plainText', () => {
 	it('collects the words in prose blocks', () => {
@@ -22,6 +31,36 @@ describe('plainText', () => {
 	it('is empty for a body that is not Portable Text', () => {
 		expect(plainText(undefined)).toBe('');
 		expect(plainText('<p>html</p>')).toBe('');
+	});
+});
+
+describe('bodyWordCounts', () => {
+	it('separates prose from code blocks', () => {
+		expect(
+			bodyWordCounts([
+				block('normal', 'one two'),
+				{ _type: 'code', _key: 'c', code: 'rm -rf /tmp/x' }
+			])
+		).toEqual({ prose: 2, code: 3 });
+	});
+
+	it('treats an inline code mark as code too', () => {
+		const body = [
+			{
+				_type: 'block',
+				style: 'normal',
+				children: [
+					{ _type: 'span', text: 'see' },
+					{ _type: 'span', text: 'npm run build', marks: ['code'] }
+				]
+			}
+		];
+
+		expect(bodyWordCounts(body)).toEqual({ prose: 1, code: 3 });
+	});
+
+	it('is zero for a body that is not Portable Text', () => {
+		expect(bodyWordCounts(undefined)).toEqual({ prose: 0, code: 0 });
 	});
 });
 
@@ -131,6 +170,19 @@ describe('toSummary', () => {
 	it('reports an unpublished entry as a draft', () => {
 		const post = toSummary(entry({ status: 'draft', publishedAt: null }));
 		expect(post.meta.draft).toBe(true);
+	});
+
+	it('charges its code blocks at half weight', () => {
+		// The old path flattened the body with plainText, which drops code, so a
+		// tutorial read as 1 minute no matter how much shell it walked through.
+		const post = toSummary(
+			entry({
+				content: [block('normal', words(200)), { _type: 'code', _key: 'c', code: words(400) }]
+			}),
+			[]
+		);
+
+		expect(post.readingMinutes).toBe(2);
 	});
 
 	it('advertises a modified date only for a real edit', () => {

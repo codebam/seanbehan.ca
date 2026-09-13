@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { generateRSSFeed, absolutizeUrls, escapeXml, RSS_URL } from './rssFeed';
+import { renderBodyHtml } from './renderBody';
 import type { PostSummary } from './types';
 
 // A representative post; its tags deliberately carry the two characters that
@@ -137,5 +138,36 @@ describe('feed options', () => {
 		const feed = generateRSSFeed([post], new Map([[post.path, '<img src="/img/x.webp"/>']]));
 
 		expect(feed).toContain('<img src="https://seanbehan.ca/img/x.webp"/>');
+	});
+});
+
+describe('renderBodyHtml in the feed', () => {
+	it('carries an image stored as asset.url into content:encoded', async () => {
+		const html = await renderBodyHtml([
+			{ _type: 'image', _key: 'i', asset: { url: '/img/x.webp' }, alt: 'X' }
+		]);
+		const feed = generateRSSFeed([post], new Map([[post.path, html]]));
+
+		expect(feed).toContain('<img src="https://seanbehan.ca/img/x.webp" alt="X" />');
+	});
+
+	it('falls back to an empty alt and keeps dimensions when the block has them', async () => {
+		const html = await renderBodyHtml([
+			{ _type: 'image', _key: 'i', asset: { url: '/img/x.webp' }, width: 843, height: 381 }
+		]);
+
+		expect(html).toBe('<img src="/img/x.webp" alt="" width="843" height="381" />');
+	});
+
+	it('keeps code full text but drops shiki token markup', async () => {
+		const html = await renderBodyHtml([
+			{ _type: 'code', _key: 'c', language: 'sh', code: 'echo "<hi>" & bye' }
+		]);
+		const feed = generateRSSFeed([post], new Map([[post.path, html]]));
+
+		expect(html).toBe('<pre><code class="language-sh">echo "&lt;hi&gt;" &amp; bye</code></pre>');
+		expect(feed).toContain('<pre><code class="language-sh">echo');
+		expect(feed).not.toContain('style="');
+		expect(feed).not.toContain('<span');
 	});
 });
