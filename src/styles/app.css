@@ -1,14 +1,32 @@
-/* Kumo exposes no per-component stylesheet — `styles/tailwind` is the whole
-   component sheet — so this scan has to stay broad enough to cover every built
-   module. Narrowing it to the imported button and input chunks (plus their
-   transitive chunks, excluding dist/src and blocks-source) was measured at
-   192,807 bytes against 195,845 for this glob: a 1.5% cut that would couple the
-   build to Kumo's private dist layout, while the ~46 KB of rules that never
-   match a page is component CSS and theme variables, not scanned utilities.
-   The broad scan stays until Kumo ships per-component styles. */
-@source '../../node_modules/@cloudflare/kumo/dist/**/*.{js,jsx,ts,tsx}';
+/* The public bundle used to scan all of Kumo's dist/**: Tailwind emitted the
+   utility strings of every admin-only component — date pickers, charts,
+   sidebars — into a stylesheet public pages load, roughly doubling Base.css.
+   Kumo exposes no per-component stylesheet, and Tailwind's scanner treats any
+   explicit source inside node_modules as a whole directory, so a tighter glob
+   cannot name the chunks. `source(none)` turns automatic detection off and the
+   @source lines below name every file the public templates can render: the
+   site's own sources plus the import closure of the two Kumo components the
+   public UI imports (Button and Input — see src/components/PostSearch.astro
+   and the LinkButton imports in src/pages). The vendor chunks are deliberately
+   out: they are Base UI, Floating UI and clsx/tailwind-merge internals, which
+   pass class names through rather than naming Tailwind classes of their own.
+   The admin UI is unaffected: its route links @emdash-cms/admin's own compiled
+   stylesheet, not app.css. If a public template starts using another Kumo
+   component, add that component's chunk here or its utilities will be missing,
+   and re-measure the served Base.css before and after. */
+@source '../../src/**/*.{astro,html,js,jsx,md,mdx,ts,tsx}';
+@source '../../node_modules/@cloudflare/kumo/dist/chunks/button-*.js';
+@source '../../node_modules/@cloudflare/kumo/dist/chunks/input-*.js';
+@source '../../node_modules/@cloudflare/kumo/dist/chunks/field-*.js';
+@source '../../node_modules/@cloudflare/kumo/dist/chunks/label-*.js';
+@source '../../node_modules/@cloudflare/kumo/dist/chunks/loader-*.js';
+@source '../../node_modules/@cloudflare/kumo/dist/chunks/tooltip-*.js';
+@source '../../node_modules/@cloudflare/kumo/dist/chunks/cn-*.js';
+@source '../../node_modules/@cloudflare/kumo/dist/chunks/resolve-variant-*.js';
+@source '../../node_modules/@cloudflare/kumo/dist/chunks/link-provider-*.js';
+@source '../../node_modules/@cloudflare/kumo/dist/chunks/portal-provider-*.js';
 @import '@cloudflare/kumo/styles/tailwind';
-@import 'tailwindcss';
+@import 'tailwindcss' source(none);
 @plugin '@tailwindcss/typography';
 @plugin '@tailwindcss/forms';
 
@@ -18,6 +36,13 @@
    buttons, metadata. Newsreader is kept for reading — the body
    of a long article, and the résumé, which is a document — because
    a serif column is still the most comfortable way to read prose.
+
+   Code is local-first, not a third webfont: Fira Code is named
+   first in --font-mono, but no file ships for it, so a reader who
+   has Fira Code (or JetBrains Mono, Cascadia Code) gets it and
+   everyone else falls through to the platform monospace. The two
+   variable files above are the whole font payload; there is no
+   missing Fira Code @font-face to add.
    ═══════════════════════════════════════════════════════════ */
 @font-face {
 	font-family: 'Inter Variable';
@@ -75,6 +100,7 @@
 	--font-serif:
 		'Newsreader Variable', 'Newsreader Variable Fallback', Newsreader, Georgia, 'Times New Roman',
 		serif;
+	/* Local-first; no file ships for the named faces. See the Fonts note. */
 	--font-mono:
 		'Fira Code', 'JetBrains Mono', 'Cascadia Code', ui-monospace, SFMono-Regular, Menlo, Monaco,
 		Consolas, 'Liberation Mono', monospace;
@@ -90,6 +116,10 @@
 		--bg: #ffffff;
 		--surface-alt: #f8fafc;
 		--panel: #ffffff;
+		/* Hairline only (1.23:1 on white). WCAG 1.4.11 wants 3:1 for a
+		   boundary a reader has to perceive to operate a control; --dim is
+		   the token for that and .site-field uses it. Do not reach for
+		   --line to outline a field, button or other control. */
 		--line: #e2e8f0;
 		--line-strong: #cbd5e1;
 
@@ -118,10 +148,37 @@
 		--footer-bg: #0f172a;
 		--footer-text: #e2e8f0;
 		--footer-muted: #94a3b8;
+		/* Same intent as --line: a column rule, not a control boundary. It
+		   is 1.22:1 against --footer-bg, so a required edge here would need
+		   --footer-muted instead. */
 		--footer-line: #1e293b;
 		--footer-accent: #60a5fa;
 
 		/* Geometry */
+		/* .section (below) is the shared page-level rhythm. These are the
+		   genuine exceptions, named so the next change picks one instead of
+		   restating a clamp:
+		   - --pad-hero opens the first screen (index.astro's .hero); its
+		     smaller minimum keeps the statement above the fold on a phone.
+		   - --pad-masthead frames every non-home opener (Masthead.astro)
+		     and --pad-post-masthead / --pad-post-body frame an article
+		     ([slug].astro) — a compact opener, then the reading body, whose
+		     bottom is larger to separate the post from what follows.
+		   - --pad-footer-grid is the inverted band's own rhythm
+		     (Base.astro): top clearance from the page, a fixed 2.5rem to
+		     the footer bar.
+		   - --pad-stats-grid is an inset strip (Facts.astro), not a
+		     page-level section, so it stays tighter than .section at both
+		     ends.
+		   Each expands to `padding-block` values. The call sites still
+		   hard-code the clamps — route them through these names when their
+		   files are next touched. */
+		--pad-hero: clamp(3rem, 7vw, 5.5rem);
+		--pad-masthead: clamp(2.75rem, 5vw, 4rem) clamp(2.5rem, 5vw, 4rem);
+		--pad-post-masthead: clamp(2.5rem, 6vw, 4rem) clamp(2rem, 4vw, 3rem);
+		--pad-post-body: clamp(2.5rem, 6vw, 4rem) clamp(4rem, 8vw, 6rem);
+		--pad-footer-grid: clamp(3rem, 6vw, 4.5rem) 2.5rem;
+		--pad-stats-grid: clamp(1.75rem, 3vw, 2.5rem);
 		--radius-sm: 6px;
 		--radius: 10px;
 		--radius-lg: 16px;
@@ -1045,6 +1102,11 @@
    Print
    ═══════════════════════════════════════════════════════════ */
 @media print {
+	/* Print keeps deliberately darker values rather than reading the light
+	   tokens: a laser printer lays the screen's #64748b muted down as a light
+	   grey and washes #2563eb out on paper. This block is a documented
+	   palette surface (DESIGN.md §1), not drift; move it with the tokens. The
+	   ratios in DESIGN.md §3.6 are computed from the values here. */
 	:root {
 		color-scheme: light;
 
