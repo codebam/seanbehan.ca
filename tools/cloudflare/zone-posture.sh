@@ -18,6 +18,7 @@
 #   CF_API_TOKEN=… bash tools/cloudflare/zone-posture.sh --apply    # apply + purge
 #   CF_API_TOKEN=… bash tools/cloudflare/zone-posture.sh --apply --www-only
 #   CF_API_TOKEN=… bash tools/cloudflare/zone-posture.sh --apply --drop-legacy-cache
+#   CF_API_TOKEN=… bash tools/cloudflare/zone-posture.sh --apply --no-edge-cache --drop-legacy-cache
 #   CF_API_TOKEN=… bash tools/cloudflare/zone-posture.sh --apply codebam.ca
 #
 # --www-only is for a token that holds Page Rules Edit and Cache Purge but not
@@ -32,12 +33,14 @@ set -euo pipefail
 APPLY=0
 WWW_ONLY=0
 DROP_LEGACY=0
+EDGE_BYPASS=0
 ZONES=()
 for arg in "$@"; do
 case "$arg" in
 --apply) APPLY=1 ;;
 --www-only) WWW_ONLY=1 ;;
 --drop-legacy-cache) DROP_LEGACY=1 ;;
+--no-edge-cache) EDGE_BYPASS=1 ;;
 -h | --help)
 sed -n '2,30p' "$0"
 exit 0
@@ -193,8 +196,16 @@ done
 
 if [ "$APPLY" = 1 ]; then
 if [ "$WWW_ONLY" = 0 ]; then
+# --no-edge-cache leaves the rule in bypass: the shared edge entry is what
+# was serving www before the Worker could redirect, so keep it off until the
+# legacy Page Rule is gone and the cache key can be trusted.
+if [ "$EDGE_BYPASS" = 1 ]; then
+cache_script=cache-bypass.sh
+else
+cache_script=cache-rule.sh
+fi
 for zone in "${ZONES[@]}"; do
-if ! bash "$(dirname "$0")/cache-rule.sh" "$zone"; then
+if ! bash "$(dirname "$0")/$cache_script" "$zone"; then
 echo "warning: could not update the HTML cache rule for $zone (token may lack Cache Rules edit)" >&2
 fi
 done
