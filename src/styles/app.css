@@ -1,3 +1,11 @@
+/* Kumo exposes no per-component stylesheet — `styles/tailwind` is the whole
+   component sheet — so this scan has to stay broad enough to cover every built
+   module. Narrowing it to the imported button and input chunks (plus their
+   transitive chunks, excluding dist/src and blocks-source) was measured at
+   192,807 bytes against 195,845 for this glob: a 1.5% cut that would couple the
+   build to Kumo's private dist layout, while the ~46 KB of rules that never
+   match a page is component CSS and theme variables, not scanned utilities.
+   The broad scan stays until Kumo ships per-component styles. */
 @source '../../node_modules/@cloudflare/kumo/dist/**/*.{js,jsx,ts,tsx}';
 @import '@cloudflare/kumo/styles/tailwind';
 @import 'tailwindcss';
@@ -201,8 +209,12 @@
 	}
 }
 
-/* Component classes live in the components layer so a Tailwind utility on the
-   same element still wins — unlayered CSS would outrank every utility. */
+/* Component classes live in the components layer. Kumo's Tailwind import emits
+   the layer order properties, base, utilities, theme, components — components
+   last — so a rule here outranks both base and utilities. That is what lets
+   the focus rule below beat Kumo's `focus:outline-none` without `!important`;
+   only the declarations Kumo paints inline still need the `!important` a few
+   rules below carry. */
 @layer components {
 	/* ═══════════════════════════════════════════════════════════
 	   Type
@@ -398,6 +410,22 @@
 	.flat-control {
 		border-radius: var(--radius-sm) !important;
 		box-shadow: var(--shadow-sm);
+	}
+
+	/* Keyboard focus on the controls Kumo paints over. Its `focus:outline-none`
+	   lives in the utilities layer and `.flat-control`'s resting box-shadow in
+	   this one, so the base ring at the top of the file loses either way:
+	   outline none on the button, and the shadow hides Kumo's own ring on the
+	   field. Declaring the ring here — the last layer — wins over both without
+	   `!important`. `summary` is named because the base selector list never
+	   included it, which left the mobile menu toggle on the browser's 1px
+	   auto outline. Focus-only, so nothing resting changes. */
+	.site-cta:focus-visible,
+	.flat-control:focus-visible,
+	.site-field:focus-visible,
+	summary:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
 	}
 
 	.link-quiet {
