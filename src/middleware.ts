@@ -82,21 +82,37 @@ const LONG_LIVED = /^\/(fonts|og|img|optimized)\/|\.(webp|png|svg|ico)$/;
 const COMMERCE_PRIVATE = /^\/(checkout|api\/stripe)(?:\/|$)/;
 
 /**
- * HTML is revalidated by the browser and deliberately kept out of every shared
- * cache.
+ * HTML is revalidated by the browser, and this value is not what keeps it out
+ * of Cloudflare's zone cache.
  *
- * The zones' cache matching is host-agnostic: an apex HTML copy answered www
- * requests, and a cached response never reached the middleware that would 301
- * it. Until the zone cache key is host-scoped again (a dashboard/Cache Rules
- * change; see tools/cloudflare/cache-bypass.sh), the only safe origin-side
- * policy is `private`, which both keeps Cloudflare from storing the response
- * and makes the Worker's own `cache.put` skip it. Feeds, images and the
- * immutable asset routes set their own public policies and still cache.
+ * The zones' Cache Rule marks extensionless and .html paths eligible and
+ * overrides the origin's `private`; only `no-store` survives it. Proved live:
+ * `/` (which carried `private, max-age=0, must-revalidate`) answered 200 with a
+ * rising `age` and a byte-identical body on www, while an extensionless admin
+ * page carrying `private, no-store` answered `cf-cache-status: BYPASS` every
+ * time. A host-agnostic copy of that rule is what let the apex copy answer www
+ * before this middleware could 301 it; tools/cloudflare/cache-bypass.sh now
+ * replaces that copy in place, and cache-rule.sh puts back a host-scoped one.
+ *
+ * `private` is still the right browser policy here, and it is also what keeps
+ * HTML out of the Worker's own `cache.put`: `safeToStore` below rejects it, so
+ * no HTML ever lands under edgeCacheKey's `/__host/<host>` key. Feeds, images,
+ * the immutable routes and the social cards set public policies and are stored.
  */
 const EDGE_SECONDS = 600;
 const IMMUTABLE_SECONDS = 31536000;
 
 const HTML_CACHE = 'private, max-age=0, must-revalidate';
+
+/**
+ * The one value Cloudflare's Cache Rule cannot override, and the reason editor
+ * and preview responses use it instead of `private`. `private` only tells
+ * shared caches that are listening; `no-store` is what actually keeps a copy
+ * out of the zone cache, and it also makes the Worker's own `cache.put` skip
+ * the response. A browser that receives it directly is told not to store it
+ * either, which is the right answer for a personalised or token-bearing page.
+ */
+const NO_STORE = 'private, no-store';
 
 /**
  * Where a copy stored in the Worker's own cache keeps the browser-facing
@@ -198,7 +214,10 @@ export function owningSite(pathname: string, id: string): 'seanbehan' | 'codebam
 			pathname.startsWith('/posts/') ||
 			pathname.startsWith('/pages/') ||
 			pathname === '/rss.xml' ||
-			pathname === '/resume')
+			pathname === '/resume' ||
+			pathname === '/resume.md' ||
+			pathname === '/resume.pdf' ||
+			pathname === '/resume.txt')
 	) {
 		return 'seanbehan';
 	}
@@ -317,8 +336,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	if (variant || isNegotiablePath(pathname)) {
 		addVary(response.headers, 'Accept');
 	}
+	// A preview's token is in the URL and can be revoked or expire. The Worker
+	// refuses it in isCacheable, but the zone cache sits upstream of this
+	// middleware: without no-store Cloudflare holds the preview under its
+	// token-bearing key, and a HIT never runs verifyPreviewToken again.
+	if (context.url.searchParams.has('_preview')) {
+		response.headers.set('Cache-Control', NO_STORE);
+	}
 	if (COMMERCE_PRIVATE.test(pathname)) {
-		response.headers.set('Cache-Control', 'private, no-store');
+		response.headers.set('Cache-Control', NO_STORE);
 		response.headers.set('Referrer-Policy', 'no-referrer');
 	}
 
@@ -347,6 +373,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	// directive set; everyone else keeps the strict one.
 	if ((context.locals?.user?.role ?? 0) >= 30) {
 		response.headers.set('Content-Security-Policy', EDITOR_CSP);
+		// An editor's render carries EmDash's toolbar and the inline-allowing
+		// CSP. `private` was zone-eligible because the Cache Rule overrides it,
+		// so a personalised render could be served to anonymous readers for
+		// the rule's whole TTL. `no-store` is the only value that survives it.
+		response.headers.set('Cache-Control', NO_STORE);
 	}
 
 	// What the route asked for, read before the defaults above can replace it:

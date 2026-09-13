@@ -47,12 +47,15 @@ export function edgeCacheKey(url: URL): Request {
 			? filteredQuery(url)
 			: '';
 	/*
-	 * The zone's shared cache matches entries by path, not host: an apex HTML
-	 * copy could answer a www request, and a cached response never reaches the
-	 * middleware that would 301 it. Prefixing the key path with the host keeps
-	 * the Worker's per-host cache hits while making an apex key unmatchable
-	 * from www. The marker never reaches a rendered page — it exists only in
-	 * the Cache API key.
+	 * This prefix scopes the Worker's own Cache API key, and nothing else. It
+	 * cannot scope Cloudflare's zone cache, which keys the URL the client sent
+	 * before the Worker runs; that cache is governed by the zone's Cache Rule
+	 * (tools/cloudflare/cache-rule.sh, docs/edge-caching.md). HTML never gets a
+	 * key here anyway — the middleware's HTML_CACHE keeps it `private`, so
+	 * `safeToStore` refuses the put — and that, not this prefix, is why the www
+	 * redirect cannot depend on the Worker cache. Entries that do get stored
+	 * (feeds, transforms, cards) stay per-host because of the prefix. The
+	 * marker never reaches a rendered page.
 	 */
 	return new Request(`${url.origin}/__host/${url.host}${url.pathname}${search}`, { method: 'GET' });
 }
