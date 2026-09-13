@@ -54,6 +54,9 @@ PY
 # The value src/middleware.ts emits, kept in one place for the patch below.
 HSTS_PATCH='{"value":{"strict_transport_security":{"enabled":true,"max_age":63072000,"include_subdomains":true,"preload":true,"nosniff":true}}}'
 
+echo "zones visible to this token:"
+api GET "/zones?per_page=50" | json "print('  ' + ', '.join(z['name'] for z in (d.get('result') or [])) if d.get('success') else json.dumps(d.get('errors')))"
+
 for zone in "${ZONES[@]}"; do
 echo "=== $zone"
 zone_id="$(api GET "/zones?name=$zone" | json "print(d['result'][0]['id'] if d.get('success') and d['result'] else '')")"
@@ -70,6 +73,10 @@ current="$(api GET "/zones/$zone_id/settings/security_header")"
 check "$current"
 echo "security_header:  $(printf '%s' "$current" | json "import json; print(json.dumps(d['result']['value'], sort_keys=True))")"
 
+ruleset="$(api GET "/zones/$zone_id/rulesets/phases/http_request_cache_settings/entrypoint")"
+expr="$(printf '%s' "$ruleset" | json "print(next((r.get('expression','') for r in ((d.get('result') or {}).get('rules') or []) if r.get('description') == 'Cache prerendered HTML'), '(no matching cache rule)'))")"
+echo "html cache rule: $expr"
+
 if [ "$APPLY" = 1 ]; then
 result="$(api PATCH "/zones/$zone_id/settings/browser_cache_ttl" -d '{"value":0}')"
 check "$result"
@@ -78,6 +85,14 @@ echo "set browser_cache_ttl = 0 (respect origin)"
 result="$(api PATCH "/zones/$zone_id/settings/security_header" -d "$HSTS_PATCH")"
 check "$result"
 echo "set HSTS = max-age=63072000; includeSubDomains; preload"
+
+www_url="https://www.$zone/"
+purge="$(api POST "/zones/$zone_id/purge_cache" -d "{\"files\":[\"$www_url\"]}")"
+if printf '%s' "$purge" | json "sys.exit(0 if d.get('success') else 1)" 2>/dev/null; then
+echo "purged $www_url"
+else
+echo "warning: targeted purge of $www_url rejected: $(printf '%s' "$purge" | json "print(d.get('errors'))")" >&2
+fi
 fi
 done
 
