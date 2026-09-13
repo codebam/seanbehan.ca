@@ -93,6 +93,7 @@ const updated = post.meta.updated
 {/* Description, og:*, article:* and the BlogPosting JSON-LD all come from the
     layout, which reads the post it is passed. */}
 <Base
+	serif={true}
 	title={post.meta.title}
 	post={post}
 	content={{ collection: 'posts', id: entry.data.id, slug }}
