@@ -17,6 +17,7 @@
 		"deploy:codebam": "env -u CLOUDFLARE_API_TOKEN -u CLOUDFLARE_ACCOUNT_ID -u CF_API_TOKEN npm run build:codebam && wrangler deploy --env codebam",
 		"check": "astro check",
 		"test": "vitest",
+		"test:scripts": "node --test scripts/repair-post-paragraphs.test.mjs",
 		"test:run": "vitest run",
 		"smoke": "node scripts/smoke.mjs",
 		"mockups": "node tools/mockups/build.mjs",

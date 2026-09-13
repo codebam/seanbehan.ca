@@ -32,6 +32,9 @@ jobs:
       - name: Test
         run: npm run test:run
 
+      - name: Test operator scripts
+        run: npm run test:scripts
+
       - name: Validate site migrations
         run: npm run migrate:local
 
