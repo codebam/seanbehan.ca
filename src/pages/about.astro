@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Masthead from '../components/Masthead.astro';
 import Availability from '../components/Availability.astro';
-import { site, LEGAL_NAME, LINKEDIN_URL, writingHref } from '../lib/site';
+import { site, LEGAL_NAME, HANDLE, LINKEDIN_URL, writingHref } from '../lib/site';
 import SiblingMark from '../components/SiblingMark.astro';
 
 const notes = [
@@ -31,18 +31,28 @@ const destinations = [
 		: []),
 	{ label: 'Contact', href: '/contact', external: false }
 ];
+
+/**
+ * The identity table's About copy opens "Since 2014 …", four years before the
+ * first dated entry in resume/resume.md (May 2018). H3 in the fix plan asks B
+ * to reword that string in site.data.js; until it lands, drop the unsupported
+ * span from the page rather than repeat a date the résumé cannot answer. A
+ * reworded intro no longer matches and passes through unchanged.
+ */
+const aboutIntro = site.about.intro.replace('Since 2014 I have worked', 'I have worked');
+
+/** Fixed rather than interpolated: the old line read "the developer behind
+ *  ${site.name}", which said the same name twice on the hiring variant. This
+ *  copy is true on both origins and names the place and the work. */
+const ABOUT_DESCRIPTION = `About ${LEGAL_NAME} (@${HANDLE}) — senior full-stack developer in Ontario, Canada, building Rust, TypeScript, NixOS and Cloudflare Workers projects.`;
 ---
 
-<Base
-	title="About"
-	description={`About ${LEGAL_NAME}, the developer behind ${site.name} and @codebam.`}
-	ogTitle={`About — ${site.name}`}
->
+<Base title="About" description={ABOUT_DESCRIPTION} ogTitle={`About — ${site.name}`}>
 	<Masthead label={site.about.eyebrow} meta="Ontario / Canada">
 		<Fragment slot="title">{site.about.headline}</Fragment>
 		<div class="masthead-profile">
 			<img src="/profile.webp" alt={LEGAL_NAME} width="180" height="180" />
-			<p>{site.about.intro}</p>
+			<p>{aboutIntro}</p>
 		</div>
 		{/* The About page is the other door a hiring reader comes through, so
 		    the status follows them here too. `availability` is null on the

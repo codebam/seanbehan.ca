@@ -62,11 +62,12 @@ proposed, roughly ordered by value within each section.
       alternative; it is an SEO call, not taken here.)
 - [x] Mobile nav wraps to two rows. The decision was subtraction, not a menu
       widget: the header now carries four items plus Contact, chosen per
-      variant in `site.data.js` (`nav`, resolved by `linkHref`). Links and
-      Services moved to the footer, where both already were or now are, so
-      nothing became unreachable. On seanbehan.ca the reorder matters more
-      than the count — Résumé was fifth of six, which put the one page a
-      hiring reader came for on the wrapped second row.
+      variant in `site.data.js` (`nav`, resolved by `linkHref`). Links moved to
+      the footer; Services stays in the header as the labelled commercial
+      cross-sell and also remains in the footer, so nothing became unreachable.
+      On seanbehan.ca the reorder matters more than the count — Résumé was
+      fifth of six, which put the one page a hiring reader came for on the
+      wrapped second row.
 - [ ] No manual dark toggle — `prefers-color-scheme` only (DESIGN §2.2). Needs
       a design decision; invariant 2 still requires the no-JS path.
 - [ ] `reveal` ships globally (`src/layouts/Base.astro`, the `reveal` import at the end of the body). **Dropped:**
