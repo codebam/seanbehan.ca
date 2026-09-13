@@ -21,6 +21,8 @@ import type { APIRoute } from 'astro';
 import { ImageResponse } from '@cf-wasm/og';
 import { env } from 'cloudflare:workers';
 import { getEmDashEntry } from 'emdash';
+import { PRODUCT } from '../../lib/product';
+import { featuredProjects } from '../../lib/projects';
 import { site } from '../../lib/site';
 import { displayTag } from '../../lib/tags';
 
@@ -117,6 +119,30 @@ const card = (post: Card) => ({
 });
 
 /**
+ * Product and project pages are hand-written templates, not CMS entries, so
+ * their cards come from the same static modules those pages render. The slug
+ * is the URL segment the pages pass to `Base image=`, and deriving the title
+ * here means a rename moves the card with it instead of leaving a stale
+ * drawing behind.
+ */
+function staticCardPayload(slug: string, host: string): Card | undefined {
+	if (slug === PRODUCT.id) {
+		return {
+			title: PRODUCT.name,
+			tagLine: `Product · $${PRODUCT.price} ${PRODUCT.currency}`,
+			host
+		};
+	}
+	const project = featuredProjects.find((candidate) => candidate.slug === slug);
+	if (!project) return undefined;
+	return {
+		title: project.title,
+		tagLine: `${project.language} · ${project.since}`,
+		host
+	};
+}
+
+/**
  * Newsreader for the title, Inter for everything else — the site's own
  * pairing, but the static @fontsource cuts rather than the variable files the
  * site serves: satori reads the `fvar` table of a variable font wrong and
@@ -163,7 +189,13 @@ export const GET: APIRoute = async ({ params, url }) => {
 
 	let payload: Card;
 
-	if (slug === 'site') {
+	// Product and project pages have no D1 entry to look up — they are static
+	// templates — so they are answered before the database is touched. That is
+	// what lets a card be generated on a cold Worker with no content around.
+	const staticCard = staticCardPayload(slug, host);
+	if (staticCard) {
+		payload = staticCard;
+	} else if (slug === 'site') {
 		payload = { title: site.ogTitle, tagLine: site.ogDescription, host };
 	} else {
 		// Drafts get a card too: a draft is still reachable by URL, and a shared

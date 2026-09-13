@@ -37,6 +37,8 @@ interface Props {
 	/** Set on a post page; drives the article metadata and the canonical rule. */
 	post?: PostSummary;
 	image?: string;
+	/** Preload Newsreader too; only article bodies and the résumé render the serif. */
+	serif?: boolean;
 	robots?: string;
 	canonical?: string;
 	/** Content reference, so plugins and visual editing can find the entry. */
@@ -50,6 +52,7 @@ const {
 	ogDescription,
 	post,
 	image,
+	serif = false,
 	robots,
 	canonical: canonicalOverride,
 	content
@@ -58,6 +61,8 @@ const {
 const path = Astro.url.pathname;
 const currentYear = new Date().getFullYear();
 const isHome = path === '/';
+/** On codebam this resolves to the sibling origin; the footer only uses it there. */
+const resumeHref = writingHref('/resume');
 
 const fullTitle = title
 	? title.includes(site.name)
@@ -138,19 +143,27 @@ const navItems = nav.map((item) => ({
 		<title>{fullTitle}</title>
 
 		<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
-		<link
-			rel="preload"
-			href="/fonts/newsreader-latin.woff2"
-			as="font"
-			type="font/woff2"
-			crossorigin
-		/>
+		{serif && (
+			<link
+				rel="preload"
+				href="/fonts/newsreader-latin.woff2"
+				as="font"
+				type="font/woff2"
+				crossorigin
+			/>
+		)}
 
 		<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
 		<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b1220" />
 
 		<meta property="og:locale" content="en_CA" />
-		<meta property="og:image:alt" content={post ? post.meta.title : site.name} />
+		{/* Describe the card that is actually shared: a post names its own, a
+		    page that passed `image` names its product/project, and only the
+		    generic site card falls back to the site name. */}
+		<meta
+			property="og:image:alt"
+			content={post ? post.meta.title : image ? socialTitle : site.name}
+		/>
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="630" />
 		<meta name="twitter:site" content="@seanwbehan" />
@@ -250,6 +263,15 @@ const navItems = nav.map((item) => ({
 						<span aria-hidden="true">.</span>
 					</p>
 					<p class="footer-copy">{site.ogDescription}</p>
+					{site.id === 'codebam' && (
+						<p class="footer-hiring">
+							Looking to hire?{' '}
+							<a class="footer-link" href={resumeHref}>
+								Résumé and availability
+								<SiblingMark href={resumeHref} />
+							</a>
+						</p>
+					)}
 				</div>
 
 				<nav aria-label="Site">
@@ -558,6 +580,16 @@ const navItems = nav.map((item) => ({
 	.footer-copy {
 		max-width: 34ch;
 		margin-top: 0.75rem;
+		font-size: 0.9rem;
+		line-height: 1.6;
+		color: var(--footer-muted);
+	}
+
+	/* The one hiring line on the handle's origin: quiet, because the footer's job
+	   there is still the commercial links, and it exists only so a person who
+	   arrived from GitHub is one click from the résumé rather than a 404. */
+	.footer-hiring {
+		margin-top: 1rem;
 		font-size: 0.9rem;
 		line-height: 1.6;
 		color: var(--footer-muted);

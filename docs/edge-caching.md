@@ -12,10 +12,11 @@ The edge cache is what pays that back. HTML is served with:
 Cache-Control: public, max-age=0, s-maxage=600, must-revalidate
 ```
 
-set in `src/middleware.ts`. `max-age=0, must-revalidate` means a reader's own
-browser revalidates on every visit, so nobody is served a stale page from their
-disk cache. `s-maxage=600` is the shared-cache half, which only a shared cache
-reads — it tells Cloudflare it may hold the response for ten minutes.
+set in `src/middleware.ts`, on a first render and on a Worker cache HIT alike.
+`max-age=0, must-revalidate` means a reader's own browser revalidates on every
+visit, so nobody is served a stale page from their disk cache. `s-maxage=600`
+is the shared-cache half, which only a shared cache reads — it tells Cloudflare
+it may hold the response for ten minutes.
 
 That directive alone does nothing here, and the reason is worth stating plainly
 because it looks like it should work.
@@ -29,6 +30,15 @@ API: a cacheable `GET` is looked up in `caches.default` before anything
 renders, and a rendered page is put back into it for the ten minutes
 `s-maxage` describes. `X-Edge-Cache: HIT` or `MISS` on the response says which
 happened — a second request for the same page should say HIT.
+
+The stored copy cannot carry the reader's half of that policy: a stored
+`max-age=0` tells the Cache API to store nothing, so the copy is written with
+the edge window instead (`max-age=600` for HTML, the route's own TTL for a feed
+or a card). The browser policy is kept beside it in
+`X-Edge-Browser-Cache-Control` and swapped back before a HIT is returned — the
+header is internal and never reaches a client. Without that marker a reader
+whose request was answered from the Worker's cache would be told `max-age=600`
+rather than the revalidate-every-visit policy the route wrote.
 
 Two rules in that middleware exist for DDoS reasons, not caching tidiness:
 the cache key drops the query string on every route except `search.json`
@@ -188,15 +198,60 @@ One shape worth knowing: a `*` in `_headers` matches across `/`, so
 both rules match and emits `Cache-Control` twice with the same value — legal
 but confusing, and easy to read as a bug. One rule per extension.
 
-## Two things to check in the dashboard, not here
+## Browser Cache TTL: the day-long warm HIT (operator action)
 
-- The Cache Rule's **Browser TTL** is documented above as "Respect origin".
-  Live responses disagree: an edge `HIT` for HTML came back with
-  `Cache-Control: public, max-age=86400` rather than the origin's
-  `max-age=0, must-revalidate`, which means a returning reader's browser may
-  hold a page for a day. Worth confirming against the zone's Browser Cache TTL
-  setting, because it silently undoes the revalidate-every-visit half of the
-  policy this repo writes.
+Reproduced live on 2026-09-13. A warm Worker HIT for HTML returned:
+
+```
+Cache-Control: public, max-age=86400
+CF-Cache-Status: BYPASS
+X-Edge-Cache: HIT
+```
+
+while a forced fresh render (`Authorization: Bearer …`) or a `HEAD` returned
+the origin policy:
+
+```
+Cache-Control: public, max-age=0, s-maxage=600, must-revalidate
+```
+
+The Worker was doing its job — `X-Edge-Cache: HIT` comes from the Cache API,
+whose stored copy carries the 600 s edge window — but the zone's Browser Cache
+TTL rewrote the browser-facing `max-age` to a day on the way out. The route
+files are correct; changing their TTLs would not fix this. The operator step
+is the zone setting, and it is deliberately not attempted from this repo.
+
+**Operator step, both zones (`seanbehan.ca` and `codebam.ca`):**
+
+1. Dashboard → **Caching** → **Configuration** → **Browser Cache TTL** →
+   **Respect Existing Headers** (not a fixed default).
+2. Check the **Cache Rule** from "The rule" above still says Browser TTL
+   **Respect origin** — a Cache Rule overrides the zone default.
+3. Purge both zones (or run `tools/cloudflare/purge.sh`) so copies written with
+   the old header are gone.
+
+**Acceptance — run each command twice and read the second response (the warm
+Worker HIT):**
+
+```sh
+# HTML: the reader must be told to revalidate every visit.
+curl -sS -D - -o /dev/null https://seanbehan.ca/about | grep -i cache-control
+# expect: cache-control: public, max-age=0, s-maxage=600, must-revalidate
+
+# A route policy is left alone.
+curl -sS -D - -o /dev/null https://seanbehan.ca/rss.xml | grep -i cache-control
+# expect: cache-control: max-age=3600
+
+# Confirm the request was actually a HIT, and that the edge copy is inside
+# its ten-minute window.
+curl -sS -D - -o /dev/null https://seanbehan.ca/about | grep -iE '^(x-edge-cache|cf-cache-status|age):'
+# expect: x-edge-cache: HIT, and age: below 600
+```
+
+If HTML still reports `max-age=86400`, the Cache Rule's Browser TTL is the
+first suspect (it wins over the zone default), then the zone setting. Both
+origins have to be changed independently.
+
 - `public/_headers` is only read when the Worker is deployed with the assets
   directory it sits in. `wrangler deploy` prints `Parsed N valid header
 rules`; if that count is not what you expect, the rules are not live.

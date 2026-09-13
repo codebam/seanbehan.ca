@@ -41,6 +41,18 @@ const SECURITY_HEADERS: Record<string, string> = {
 		'accelerometer=(), ambient-light-sensor=(), autoplay=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), hid=(), idle-detection=(), magnetometer=(), microphone=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), serial=(), usb=(), web-share=(), xr-spatial-tracking=()'
 };
 
+/**
+ * Admin routes need one directive back. EmDash's login is built around
+ * passkeys, and `publickey-credentials-get=()` disables WebAuthn in the very
+ * document that offers it (the CMS cannot call `navigator.credentials.get()`).
+ * Only that feature changes, and only for the admin: the panel is already
+ * behind authentication and none of the public-page hardening is useful there.
+ */
+export const ADMIN_PERMISSIONS_POLICY = SECURITY_HEADERS['Permissions-Policy']!.replace(
+	'publickey-credentials-get=()',
+	'publickey-credentials-get=(self)'
+);
+
 /** Adds a header to an existing `Vary` list without discarding the others. */
 function addVary(headers: Headers, name: string) {
 	const current = headers.get('Vary');
@@ -79,6 +91,19 @@ const EDGE_SECONDS = 600;
 const IMMUTABLE_SECONDS = 31536000;
 
 const HTML_CACHE = `public, max-age=0, s-maxage=${EDGE_SECONDS}, must-revalidate`;
+
+/**
+ * Where a copy stored in the Worker's own cache keeps the browser-facing
+ * policy it was written with.
+ *
+ * The stored copy must carry `max-age=600` (or the route's own TTL) or the
+ * Cache API treats the page as unstoreable — but that same copy is what a
+ * cache HIT hands back, so without this marker every reader after the first
+ * would also be told `max-age=600` instead of the revalidate-every-visit
+ * policy the route sent. It is internal to the cache and removed on the way
+ * out, so a browser only ever sees the policy the first render wrote.
+ */
+const EDGE_BROWSER_POLICY = 'X-Edge-Browser-Cache-Control';
 
 /**
  * "Is this per-user?" is the whole caching policy, and the hardest question
@@ -144,6 +169,48 @@ const isCacheable = async (context: {
 	return !(await hasLiveSession(request, context.session));
 };
 
+/**
+ * The other origin a path belongs to, or null when this Worker already owns it.
+ *
+ * Writing has one canonical home (seanbehan.ca): posts, CMS pages and the feed
+ * are redirected there so codebam never indexes a duplicate. `/resume` joins
+ * that list because codebam's footer links to it, the GitHub profile points at
+ * codebam.ca, and a 404 is the wrong answer for a person who came to hire.
+ *
+ * Commercial pages point the other way. Projects, products, services and the
+ * legal pages pin codebam canonicals already, so answering them on
+ * seanbehan.ca gave a hiring reader one origin's chrome around another
+ * origin's copy — a page asking them to email someone else at another domain.
+ * llms.txt has always promised the 301; this is the routing half.
+ *
+ * Exported because the redirect rules are worth testing without a Worker.
+ */
+export function owningSite(pathname: string, id: string): 'seanbehan' | 'codebam' | null {
+	if (
+		id === 'codebam' &&
+		(pathname === '/posts' ||
+			pathname.startsWith('/posts/') ||
+			pathname.startsWith('/pages/') ||
+			pathname === '/rss.xml' ||
+			pathname === '/resume')
+	) {
+		return 'seanbehan';
+	}
+	if (
+		id === 'seanbehan' &&
+		(pathname === '/projects' ||
+			pathname.startsWith('/projects/') ||
+			pathname === '/products' ||
+			pathname.startsWith('/products/') ||
+			pathname === '/services' ||
+			pathname === '/legal' ||
+			pathname.startsWith('/legal/'))
+	) {
+		return 'codebam';
+	}
+	return null;
+}
+
 export const onRequest = defineMiddleware(async (context, next) => {
 	const { pathname } = context.url;
 
@@ -169,34 +236,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		}
 
 		// The shared database does not imply two indexed copies. Writing belongs
-		// to Sean's domain; projects and products belong to the code-first domain.
-		if (
-			site.id === 'codebam' &&
-			(target.pathname === '/posts' ||
-				target.pathname.startsWith('/posts/') ||
-				target.pathname.startsWith('/pages/') ||
-				target.pathname === '/rss.xml')
-		) {
-			target.host = new URL(SITES.seanbehan.url).host;
-			redirect = true;
-		}
-		// /services joins the list because it was already a codebam.ca page in
-		// every other respect — services.astro pins its canonical there and its
-		// quote request goes to codebam's address — but it answered 200 on
-		// Sean's origin, so a hiring reader who reached it by URL got Sean's
-		// header and footer around a page asking them to email someone else at
-		// another domain. llms.txt has always promised the 301; now it is true.
-		if (
-			site.id === 'seanbehan' &&
-			(target.pathname === '/projects' ||
-				target.pathname.startsWith('/projects/') ||
-				target.pathname === '/products' ||
-				target.pathname.startsWith('/products/') ||
-				target.pathname === '/services' ||
-				target.pathname === '/legal' ||
-				target.pathname.startsWith('/legal/'))
-		) {
-			target.host = new URL(SITES.codebam.url).host;
+		// to Sean's domain; projects and products belong to the code-first
+		// domain — and the résumé now rides with writing, so the URL in the
+		// codebam footer resolves from the handle's origin instead of 404ing.
+		const owner = owningSite(target.pathname, site.id);
+		if (owner) {
+			target.host = new URL(SITES[owner].url).host;
 			redirect = true;
 		}
 
@@ -237,6 +282,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		const hit = await cache.match(key);
 		if (hit) {
 			const response = new Response(hit.body, hit);
+			// Put the route's browser policy back. An entry written before this
+			// marker existed keeps its stored header (the old behaviour) until
+			// the edge window replaces it.
+			const browserPolicy = response.headers.get(EDGE_BROWSER_POLICY);
+			if (browserPolicy) {
+				response.headers.set('Cache-Control', browserPolicy);
+				response.headers.delete(EDGE_BROWSER_POLICY);
+			}
 			response.headers.set('X-Edge-Cache', 'HIT');
 			return response;
 		}
@@ -274,6 +327,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		// The rest of the headers stay: nothing about an admin panel wants MIME
 		// sniffing, a leaked referrer, or the option of being framed.
 		response.headers.delete('Content-Security-Policy');
+		response.headers.set('Permissions-Policy', ADMIN_PERMISSIONS_POLICY);
 		response.headers.set('Cache-Control', 'private, no-store');
 		return response;
 	}
@@ -311,11 +365,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		!response.headers.has('Set-Cookie');
 
 	if (key && response.status === 200 && safeToStore) {
-		// The stored copy is read by `cache.match` above and never by a browser,
-		// so it is put away without the `max-age=0, must-revalidate` half of the
-		// policy — those two are instructions to the reader's own cache, and the
-		// Cache API would honour the zero and store nothing.
+		// The stored copy is read by `cache.match` above and never by the browser
+		// directly, so it is put away with the edge window instead of the reader
+		// instructions (`max-age=0, must-revalidate`); the Cache API would honour
+		// the zero and store nothing. The browser policy is kept in
+		// EDGE_BROWSER_POLICY and restored by the HIT path above.
 		const stored = new Response(response.clone().body, response);
+		stored.headers.set(EDGE_BROWSER_POLICY, response.headers.get('Cache-Control') ?? HTML_CACHE);
 		// Three answers, in this order. EmDash image URLs identify immutable
 		// source bytes and transform options, so a year. A route that set its own
 		// policy keeps it — this used to overwrite every one of them with
