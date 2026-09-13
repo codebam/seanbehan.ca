@@ -171,6 +171,8 @@ interface PostEntry {
 		publishedAt?: Date | null;
 		updatedAt?: Date | null;
 		createdAt?: Date | null;
+		/** The SEO panel, extracted from `_emdash_seo` by the loader. */
+		seo?: { noIndex?: boolean } | null;
 	};
 }
 
@@ -221,6 +223,11 @@ export function toSummary(
  * `content` is the raw Portable Text, and it exists for the feed: the archive
  * query already transferred it, so asking for it here is what lets the feed
  * render bodies without a second `getEmDashCollection` for the same rows.
+ *
+ * `noIndex` carries the slugs whose SEO panel asked search engines to skip
+ * them. It rides beside the summaries rather than on them because the sitemap
+ * is the only reader, and it comes from the same rows — no extra query to
+ * learn what the sitemap was already looking at.
  */
 export async function getPosts(opts?: { includeBodies?: boolean; includeContent?: boolean }) {
 	const includeBodies = opts?.includeBodies ?? true;
@@ -232,6 +239,11 @@ export async function getPosts(opts?: { includeBodies?: boolean; includeContent?
 	});
 
 	const list = entries as unknown as PostEntry[];
+	if (entries.length === 200) {
+		console.warn(
+			'[posts] hit the 200-row query limit; older posts are missing from every getPosts caller'
+		);
+	}
 	const termsByEntry = await getTermsForEntries(
 		'posts',
 		list.map((entry) => entry.data.id),
@@ -240,20 +252,27 @@ export async function getPosts(opts?: { includeBodies?: boolean; includeContent?
 
 	const bodies = new Map<string, string>();
 	const content = new Map<string, unknown>();
+	const noIndex = new Set<string>();
 	const posts = list
 		.map((entry) => {
 			const body = plainText(entry.data.content);
 			if (includeBodies) bodies.set(entry.id, body);
 			if (includeContent) content.set(entry.id, entry.data.content);
+			if (entry.data.seo?.noIndex) noIndex.add(entry.id);
 			return toSummary(
 				entry,
-				(termsByEntry.get(entry.data.id) ?? []).map((term) => term.slug),
+				// The label is what the admin and the tag surfaces show; the slug keeps
+				// a term usable before anyone has filled its label in.
+				(termsByEntry.get(entry.data.id) ?? []).map((term) => term.label || term.slug),
 				bodyWordCounts(entry.data.content)
 			);
 		})
+		// Not redundant with the SQL sort: toSummary falls back to createdAt (then
+		// epoch) when publishedAt is missing, and ORDER BY cannot see that. V8's
+		// stable sort preserves the SQL order wherever the fallback ties.
 		.sort((a, b) => new Date(b.meta.date).getTime() - new Date(a.meta.date).getTime());
 
-	return { posts, cacheHint, bodies, content };
+	return { posts, cacheHint, bodies, content, noIndex };
 }
 
 /** Tag counts across the published posts, most used first. */

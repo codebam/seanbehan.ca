@@ -49,7 +49,7 @@ const newestStamp = (list: PostSummary[]) =>
 	}, '');
 
 export const GET: APIRoute = async () => {
-	const { posts, cacheHint } = await getPosts({ includeBodies: false });
+	const { posts, cacheHint, noIndex } = await getPosts({ includeBodies: false });
 	// The Astro global is absent where the sandbox runs the endpoint, so the
 	// guard is a typeof rather than a direct read.
 	if (typeof Astro !== 'undefined' && Astro.cache?.enabled) Astro.cache.set(cacheHint);
@@ -59,7 +59,13 @@ export const GET: APIRoute = async () => {
 	);
 
 	if (site.id === 'seanbehan') {
-		urls.push(...posts.map((post) => entry(post.path, postStamp(post))));
+		// The SEO panel can mark a published post noIndex; the sitemap is the
+		// surface that has to obey, since the HTML page only carries the meta tag.
+		urls.push(
+			...posts
+				.filter((post) => !noIndex.has(post.slug))
+				.map((post) => entry(post.path, postStamp(post)))
+		);
 
 		for (const tag of tagCounts(posts).filter((candidate) => candidate.count >= 2)) {
 			const tagged = posts.filter((post) =>
@@ -68,11 +74,17 @@ export const GET: APIRoute = async () => {
 			urls.push(entry(`/posts/tag/${tag.slug}`, newestStamp(tagged) || undefined));
 		}
 
-		const { entries: pages } = await getEmDashCollection('pages', {
+		const { entries: pages, cacheHint: pagesHint } = await getEmDashCollection('pages', {
 			status: 'published',
 			orderBy: { updated_at: 'desc' },
 			limit: 200
 		});
+		if (typeof Astro !== 'undefined' && Astro.cache?.enabled) Astro.cache.set(pagesHint);
+		if (pages.length === 200) {
+			console.warn(
+				'[sitemap] pages query hit its 200-row limit; older pages are missing from the sitemap'
+			);
+		}
 		for (const page of pages) {
 			if (!page.id || getContentSeo(page)?.noIndex) continue;
 			const changed = page.data.updatedAt ?? page.data.publishedAt;
