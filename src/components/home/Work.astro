@@ -5,6 +5,11 @@
  * The first project gets a wide feature card — plate and story side by side.
  * The rest run as a two-column card grid, each with its mockup, so the section
  * can be scanned by picture rather than read line by line.
+ *
+ * On the hiring variant every case study lives on codebam.ca. Both links in a
+ * card — the image and the title — carry the sibling mark the header uses, so
+ * the origin change is never silent; on codebam's own build the hrefs stay
+ * relative and SiblingMark renders nothing.
  */
 import { Image } from 'astro:assets';
 import { projectHref } from '../../lib/site';
@@ -53,11 +58,15 @@ const metaLine = (project: FeaturedProject) =>
 					loading="lazy"
 					decoding="async"
 				/>
+				<SiblingMark href={projectHref(`/projects/${lead.slug}`)} overlay />
 			</a>
 			<div class="project-body">
 				<p class="project-meta">{metaLine(lead)}</p>
 				<h3 class="project-title">
-					<a href={projectHref(`/projects/${lead.slug}`)}>{lead.title}</a>
+					<a href={projectHref(`/projects/${lead.slug}`)}>
+						{lead.title}
+						<SiblingMark href={projectHref(`/projects/${lead.slug}`)} />
+					</a>
 				</h3>
 				<p class="project-copy">{lead.description}</p>
 				<p class="project-tags">
@@ -101,11 +110,15 @@ const metaLine = (project: FeaturedProject) =>
 						loading="lazy"
 						decoding="async"
 					/>
+					<SiblingMark href={projectHref(`/projects/${project.slug}`)} overlay />
 				</a>
 				<div class="project-body">
 					<p class="project-meta">{metaLine(project)}</p>
 					<h3 class="project-title">
-						<a href={projectHref(`/projects/${project.slug}`)}>{project.title}</a>
+						<a href={projectHref(`/projects/${project.slug}`)}>
+							{project.title}
+							<SiblingMark href={projectHref(`/projects/${project.slug}`)} />
+						</a>
 					</h3>
 					<p class="project-copy">{project.description}</p>
 					<p class="project-tags">
@@ -174,6 +187,8 @@ const metaLine = (project: FeaturedProject) =>
 	}
 
 	.project-media {
+		/* The overlay sibling mark anchors to the image. */
+		position: relative;
 		display: block;
 		height: 100%;
 		overflow: hidden;

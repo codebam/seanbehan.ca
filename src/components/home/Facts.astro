@@ -11,10 +11,17 @@ import type { FeaturedProject } from '../../lib/types';
 interface Props {
 	postCount: number;
 	projects: FeaturedProject[];
-	yearsBuilding: number;
+	/**
+	 * The B-owned home page still passes the table's years-since-2014 number.
+	 * This strip cannot print it: resume/resume.md's first dated entry is May
+	 * 2018, so four of those years have no evidence behind them (fix-plan H3).
+	 * Kept optional until B removes the call; the strip reports the start year
+	 * the document can prove instead.
+	 */
+	yearsBuilding?: number;
 }
 
-const { postCount, projects, yearsBuilding } = Astro.props;
+const { postCount, projects } = Astro.props;
 
 /** Stars across the featured repos, rounded down to a round number. */
 const starTotal = projects.reduce((sum, project) => sum + project.stars, 0);
@@ -22,7 +29,9 @@ const starCount = starTotal >= 100 ? Math.floor(starTotal / 50) * 50 : starTotal
 const starSuffix = starTotal >= 100 ? '+' : '';
 
 const facts = [
-	{ value: `${yearsBuilding}+`, label: 'years building software' },
+	// The start year every dated entry sits after, rather than an elapsed
+	// count the document cannot trace back past May 2018.
+	{ value: '2018', label: 'professional experience since' },
 	{ value: String(postCount), label: 'technical posts' },
 	{ value: `${starCount}${starSuffix}`, label: 'GitHub stars' },
 	{ value: 'Rust', label: '+ TypeScript, Nix' }

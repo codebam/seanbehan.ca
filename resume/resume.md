@@ -6,7 +6,7 @@ email: "sean@seanbehan.ca"
 website: "https://seanbehan.ca"
 linkedin: "sean-behan"
 github: "codebam"
-abstract: "Senior full-stack and systems developer, open to full-time work — remote, or hybrid in the Greater Toronto Area. I ship serverless bots and web apps on Cloudflare Workers, write Rust for Wayland compositors, and keep my machines reproducible with Nix."
+abstract: "Senior full-stack and systems developer, open to full-time work — remote, or hybrid in the Greater Toronto Area. I ship serverless bots and web apps on Cloudflare Workers, write Rust for Wayland compositors, and keep my machines reproducible with Nix. Professional software and IT experience since 2018; open-source work since 2021."
 ---
 
 # EXPERIENCE

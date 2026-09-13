@@ -13,6 +13,10 @@
  * learns from the new window and a screen-reader user learns from nowhere.
  * Anything that opens a tab passes it, and the note is spoken, not drawn —
  * the visible arrow on those links is already the page's own.
+ *
+ * `overlay` is the third case: an image link has no text line for the arrow to
+ * follow, so it parks the mark over the media instead of adding a line below
+ * it. The parent needs `position: relative`, and the host note is unchanged.
  */
 import { isSiblingHref, siblingHost } from '../lib/site';
 
@@ -20,14 +24,16 @@ interface Props {
 	href: string;
 	/** The anchor carries target="_blank". */
 	newTab?: boolean;
+	/** Park the visible arrow over media rather than after a text label. */
+	overlay?: boolean;
 }
 
-const { href, newTab = false } = Astro.props;
+const { href, newTab = false, overlay = false } = Astro.props;
 const sibling = isSiblingHref(href);
 ---
 
 {sibling && (
-	<span class="sibling-mark" aria-hidden="true">
+	<span class={`sibling-mark${overlay ? ' sibling-mark-overlay' : ''}`} aria-hidden="true">
 		&#8599;
 	</span>
 )}
@@ -41,5 +47,24 @@ const sibling = isSiblingHref(href);
 		margin-left: 0.3em;
 		font-size: 0.85em;
 		color: var(--muted);
+	}
+	/* The media-link variant: a small quiet badge the anchor can position. */
+	.sibling-mark-overlay {
+		position: absolute;
+		right: 0.65rem;
+		bottom: 0.65rem;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 1.75rem;
+		height: 1.75rem;
+		margin-left: 0;
+		font-size: 1rem;
+		line-height: 1;
+		color: var(--text);
+		border: 1px solid var(--line);
+		border-radius: 999px;
+		background: color-mix(in srgb, var(--panel) 88%, transparent);
+		pointer-events: none;
 	}
 </style>
