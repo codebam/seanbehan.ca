@@ -1,15 +1,16 @@
 /**
  * Normalise a tag into a URL slug: trim, fold to lowercase and turn runs of
- * whitespace into a single hyphen ("Secure Boot" -> "secure-boot"). Written as
- * its own leaf module — no globs, no platform modules — so the post page can
- * import it without dragging getPosts' markdown globs into the client bundle.
+ * whitespace into a single hyphen ("Secure Boot" -> "secure-boot"). A leaf
+ * module with no content-layer imports, so a template can use it without
+ * pulling `emdash` in with it.
  */
 export const slugifyTag = (tag: string): string => tag.trim().toLowerCase().replace(/\s+/g, '-');
 
 /**
- * Display form of a tag. Frontmatter is written in lowercase slugs, so the
- * first-seen casing is "nixos" rather than "NixOS". Known proper nouns are
- * mapped here; anything else keeps the form it arrived in.
+ * Display form of a tag. D1 stores a lowercased slug beside the term's label,
+ * and the label is the normal name; this map rescues proper nouns like "nixos"
+ * for terms whose label was never filled in, and leaves everything else as it
+ * arrived.
  */
 const TAG_LABELS: Record<string, string> = {
 	nixos: 'NixOS',

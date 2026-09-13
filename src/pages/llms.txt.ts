@@ -45,6 +45,11 @@ export const GET: APIRoute = async () => {
 		Astro.cache.set(cacheHint);
 		Astro.cache.set(pagesHint);
 	}
+	if (cmsEntries.length === PAGE_LIMIT) {
+		console.warn(
+			`[llms.txt] pages query hit PAGE_LIMIT (${PAGE_LIMIT}); older pages are omitted from the brief`
+		);
+	}
 
 	/** Entries with a slug; a page without one has no URL to name. */
 	const cmsPages = cmsEntries.filter((page) => page.id);
@@ -125,7 +130,7 @@ How to fetch this site:
 - [All posts](${WRITING}/posts): the archive, newest first, with the title search over it.
 - [Post feed](${WRITING}/rss.xml): recent posts with full text, HTML.
 - [Tags](${WRITING}/posts/tags): the topic index with counts; each tag has its own feed under ${WRITING}/posts/tag/.
-- [Search](${site.url}/search.json): ranked slugs for a query in \`?q=\`; words are matched over titles, descriptions, tags and bodies.
+- [Search](${WRITING}/search.json): ranked slugs for a query in \`?q=\`; words are matched over titles, descriptions, tags and bodies.
 - [Résumé](${WRITING}/resume.md): the CV in its source markdown — the same file the HTML page, the PDF and the plain text are generated from. The PDF is ${WRITING}/resume.pdf; the plain text is ${WRITING}/resume.txt.
 
 ${pagesSection}## Work
