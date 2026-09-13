@@ -1,0 +1,14 @@
+---
+import ErrorState from './_ErrorState.astro';
+
+Astro.response.status = 404;
+Astro.response.headers.set('Cache-Control', 'private, no-store');
+Astro.response.headers.set('Referrer-Policy', 'no-referrer');
+---
+
+<ErrorState title="Download link invalid" headline="That download link is invalid or has expired.">
+	<p>
+		Access links are private to the Stripe Checkout session they were issued for and do not last
+		forever. If you have a receipt, send it to the address below and the link will be reissued.
+	</p>
+</ErrorState>

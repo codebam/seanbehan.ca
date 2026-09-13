@@ -10,6 +10,7 @@ import Base from '../layouts/Base.astro';
 import Masthead from '../components/Masthead.astro';
 import { getEmDashCollection } from 'emdash';
 import SiblingMark from '../components/SiblingMark.astro';
+import { SITES } from '../lib/site.data.js';
 
 interface LinkEntry {
 	id: string;
@@ -60,7 +61,12 @@ const added = (date: Date | null | undefined) =>
 		: '';
 ---
 
-<Base title="Links" description="Pages and writing worth finding again." ogTitle="Links">
+<Base
+	title="Links"
+	description="Pages and writing worth finding again."
+	ogTitle="Links"
+	canonical={`${SITES.seanbehan.url}/links`}
+>
 	<Masthead label="Elsewhere index" meta={`${links.length} saved`}>
 		<Fragment slot="title">
 			Good things, <em>filed for later.</em>

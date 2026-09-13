@@ -1,0 +1,68 @@
+---
+/**
+ * The shared result page for checkout and download failures.
+ *
+ * These paths are private and no-store (`COMMERCE_PRIVATE` in the middleware
+ * already classifies every /checkout route that way), so the page carries no
+ * cache headers of its own beyond what the layout earns. Each concrete route
+ * below sets its own status before rendering this; the API handlers that
+ * rewrite to a route also re-wrap the response so the status is theirs even if
+ * a rewrite would otherwise flatten it.
+ *
+ * The body is a slot so each failure gets copy that names what actually
+ * happened, and every failure gets the same two ways forward: the product page
+ * and a human.
+ */
+import Base from '../../layouts/Base.astro';
+import Masthead from '../../components/Masthead.astro';
+import { LinkButton } from '@cloudflare/kumo/components/button';
+import { PRODUCT } from '../../lib/product';
+import { site } from '../../lib/site';
+
+interface Props {
+	title: string;
+	headline: string;
+}
+
+const { title, headline } = Astro.props;
+const productHref = `/products/${PRODUCT.id}`;
+---
+
+<Base
+	title={title}
+	description={`${title} for ${PRODUCT.name}.`}
+	canonical={PRODUCT.url}
+	robots="noindex, nofollow"
+>
+	<Masthead label="Digital product / Checkout" meta="Private result page">
+		<Fragment slot="title">{headline}</Fragment>
+		<slot />
+		<p class="masthead-actions">
+			<LinkButton href={productHref} variant="primary" size="lg" className="flat-control site-cta">
+				Back to the product page
+			</LinkButton>
+			<a class="link-quiet" href="/contact">
+				Contact
+			</a>
+		</p>
+		<p class="purchase-terms masthead-terms">
+			Or email <a href={`mailto:${site.email}`}>{site.email}</a> with your receipt.
+		</p>
+	</Masthead>
+</Base>
+
+<style>
+	.masthead-terms {
+		max-width: 60ch;
+		margin-top: 1rem;
+		font-size: 0.85rem;
+		line-height: 1.6;
+		color: var(--muted);
+	}
+	.masthead-terms a {
+		color: var(--text);
+		text-decoration: underline;
+		text-decoration-color: var(--line-strong);
+		text-underline-offset: 0.18em;
+	}
+</style>

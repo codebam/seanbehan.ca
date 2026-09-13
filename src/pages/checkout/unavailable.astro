@@ -1,0 +1,14 @@
+---
+import ErrorState from './_ErrorState.astro';
+
+Astro.response.status = 503;
+Astro.response.headers.set('Cache-Control', 'private, no-store');
+Astro.response.headers.set('Referrer-Policy', 'no-referrer');
+---
+
+<ErrorState title="Checkout unavailable" headline="Checkout is temporarily unavailable.">
+	<p>
+		Stripe could not be reached, or the release could not be verified, so no session was created and
+		nothing was charged. Try again in a few minutes.
+	</p>
+</ErrorState>

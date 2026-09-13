@@ -21,7 +21,15 @@ import type { FeaturedProject } from './types';
  * fallback used when that request fails, so they are worth keeping roughly
  * current but are never load-bearing. `language` stays curated either way.
  */
-export const featuredProjects: FeaturedProject[] = [
+/**
+ * One featured row plus the search snippet that goes in the page head. The
+ * `description` above stays the long-form copy for the case study; Google
+ * truncates around 155 characters, so the outcome has to lead its own string.
+ * The inline intersection keeps `seoDescription` a property of this table
+ * rather than widening the shared FeaturedProject type, which the reader lane
+ * owns.
+ */
+export const featuredProjects: Array<FeaturedProject & { seoDescription: string }> = [
 	{
 		slug: 'codebam-stream',
 		// The one row without a repository: the control plane takes Stripe money
@@ -31,6 +39,8 @@ export const featuredProjects: FeaturedProject[] = [
 		title: 'Codebam Stream',
 		description:
 			'Browser-first multistreaming in early access: OBS pushes one signal in over WHIP, your own watch page is the program output, and the same signal leaves again as RTMPS to YouTube, Twitch, X, Kick and Telegram. Cloudflare Workers, Durable Objects, D1 and LiveKit underneath, prepaid hours on top.',
+		seoDescription:
+			'Multistream to YouTube, Twitch, X, Kick and Telegram from one browser-first control room, billed by prepaid usage.',
 		language: 'TypeScript',
 		stars: 0,
 		homepage: 'https://stream.codebam.ca',
@@ -58,6 +68,8 @@ export const featuredProjects: FeaturedProject[] = [
 		title: 'Viewport',
 		description:
 			'A Wayland compositor in Rust on Smithay whose entire shell — wallpaper, dock, window frames and titlebars — is a web page, composited zero-copy alongside native clients. Five interchangeable engine backends render that same page: WPE, WebKitGTK, Chromium, CEF and Servo.',
+		seoDescription:
+			'A Wayland compositor in Rust whose whole desktop shell is a web page, composited zero-copy across five engines.',
 		language: 'Rust',
 		stars: 4,
 		mockup: viewportMockup,
@@ -83,6 +95,8 @@ export const featuredProjects: FeaturedProject[] = [
 		title: 'Telegram Bot for Cloudflare Workers',
 		description:
 			'A lightweight, type-safe Telegram bot framework for Cloudflare Workers: handlers chain off the incoming Request, middleware runs before them, and one URL registers the webhook. 214 forks and 120 releases on npm.',
+		seoDescription:
+			'A type-safe Telegram bot framework for Cloudflare Workers with chained handlers and one-URL webhook setup.',
 		language: 'TypeScript',
 		stars: 324,
 		homepage: 'https://cf-workers-telegram-bot.codebam.ca',
@@ -110,6 +124,8 @@ export const featuredProjects: FeaturedProject[] = [
 		title: 'Tux Robot',
 		description:
 			'The bot that grew out of the framework, rebuilt on grammY: one Cloudflare Worker for the conversation, Cloudflare AI for the answers, Tavily for web search and document retrieval, and a Svelte 5 web app in front of it all. Live at t.me/TuxRobot.',
+		seoDescription:
+			'A Cloudflare Worker Telegram bot with model answers, web search and document retrieval behind a Svelte web app.',
 		language: 'TypeScript',
 		stars: 0,
 		homepage: 'https://t.me/TuxRobot',
@@ -137,6 +153,8 @@ export const featuredProjects: FeaturedProject[] = [
 		title: 'Pastebin R2',
 		description:
 			'A pastebin on Cloudflare Workers in TypeScript with Hono, storing objects in R2 behind a small REST API — create, update, list, info, delete — with syntax-highlighted and plain-text views, and pastes that expire on their own.',
+		seoDescription:
+			'A TypeScript pastebin on Cloudflare Workers and R2, with expiry, syntax highlighting and a small REST API.',
 		language: 'TypeScript',
 		stars: 4,
 		homepage: 'https://paste.codebam.ca',

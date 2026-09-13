@@ -1,0 +1,14 @@
+---
+import ErrorState from './_ErrorState.astro';
+
+Astro.response.status = 410;
+Astro.response.headers.set('Cache-Control', 'private, no-store');
+Astro.response.headers.set('Referrer-Policy', 'no-referrer');
+---
+
+<ErrorState title="Download no longer available" headline="This purchase was refunded or disputed.">
+	<p>
+		The download is no longer available for this checkout session. If that does not match what
+		happened, email the address below with your receipt.
+	</p>
+</ErrorState>

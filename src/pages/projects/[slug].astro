@@ -29,9 +29,10 @@ const schema = JSON.stringify({
 
 <Base
 	title={project.title}
-	description={project.description}
+	description={project.seoDescription}
 	ogTitle={`${project.title} — codebam`}
 	canonical={canonical}
+	image={`/og/${project.slug}.png`}
 >
 	<script slot="head" type="application/ld+json" is:inline set:html={schema}></script>
 	<article class="panel pt-14 pb-20 md:pt-16 md:pb-24">
@@ -105,6 +106,24 @@ const schema = JSON.stringify({
 					<span class="arrow">&larr;</span> All selected work
 				</a>
 			</p>
+
+			<section class="case-cta" aria-labelledby="case-cta-heading">
+				<p class="eyebrow">Need something like this?</p>
+				<h2 class="display display-lg" id="case-cta-heading">
+					Let&rsquo;s scope it.
+				</h2>
+				<p class="case-cta-copy">
+					Custom websites and Telegram bots, scoped per project and quoted by email.
+				</p>
+				<p class="case-cta-actions">
+					<a class="btn" href="/services">
+						See services
+					</a>
+					<a class="link-quiet" href="/contact">
+						Get in touch
+					</a>
+				</p>
+			</section>
 		</div>
 	</article>
 </Base>
@@ -125,5 +144,32 @@ const schema = JSON.stringify({
 		display: block;
 		width: 100%;
 		height: auto;
+	}
+	.case-cta {
+		margin-top: clamp(3.5rem, 8vw, 5.5rem);
+		padding: clamp(1.75rem, 4vw, 2.75rem);
+		background: var(--panel);
+		border: 1px solid var(--line);
+		border-radius: var(--radius-lg);
+	}
+	.case-cta .eyebrow {
+		color: var(--accent);
+	}
+	.case-cta h2 {
+		margin-top: 0.6rem;
+	}
+	.case-cta-copy {
+		max-width: 52ch;
+		margin-top: 0.85rem;
+		font-size: 1rem;
+		line-height: 1.65;
+		color: var(--body);
+	}
+	.case-cta-actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 1rem 1.5rem;
+		margin-top: 1.5rem;
 	}
 </style>

@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import Masthead from '../components/Masthead.astro';
 import Availability from '../components/Availability.astro';
 import { site, LINKEDIN_URL } from '../lib/site';
+import { COMMERCE } from '../lib/site.data.js';
 import SiblingMark from '../components/SiblingMark.astro';
 
 /**
@@ -60,6 +61,13 @@ const channels = [
 ];
 
 /**
+ * The reply window is data in src/lib/site.data.js, beside the availability
+ * it would qualify. While that field is null the meta line keeps the honest
+ * old wording; setting the field replaces it on both contact pages.
+ */
+const replyWindow = COMMERCE.codebam.replyWindow;
+
+/**
  * What to write in a first email, so the reply is useful on the first turn
  * rather than the third. Only on the hiring variant: a reader who came for the
  * code has nothing to fill in.
@@ -84,7 +92,7 @@ const askingFor = site.showResume
 	description={`Get in touch with ${site.name} — email${site.showResume ? ', LinkedIn' : ''}, GitHub.`}
 	ogTitle={`Contact — ${site.name}`}
 >
-	<Masthead label="Ontario / Canada" meta="Replies by email">
+	<Masthead label="Ontario / Canada" meta={replyWindow ?? 'Replies by email'}>
 		<Fragment slot="title">
 			Say <em>hello.</em>
 		</Fragment>

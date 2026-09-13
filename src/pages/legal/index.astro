@@ -1,0 +1,103 @@
+---
+/**
+ * The legal hub.
+ *
+ * The individual policies were each reachable, but the section root — the URL
+ * a cautious buyer types before paying, and the one the middleware redirects
+ * from seanbehan.ca — was a 404. This page is the table of contents: the four
+ * documents, what each covers, and the date to read them against.
+ *
+ * Dates are copied from the frontmatter of the policy files beside this one;
+ * when a policy is re-dated, this list moves with it.
+ */
+import Legal from '../../layouts/Legal.astro';
+
+const policies = [
+	{
+		title: 'Terms of Sale',
+		description:
+			'Purchase, delivery, licensing, support, and liability terms for codebam digital products.',
+		href: '/legal/terms-of-sale',
+		effective: 'Effective August 30, 2026'
+	},
+	{
+		title: 'Refund Policy',
+		description: 'The 14-day refund policy for the Cloudflare Workers Production Kit.',
+		href: '/legal/refund-policy',
+		effective: 'Effective August 30, 2026'
+	},
+	{
+		title: 'Product License',
+		description: 'Commercial license for the Cloudflare Workers Production Kit.',
+		href: '/legal/product-license',
+		effective: 'Version 1.0 · 2026-08-28'
+	},
+	{
+		title: 'Privacy Policy',
+		description:
+			'How codebam collects, uses, shares, and protects information from site visitors and product purchasers.',
+		href: '/legal/privacy',
+		effective: 'Effective August 30, 2026'
+	}
+];
+---
+
+<Legal
+	frontmatter={{
+		title: 'Legal',
+		description:
+			'Terms, refunds, license and privacy for codebam and the Cloudflare Workers Production Kit.'
+	}}
+>
+	<h1>Legal</h1>
+	<p>
+		The policies that apply to this site and to purchases from it. Questions about any of them can
+		go to the <a href="/contact">contact page</a>.
+	</p>
+	<!-- OPERATOR: city/registration-level seller detail only once Sean has
+     approved what is public. "Ontario, Canada" is already published in the
+     site's own byline and contact page; nothing more is claimed here. -->
+	<p>The seller is Sean Behan, operating as codebam in Ontario, Canada.</p>
+
+	<ul class="policy-list">
+		{policies.map((policy) => (
+			<li>
+				<a href={policy.href}>{policy.title}</a>
+				<p>{policy.description}</p>
+				<p class="policy-date">{policy.effective}</p>
+			</li>
+		))}
+	</ul>
+</Legal>
+
+<style>
+	.policy-list {
+		display: grid;
+		gap: 1rem;
+		margin-top: 2rem;
+		padding: 0;
+		list-style: none;
+	}
+	.policy-list li {
+		padding: 1.5rem;
+		background: var(--panel);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+	}
+	.policy-list a {
+		font-size: 1.15rem;
+		font-weight: 600;
+		letter-spacing: -0.015em;
+	}
+	.policy-list p {
+		margin-top: 0.5rem;
+		font-size: 0.95rem;
+		line-height: 1.6;
+		color: var(--body);
+	}
+	.policy-list .policy-date {
+		margin-top: 0.65rem;
+		font-size: 0.82rem;
+		color: var(--muted);
+	}
+</style>
