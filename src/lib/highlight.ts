@@ -77,6 +77,16 @@ export async function highlight(code: string, lang?: string): Promise<string> {
 	return highlighter.codeToHtml(code, {
 		lang: resolved ?? 'plaintext',
 		themes: { light: 'github-light', dark: 'github-dark' },
-		defaultColor: false
+		defaultColor: false,
+		// Shiki makes the <pre> focusable (tabindex="0") because a long line
+		// can make it a scroll container. Dropping the tabindex would hurt the
+		// keyboard reader who needs to reach that scroll, so the block keeps
+		// it and gets the name the default omitted: an unlabelled tab stop
+		// tells a screen reader nothing about what it just landed on. `meta`
+		// entries become attributes on the <pre> shiki renders.
+		meta: {
+			role: 'region',
+			'aria-label': label ? `Code block: ${label}` : 'Code block'
+		}
 	});
 }
