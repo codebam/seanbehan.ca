@@ -77,6 +77,31 @@ ruleset="$(api GET "/zones/$zone_id/rulesets/phases/http_request_cache_settings/
 expr="$(printf '%s' "$ruleset" | json "print(next((r.get('expression','') for r in ((d.get('result') or {}).get('rules') or []) if r.get('description') == 'Cache prerendered HTML'), '(no matching cache rule)'))")"
 echo "html cache rule: $expr"
 
+# A www copy must redirect before the shared cache can answer it: when the
+# cache key does not distinguish the host, an apex HTML copy can be served on
+# www and the Worker's 301 never runs. A Page Rule is evaluated first.
+page_rules="$(api GET "/zones/$zone_id/pagerules")"
+if printf '%s' "$page_rules" | json "sys.exit(0 if d.get('success') else 1)" 2>/dev/null; then
+existing="$(printf '%s' "$page_rules" | json "print(', '.join(((r.get('targets') or [{}])[0].get('constraint') or {}).get('value','?') for r in d['result']) or 'none')")"
+echo "page rules: $existing"
+if [ "$APPLY" = 1 ]; then
+has_www="$(printf '%s' "$page_rules" | json "print(any('www.$zone' in (((r.get('targets') or [{}])[0].get('constraint') or {}).get('value','')) for r in d['result']))")"
+if [ "$has_www" = "True" ]; then
+echo "www page rule already present"
+else
+payload="{\"targets\":[{\"target\":\"url\",\"constraint\":{\"operator\":\"matches\",\"value\":\"www.$zone/*\"}}],\"actions\":[{\"id\":\"forwarding_url\",\"value\":{\"url\":\"https://$zone/\$1\",\"status_code\":301}}],\"priority\":1,\"status\":\"active\"}"
+result="$(api POST "/zones/$zone_id/pagerules" -d "$payload")"
+if printf '%s' "$result" | json "sys.exit(0 if d.get('success') else 1)" 2>/dev/null; then
+echo "created www -> $zone page rule"
+else
+echo "warning: could not create the www page rule: $(printf '%s' "$result" | json "print(d.get('errors'))")" >&2
+fi
+fi
+fi
+else
+echo "page rules: token cannot read them"
+fi
+
 if [ "$APPLY" = 1 ]; then
 result="$(api PATCH "/zones/$zone_id/settings/browser_cache_ttl" -d '{"value":0}')"
 check "$result"
