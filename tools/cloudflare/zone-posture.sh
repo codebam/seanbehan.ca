@@ -82,6 +82,14 @@ fi
 done
 
 if [ "$APPLY" = 1 ]; then
+# Keep the HTML cache rule scoped to the apex: an edge-cached www copy
+# outranks the middleware 301 that sends www to the apex. Purge last, so a
+# copy already stored under the www key cannot survive the change.
+for zone in "${ZONES[@]}"; do
+if ! bash "$(dirname "$0")/cache-rule.sh" "$zone"; then
+echo "warning: could not update the HTML cache rule for $zone (token may lack Cache Rules edit)" >&2
+fi
+done
 for zone in "${ZONES[@]}"; do
 bash "$(dirname "$0")/purge.sh" "$zone"
 done
