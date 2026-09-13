@@ -1,6 +1,8 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { getEmDashCollection, getTermsForEntries } from 'emdash';
 import {
 	bodyWordCounts,
+	getPosts,
 	plainText,
 	prepareBody,
 	slugifyHeading,
@@ -17,6 +19,11 @@ const block = (style: string, text: string) => ({
 });
 
 const words = (n: number) => Array.from({ length: n }, (_, i) => `word${i}`).join(' ');
+
+vi.mock('emdash', () => ({
+	getEmDashCollection: vi.fn(),
+	getTermsForEntries: vi.fn()
+}));
 
 describe('plainText', () => {
 	it('collects the words in prose blocks', () => {
@@ -197,6 +204,56 @@ describe('toSummary', () => {
 			entry({ publishedAt: published, updatedAt: new Date('2025-02-02T00:00:00Z') })
 		);
 		expect(edited.meta.updated).toBe('2025-02-02T00:00:00.000Z');
+	});
+});
+
+describe('getPosts', () => {
+	const entry = (id: string, dataId: string, title: string, noIndex = false) => ({
+		id,
+		data: {
+			id: dataId,
+			title,
+			status: 'published',
+			publishedAt: new Date('2026-01-01T00:00:00Z'),
+			content: [block('normal', 'words')],
+			...(noIndex ? { seo: { noIndex: true } } : {})
+		}
+	});
+
+	afterEach(() => {
+		vi.clearAllMocks();
+	});
+
+	it('carries term labels, falls back to the slug, and collects noIndex slugs', async () => {
+		vi.mocked(getEmDashCollection).mockResolvedValue({
+			entries: [entry('nixos', '01A', 'NixOS', true), entry('secure-boot', '01B', 'Secure Boot')],
+			cacheHint: {}
+		} as never);
+		vi.mocked(getTermsForEntries).mockResolvedValue(
+			new Map([
+				['01A', [{ slug: 'nixos', label: 'NixOS' }]],
+				['01B', [{ slug: 'secure-boot', label: '' }]]
+			]) as never
+		);
+
+		const result = await getPosts({ includeBodies: false });
+
+		expect(result.posts.map((post) => post.meta.tags)).toEqual([['NixOS'], ['secure-boot']]);
+		expect([...result.noIndex]).toEqual(['nixos']);
+	});
+
+	it('warns when the query fills the 200-row ceiling', async () => {
+		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+		vi.mocked(getEmDashCollection).mockResolvedValue({
+			entries: Array.from({ length: 200 }, (_, i) => entry(`post-${i}`, `id-${i}`, `Post ${i}`)),
+			cacheHint: {}
+		} as never);
+		vi.mocked(getTermsForEntries).mockResolvedValue(new Map() as never);
+
+		await getPosts({ includeBodies: false });
+
+		expect(warn).toHaveBeenCalledWith(expect.stringContaining('200-row'));
+		warn.mockRestore();
 	});
 });
 

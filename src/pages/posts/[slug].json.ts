@@ -7,15 +7,19 @@
  * reached by header instead of by URL.
  */
 import type { APIRoute } from 'astro';
-import { getEmDashEntry, getEntryTerms } from 'emdash';
+import { decodeSlug, getEmDashEntry, getEntryTerms } from 'emdash';
 import { jsonResponse, jsonDocument, notFoundResponse } from '../../lib/markdown';
 
 export const GET: APIRoute = async ({ params }) => {
-	const slug = params.slug!;
+	const slug = decodeSlug(params.slug);
+	if (!slug) return notFoundResponse();
+
 	const { entry, cacheHint } = await getEmDashEntry('posts', slug);
 	if (!entry) return notFoundResponse();
 	if (typeof Astro !== 'undefined' && Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
-	const tags = (await getEntryTerms('posts', entry.data.id, 'tag')).map((term) => term.slug);
+	const tags = (await getEntryTerms('posts', entry.data.id, 'tag')).map(
+		(term) => term.label || term.slug
+	);
 	return jsonResponse(jsonDocument(entry as never, { path: `/posts/${slug}`, tags, byline: true }));
 };

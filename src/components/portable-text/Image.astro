@@ -8,25 +8,79 @@
  * array, so this renders what the block actually carries. A block with only
  * `asset.url` is what every image looked like before the repair and must keep
  * rendering unchanged.
+ *
+ * The first image the renderer meets is the LCP candidate, so it is eager and
+ * high-priority; every later one stays lazy. The Portable Text renderer hands a
+ * type component its top-level block index, which is exact when the image opens
+ * the body but misses the first image when a paragraph precedes it, so
+ * Astro.locals carries a per-request flag as the fallback. Locals are
+ * request-scoped: a module-level flag would leak between concurrent Workers.
+ * The index check stays as the answer if the renderer ever stops providing
+ * writable locals.
+ *
+ * A missing alt and an explicitly empty one are different facts about the
+ * author's intent, so `data-alt-missing` marks the omission while both render
+ * `alt=""` (an <img> must carry the attribute, and an unnamed image is
+ * decorative to a screen reader either way). When a caption exists the image
+ * becomes a real <figure>/<figcaption>; without one it stays the bare <img>
+ * the prose styles already handle.
  */
 import { imageAttributes, type PortableTextImageNode } from './image';
 
 export interface Props {
 	node: PortableTextImageNode;
+	/** Position among the top-level Portable Text blocks, when passed. */
+	index?: number;
 }
 
-const attrs = imageAttributes(Astro.props.node);
+const node = Astro.props.node;
+const attrs = imageAttributes(node);
+const caption = typeof node?.caption === 'string' ? node.caption.trim() : '';
+
+let firstImage = false;
+if (attrs) {
+	firstImage = Astro.props.index === 0;
+	try {
+		const locals = Astro.locals as unknown as { __firstBodyImage?: boolean };
+		firstImage = firstImage || locals.__firstBodyImage !== true;
+		locals.__firstBodyImage = true;
+	} catch {
+		// Locals are not writable here; the index fallback above still stands.
+	}
+}
 ---
 
 {attrs && (
-	<img
-		src={attrs.src}
-		alt={attrs.alt}
-		width={attrs.width}
-		height={attrs.height}
-		srcset={attrs.srcset}
-		sizes={attrs.sizes}
-		loading="lazy"
-		decoding="async"
-	/>
+	<>
+		{caption ? (
+			<figure>
+				<img
+					src={attrs.src}
+					alt={attrs.alt ?? ''}
+					data-alt-missing={attrs.alt === null ? 'true' : undefined}
+					width={attrs.width}
+					height={attrs.height}
+					srcset={attrs.srcset}
+					sizes={attrs.sizes}
+					loading={firstImage ? undefined : 'lazy'}
+					fetchpriority={firstImage ? 'high' : undefined}
+					decoding="async"
+				/>
+				<figcaption>{caption}</figcaption>
+			</figure>
+		) : (
+			<img
+				src={attrs.src}
+				alt={attrs.alt ?? ''}
+				data-alt-missing={attrs.alt === null ? 'true' : undefined}
+				width={attrs.width}
+				height={attrs.height}
+				srcset={attrs.srcset}
+				sizes={attrs.sizes}
+				loading={firstImage ? undefined : 'lazy'}
+				fetchpriority={firstImage ? 'high' : undefined}
+				decoding="async"
+			/>
+		)}
+	</>
 )}

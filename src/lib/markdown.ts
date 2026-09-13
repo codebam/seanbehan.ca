@@ -83,9 +83,16 @@ function fitBlocks(value: unknown): PortableTextBlock[] {
 	return out;
 }
 
-/** The body alone, as markdown. */
+/**
+ * The body alone, as markdown.
+ *
+ * `prepareBody` is the one source of heading levels — the HTML page and the
+ * JSON document's `sections` both read it — so the converted body goes through
+ * it as well, or a post written entirely in `###` would export sections at
+ * level 2 beside a body full of `###`.
+ */
 export function bodyMarkdown(content: unknown): string {
-	const blocks = fitBlocks(content);
+	const blocks = fitBlocks(prepareBody(content).blocks);
 	// The converter's empty answer is a bare newline; a page with no body has
 	// no body, not a blank line posing as one.
 	return blocks.length ? portableTextToMarkdown(blocks) : '';

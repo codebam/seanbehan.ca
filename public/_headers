@@ -33,3 +33,28 @@
 
 /*.woff2
   Cache-Control: public, max-age=2592000
+
+# Security headers for static assets.
+#
+# Workers Assets answers /favicon.ico, /profile.webp and every hashed
+# /_astro/* file before the Worker is invoked, so the SECURITY_HEADERS record
+# in src/middleware.ts never reaches them: live checks on those three URLs
+# found HSTS and nosniff from the zone but no Referrer-Policy, X-Frame-Options
+# or Permissions-Policy. Keep this block in step with that record. The `/*`
+# pattern is deliberate here rather than one rule per extension — it covers
+# robots.txt, publickey.txt and the hashed bundles too, and it sets no
+# Cache-Control, so the cache rules above still own that header.
+#
+# Content-Security-Policy is deliberately absent. It is a document policy, and
+# nothing under public/ is a document: Astro writes the site's own policy,
+# hashes included, from security.csp in astro.config.mjs at render time — a
+# copy here could never know the build's hashes and would drift from
+# src/lib/csp.js. The editor-only inline variant is added per request in
+# src/middleware.ts after the session check, which a static asset has no
+# equivalent of.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  X-Frame-Options: DENY
+  Permissions-Policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), hid=(), idle-detection=(), magnetometer=(), microphone=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), serial=(), usb=(), web-share=(), xr-spatial-tracking=()

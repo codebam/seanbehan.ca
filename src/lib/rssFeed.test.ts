@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generateRSSFeed, absolutizeUrls, escapeXml, RSS_URL } from './rssFeed';
+import { generateRSSFeed, absolutizeUrls, escapeCdata, escapeXml, RSS_URL } from './rssFeed';
 import { renderBodyHtml } from './renderBody';
 import type { PostSummary } from './types';
 
@@ -24,6 +24,12 @@ describe('escapeXml', () => {
 	});
 });
 
+describe('escapeCdata', () => {
+	it('splits the one sequence that can end a CDATA section', () => {
+		expect(escapeCdata('a]]>b')).toBe('a]]]]><![CDATA[>b');
+	});
+});
+
 describe('generateRSSFeed', () => {
 	it('points the atom self link at the real /rss.xml route', () => {
 		const feed = generateRSSFeed([post], new Map());
@@ -38,6 +44,31 @@ describe('generateRSSFeed', () => {
 		expect(feed).toContain('<category>a&lt;b</category>');
 		expect(feed).not.toContain('<category>Rock & Roll</category>');
 		expect(feed).not.toContain('<category>a<b</category>');
+	});
+
+	it('splits a CDATA terminator in an editor-typed title and description', () => {
+		const tricky: PostSummary = {
+			...post,
+			meta: {
+				...post.meta,
+				title: 'Before ]]> after',
+				description: 'Description with ]]> inside.'
+			}
+		};
+		const feed = generateRSSFeed([tricky], new Map());
+
+		expect(feed).toContain('<title><![CDATA[Before ]]]]><![CDATA[> after]]></title>');
+		expect(feed).toContain(
+			'<description><![CDATA[Description with ]]]]><![CDATA[> inside.]]></description>'
+		);
+	});
+
+	it('splits a CDATA terminator in content:encoded too', () => {
+		const feed = generateRSSFeed([post], new Map([[post.path, '<p>a ]]> b</p>']]));
+
+		expect(feed).toContain(
+			'<content:encoded><![CDATA[<p>a ]]]]><![CDATA[> b</p>]]></content:encoded>'
+		);
 	});
 
 	it('emits one <category> element per tag', () => {

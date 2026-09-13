@@ -20,9 +20,12 @@ copy tables is not a change for this site.
 
 **The voice.** Inter does the interface — navigation, headings, labels,
 buttons, metadata, and the display type. Newsreader does the reading: the
-article body, and the résumé, which is a document. Fira Code (with a mono
-fallback stack) is code. Headlines get exactly one decorative move: an italic
-word set in the warm accent, which is also the colour of the wordmark's dot.
+article body, and the résumé, which is a document. Code is a local-first
+mono stack — Fira Code if the reader has it, then JetBrains Mono, Cascadia
+Code and the platform's monospace; no mono webfont ships, so the face is
+opportunistic rather than guaranteed. Headlines get exactly one decorative
+move: an italic word set in the warm accent, which is also the colour of the
+wordmark's dot.
 Everything that moves is under 0.6 s and a few pixels. The comments in
 `app.css` are the best summary of intent — the site is deliberately a page,
 not a dashboard.
@@ -36,10 +39,15 @@ footer is the one band that still carries the opposite palette
 (`panel-invert`); mid-page bands are fills, not inversions.
 
 **The composition.** A shared 1120 px inner column (`.shell`) and one vertical
-rhythm (`.section`: `padding-block: clamp(3.5rem, 7vw, 5.5rem)`) that every
-page-level section uses rather than restating. The home page is: hero (eyebrow,
-statement, one action) → a facts strip → project cards → latest writing, with
-`leadWith` swapping the middle two on the handle-first variant. Every other
+rhythm (`.section`: `padding-block: clamp(3.5rem, 7vw, 5.5rem)`) that
+page-level sections share. The home hero, the masthead and post masthead, the
+article body, the footer grid and the facts strip are the genuine exceptions;
+each has a named `--pad-*` token in `app.css` with the reason it differs, so
+the next change picks a name instead of restating a clamp. The call sites in
+`.astro` files still carry the clamps and are being routed through those names.
+The home page is: hero (eyebrow, statement, one action) → a facts strip →
+project cards → latest writing, with `leadWith` swapping the middle two on the
+handle-first variant. Every other
 page opens with the same `Masthead` — a folio line (uppercase label left, meta
 right, hairline under) above a display-xl headline and a deck capped at 60 ch.
 Long-form is one serif column (820 px, 1.75 leading) with Tailwind typography
@@ -51,7 +59,8 @@ pointed at the tokens; headings inside it are sans.
 - Shiki tokens, prose, buttons, inputs, scrollbars, selection — all
   token-derived.
 - The dark mode is one `prefers-color-scheme` block plus the footer's
-  inversion override. Print pins the light palette.
+  inversion override. Print pins the light palette and deliberately darkens
+  its quiet marks for paper (documented in the surfaces list below).
 - The fonts are two variable files plus metric-matched fallbacks
   (no swap reflow); the build script is `tools/fonts/build-fonts.sh`.
 - Variant differences are copy and ordering (`leadWith: 'facts' | 'work'`),
@@ -65,11 +74,15 @@ change. These hold a copy of the values and have to be re-inked with them:
 `src/pages/og/[slug].png.ts` (the light values, hard-coded), `src/pages/site.webmanifest.ts`,
 `public/favicon.svg` and `tools/favicon/build-favicon.sh` (regenerate the
 raster set with it), `resume/metadata.yaml` (the PDF's LaTeX palette), and the
-display ads in `public/img/`. `Base.astro`'s two `theme-color` metas take the
-same pair the manifest does. This list exists because the redesign of Sept 2026
-updated `app.css` and `Base.astro` and nothing else, and the social cards, the
-manifest, the favicon, the résumé PDF and the ads spent a commit showing the
-previous design.
+display ads in `public/img/`, and the `@media print` block in
+`src/styles/app.css` (it keeps deliberately ink-optimised values — `--muted
+#475569`, `--dim #64748b`, `--accent #1d4ed8` — rather than reading the light
+tokens, because the screen values wash out on paper; that is a decision, not
+drift). `Base.astro`'s two `theme-color` metas take the same pair the manifest
+does. This list exists because the redesign of Sept 2026 updated `app.css` and
+`Base.astro` and nothing else, and the social cards, the manifest, the
+favicon, the résumé PDF and the ads spent a commit showing the previous
+design.
 
 ---
 

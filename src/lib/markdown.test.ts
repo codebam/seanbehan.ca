@@ -116,6 +116,13 @@ describe('bodyMarkdown', () => {
 	it('is empty for a body that is not Portable Text', () => {
 		expect(bodyMarkdown(undefined)).toBe('');
 	});
+
+	it('re-bases stored heading levels the way the HTML page does', () => {
+		// The archive was written as `###`; exporting the raw levels put `###
+		// headings beside `sections[].level === 2` in the JSON.
+		expect(bodyMarkdown([block('h3', [span('Setup')])])).toContain('## Setup');
+		expect(bodyMarkdown([block('h3', [span('Setup')])])).not.toContain('### Setup');
+	});
 });
 
 describe('markdownDocument', () => {
@@ -190,6 +197,18 @@ describe('jsonDocument', () => {
 			content: bodyMarkdown(body)
 		});
 		expect(doc.sections).toEqual([{ id: 'setup', text: 'Setup', level: 2 }]);
+	});
+
+	it('exports the body at the levels prepareBody chose for its sections', () => {
+		const allH3 = {
+			...entry,
+			data: { ...entry.data, content: [block('h3', [span('Setup')])] }
+		};
+		const doc = jsonDocument(allH3 as never, { path: '/posts/nixos' });
+
+		expect(doc.sections).toEqual([{ id: 'setup', text: 'Setup', level: 2 }]);
+		expect(doc.content).toContain('## Setup');
+		expect(doc.content).not.toContain('### Setup');
 	});
 
 	it('keeps every field present on a page that has none of them', () => {

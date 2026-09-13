@@ -20,6 +20,7 @@ export interface PortableTextImageNode {
 	asset?: { url?: string; variants?: ImageVariant[] | null } | null;
 	src?: string;
 	alt?: string | null;
+	caption?: string | null;
 	width?: number | string | null;
 	height?: number | string | null;
 	variants?: ImageVariant[] | null;
@@ -27,7 +28,15 @@ export interface PortableTextImageNode {
 
 export interface ImageAttributes {
 	src: string;
-	alt: string;
+	/**
+	 * The author's alt text, `''` when they marked the image decorative, or
+	 * `null` when the block carried no alt at all. The component renders both
+	 * as `alt=""` — an `<img>` needs the attribute — but flags `null` with
+	 * `data-alt-missing` so an audit can tell an authoring omission from a
+	 * deliberate decorative image. EmDash's block contract has no third state:
+	 * the key is either present (even empty) or absent.
+	 */
+	alt: string | null;
 	width?: number;
 	height?: number;
 	srcset?: string;
@@ -55,7 +64,7 @@ export function imageAttributes(
 
 	const attributes: ImageAttributes = {
 		src,
-		alt: typeof node?.alt === 'string' ? node.alt : ''
+		alt: typeof node?.alt === 'string' ? node.alt : null
 	};
 
 	const width = positiveInteger(node?.width);

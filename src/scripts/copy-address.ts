@@ -66,5 +66,10 @@ async function onClick(event: MouseEvent) {
 
 for (const holder of Array.from(document.querySelectorAll<HTMLElement>('[data-copy-text]'))) {
 	decorate(holder);
-	holder.addEventListener('click', onClick);
 }
+
+// One listener for every holder, present or future: an address can appear in
+// more than one block on the contact page, and per-element listeners are what
+// scripts/copy-code.ts exists to avoid. `document` is the stable container
+// here because the holders are not inside one shared prose wrapper.
+document.addEventListener('click', onClick);

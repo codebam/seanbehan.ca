@@ -116,10 +116,24 @@ fi
 
 ruleset="$(api GET "/zones/$zone_id/rulesets/phases/http_request_cache_settings/entrypoint")"
 if succeeded "$ruleset"; then
-expr="$(printf '%s' "$ruleset" | json "print(next((r.get('expression','') for r in ((d.get('result') or {}).get('rules') or []) if r.get('description') == 'Cache prerendered HTML'), '(no matching cache rule)'))")"
-echo "html cache rule: $expr"
+printf '%s' "$ruleset" | json "
+rules = ((d.get('result') or {}).get('rules') or [])
+if not rules:
+    print('cache rule: none in this phase (the read succeeded; the zone has no cache rules)')
+for r in rules:
+    ap = r.get('action_parameters') or {}
+    key = ap.get('cache_key')
+    print('cache rule:', r.get('description'),
+          '| id:', r.get('id'),
+          '| enabled:', r.get('enabled'),
+          '| cache:', ap.get('cache'),
+          '| edge_ttl:', json.dumps(ap.get('edge_ttl')),
+          '| browser_ttl:', json.dumps(ap.get('browser_ttl')),
+          '| cache_key:', 'custom' if key else 'default',
+          '|', r.get('expression'))
+"
 else
-echo "html cache rule: token cannot read it (needs Zone → Cache Rules → Read)" >&2
+echo "cache rule: token cannot read it (needs Zone → Cache Rules → Read)" >&2
 fi
 fi
 
@@ -196,9 +210,10 @@ done
 
 if [ "$APPLY" = 1 ]; then
 if [ "$WWW_ONLY" = 0 ]; then
-# --no-edge-cache leaves the rule in bypass: the shared edge entry is what
-# was serving www before the Worker could redirect, so keep it off until the
-# legacy Page Rule is gone and the cache key can be trusted.
+# --no-edge-cache replaces the HTML rule with a bypass: the shared edge entry
+# is what was serving www before the Worker could redirect, so keep it off
+# until the legacy Page Rule is gone and the host-scoped rule can be trusted.
+# The card rule is host-scoped and public, so it stays cache-eligible.
 if [ "$EDGE_BYPASS" = 1 ]; then
 cache_script=cache-bypass.sh
 else
@@ -206,7 +221,7 @@ cache_script=cache-rule.sh
 fi
 for zone in "${ZONES[@]}"; do
 if ! bash "$(dirname "$0")/$cache_script" "$zone"; then
-echo "warning: could not update the HTML cache rule for $zone (token may lack Cache Rules edit)" >&2
+echo "warning: could not update the cache rules for $zone (token may lack Cache Rules edit)" >&2
 fi
 done
 fi

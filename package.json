@@ -17,8 +17,8 @@
 		"deploy:codebam": "env -u CLOUDFLARE_API_TOKEN -u CLOUDFLARE_ACCOUNT_ID -u CF_API_TOKEN npm run build:codebam && wrangler deploy --env codebam",
 		"check": "astro check",
 		"test": "vitest",
-		"test:scripts": "node --test scripts/repair-post-paragraphs.test.mjs",
-		"test:run": "vitest run",
+		"test:scripts": "node --test scripts/*.test.mjs",
+		"test:run": "vitest run && npm run test:scripts",
 		"smoke": "node scripts/smoke.mjs",
 		"mockups": "node tools/mockups/build.mjs",
 		"ads": "node tools/ads/build-ads.mjs",
@@ -69,7 +69,7 @@
 	"allowScripts": {
 		"esbuild@0.28.2": true,
 		"esbuild@0.28.1": true,
-		"workerd@1.20260908.1": true,
+		"workerd@1.20260910.1": true,
 		"better-sqlite3@12.11.1": true
 	}
 }

@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       apply:
-        description: Apply Browser Cache TTL and HSTS, then purge both zones
+        description: Apply Browser Cache TTL and HSTS, bypass HTML edge caching, then purge
         type: boolean
         default: false
 
@@ -24,7 +24,12 @@ jobs:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
         run: |
           if [ "${{ inputs.apply }}" = "true" ]; then
-            bash tools/cloudflare/zone-posture.sh --apply
+            # Applying without --no-edge-cache would run cache-rule.sh, whose
+            # cache-on rule is what let a hostless apex entry answer www and
+            # skip the redirect. Keep the HTML rule in bypass until the
+            # host-scoped cache key is verified; --drop-legacy-cache removes
+            # the Page Rules that cache everything.
+            bash tools/cloudflare/zone-posture.sh --apply --no-edge-cache --drop-legacy-cache
           else
             bash tools/cloudflare/zone-posture.sh
           fi

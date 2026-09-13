@@ -18,9 +18,8 @@ const posts = all.filter((post) => post.meta.tags.some((tag) => slugifyTag(tag) 
 // request now, so the URL has to answer for itself.
 if (posts.length === 0) return Astro.rewrite('/404');
 
-// Prefer a known proper-noun label, then the casing a post actually used, then
-// the slug. The old frontmatter was lowercase, so first-seen casing alone
-// produced headings like "nixos".
+// The post's tags now carry the term's label, so this is usually the display
+// name already; displayTag catches terms that only ever had a lowercased slug.
 const fromPost = posts[0].meta.tags.find((tag) => slugifyTag(tag) === target) ?? target;
 const display = displayTag(fromPost);
 const robots = posts.length < 2 ? 'noindex, follow' : undefined;

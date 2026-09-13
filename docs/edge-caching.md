@@ -1,145 +1,158 @@
 # Edge caching
 
-## Current state: HTML is deliberately not cached at the edge
+There are two caches in front of a reader, and the mistake this file exists to
+prevent is believing a header set for one of them controls the other.
 
-The HTML policy in `src/middleware.ts` is `private, max-age=0, must-revalidate`
-until the zones' cache keys distinguish hosts. The zone cache matched entries by
-path on these zones, so an apex HTML copy answered `www` requests and a cached
-response never reached the middleware that would 301 them (proved live
-2026-09-13: warm `seanbehan.ca/posts`, then `www.seanbehan.ca/posts` returned
-the apex copy with `age: 0`). `private` keeps Cloudflare from storing the
-response and makes the Worker skip its own `cache.put`; feeds, images and the
-immutable asset routes set their own `public` policies and still cache.
+- **Cloudflare's zone cache** runs before the Worker. The zone's Cache Rule
+  decides whether a response is eligible, and that rule **overrides the origin's
+  `Cache-Control: private`**. Only `no-store` survives it. An extensionless
+  admin page carrying `private, no-store` answers `cf-cache-status: BYPASS`
+  every time, while `/` carrying `private, max-age=0, must-revalidate` answers
+  from cache with a rising `age`.
+- **The Worker's own Cache API** (`caches.default`) is inside the Worker, and
+  `src/middleware.ts` is its only policy. It is the cache that stores a route's
+  own public policy, keeps the browser-facing policy beside it in
+  `X-Edge-Browser-Cache-Control`, and reports itself as `X-Edge-Cache: HIT` or
+  `MISS`. HTML never enters it: `HTML_CACHE` is `private`, and the
+  middleware's `safeToStore` refuses a `private` response.
 
-Restore the `public, max-age=0, s-maxage=600, must-revalidate` value once the
-zone's Cache Rule cache key includes the host, or the www Page Rule/Redirect
-Rule is in place and verified. `tools/cloudflare/cache-bypass.sh` is the
-companion zone-side switch (Cache Rule → bypass); `tools/cloudflare/cache-rule.sh`
-puts the cache-on rule back.
+The `/__host/<host>` prefix in `edgeCacheKey` scopes the Worker cache key only.
+It does not and cannot scope Cloudflare's zone cache, which keys the URL the
+client sent before this Worker runs.
 
-Every page on this site is rendered per request by a Worker, out of D1. That is
-the trade the CMS bought: a post can be edited in the admin panel and be live
-without a build. What it costs is that a page nobody has asked for recently is
-assembled from a database query, a Portable Text render and — on a post — a
-syntax highlighter, every time.
+## The failure the current rules address
 
-The edge cache is what pays that back. HTML is served with:
+An earlier Cache Rule marked extensionless and `.html` paths eligible with no
+`http.host` clause. On these zones an apex HTML entry then answered a www
+request byte for byte, before the middleware's www-to-apex 301 could run, so
+`www.seanbehan.ca/` returned 200 instead of 301. Origin `private` did not stop
+it; that is exactly what the rule overrides.
 
-```
-Cache-Control: public, max-age=0, s-maxage=600, must-revalidate
-```
+The repository's scripts could not fix it either. They looked for a rule
+described as `Cache prerendered HTML`, while the live rule was named `Cache
+rendered HTML`; the merge kept every rule that did not match that description
+and appended the new one behind them. Cloudflare evaluates Cache Rules in order,
+so the stale hostless rule kept winning through four rounds of "applying the
+fix".
 
-set in `src/middleware.ts`, on a first render and on a Worker cache HIT alike.
-`max-age=0, must-revalidate` means a reader's own browser revalidates on every
-visit, so nobody is served a stale page from their disk cache. `s-maxage=600`
-is the shared-cache half, which only a shared cache reads — it tells Cloudflare
-it may hold the response for ten minutes.
+`tools/cloudflare/cache-rule.sh` and `cache-bypass.sh` now identify the target
+by the cache-key clause in its expression — the extension test for HTML, the
+`/og/` path test for cards — replace the first match **in place**, collapse any
+later duplicates, and only append when no such rule exists. They can therefore
+replace a cache-on rule they did not create. `CF_CACHE_RULE_ID` is an escape
+hatch for a rule whose expression has also drifted; a pinned id that matches
+nothing is an error, not a silent append.
 
-That directive alone does nothing here, and the reason is worth stating plainly
-because it looks like it should work.
+The safe posture is:
 
-## Why the middleware does the caching
+- **HTML rule: bypass** (`cache-bypass.sh`, the `--no-edge-cache` path in
+  `zone-posture.sh`). With the HTML rule off, nothing can answer a www request
+  before the Worker's 301, and the Worker never stores HTML itself.
+- **Card rule: cache on** and host-scoped. `/og/<slug>.png` is public, stable,
+  host-scoped and draws with satori and resvg when cold, so it keeps a rule of
+  its own even while HTML is bypassed.
 
-The rule below was written when this site was prerendered HTML served by Pages, where it did the whole job. After the move to a Worker it was still in place and still looked correct — but rendered pages stopped getting the window, because `s-maxage` only counts once something _stores_ the response, and a response rendered inside a Worker does not pass through the rule's cache by itself. During that stretch every page view went to D1; it cost a production outage's worth of confusion, which is why this page exists. Live check on 2026-08 (both zones): first GET answers `X-Edge-Cache: MISS`, second answers `cf-cache-status: HIT` — on a Workers custom domain `caches.default` _is_ the shared edge cache, so the rule (eligibility) and the Cache API (store/read) cooperate. Keep both; neither alone gives a rendered page its ten-minute window.
+Re-run `cache-rule.sh` to put the HTML rule back as host-scoped and
+cache-eligible once the www redirect is verified through the real edge.
 
-So the Worker caches its own output, in `src/middleware.ts`, through the Cache
-API: a cacheable `GET` is looked up in `caches.default` before anything
-renders, and a rendered page is put back into it for the ten minutes
-`s-maxage` describes. `X-Edge-Cache: HIT` or `MISS` on the response says which
-happened — a second request for the same page should say HIT.
+## Why the Worker caches public routes at all
 
-The stored copy cannot carry the reader's half of that policy: a stored
-`max-age=0` tells the Cache API to store nothing, so the copy is written with
-the edge window instead (`max-age=600` for HTML, the route's own TTL for a feed
-or a card). The browser policy is kept beside it in
-`X-Edge-Browser-Cache-Control` and swapped back before a HIT is returned — the
-header is internal and never reaches a client. Without that marker a reader
-whose request was answered from the Worker's cache would be told `max-age=600`
-rather than the revalidate-every-visit policy the route wrote.
+Every page is rendered per request by a Worker, out of D1. That is the trade the
+CMS bought: a post can be edited in the admin panel and be live without a build.
+What it costs is that a page nobody has asked for recently is assembled from a
+database query, a Portable Text render and — on a post — a syntax highlighter,
+every time.
 
-Two rules in that middleware exist for DDoS reasons, not caching tidiness:
-the cache key drops the query string on every route except `search.json`
-(a `?nonce=1..N` flood must not manufacture an unlimited supply of fresh
-anonymous keys), and a request leaves the cache only when a **real** session
-is attached to it, never on the mere presence of a cookie
-(a `Cookie: emdash=fake` flood must not buy itself an uncached render per
-request). The full rationale is in the comments where the rules live.
+A route that sets its own public `Cache-Control` — the feed, `/og/<slug>.png`,
+image transforms — is looked up in `caches.default` before the route runs and
+put back after it renders. On a HIT the response is returned with the stored
+`Cache-Control` replaced by the route's browser policy from
+`X-Edge-Browser-Cache-Control`, and the internal marker is removed. The stored
+copy cannot carry that browser policy directly: `max-age=0` would tell the
+Cache API to store nothing, so the copy is written with the route's own TTL
+(a feed's hour, a card's month) and the marker carries the reader-facing half.
 
-Requests carrying an EmDash session cookie skip the cache in both directions. A
-signed-in editor gets the admin bar and the edit affordances in the markup, and
-storing that copy under the page's URL would serve one person's session
-furniture to everyone.
+Two rules in the middleware exist for DDoS reasons, not cache tidiness: the
+cache key drops the query string on every route except `search.json` and the
+archive's `?q=`, so a `?nonce=1..N` flood cannot manufacture unlimited fresh
+anonymous keys; and a request leaves the cache only when a **real** session is
+attached to it, never on the mere presence of a cookie, so `Cookie: emdash=fake`
+does not buy an uncached render per request. The same middleware sends
+`no-store` on any response carrying editor context (`locals.user.role >= 30`)
+or a `_preview=<token>` query: those are per-person or revocable, and `private`
+would not have kept them out of the zone cache.
 
-## The rule
+## The rules
 
-Dashboard → **Caching** → **Cache Rules** → **Create rule**, on the
-`seanbehan.ca` zone.
+Dashboard → **Caching** → **Cache Rules**, on the `seanbehan.ca` zone. The
+scripts write the same two rules without the dashboard:
 
-| Field             | Value                                                                                  |
-| ----------------- | -------------------------------------------------------------------------------------- |
-| Rule name         | `Cache rendered HTML`                                                                  |
-| Expression        | `(http.request.uri.path.extension eq "" or http.request.uri.path.extension eq "html")` |
-| Cache eligibility | **Eligible for cache**                                                                 |
-| Edge TTL          | **Use cache-control header if present, use default otherwise**, default `10 minutes`   |
-| Browser TTL       | **Respect origin**                                                                     |
+| Rule name             | Expression                                                                                                            | Cache    | Notes                                                 |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------- |
+| `Cache rendered HTML` | `(http.request.uri.path.extension eq "" or http.request.uri.path.extension eq "html") and http.host eq "<zone>"`      | eligible | Vary normalised on `Accept`, both TTLs respect origin |
+| `Cache social cards`  | `(http.request.uri.path.extension eq "png" and starts_with(http.request.uri.path, "/og/")) and http.host eq "<zone>"` | eligible | No vary: card bytes do not change with `Accept`       |
 
-It is still worth having — it governs the static assets Cloudflare serves ahead
-of the Worker — but it is not what caches a post. Or, the same rule without the
-dashboard:
+The host clause is the whole point of the HTML rule: without it a cached apex
+entry can answer www. The card rule carries the same clause for the same reason.
+The HTML rule also configures `Vary: Accept`, because the Worker sends that
+header on `/posts/<slug>`, `/pages/<slug>` and `/resume` (the paths
+`isNegotiablePath()` recognises in `src/lib/accept.ts`). Without the Cache Rule
+setting, Cloudflare ignores the origin header and can serve a cached HTML copy
+to a request that asked for `text/markdown` or `application/json` before the
+Worker rewrites it. The script normalises `Accept` against the formats the site
+serves, so browser, markdown and JSON variants key separately without
+fragmenting on each browser's full Accept string. The card rule has no such
+block: a PNG does not negotiate.
+
+Run the scripts with:
 
 ```sh
-CF_API_TOKEN=… bash tools/cloudflare/cache-rule.sh          # seanbehan.ca
-CF_API_TOKEN=… bash tools/cloudflare/cache-rule.sh codebam.ca
+CF_API_TOKEN=… bash tools/cloudflare/cache-bypass.sh           # HTML off, cards on
+CF_API_TOKEN=… bash tools/cloudflare/cache-rule.sh codebam.ca  # HTML cached, host-scoped
 ```
 
 The token needs **Zone → Cache Rules → Edit**, plus **Zone → Zone → Read** for
-the name lookup, scoped to the zone you are changing. Wrangler's own OAuth
-token will not do: it carries `zone (read)` and nothing that can write a
-ruleset, so `wrangler whoami` looking healthy says nothing about this.
+the name lookup and **Zone → Cache Purge** for the workflows that purge. It is
+scoped per zone, so each origin is a separate run. Wrangler's own OAuth token
+will not do: it carries `zone (read)` and nothing that can write a ruleset.
 
-The script is idempotent — it reads the existing cache ruleset, replaces any
-rule with the same description, and writes the set back, so re-running after an
-edit updates in place instead of stacking duplicates.
+`.github/workflows/zone-posture.yml` reports by default and applies with
+`--apply --no-edge-cache --drop-legacy-cache`; the `--no-edge-cache` is
+deliberate, because applying the cache-on rule is what re-armed the www bug.
+`.github/workflows/ci.yml` also runs `zone-posture.sh` in report mode whenever
+`CF_API_TOKEN` is present, and skips with a notice rather than failing when it
+is absent (forks, Dependabot's `workflow_call`): zone state is otherwise
+unversioned, which is why it drifted unnoticed.
 
-### Vary for negotiated content
-
-The Worker sets `Vary: Accept` on `/posts/<slug>`, `/pages/<slug>` and
-`/resume` — the paths `isNegotiablePath()` recognises in `src/lib/accept.ts`.
-Cloudflare only honours that header when the Cache Rule's `vary` setting is
-configured; if the setting is absent, Cloudflare ignores the origin header and
-can serve a cached HTML copy to a request that asked for `text/markdown` or
-`application/json` before the Worker gets to rewrite it. The script above
-writes a `vary` block that normalises `Accept` against the formats the site
-serves, so browser, markdown and JSON variants key separately without
-fragmenting on each browser's full Accept string.
-
-Run the script once after deploying this change. Without it the smoke test's
-Accept-header checks are the regression detector: they ask the deployed site for
-the same URL in each format and fail if HTML comes back instead.
-
-Notes on the shape of it:
+### Notes on the shape of it
 
 - **Extension match, not `/*`.** Everything under `/_astro` is content-hashed
   and already served `immutable`; a blanket rule would put the fonts, images
-  and JS bundles under this TTL too, which is strictly worse for them.
-  Extensionless paths (`/`, `/posts`, `/posts/some-slug`) and `.html` are
-  exactly the rendered pages.
-- **Respect origin, both TTLs.** The TTL lives in `src/middleware.ts`, in this
-  repo, next to the comment explaining it — rather than as a number in a
-  dashboard nobody diffs. Changing the cache window is a commit, not a click,
-  and `EDGE_SECONDS` there is the one place it is written down.
-- **The admin is excluded by its own headers.** Everything under `/_emdash` is
-  sent `private, no-store` by the middleware, so the rule above can never hold
-  a signed-in view of the CMS at the edge.
-- **`/rss.xml` is unaffected.** It has an extension, so the expression does not
-  match it, and it keeps the `max-age=3600` its route sets. The same goes for
-  `/og/<slug>.png`, which is cached for a month.
-- **A route's own TTL is what the Cache API stores.** The stored copy is
-  written with the response's own `Cache-Control` when it has one, and only
-  falls back to `EDGE_SECONDS` when it does not. It used to overwrite every
-  route with `EDGE_SECONDS`, which quietly cut the social cards from a month to
-  ten minutes — satori and resvg re-rasterising every card on the site, six
-  times an hour, for a URL only a scraper ever asks for.
+  and JS bundles under the HTML TTL too. Extensionless paths (`/`, `/posts`,
+  `/posts/some-slug`) and `.html` are exactly the rendered pages; the card rule
+  names `/og/` explicitly for the one non-HTML route that wants a shared window.
+- **Respect origin, both TTLs.** The TTL lives in the route or middleware, in
+  this repo, next to the comment explaining it — rather than as a number in a
+  dashboard nobody diffs. Changing a cache window is a commit, not a click.
+- **The admin and previews are excluded by their own headers.** Everything
+  under `/_emdash`, every editor render and every `_preview=` response is sent
+  `private, no-store`, so no rule can hold a signed-in or revoked view.
+- **`/rss.xml` is unaffected by the HTML rule.** It has an extension, so the
+  expression does not match; it keeps the `max-age=3600` its route sets. The
+  generated cards are handled by their own rule.
+
+## The social-card route
+
+`/og/<slug>.png` renders with satori and resvg and advertises
+`public, max-age=2592000, s-maxage=2592000`. The Worker's Cache API stores it
+for the month and a repeat is `X-Edge-Cache: HIT`; but Cloudflare's zone cache
+only stores a Worker response for a path its Cache Rule marks eligible, and the
+old HTML-only rule never matched `.png`. Every repeat still reported
+`cf-cache-status: BYPASS` and woke the Worker, and because a Cache API write is
+not immediately visible to another request, a scraper's immediate retry could
+render the card twice before the Worker cache caught up. The `Cache social
+cards` rule above is the fix; it takes effect when it is applied to the zone,
+not when the Worker is deployed.
 
 ## Purge on deploy
 
@@ -148,25 +161,25 @@ The reason to purge changed with the move off Pages, but it did not go away.
 When the site was prerendered, stale HTML pointed at content-hashed bundles
 that only existed in the deployment that built them, so serving a cached page
 after a deploy meant 404s on hydration. Now the deployed Worker serves whatever
-the database holds, and the risk is milder: ten minutes of a page rendered by
-the previous version of the templates.
+the database holds, and the risk is milder: a page rendered by the previous
+version of the templates. The purge still has to happen, because a zone cache
+entry (and a `caches.default` entry — they share the zone's cache on a Workers
+custom domain) outlives the deploy otherwise.
 
-What has not changed is that a deploy should be visible when it finishes, not
-ten minutes later. `.github/workflows/deploy.yml` runs
-`tools/cloudflare/purge.sh` for each zone immediately after `wrangler deploy`,
-and `npm run deploy` does the same locally when `CF_API_TOKEN` is set —
-printing a skip notice when it is not, so a deploy from a machine without the
-token still works and says so.
+`.github/workflows/deploy.yml` runs `tools/cloudflare/purge.sh` for each zone
+immediately after `wrangler deploy`, and `npm run deploy` does the same locally
+when `CF_API_TOKEN` is set — printing a skip notice when it is not, so a deploy
+from a machine without the token still works and says so.
 
 ## Content changes are not deploys
 
-Publishing a post does not run a deploy, so nothing purges — and the archive,
-the home page and the feed would keep serving their cached copies for up to ten
-minutes.
+Publishing a post does not run a deploy, so nothing purges automatically. With
+the HTML rule in bypass every page is rendered fresh; once the host-scoped rule
+is back, a cached page can be up to its edge window old.
 
-That is the intended behaviour: ten minutes is short enough that it reads as
-"the site catches up", and the alternative is a purge on every content write,
-which would throw away the whole zone's cache each time a typo is fixed.
+That is the intended behaviour: a short window is how the site "catches up"
+without purging the whole zone every time a typo is fixed. The targeted purge
+is the alternative when it matters.
 
 **The targeted purge now works.** It did not until Sept 2026, and the reason is
 worth keeping: every page that queries content calls
@@ -197,8 +210,7 @@ save. Check it against a local `wrangler dev` on a real build, where nothing
 sits in front of the Worker, or against the build itself: the provider is
 bundled as `dist/server/chunks/_virtual_astro_cache-provider_*.mjs`.
 
-Nothing calls it yet — the ten-minute window is still the trade this site
-makes — but the capability is real rather than described.
+Nothing calls `invalidate` yet; the window is still the trade this site makes.
 
 ## Static assets are not this file's business
 
@@ -217,61 +229,47 @@ but confusing, and easy to read as a bug. One rule per extension.
 
 ## Browser Cache TTL: the day-long warm HIT (operator action)
 
-Reproduced live on 2026-09-13. A warm Worker HIT for HTML returned:
-
-```
-Cache-Control: public, max-age=86400
-CF-Cache-Status: BYPASS
-X-Edge-Cache: HIT
-```
-
-while a forced fresh render (`Authorization: Bearer …`) or a `HEAD` returned
-the origin policy:
-
-```
-Cache-Control: public, max-age=0, s-maxage=600, must-revalidate
-```
-
-The Worker was doing its job — `X-Edge-Cache: HIT` comes from the Cache API,
-whose stored copy carries the 600 s edge window — but the zone's Browser Cache
-TTL rewrote the browser-facing `max-age` to a day on the way out. The route
-files are correct; changing their TTLs would not fix this. The operator step
-is the zone setting, and it is deliberately not attempted from this repo.
+Reproduced live on 2026-09-13. A warm Worker HIT for HTML returned
+`Cache-Control: public, max-age=86400`, while the route and middleware sent
+`private, max-age=0, must-revalidate`. The Worker was doing its job; the zone's
+Browser Cache TTL rewrote the browser-facing `max-age` to a day on the way out.
+The route files were correct; changing their TTLs would not fix that. The
+operator step is the zone setting, and it is deliberately not attempted from
+this repo.
 
 **Operator step, both zones (`seanbehan.ca` and `codebam.ca`):**
 
 1. Dashboard → **Caching** → **Configuration** → **Browser Cache TTL** →
    **Respect Existing Headers** (not a fixed default).
-2. Check the **Cache Rule** from "The rule" above still says Browser TTL
+2. Check the Cache Rules from "The rules" above still say Browser TTL
    **Respect origin** — a Cache Rule overrides the zone default.
 3. Purge both zones (or run `tools/cloudflare/purge.sh`) so copies written with
    the old header are gone.
 
-**Acceptance — run each command twice and read the second response (the warm
-Worker HIT):**
+**Acceptance — run each command twice and read the second response:**
 
 ```sh
-# HTML: the reader must be told to revalidate every visit.
+# HTML: the reader must revalidate, and the Worker refuses to store it.
 curl -sS -D - -o /dev/null https://seanbehan.ca/about | grep -i cache-control
-# expect: cache-control: public, max-age=0, s-maxage=600, must-revalidate
+# expect: cache-control: private, max-age=0, must-revalidate
 
 # A route policy is left alone.
 curl -sS -D - -o /dev/null https://seanbehan.ca/rss.xml | grep -i cache-control
 # expect: cache-control: max-age=3600
 
-# Confirm the request was actually a HIT, and that the edge copy is inside
-# its ten-minute window.
-curl -sS -D - -o /dev/null https://seanbehan.ca/about | grep -iE '^(x-edge-cache|cf-cache-status|age):'
-# expect: x-edge-cache: HIT, and age: below 600
+# A card keeps the month, and the outer cache should answer the second request
+# with cf-cache-status: HIT once the card rule is applied.
+curl -sS -D - -o /dev/null https://seanbehan.ca/og/site.png | grep -iE '^(cache-control|cf-cache-status):'
+# expect: cache-control: public, max-age=2592000, s-maxage=2592000
 ```
 
-If HTML still reports `max-age=86400`, the Cache Rule's Browser TTL is the
-first suspect (it wins over the zone default), then the zone setting. Both
-origins have to be changed independently.
+If HTML still reports `max-age=86400`, the zone's Browser Cache TTL is the first
+suspect (a Cache Rule with Browser TTL respect-origin wins over the zone
+default), then the zone setting. Both origins have to be changed independently.
 
 - `public/_headers` is only read when the Worker is deployed with the assets
-  directory it sits in. `wrangler deploy` prints `Parsed N valid header
-rules`; if that count is not what you expect, the rules are not live.
+  directory it sits in. `wrangler deploy` prints `Parsed N valid header rules`;
+  if that count is not what you expect, the rules are not live.
 
 ## Required tokens
 
@@ -279,3 +277,7 @@ rules`; if that count is not what you expect, the rules are not live.
 | --------------- | ------------------------ | ------------------------------------------------------------------------ |
 | `CF_API_TOKEN`  | the deploy and the purge | Zone → Cache Purge, Zone → Zone → Read, Account → Workers Scripts → Edit |
 | `CF_ACCOUNT_ID` | the deploy               | —                                                                        |
+
+The Cache Rule scripts need **Zone → Cache Rules → Edit** in addition; the
+workflows that call them use the same `CF_API_TOKEN`, so it has to carry both
+sets of scopes.

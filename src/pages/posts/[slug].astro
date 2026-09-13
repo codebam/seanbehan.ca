@@ -6,7 +6,7 @@
  * sitemap, but a draft URL can still be shared, and the layout marks it
  * noindex.
  */
-import { getEmDashEntry, getEntryTerms } from 'emdash';
+import { getContentSeo, getEmDashEntry, getEntryTerms, getSeoMeta } from 'emdash';
 import { PortableText } from 'emdash/ui';
 import Base from '../../layouts/Base.astro';
 import PostList from '../../components/PostList.astro';
@@ -14,8 +14,8 @@ import Block from '../../components/portable-text/Block.astro';
 import Code from '../../components/portable-text/Code.astro';
 import Image from '../../components/portable-text/Image.astro';
 import { getPosts, prepareBody, toSummary } from '../../lib/posts';
-import { LEGAL_NAME } from '../../lib/site';
-import { slugifyTag } from '../../lib/tags';
+import { LEGAL_NAME, site } from '../../lib/site';
+import { displayTag, slugifyTag } from '../../lib/tags';
 import type { PostSummary } from '../../lib/types';
 
 /** How many "keep reading" entries a post ends with. Two fills the row. */
@@ -33,11 +33,38 @@ const { entry, cacheHint } = await getEmDashEntry('posts', slug);
 if (!entry) return Astro.rewrite('/404');
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
-const tags = (await getEntryTerms('posts', entry.data.id, 'tag')).map((term) => term.slug);
+const tags = (await getEntryTerms('posts', entry.data.id, 'tag')).map(
+	(term) => term.label || term.slug
+);
 const post = toSummary(entry as never, tags);
 const { blocks, headings } = prepareBody(entry.data.content);
 
-const { posts } = await getPosts({ includeBodies: false });
+const seo = getSeoMeta(entry, {
+	siteTitle: site.name,
+	siteUrl: site.url,
+	path: `/posts/${slug}`,
+	defaultTitle: entry.data.title
+});
+
+/**
+ * Base prefers a post's own summary over the `ogTitle`/`ogDescription` props,
+ * so the SEO panel's resolved values ride on a copy of that summary: the page
+ * still renders `post`, with the stored title and excerpt, while the head sees
+ * the editor's overrides. An explicit canonical is the only one passed through
+ * — without one, Base keeps choosing the origin by draft/published state.
+ */
+const headPost: PostSummary = {
+	...post,
+	meta: {
+		...post.meta,
+		title: seo.ogTitle,
+		description: seo.description ?? undefined
+	}
+};
+const canonical = getContentSeo(entry)?.canonical ? (seo.canonical ?? undefined) : undefined;
+
+const { posts, cacheHint: postsHint } = await getPosts({ includeBodies: false });
+if (Astro.cache?.enabled) Astro.cache.set(postsHint);
 
 /**
  * The posts either side of this one in the archive's order — newest first, so
@@ -91,11 +118,18 @@ const updated = post.meta.updated
 ---
 
 {/* Description, og:*, article:* and the BlogPosting JSON-LD all come from the
-    layout, which reads the post it is passed. */}
+    layout. `headPost` is the summary with the SEO panel's overrides folded in,
+    so the visible copy above still comes from `post`. */}
 <Base
 	serif={true}
-	title={post.meta.title}
-	post={post}
+	title={seo.ogTitle}
+	description={seo.description ?? undefined}
+	ogTitle={seo.ogTitle}
+	ogDescription={seo.ogDescription ?? undefined}
+	image={seo.ogImage ?? undefined}
+	robots={seo.robots ?? undefined}
+	canonical={canonical}
+	post={headPost}
 	content={{ collection: 'posts', id: entry.data.id, slug }}
 >
 	<!-- The same post for a machine reader, advertised into the head the way the
@@ -147,10 +181,10 @@ const updated = post.meta.updated
 									{post.meta.tags.map((tag) =>
 										publishedTagSlugs.has(slugifyTag(tag)) ? (
 											<a class="tag" href={`/posts/tag/${slugifyTag(tag)}`}>
-												{tag}
+												{displayTag(tag)}
 											</a>
 										) : (
-											<span class="tag">{tag}</span>
+											<span class="tag">{displayTag(tag)}</span>
 										)
 									)}
 								</span>

@@ -102,6 +102,39 @@ const CHECKS = [
 	{ path: '/no-such-page', status: 404 }
 ];
 
+/**
+ * The www-to-apex redirect is asserted here rather than in a unit test.
+ *
+ * `src/lib/edgeCache.test.ts` proves the Worker's Cache API key carries the
+ * host, but HTML never reaches that cache: the middleware keeps it `private`
+ * and `safeToStore` refuses the put. The failure this check exists for is a
+ * zone-level Cache Rule answering a www request with the apex copy before the
+ * Worker runs, and no test that stops at the middleware can see that.
+ */
+const apex = new URL(base);
+apex.protocol = 'https:';
+apex.hostname = apex.hostname.replace(/^www\./, '');
+apex.pathname = '/';
+apex.search = '';
+const privateHosts = ['localhost', '127.0.0.1', '[::1]'];
+const canCheckWww =
+	!privateHosts.includes(apex.hostname) &&
+	!apex.hostname.endsWith('.local') &&
+	!apex.hostname.endsWith('.workers.dev');
+if (canCheckWww) {
+	const www = new URL(apex);
+	www.hostname = `www.${apex.hostname}`;
+	CHECKS.push({
+		path: `www ${apex.hostname}/`,
+		url: www.href,
+		redirect: 'manual',
+		status: 301,
+		location: apex.href
+	});
+} else {
+	console.log(`skip www redirect check against ${apex.hostname}`);
+}
+
 let failed = 0;
 
 /**
@@ -114,16 +147,25 @@ let failed = 0;
  */
 async function attempt(check) {
 	const expected = check.status ?? 200;
-	const url = `${base}${check.path}`;
+	const url = check.url ?? `${base}${check.path}`;
 
 	try {
-		const res = await fetch(url, check.headers ? { headers: check.headers } : undefined);
+		const options = {};
+		if (check.headers) options.headers = check.headers;
+		// A redirected fetch follows the 301 and hides what the edge answered;
+		// this is the only check that wants to read the redirect itself.
+		if (check.redirect) options.redirect = check.redirect;
+		const res = await fetch(url, options);
 		const problems = [];
 
 		if (res.status !== expected) problems.push(`status ${res.status}, wanted ${expected}`);
 
 		if (check.type && !res.headers.get('content-type')?.startsWith(check.type)) {
 			problems.push(`content-type ${res.headers.get('content-type')}, wanted ${check.type}`);
+		}
+
+		if (check.location && res.headers.get('location') !== check.location) {
+			problems.push(`location ${res.headers.get('location')}, wanted ${check.location}`);
 		}
 
 		if (check.contains) {

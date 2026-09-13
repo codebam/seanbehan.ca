@@ -13,8 +13,21 @@
  * Worker can run.
  *
  * Cards are only ever fetched by a scraper, which re-reads them when the page
- * changes rather than on a schedule, so the response is cached for a month and
- * kept in the Worker's own cache between renders.
+ * changes rather than on a schedule, so the response is cached for a month.
+ * There are two stores, and each needs its own policy to answer:
+ *
+ *  - The Worker's Cache API keeps the rendered PNG for the month. The route's
+ *    `max-age` becomes the stored TTL and `X-Edge-Browser-Cache-Control` puts
+ *    the browser-facing value back on a HIT; measured live, the second GET is
+ *    `X-Edge-Cache: HIT`, so satori and resvg do not run again.
+ *  - Cloudflare's zone cache only holds a Worker response for a path its Cache
+ *    Rule marks eligible. The rule that shipped matched extensionless and
+ *    .html paths only, so a card always reported `cf-cache-status: BYPASS` and
+ *    every request still woke the Worker; a cold card's Cache API write is not
+ *    visible to a request that arrives before it propagates either, so a
+ *    scraper's immediate retry can render twice. tools/cloudflare/cache-rule.sh
+ *    writes a host-scoped rule for `/og/<slug>.png` as well now; that takes
+ *    effect when the zone rule is applied, not at deploy time.
  */
 
 import type { APIRoute } from 'astro';
@@ -221,6 +234,6 @@ export const GET: APIRoute = async ({ params, url }) => {
 		width: WIDTH,
 		height: HEIGHT,
 		fonts: await fonts(url.origin),
-		headers: { 'Cache-Control': 'public, max-age=2592000' }
+		headers: { 'Cache-Control': 'public, max-age=2592000, s-maxage=2592000' }
 	});
 };

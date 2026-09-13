@@ -69,10 +69,12 @@ describe('edgeCacheKey', () => {
 });
 
 describe('owningSite', () => {
-	it('sends the résumé from codebam to the hiring origin', () => {
-		expect(owningSite('/resume', 'codebam')).toBe('seanbehan');
-		// The hiring origin already owns it; no redirect is another 200.
-		expect(owningSite('/resume', 'seanbehan')).toBeNull();
+	it('sends every résumé artifact from codebam to the hiring origin', () => {
+		for (const pathname of ['/resume', '/resume.md', '/resume.pdf', '/resume.txt']) {
+			expect(owningSite(pathname, 'codebam')).toBe('seanbehan');
+			// The hiring origin already owns them; no redirect is another 200.
+			expect(owningSite(pathname, 'seanbehan')).toBeNull();
+		}
 	});
 
 	it('keeps writing on one origin and commerce on the other', () => {
@@ -91,13 +93,13 @@ describe('owningSite', () => {
  * `astro dev`; the tests flip it off to exercise the cache path, and the
  * Cache API is not in Node, so a Map stands in for `caches.default`.
  */
-const makeContext = (pathname: string) =>
+const makeContext = (pathname: string, locals: Record<string, unknown> = {}) =>
 	({
 		url: new URL(`https://seanbehan.ca${pathname}`),
 		request: new Request(`https://seanbehan.ca${pathname}`, {
 			headers: { Accept: 'text/html' }
 		}),
-		locals: {}
+		locals
 	}) as unknown as Parameters<typeof onRequest>[0];
 
 const respondWith =
@@ -168,17 +170,63 @@ describe('security headers', () => {
 });
 
 describe('edge cache policy', () => {
-	it('keeps HTML out of the shared cache while the zone key is host-agnostic', async () => {
+	it('never stores HTML in the Worker cache even though the zone rule can override private', async () => {
 		installFakeCache();
 		vi.stubEnv('DEV', false);
 		try {
 			const first = await runMiddleware(makeContext('/about'), respondWith());
 			const second = await runMiddleware(makeContext('/about'), respondWith());
 
+			// This proves only the Worker half: `private` makes safeToStore refuse
+			// the put, so neither request is marked HIT. It says nothing about
+			// Cloudflare's zone cache, whose Cache Rule overrides `private`; the
+			// smoke test's www check is the end-to-end detector for a zone copy
+			// answering before this redirect can run.
 			for (const response of [first, second]) {
 				expect(response.headers.get('Cache-Control')).toBe('private, max-age=0, must-revalidate');
 				expect(response.headers.has('X-Edge-Cache')).toBe(false);
 			}
+		} finally {
+			vi.unstubAllEnvs();
+			delete (globalThis as { caches?: unknown }).caches;
+		}
+	});
+
+	it('keeps a token-bearing preview out of both caches', async () => {
+		installFakeCache();
+		vi.stubEnv('DEV', false);
+		try {
+			const response = await runMiddleware(
+				makeContext('/about?_preview=revoked-token'),
+				respondWith({ 'Cache-Control': 'public, max-age=3600' })
+			);
+
+			// no-store is the one value the zone rule cannot override, and the
+			// returned policy is what a browser receiving it directly must see.
+			expect(response.headers.get('Cache-Control')).toBe('private, no-store');
+			expect(response.headers.has('X-Edge-Cache')).toBe(false);
+		} finally {
+			vi.unstubAllEnvs();
+			delete (globalThis as { caches?: unknown }).caches;
+		}
+	});
+
+	it('keeps an editor render out of both caches, route policy or not', async () => {
+		installFakeCache();
+		vi.stubEnv('DEV', false);
+		try {
+			const response = await runMiddleware(
+				makeContext('/about', { user: { role: 30 } }),
+				respondWith({ 'Cache-Control': 'public, max-age=3600' })
+			);
+
+			// The toolbar and inline-allowing CSP only exist for this browser;
+			// the zone rule would otherwise hold the render for its TTL.
+			expect(response.headers.get('Cache-Control')).toBe('private, no-store');
+			expect(response.headers.get('Content-Security-Policy')).toContain(
+				"script-src 'self' 'unsafe-inline'"
+			);
+			expect(response.headers.has('X-Edge-Cache')).toBe(false);
 		} finally {
 			vi.unstubAllEnvs();
 			delete (globalThis as { caches?: unknown }).caches;
