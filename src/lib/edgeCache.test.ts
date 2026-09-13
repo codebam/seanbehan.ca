@@ -163,26 +163,45 @@ describe('security headers', () => {
 		const response = await runMiddleware(makeContext('/about'), respondWith());
 
 		expect(response.headers.get('Permissions-Policy')).toContain('publickey-credentials-get=()');
-		expect(response.headers.get('Cache-Control')).toBe(
-			'public, max-age=0, s-maxage=600, must-revalidate'
-		);
+		expect(response.headers.get('Cache-Control')).toBe('private, max-age=0, must-revalidate');
 	});
 });
 
-describe('edge cache browser policy', () => {
-	it('restores the route Cache-Control on a HIT instead of the edge TTL', async () => {
-		const browserPolicy = 'public, max-age=0, s-maxage=600, must-revalidate';
+describe('edge cache policy', () => {
+	it('keeps HTML out of the shared cache while the zone key is host-agnostic', async () => {
 		installFakeCache();
 		vi.stubEnv('DEV', false);
 		try {
-			const miss = await runMiddleware(makeContext('/about'), respondWith());
+			const first = await runMiddleware(makeContext('/about'), respondWith());
+			const second = await runMiddleware(makeContext('/about'), respondWith());
+
+			for (const response of [first, second]) {
+				expect(response.headers.get('Cache-Control')).toBe('private, max-age=0, must-revalidate');
+				expect(response.headers.has('X-Edge-Cache')).toBe(false);
+			}
+		} finally {
+			vi.unstubAllEnvs();
+			delete (globalThis as { caches?: unknown }).caches;
+		}
+	});
+
+	it('still caches a route that asks for a public policy', async () => {
+		const browserPolicy = 'public, max-age=3600';
+		installFakeCache();
+		vi.stubEnv('DEV', false);
+		try {
+			const miss = await runMiddleware(
+				makeContext('/rss.xml'),
+				respondWith({ 'Cache-Control': browserPolicy })
+			);
 			expect(miss.headers.get('X-Edge-Cache')).toBe('MISS');
 			expect(miss.headers.get('Cache-Control')).toBe(browserPolicy);
 
-			const hit = await runMiddleware(makeContext('/about'), respondWith());
+			const hit = await runMiddleware(
+				makeContext('/rss.xml'),
+				respondWith({ 'Cache-Control': browserPolicy })
+			);
 			expect(hit.headers.get('X-Edge-Cache')).toBe('HIT');
-			// The stored copy carries max-age=600 for the edge; the reader is
-			// still told to revalidate on every visit.
 			expect(hit.headers.get('Cache-Control')).toBe(browserPolicy);
 			expect(hit.headers.has('X-Edge-Browser-Cache-Control')).toBe(false);
 		} finally {

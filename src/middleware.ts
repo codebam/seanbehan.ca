@@ -82,15 +82,21 @@ const LONG_LIVED = /^\/(fonts|og|img|optimized)\/|\.(webp|png|svg|ico)$/;
 const COMMERCE_PRIVATE = /^\/(checkout|api\/stripe)(?:\/|$)/;
 
 /**
- * HTML is revalidated by the browser and held at the edge for ten minutes.
- * Pages are rendered from D1 now rather than prerendered, so this is what
- * keeps a popular post from hitting the database on every visit; EmDash
- * purges the tag when content changes.
+ * HTML is revalidated by the browser and deliberately kept out of every shared
+ * cache.
+ *
+ * The zones' cache matching is host-agnostic: an apex HTML copy answered www
+ * requests, and a cached response never reached the middleware that would 301
+ * it. Until the zone cache key is host-scoped again (a dashboard/Cache Rules
+ * change; see tools/cloudflare/cache-bypass.sh), the only safe origin-side
+ * policy is `private`, which both keeps Cloudflare from storing the response
+ * and makes the Worker's own `cache.put` skip it. Feeds, images and the
+ * immutable asset routes set their own public policies and still cache.
  */
 const EDGE_SECONDS = 600;
 const IMMUTABLE_SECONDS = 31536000;
 
-const HTML_CACHE = `public, max-age=0, s-maxage=${EDGE_SECONDS}, must-revalidate`;
+const HTML_CACHE = 'private, max-age=0, must-revalidate';
 
 /**
  * Where a copy stored in the Worker's own cache keeps the browser-facing

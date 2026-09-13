@@ -1,5 +1,22 @@
 # Edge caching
 
+## Current state: HTML is deliberately not cached at the edge
+
+The HTML policy in `src/middleware.ts` is `private, max-age=0, must-revalidate`
+until the zones' cache keys distinguish hosts. The zone cache matched entries by
+path on these zones, so an apex HTML copy answered `www` requests and a cached
+response never reached the middleware that would 301 them (proved live
+2026-09-13: warm `seanbehan.ca/posts`, then `www.seanbehan.ca/posts` returned
+the apex copy with `age: 0`). `private` keeps Cloudflare from storing the
+response and makes the Worker skip its own `cache.put`; feeds, images and the
+immutable asset routes set their own `public` policies and still cache.
+
+Restore the `public, max-age=0, s-maxage=600, must-revalidate` value once the
+zone's Cache Rule cache key includes the host, or the www Page Rule/Redirect
+Rule is in place and verified. `tools/cloudflare/cache-bypass.sh` is the
+companion zone-side switch (Cache Rule → bypass); `tools/cloudflare/cache-rule.sh`
+puts the cache-on rule back.
+
 Every page on this site is rendered per request by a Worker, out of D1. That is
 the trade the CMS bought: a post can be edited in the admin panel and be live
 without a build. What it costs is that a page nobody has asked for recently is
