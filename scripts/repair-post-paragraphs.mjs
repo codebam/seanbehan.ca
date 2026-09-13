@@ -679,7 +679,27 @@ export function repairSqlite({
  * Remote mode (emdash CLI)
  */
 
-const runEmdash = (args, { json = true } = {}) => {
+/**
+ * Transport failures from the CLI are worth a retry: the CMS is a Worker and a
+ * single `fetch failed` used to abort a twenty-post repair halfway through.
+ * Argument, auth and parse errors are not retried — they will fail again.
+ */
+const TRANSIENT_CLI_ERROR =
+	/fetch failed|ECONNRESET|ETIMEDOUT|EAI_AGAIN|EPIPE|socket hang up|network|429|500|502|503|504|timed? ?out/i;
+
+export function isTransientCliError(error) {
+	const text = [error?.message, error?.stderr, error?.stdout]
+		.filter(Boolean)
+		.map((value) => (typeof value === 'string' ? value : String(value)))
+		.join('\n');
+	return TRANSIENT_CLI_ERROR.test(text);
+}
+
+const sleepMs = (ms) => {
+	Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+};
+
+const runEmdashOnce = (args, { json = true } = {}) => {
 	const out = execFileSync('npx', ['emdash', ...args, ...(json ? ['--json'] : [])], {
 		cwd: ROOT,
 		encoding: 'utf8',
@@ -689,6 +709,21 @@ const runEmdash = (args, { json = true } = {}) => {
 	const start = out.search(/[[{]/);
 	if (start === -1) throw new Error(`no JSON in emdash output: ${out.slice(0, 200)}`);
 	return JSON.parse(out.slice(start));
+};
+
+const runEmdash = (args, { json = true, retries = 3 } = {}) => {
+	for (let attempt = 0; ; attempt++) {
+		try {
+			return runEmdashOnce(args, { json });
+		} catch (error) {
+			if (attempt >= retries || !isTransientCliError(error)) throw error;
+			const delay = [1000, 3000, 7000][attempt] ?? 7000;
+			console.error(
+				`  transient emdash failure (${error.message.split('\n')[0]}); retrying in ${delay} ms`
+			);
+			sleepMs(delay);
+		}
+	}
 };
 
 const portableTextField = (data) => {

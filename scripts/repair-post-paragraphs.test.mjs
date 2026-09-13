@@ -24,7 +24,8 @@ import {
 	repairSqlite,
 	unwrapSoftBreaks,
 	validateOptions,
-	forbiddenApplyReason
+	forbiddenApplyReason,
+	isTransientCliError
 } from './repair-post-paragraphs.mjs';
 
 const span = (text, marks = []) => ({ _type: 'span', text, marks });
@@ -421,4 +422,12 @@ test('--extract-image writes the decoded inline image from the copy', () => {
 	} finally {
 		rmSync(dir, { recursive: true, force: true });
 	}
+});
+
+test('isTransientCliError retries transport failures but not permanent ones', () => {
+	assert.equal(isTransientCliError({ message: 'Command failed: fetch failed' }), true);
+	assert.equal(isTransientCliError({ stderr: 'Error: socket hang up' }), true);
+	assert.equal(isTransientCliError({ message: '429 Too Many Requests' }), true);
+	assert.equal(isTransientCliError({ message: '401 Unauthorized' }), false);
+	assert.equal(isTransientCliError({ message: 'no JSON in emdash output: ...' }), false);
 });
