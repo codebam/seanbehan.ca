@@ -23,7 +23,13 @@ DESCRIPTION='Cache prerendered HTML'
 # Extensionless paths (/, /posts, /posts/some-slug) and .html are exactly the
 # prerendered pages. Everything under /_app/immutable is content-hashed and
 # already cached hard by Pages, and /rss.xml keeps the max-age its route sets.
-EXPRESSION='(http.request.uri.path.extension eq "" or http.request.uri.path.extension eq "html")'
+#
+# The rule is scoped to the apex host on purpose. A cached www copy can answer
+# a request before the Worker runs, and the middleware redirect that turns www
+# into the apex never gets a chance to fire — the one path this bit was `/`,
+# where the edge served the cached apex HTML under the www key. www hosts are
+# left uncached so the 301 always comes from the Worker.
+EXPRESSION="(http.request.uri.path.extension eq \"\" or http.request.uri.path.extension eq \"html\") and http.host eq \"$ZONE_NAME\""
 
 : "${CF_API_TOKEN:?set CF_API_TOKEN to a token with Zone → Cache Rules → Edit}"
 
