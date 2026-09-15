@@ -216,10 +216,32 @@ Webhook signing secrets differ between Stripe CLI, sandbox endpoint, and live en
 11. Disable the Lemon Squeezy checkout only after the Stripe purchase, email, download, and refund
     path all pass.
 
-Add Cloudflare WAF rate-limit rules before launch. A reasonable starting point is 10 requests per IP
-per minute for `POST /checkout/cloudflare-workers-production-kit`, plus 30 requests per IP per minute
-across `GET /checkout/success` and `GET /checkout/download`. Exempt verified bots only from the
-public product page, not the checkout routes. The POST also requires a same-origin browser request
-and ignores all client product data.
+Launch is not complete until rate limiting covers all three commerce routes:
+`POST /checkout/cloudflare-workers-production-kit`, `GET /checkout/download`
+and `GET /checkout/success`. The application limiter in `src/lib/rateLimit.ts`
+ships with the Worker and already bounds the POST at 10 req/min/IP and the two
+GETs at a shared 30 req/min/IP bucket, but a WAF rule or the app-level limiter
+must be in place for every one of the three routes before the first real sale.
+Install the repository's commerce rules with:
+
+```sh
+CF_API_TOKEN=… RATE_LIMIT_MODE=commerce bash tools/cloudflare/waf-rules.sh codebam.ca
+```
+
+That installs a 10 req/min/IP block on the POST and one shared
+30 req/min/IP managed challenge for the two GETs, host-scoped to `codebam.ca`;
+it needs a plan/API that allows more than one rate-limit rule.
+
+On the free single-slot plan the operator has to choose. The default
+`RATE_LIMIT_MODE=admin` spends the zone's one slot on the /_emdash 2 req/10 s
+admin guard, and checkout is left to the app limiter (or a hand-made
+dashboard rule, if the slot is spent differently). `RATE_LIMIT_MODE=commerce`
+spends the slot on the checkout rules and leaves /_emdash outside a rate guard
+(authentication still protects it). The script refuses to silently swap one
+rule for the other: if the slot is occupied by a rule it does not recognise it
+exits non-zero, and `ALLOW_OCCUPIED=1` is the explicit override for a plan that
+allows more than one rate-limit rule. Exempt verified bots only from the public
+product page, not the checkout routes. The POST also requires a same-origin
+browser request and ignores all client product data.
 
 [r2-lock]: https://developers.cloudflare.com/r2/buckets/bucket-locks/

@@ -8,13 +8,23 @@ on:
   # instead of duplicating them.
   workflow_call:
 
+# Everything here only reads the repository. Keeping the default token
+# read-only also bounds what the reusable call in dependabot_auto-merge.yml
+# hands to the dependency install code it runs from a PR.
+permissions:
+  contents: read
+
 jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          # npm ci and the builds below execute code from the PR; without this
+          # the checkout leaves a token in .git/config for that code to read.
+          persist-credentials: false
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           # One source of truth, shared with the deploy workflow, so the checks
           # gating a deploy run on the runtime that serves it.
@@ -47,13 +57,15 @@ jobs:
         run: npm run build:codebam
 
   # Zone state is versioned nowhere else, which is how the live rules drifted
-  # from what this repo documented. Read-only, and skipped rather than failed
-  # when the secret is absent (forks, Dependabot's workflow_call) so an
-  # unauthenticated contribution still gets the same green checks.
+  # from what this repo documented. The report is read-only, but it runs the
+  # checked-out script with a production-wide Cloudflare token, and a PR branch
+  # can edit that script before review. Only a reviewed master push may reach
+  # it; every pull_request and workflow_call skips it.
   zone-posture:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
       - name: Report zone posture
         env:

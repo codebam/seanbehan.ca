@@ -10,6 +10,7 @@ import Base from '../layouts/Base.astro';
 import Masthead from '../components/Masthead.astro';
 import { getEmDashCollection } from 'emdash';
 import SiblingMark from '../components/SiblingMark.astro';
+import { safeLinkUrl } from '../lib/linkUrl';
 import { SITES } from '../lib/site.data.js';
 
 interface LinkEntry {
@@ -35,7 +36,12 @@ try {
 		orderBy: { created_at: 'desc' },
 		limit: 100
 	});
-	links = result.entries as unknown as LinkEntry[];
+	// The URL is editable content, so sanitize once at the boundary and let
+	// both anchors and the displayed domain read that same value.
+	links = (result.entries as unknown as LinkEntry[]).map((entry) => ({
+		...entry,
+		data: { ...entry.data, url: safeLinkUrl(entry.data.url) }
+	}));
 	if (Astro.cache?.enabled) Astro.cache.set(result.cacheHint);
 } catch {
 	links = [];

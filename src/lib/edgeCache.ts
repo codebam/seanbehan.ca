@@ -1,48 +1,75 @@
+import { MAX_QUERY_LENGTH, clampQuery } from './search';
+
 /**
- * Routes whose response changes with their query string.
+ * Routes whose response can change with their query string. Only the image
+ * endpoint is left: a transform is keyed by more than `q`, so it goes through
+ * imageQuery instead. /search.json used to sit here and key on its whole raw
+ * query string, which let `?q=x&nonce=1..N` fill the cache with responses that
+ * are byte-identical.
+ */
+const QUERY_SENSITIVE = /(^|\/)_image$/;
+
+/**
+ * Routes that read only `q` out of their query string. Both drop every other
+ * parameter, so `?q=nixos&nonce=1..N` is one cache entry.
+ */
+const QUERY_FILTERED = /(^|\/)(?:posts|search\.json)$/;
+
+/**
+ * The parameters Astro's image endpoint reads, in a fixed order so a reordered
+ * URL cannot look like a fresh cache entry. `nonce` and other cache-busters are
+ * dropped. `q` here is image quality and is copied verbatim; the search `q` is
+ * normalised in filteredQuery instead.
+ */
+const IMAGE_QUERY_KEYS = ['href', 'w', 'h', 'f', 'fit', 'q'] as const;
+
+/**
+ * Build the image key from known parameters only.
  *
- * The archive is on the list because it filters server-side on `?q=`: without
- * it a searched page would be stored under the plain `/posts` key and served
- * to everyone who asked for the archive.
+ * `get` decodes once and `set` re-encodes the same value, so the bytes the
+ * endpoint sees are preserved without trusting the incoming encoding. A missing
+ * parameter stays missing rather than becoming the string "null"; when `href`
+ * is absent the key is whatever known parameters were present, which keeps it
+ * stable across cache-busters.
  */
-const QUERY_SENSITIVE = /(^|\/)(?:search\.json|_image)$/;
-
-/** The one route that reads a search parameter out of its query string. */
-const QUERY_FILTERED = /(^|\/)posts$/;
-
-/**
- * How much of a query is allowed to key a cache entry. Long enough for a real
- * search, short enough that a flood of near-identical queries cannot fill the
- * cache with one entry per byte.
- */
-const QUERY_MAX = 64;
+function imageQuery(url: URL): string {
+	const params = new URLSearchParams();
+	for (const key of IMAGE_QUERY_KEYS) {
+		const value = url.searchParams.get(key);
+		if (value !== null) params.set(key, value);
+	}
+	const query = params.toString();
+	return query ? `?${query}` : '';
+}
 
 /**
  * Just the `q` of a filtered route, normalised.
  *
- * Not the whole query string: only `q` can change what the archive renders, so
- * anything else on the URL (`utm_source`, a `?nonce=1..N` loop) is dropped
- * rather than turned into a fresh cache entry. Case and surrounding space are
- * folded too, since the ranking treats them as the same search.
+ * Not the whole query string: only `q` can change what the archive or
+ * /search.json renders, so anything else on the URL (`utm_source`, a
+ * `?nonce=1..N` loop) is dropped rather than turned into a fresh cache entry.
+ * Case and surrounding space are folded too, since the ranking treats them as
+ * the same search, and clampQuery caps the length before it can key an
+ * unbounded number of entries.
  */
 function filteredQuery(url: URL): string {
-	const q = url.searchParams
-		.get('q')
-		?.trim()
-		.replace(/\s+/g, ' ')
+	const q = clampQuery(url.searchParams.get('q') ?? '')
 		.toLowerCase()
-		.slice(0, QUERY_MAX);
+		// Folding case can expand one code point; take the cap again so the key
+		// itself, not just the pre-fold string, is bounded.
+		.slice(0, MAX_QUERY_LENGTH);
 	return q ? `?q=${encodeURIComponent(q)}` : '';
 }
 
 /**
  * Collapse irrelevant query strings so they cannot manufacture unlimited cache
  * misses. Image transforms are the exception: their query identifies the
- * source, dimensions and format, so dropping it would mix different images.
+ * source, dimensions and format, so it is narrowed to the parameters the
+ * endpoint reads rather than dropped.
  */
 export function edgeCacheKey(url: URL): Request {
 	const search = QUERY_SENSITIVE.test(url.pathname)
-		? url.search
+		? imageQuery(url)
 		: QUERY_FILTERED.test(url.pathname)
 			? filteredQuery(url)
 			: '';

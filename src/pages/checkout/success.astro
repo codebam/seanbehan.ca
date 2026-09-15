@@ -4,6 +4,7 @@ import Masthead from '../../components/Masthead.astro';
 import { LinkButton } from '@cloudflare/kumo/components/button';
 import { env } from 'cloudflare:workers';
 import { PRODUCT } from '../../lib/product';
+import { consumeRateLimit, getClientIp, rateLimitResponse } from '../../lib/rateLimit';
 import { site } from '../../lib/site';
 import {
 	createStripeClient,
@@ -16,6 +17,18 @@ import {
 
 Astro.response.headers.set('Cache-Control', 'private, no-store');
 Astro.response.headers.set('Referrer-Policy', 'no-referrer');
+
+// The download route shares this bucket, so following the link after a
+// refresh cannot spend two full budgets in one window.
+const clientIp = getClientIp(Astro.request);
+if (site.id === 'codebam' && clientIp) {
+	const rate = await consumeRateLimit(env.DB, {
+		key: `checkout-read:${clientIp}`,
+		limit: 30,
+		windowSeconds: 60
+	});
+	if (!rate.allowed) return rateLimitResponse(rate.retryAfterSeconds);
+}
 
 const sessionId = Astro.url.searchParams.get('session_id');
 let access: ProductAccess = { status: 'invalid' };

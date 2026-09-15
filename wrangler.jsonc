@@ -5,6 +5,14 @@
 	"compatibility_date": "2026-02-24",
 	"compatibility_flags": ["nodejs_compat"],
 
+	// Production traffic must arrive on the custom domains below (or their
+	// www aliases) so the zone WAF, cache rules and redirects apply to every
+	// request. A workers.dev or preview host reaches the Worker without the
+	// zone, and both are inherited by the named `codebam` environment, so one
+	// pair here turns them off for both deployments.
+	"workers_dev": false,
+	"preview_urls": false,
+
 	// One database, both origins. The `codebam` environment below binds the same
 	// D1 and bucket so either admin can manage the site; public writing redirects
 	// to seanbehan.ca rather than publishing a second indexable copy.

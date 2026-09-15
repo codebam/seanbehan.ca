@@ -1,6 +1,7 @@
 import type { APIContext, APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
 import { artifactMatches } from '../../lib/product';
+import { consumeRateLimit, getClientIp, rateLimitResponse } from '../../lib/rateLimit';
 import { site } from '../../lib/site';
 import {
 	createStripeClient,
@@ -32,9 +33,21 @@ const htmlError = async (rewrite: APIContext['rewrite'], path: string, status: n
 	});
 };
 
-export const GET: APIRoute = async ({ url, rewrite }) => {
+export const GET: APIRoute = async ({ request, url, rewrite }) => {
 	if (site.id !== 'codebam')
 		return new Response('Not found', { status: 404, headers: privateHeaders });
+
+	// The success page shares this bucket, so refreshing the confirmation and
+	// following the download link cannot spend two full budgets.
+	const clientIp = getClientIp(request);
+	if (clientIp) {
+		const rate = await consumeRateLimit(env.DB, {
+			key: `checkout-read:${clientIp}`,
+			limit: 30,
+			windowSeconds: 60
+		});
+		if (!rate.allowed) return rateLimitResponse(rate.retryAfterSeconds);
+	}
 
 	const sessionId = url.searchParams.get('session_id');
 	if (!isCheckoutSessionId(sessionId)) {

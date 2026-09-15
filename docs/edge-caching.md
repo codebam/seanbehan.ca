@@ -20,6 +20,24 @@ The `/__host/<host>` prefix in `edgeCacheKey` scopes the Worker cache key only.
 It does not and cannot scope Cloudflare's zone cache, which keys the URL the
 client sent before this Worker runs.
 
+## Production traffic arrives on the custom domains
+
+`wrangler.jsonc` sets `"workers_dev": false` and `"preview_urls": false` at the
+top level; wrangler inherits both into the named `codebam` environment. A
+`<name>.<subdomain>.workers.dev` deployment URL or a
+`<version>-<name>.<subdomain>.workers.dev` preview URL reaches the Worker
+without passing through the zone: no Cache Rule, no WAF rate-limit rule and no
+zone-level Page Rule applies, and a www request on such a host never reaches
+the middleware's redirect because it never claimed to be www. Production is
+`seanbehan.ca` and `codebam.ca` (and their www aliases) only. Preview-test
+locally with `wrangler dev` instead of reopening a preview URL.
+
+That switch is a deployment control, not a cache setting: it removes the
+alternate hostnames so every production request has to arrive on a host the
+zone rules were written for. If a deploy ever needs a preview URL temporarily,
+the two settings and this reason are next to each other in `wrangler.jsonc`;
+turn them back off before the deploy that matters.
+
 ## The failure the current rules address
 
 An earlier Cache Rule marked extensionless and `.html` paths eligible with no
@@ -73,11 +91,14 @@ Cache API to store nothing, so the copy is written with the route's own TTL
 (a feed's hour, a card's month) and the marker carries the reader-facing half.
 
 Two rules in the middleware exist for DDoS reasons, not cache tidiness: the
-cache key drops the query string on every route except `search.json` and the
-archive's `?q=`, so a `?nonce=1..N` flood cannot manufacture unlimited fresh
-anonymous keys; and a request leaves the cache only when a **real** session is
-attached to it, never on the mere presence of a cookie, so `Cookie: emdash=fake`
-does not buy an uncached render per request. The same middleware sends
+cache key drops the query string on every route except `search.json` and
+`/posts`, where it keeps only a normalised `q` — trimmed, whitespace-collapsed,
+lowercased and capped — and `_image`, where it keeps only the transform
+parameters the endpoint reads. A `?nonce=1..N` flood therefore cannot
+manufacture unlimited fresh anonymous keys; and a request leaves the cache only
+when a **real** session is attached to it, never on the mere presence of a
+cookie, so `Cookie: emdash=fake` does not buy an uncached render per request.
+The same middleware sends
 `no-store` on any response carrying editor context (`locals.user.role >= 30`)
 or a `_preview=<token>` query: those are per-person or revocable, and `private`
 would not have kept them out of the zone cache.

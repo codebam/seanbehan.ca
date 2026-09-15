@@ -15,9 +15,13 @@ permissions:
 
 jobs:
   posture:
+    # Report mode is read-only, but apply mode changes zone settings and the
+    # job runs a checked-out script with a zone-wide token. A manual dispatch
+    # can name any ref, so only reviewed master may receive that credential.
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
       - name: Report or apply zone posture
         env:

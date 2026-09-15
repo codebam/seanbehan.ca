@@ -11,7 +11,9 @@ name: Publish the résumé
 #
 # On a pull request the same build runs and stops before the upload, because a
 # résumé that fails to typeset should be caught by the person who broke it
-# rather than by whoever notices the site still shows last week's.
+# rather than by whoever notices the site still shows last week's. The upload,
+# purge and live check are master-only as well, so a manual dispatch on another
+# branch can validate the build without touching production.
 on:
   push:
     branches: [master]
@@ -43,14 +45,14 @@ jobs:
       OUT: resume-out
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
       # pandoc and tectonic come from the flake rather than from apt or a
       # download: it is the same pinned nixpkgs the repo's own dev shell uses,
       # so the PDF a recruiter gets was typeset by the toolchain `nix run
       # .#resume` gives locally. flake.lock is committed, so "pinned" means
       # pinned; a fresh nixpkgs needs a commit, like any other dependency.
-      - uses: cachix/install-nix-action@v31
+      - uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -58,13 +60,13 @@ jobs:
       # do it inside a sandboxed derivation, which is why the build is an app
       # and not a package. The bundle is keyed to the nixpkgs rev: a tectonic
       # bump is the only thing that changes which bundle it wants.
-      - uses: actions/cache@v6
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ~/.cache/tectonic
           key: tectonic-${{ hashFiles('flake.lock') }}
           restore-keys: tectonic-
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: .node-version
           cache: npm
@@ -137,9 +139,14 @@ jobs:
             exit 1
           fi
 
-          # Injected into the page with set:html, so say out loud that it is not
-          # executable. pandoc emits no script tags for this document by
-          # construction; the check is for the day that stops being true.
+          # Injected into the page with set:html, so the fragment is checked
+          # as HTML rather than for a list of known-bad substrings: the parser
+          # allowlists tags and attributes, refuses event handlers and styles,
+          # and requires safe URL schemes.
+          python3 resume/check-html-fragment.py "$OUT/resume.html"
+
+          # Fast fail for a literal <script or javascript:, including the
+          # unterminated spelling the parser reads as text rather than a tag.
           if grep -qi '<script\|javascript:' "$OUT/resume.html"; then
             echo 'resume.html contains script — refusing to publish' >&2
             exit 1
@@ -176,27 +183,54 @@ jobs:
             echo "- \`resume.md\` $(wc -c <resume/resume.md) bytes"
           } >>"$GITHUB_STEP_SUMMARY"
 
+          # The upload step refuses any resume.html whose hash moved after the
+          # parser above; this file is the proof of which bytes passed.
+          sha256sum "$OUT/resume.html" | awk '{print $1}' \
+            >"$RUNNER_TEMP/resume.html.sha256"
+
       # The key the bucket already had under it, so a résumé link someone
-      # pasted into an email last month still resolves.
+      # pasted into an email last month still resolves. Publishing uses the
+      # production token, so it is master-only: a manual dispatch on another
+      # branch runs the build and the checks without touching the bucket.
       - name: Upload to R2
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
         run: |
           set -euo pipefail
+
+          # The parser ran in an earlier step, so the digest written there is
+          # the only link to the bytes it passed. Re-verify before every put:
+          # a file rewritten between the gate and here must not publish.
+          verify_fragment() {
+            test -s "$RUNNER_TEMP/resume.html.sha256" || {
+              echo 'no fragment digest from the check step; refusing to publish' >&2
+              exit 1
+            }
+            test "$(sha256sum "$OUT/resume.html" | awk '{print $1}')" = \
+              "$(cat "$RUNNER_TEMP/resume.html.sha256")" || {
+              echo 'resume.html changed after the fragment gate; refusing to publish' >&2
+              exit 1
+            }
+          }
+
+          verify_fragment
           npx wrangler r2 object put "private/resume.pdf" \
             --file "$OUT/resume.pdf" \
             --content-type application/pdf \
             --remote
+          verify_fragment
           npx wrangler r2 object put "private/resume.html" \
             --file "$OUT/resume.html" \
             --content-type "text/html; charset=utf-8" \
             --remote
+          verify_fragment
           npx wrangler r2 object put "private/resume.txt" \
             --file "$OUT/resume.txt" \
             --content-type "text/plain; charset=utf-8" \
             --remote
+          verify_fragment
           # The source beside its renderings, so /resume.md answers with the
           # very file these were built from rather than a lossy conversion.
           npx wrangler r2 object put "private/resume.md" \
@@ -206,7 +240,7 @@ jobs:
 
       # On a pull request nothing reaches the bucket, so leave the files where
       # someone can open the PDF before it becomes the live one.
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: github.event_name == 'pull_request'
         with:
           name: resume-${{ github.event.pull_request.number || github.sha }}
@@ -220,7 +254,8 @@ jobs:
       # without this the new résumé appears on its own schedule. Whole-zone
       # purge, as on a deploy: the site is small and a file list would drift.
       - name: Purge seanbehan.ca
-        if: github.event_name != 'pull_request'
+        # Same production token and same master-only publish.
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
         run: bash tools/cloudflare/purge.sh seanbehan.ca
@@ -233,7 +268,8 @@ jobs:
       # serving has no /resume.pdf route and no .resume-doc in its page at all.
       # Five minutes outlasts a deploy of both origins, which takes about four.
       - name: Check the live page
-        if: github.event_name != 'pull_request'
+        # There is nothing to verify unless the master-only upload ran.
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
         run: |
           set -euo pipefail
           published=no

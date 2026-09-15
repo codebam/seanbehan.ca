@@ -62,15 +62,39 @@ const options = {
  */
 export const MIN_QUERY_LENGTH = 1;
 
-/** Whether either search path should rank this query at all. */
-export const isSearchableQuery = (query: string) => query.trim().length >= MIN_QUERY_LENGTH;
+/**
+ * The longest query the ranker or a cache key will look at. Anyone can put an
+ * enormous string in `?q=`; without a ceiling each one costs a fresh Fuse scan
+ * and can become a fresh edge-cache entry. Truncation is deliberate — a reader
+ * past 128 characters has stopped typing a search, not lost a result.
+ */
+export const MAX_QUERY_LENGTH = 128;
+
+/**
+ * Bound every query before it reaches Fuse or a cache key. Trims, collapses
+ * runs of whitespace to one space (Fuse tokenizes on it anyway) and slices at
+ * MAX_QUERY_LENGTH. A long query is truncated, never rejected: the only floor
+ * is MIN_QUERY_LENGTH, and callers still answer anything above it.
+ */
+export function clampQuery(query: string): string {
+	return query.trim().replace(/\s+/g, ' ').slice(0, MAX_QUERY_LENGTH);
+}
+
+/**
+ * Whether either search path should rank this query at all. One character is
+ * the floor; a long query stays searchable and is truncated by clampQuery on
+ * its way to the ranker.
+ */
+export const isSearchableQuery = (query: string) => clampQuery(query).length >= MIN_QUERY_LENGTH;
 
 /**
  * Pure and synchronous on purpose: the endpoint supplies the records and this
  * decides the order, so the test can exercise the ranking without a database.
+ * The clamp lives here, not at the two callers, so a new caller cannot hand
+ * Fuse an unbounded pattern.
  */
 export function rank(query: string, records: SearchRecord[]): string[] {
-	return new Fuse(records, options).search(query).map((match) => match.item.slug);
+	return new Fuse(records, options).search(clampQuery(query)).map((match) => match.item.slug);
 }
 
 /**

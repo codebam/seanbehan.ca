@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { edgeCacheKey } from './edgeCache';
+import { MAX_QUERY_LENGTH } from './search';
 
 // The real middleware is exercised below; Astro's virtual module only exists
 // inside a build, so it is mocked down to the identity `defineMiddleware`
@@ -52,6 +53,69 @@ describe('edgeCacheKey', () => {
 		expect(noisy.url).toBe('https://seanbehan.ca/__host/seanbehan.ca/posts?q=nixos%20flakes');
 	});
 
+	it('keys /search.json on the normalised term and drops cache-busters', () => {
+		const spaced = edgeCacheKey(
+			new URL('https://seanbehan.ca/search.json?q=Hello%20World&nonce=1')
+		);
+		const plus = edgeCacheKey(new URL('https://seanbehan.ca/search.json?q=hello+world&nonce=2'));
+
+		expect(spaced.url).toBe(plus.url);
+		expect(spaced.url).toBe('https://seanbehan.ca/__host/seanbehan.ca/search.json?q=hello%20world');
+	});
+
+	it('caps a /search.json key at the same length as the archive key', () => {
+		const long = edgeCacheKey(
+			new URL(`https://seanbehan.ca/search.json?q=${'b'.repeat(500)}&nonce=1`)
+		);
+
+		expect(new URL(long.url).searchParams.get('q')).toHaveLength(MAX_QUERY_LENGTH);
+	});
+
+	it('leaves the /posts key behavior unchanged', () => {
+		const key = edgeCacheKey(new URL('https://seanbehan.ca/posts?q=Hello%20World&nonce=1'));
+
+		expect(key.url).toBe('https://seanbehan.ca/__host/seanbehan.ca/posts?q=hello%20world');
+	});
+
+	it('drops cache-busters from image transform keys', () => {
+		const first = edgeCacheKey(
+			new URL('https://seanbehan.ca/_image?href=%2Fmedia%2Fphoto.jpg&w=100&nonce=1')
+		);
+		const second = edgeCacheKey(
+			new URL('https://seanbehan.ca/_image?href=%2Fmedia%2Fphoto.jpg&w=100&nonce=2')
+		);
+
+		expect(first.url).toBe(second.url);
+		expect(first.url).toBe(
+			'https://seanbehan.ca/__host/seanbehan.ca/_image?href=%2Fmedia%2Fphoto.jpg&w=100'
+		);
+	});
+
+	it('keeps transform parameters that change the image distinct', () => {
+		const small = edgeCacheKey(new URL('https://seanbehan.ca/_image?href=x&w=100'));
+		const large = edgeCacheKey(new URL('https://seanbehan.ca/_image?href=x&w=200'));
+
+		expect(small.url).not.toBe(large.url);
+	});
+
+	it('canonicalizes image keys to the endpoint parameters in a fixed order', () => {
+		const key = edgeCacheKey(
+			new URL('https://seanbehan.ca/_image?q=80&nonce=1&fit=cover&w=640&href=%2Fmedia%2Fphoto.jpg')
+		);
+
+		expect(key.url).toBe(
+			'https://seanbehan.ca/__host/seanbehan.ca/_image?href=%2Fmedia%2Fphoto.jpg&w=640&fit=cover&q=80'
+		);
+	});
+
+	it('keeps an href-less image key stable across cache-busters', () => {
+		const first = edgeCacheKey(new URL('https://seanbehan.ca/_image?nonce=1'));
+		const second = edgeCacheKey(new URL('https://seanbehan.ca/_image?nonce=2'));
+
+		expect(first.url).toBe(second.url);
+		expect(first.url).toBe('https://seanbehan.ca/__host/seanbehan.ca/_image');
+	});
+
 	it('cannot let an apex key answer a www request', () => {
 		const apex = edgeCacheKey(new URL('https://seanbehan.ca/posts'));
 		const www = edgeCacheKey(new URL('https://www.seanbehan.ca/posts'));
@@ -64,7 +128,7 @@ describe('edgeCacheKey', () => {
 	it('caps the length of a search key so a flood cannot multiply entries', () => {
 		const long = edgeCacheKey(new URL(`https://seanbehan.ca/posts?q=${'a'.repeat(500)}`));
 
-		expect(new URL(long.url).searchParams.get('q')).toHaveLength(64);
+		expect(new URL(long.url).searchParams.get('q')).toHaveLength(MAX_QUERY_LENGTH);
 	});
 });
 

@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
 import { PRODUCT, artifactMatches } from '../../lib/product';
+import { consumeRateLimit, getClientIp, rateLimitResponse } from '../../lib/rateLimit';
 import { SITES, site } from '../../lib/site';
 import { checkoutSessionParams, createStripeClient, safeErrorDetails } from '../../lib/stripe';
 
@@ -27,6 +28,19 @@ export const POST: APIRoute = async ({ request, url, rewrite }) => {
 		Number(request.headers.get('Content-Length') ?? 0) > 1024
 	) {
 		return new Response('Forbidden', { status: 403, headers });
+	}
+
+	// The WAF rule is the primary bound; this one is visible to the app. A
+	// missing client key (local dev) skips the check rather than keying on
+	// client-controlled input.
+	const clientIp = getClientIp(request);
+	if (clientIp) {
+		const rate = await consumeRateLimit(env.DB, {
+			key: `checkout:${clientIp}`,
+			limit: 10,
+			windowSeconds: 60
+		});
+		if (!rate.allowed) return rateLimitResponse(rate.retryAfterSeconds);
 	}
 
 	try {

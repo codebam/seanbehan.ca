@@ -20,12 +20,16 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # The export and upload carry production credentials. Scheduled runs are on
+  # the default branch, but manual dispatch can name any ref, so only reviewed
+  # master may run this job.
   backup:
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: .node-version
           cache: npm
@@ -34,7 +38,7 @@ jobs:
 
       # Not `wrangler d1 export` directly: it refuses a database holding FTS5
       # virtual tables, and EmDash builds one per searchable collection. The
-      # script names the tables it can export instead.
+      # script names the tables it can export and leaves sensitive rows behind.
       - name: Export D1
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
@@ -59,11 +63,21 @@ jobs:
           echo "Wrote $KEY ($(du -h backup.sql.gz | cut -f1))" >> "$GITHUB_STEP_SUMMARY"
 
       # A backup nobody has ever restored is a hypothesis. This does not restore
-      # it, but it does check the dump is a dump: gzip integrity, and the posts
-      # table present with rows in it.
+      # it, but it does check the dump is a dump: gzip integrity, the posts
+      # table present with rows in it, and none of the content the exporter was
+      # told to leave out.
       - name: Sanity-check the dump
         run: |
           gzip -t backup.sql.gz
           POSTS=$(zcat backup.sql.gz | grep -c '^INSERT INTO "\?ec_posts' || true)
           echo "ec_posts insert statements: $POSTS"
           test "$POSTS" -gt 0
+
+          # The exporter filters these out; this catches a future table-list or
+          # flag change that quietly puts the rows back into the uploaded dump.
+          # Table quoting in the dump is not part of that contract.
+          if zcat backup.sql.gz | grep -Eq '^INSERT INTO "?(options|users|credentials|auth_tokens|site_stripe_fulfillments|_plugin_state|_emdash_api_tokens|_emdash_oauth_tokens)"?([[:space:]"(]|$)'; then
+            echo "::error::excluded sensitive table found in backup dump"
+            exit 1
+          fi
+          echo "No excluded sensitive tables in the dump."

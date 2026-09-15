@@ -6,9 +6,16 @@
  * "cannot export databases with Virtual Tables (fts5)" — and EmDash builds one
  * per searchable collection. It will export a named list of tables, though, so
  * this asks the database what it has and hands back everything that is not a
- * virtual table, one of their shadow tables, or Cloudflare's own bookkeeping.
+ * virtual table, one of their shadow tables, Cloudflare's own bookkeeping, or
+ * a table carrying secrets, credentials or fulfillment state.
  *
- * Nothing is lost by skipping them: an FTS index is derived from the rows in
+ * The dump is content-only: it exists to restore the writing, not a running
+ * install. `options` (preview secret, session salt and plugin settings), the
+ * user/auth tables, API and OAuth tokens, plugin state, and the Stripe
+ * fulfillment rows — whose checkout_session_id is a bearer download credential
+ * — are deliberately excluded, so a restore will not carry them.
+ *
+ * Nothing is lost by skipping the FTS indexes: each is derived from the rows in
  * the table it indexes, and `INSERT INTO <fts>(<fts>) VALUES('rebuild')`
  * reconstructs it after a restore.
  *
@@ -28,7 +35,11 @@ const wrangler = (args, { json = false } = {}) => {
 	const out = execFileSync('npx', ['wrangler', ...args], {
 		encoding: 'utf8',
 		maxBuffer: 256 * 1024 * 1024,
-		stdio: json ? ['ignore', 'pipe', 'ignore'] : ['ignore', 'inherit', 'inherit']
+		// Never inherit either stream: `wrangler d1 export` prints a one-hour
+		// presigned URL into both, and an inherited stream is how that URL
+		// reaches the CI log. The JSON query parses stdout; the export's output
+		// is captured and discarded.
+		stdio: json ? ['ignore', 'pipe', 'ignore'] : ['ignore', 'pipe', 'pipe']
 	});
 	if (!json) return '';
 	const start = out.indexOf('[');
@@ -38,6 +49,36 @@ const wrangler = (args, { json = false } = {}) => {
 
 /** Shadow tables FTS5 maintains beside each virtual table. */
 const FTS_SHADOW = /_fts_\w+_(data|idx|docsize|config|content)$/;
+
+/**
+ * Rows that are credential or live state, never content. The explicit set
+ * covers the tables EmDash ships today; the pattern is the safety net for a
+ * new table with a telling name.
+ */
+const SENSITIVE_TABLE =
+	/^(?:options|users?|credentials?|auth_|oauth_|sessions?|.*tokens?|.*secrets?|.*fulfillments?|_plugin_)/i;
+const SENSITIVE_TABLES = new Set([
+	'options',
+	'users',
+	'users_new',
+	'users_old',
+	'credentials',
+	'auth_tokens',
+	'auth_challenges',
+	'oauth_accounts',
+	'sessions',
+	'_emdash_api_tokens',
+	'_emdash_authorization_codes',
+	'_emdash_oauth_clients',
+	'_emdash_oauth_tokens',
+	'_the_plugin_state',
+	'_plugin_state',
+	'_plugin_storage',
+	'_plugin_indexes',
+	'site_stripe_fulfillments'
+]);
+
+const isSensitive = (name) => SENSITIVE_TABLES.has(name) || SENSITIVE_TABLE.test(name);
 
 const result = wrangler(
 	[
@@ -58,21 +99,36 @@ const tables = result[0].results
 	.filter((name) => !FTS_SHADOW.test(name))
 	// `_cf_KV` is Cloudflare's, not ours, and not something a restore should
 	// carry; `sqlite_*` are the engine's own.
-	.filter((name) => name !== '_cf_KV' && !name.startsWith('sqlite_'));
+	.filter((name) => name !== '_cf_KV' && !name.startsWith('sqlite_'))
+	.filter((name) => !isSensitive(name));
+
+// The filter above did the excluding. This is the assertion that it actually
+// did: if a future table list lets a sensitive name back in, stop here rather
+// than hand wrangler a `--table` list that dumps credentials.
+const leaked = tables.filter((name) => isSensitive(name));
+if (leaked.length > 0) {
+	throw new Error(`backup: refusing to export sensitive table(s): ${leaked.join(', ')}`);
+}
 
 if (!tables.some((name) => name === 'ec_posts')) {
 	throw new Error('backup: ec_posts is not in the table list — refusing to write a useless dump');
 }
 
-console.error(`backup: exporting ${tables.length} tables from ${database}`);
+try {
+	wrangler([
+		'd1',
+		'export',
+		database,
+		'--remote',
+		'--output',
+		output,
+		'-y',
+		...tables.flatMap((name) => ['--table', name])
+	]);
+} catch (error) {
+	// The captured streams may contain the presigned URL; only the exit status
+	// belongs in an error log.
+	throw new Error(`backup: wrangler d1 export failed (exit status ${error.status ?? 'unknown'})`);
+}
 
-wrangler([
-	'd1',
-	'export',
-	database,
-	'--remote',
-	'--output',
-	output,
-	'-y',
-	...tables.flatMap((name) => ['--table', name])
-]);
+console.error(`backup: wrote ${tables.length} tables to ${output}`);

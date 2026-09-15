@@ -13,7 +13,7 @@ Same posts. Identity is chosen at build time by `PUBLIC_SITE`.
 
 - Node.js 26 (see `.node-version`)
 - npm
-- A Cloudflare account. EmDash runs plugins in Worker sandboxes, which needs a paid Workers plan; everything else here works on the free one.
+- A Cloudflare account. Everything here works on the free Workers plan; EmDash marketplace installs and sandboxed plugin execution are disabled in this repo (they would need a paid plan), and no production path depends on them.
 - Nix, only for the résumé: `nix run .#resume` is what builds the PDF. Nothing else in the repo needs it, and no build step here asks for it.
 
 ## Setup
@@ -78,13 +78,18 @@ HTML is served with `s-maxage` so Cloudflare can hold it at the edge, but that o
 
 Published posts on both origins canonical to `seanbehan.ca`. Homes stay self-canonical.
 
+Marketplace plugin installation and sandboxed plugin execution are intentionally disabled in `astro.config.mjs` until EmDash enforces a plugin's declared `manifest.hooks` and runtime capability checks; the trusted local plugins in the `plugins:` array remain in use.
+
 ## Backups
 
 The posts used to be files in this repo, so every clone was a backup. They live
 in D1 now, and `.github/workflows/backup.yml` runs nightly to keep that from
 meaning "one copy": it exports the database and writes it to the
 `seanbehan-ca-backups` bucket under a dated key, which the bucket expires after
-90 days.
+90 days. That bucket must stay private — no r2.dev public access and no custom
+domain — because it holds the site's writing. An export also prints a one-hour
+presigned URL to the dump; the backup script captures and discards that output,
+so it no longer reaches the CI log.
 
 ```bash
 npm run backup                        # writes backup.sql from the deployed database
@@ -95,6 +100,17 @@ EmDash builds one per searchable collection, so `scripts/backup-d1.mjs` asks the
 database for its table list and exports everything that is not virtual. The
 search indexes are derived data — after a restore, rebuild each with
 `INSERT INTO <fts_table>(<fts_table>) VALUES('rebuild')`.
+
+The dump is content-only. It deliberately omits `options` (preview secret,
+session salt and plugin settings); the user and auth tables (`users`,
+`users_new`, `users_old`, `credentials`, `auth_tokens`, `auth_challenges`,
+`oauth_accounts`, `sessions`); the `_emdash_*` API, authorization and OAuth
+token tables; plugin state and storage (`_plugin_state`, `_the_plugin_state`,
+`_plugin_storage`, `_plugin_indexes`); and `site_stripe_fulfillments`, whose
+`checkout_session_id` is a bearer download credential. A restore therefore
+brings back the exported content tables but not those rows; sign-ins, plugin
+configuration and storefront fulfillment records have to be re-provisioned or
+reissued afterwards.
 
 ## Résumé
 

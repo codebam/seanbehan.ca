@@ -30,6 +30,11 @@ data.db-*
 uploads
 .wrangler
 
+# `npm run backup` writes these at the repo root. Named individually rather
+# than ignoring *.sql, because the site migrations are tracked SQL.
+/backup.sql
+/backup.sql.gz
+
 # The EmDash CLI's local install (its node_modules); not content or config.
 .emdash/
 
@@ -63,5 +68,13 @@ resume/*.pdf
 resume/*.html
 resume/*.tex
 
+# resume/check-html-fragment.py is Python; running it by hand leaves bytecode
+# next to itself, which should not dirty the tree.
+__pycache__/
+*.pyc
+
 # Pi agent session artifacts (per-run task state and logs)
 .pi/
+
+# Claude Code's local settings and permissions.
+.claude/

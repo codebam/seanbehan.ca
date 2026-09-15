@@ -86,9 +86,22 @@ them, writes them to bucket `private` under the keys the Worker reads, and
 purges `seanbehan.ca` so the new fragment is what readers get next request
 rather than in ten minutes. The same build on a pull request stops before the
 upload: a résumé that no longer typesets should be caught by whoever broke it.
+Upload and purge also require `github.ref == 'refs/heads/master'`, so a
+`workflow_dispatch` on another branch builds and checks without touching the
+production bucket.
 
-Three checks in there are load-bearing rather than decorative:
+Five checks in there are load-bearing rather than decorative:
 
+- **No raw HTML from the Markdown.** `build.sh` reads with
+  `-f markdown-citations-raw_html`, so `resume.md` cannot emit tags or
+  attributes; `resume/check-html-fragment.py` then parses the fragment against a
+  tag/attribute allowlist — no event handlers, no `style`, no `src` outside
+  `img`, no `javascript:`, `data:` or protocol-relative URLs — because `/resume`
+  injects it with `set:html`.
+- **The upload is digest-bound.** The check step writes the fragment's SHA-256
+  under `$RUNNER_TEMP`; the upload re-hashes `resume.html` before every
+  `wrangler r2 object put` and refuses if the bytes no longer match, so the
+  bytes parsed are the bytes published.
 - **No `\resume` in the fragment.** If `tex_markup=false` ever stops reaching the
   filter, the HTML fills with LaTeX macros and the page prints them.
 - **No `\resume` in the text, and a contact line in it.** The plain pass is the
@@ -133,7 +146,9 @@ curls `/resume` and looks for the résumé in it.
 
 **Trusting the fragment.** `resume.astro` injects it with `set:html`, unescaped,
 because the whole point is that the résumé _is_ the page. It is this repo's own
-build output, written by this repo's CI, with no script and no stylesheet. That
+build output, written by this repo's CI and gated on the way to the bucket —
+raw Markdown HTML disabled, fragment parsed against a tag/attribute allowlist,
+bytes digest-bound — with no script and no stylesheet. That
 makes write access to bucket `private` equivalent to writing HTML on
 seanbehan.ca — which is a reason to keep that bucket's tokens as carefully as
 the deployment's, not a reason to escape the markup and be back to reading a

@@ -18,11 +18,16 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Checks may run for any ref; nothing below receives a production credential
+  # until it has survived review on master.
   verify:
     uses: ./.github/workflows/ci.yml
 
   deploy:
+    # Deploy and purge use production-wide credentials. A non-master
+    # workflow_dispatch still runs verify but stops here.
     needs: migrate
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     # Both origins are one repo and one database; they differ only in the
     # identity baked in at build time, so each is built and deployed in turn.
@@ -42,9 +47,9 @@ jobs:
             wrangler_args: --env codebam
             zone: codebam.ca
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: .node-version
           cache: npm
@@ -74,12 +79,15 @@ jobs:
   # Both Workers share one D1 database. Apply repository-owned migrations once,
   # before either build can deploy code that expects the new schema.
   migrate:
+    # Schema changes run against the shared production D1; only a reviewed
+    # master ref may apply them.
     needs: verify
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: .node-version
           cache: npm

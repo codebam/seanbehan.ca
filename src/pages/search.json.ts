@@ -12,11 +12,12 @@ import { isSearchableQuery, searchPosts } from '../lib/search';
 /**
  * The archive as search reads it, held per isolate.
  *
- * Every novel query string is an edge-cache MISS, and without this each MISS
- * cost two D1 round trips plus a Fuse build — one per keystroke burst that
- * outran the debounce. Sixty seconds of isolate memory covers the burst; the
- * edge cache (keyed on `?q=`, see edgeCache.ts) and the content tags below
- * remain the real caching layers.
+ * A cache MISS costs two D1 round trips plus a Fuse build — one per keystroke
+ * burst that outran the debounce; sixty seconds of isolate memory covers the
+ * burst. The edge cache key is `?q=` normalised (trimmed, whitespace-collapsed,
+ * lowercased and capped) and drops every other parameter, so `?nonce=1..N`
+ * cannot manufacture fresh keys, and the content tags below remain the real
+ * caching layers.
  */
 const MEMO_SECONDS = 60;
 

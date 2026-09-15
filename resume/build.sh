@@ -159,9 +159,14 @@ note "pandoc   $(command -v pandoc)"
 # ---------------------------------------------------------------- build
 common=(
   "$INPUT"
-  -f markdown-citations       # "@codebam/x" in the prose is a handle, not a
-                              # citation: without this the HTML writer wraps it
-                              # in span.citation and the PDF gains a \citep
+  -f markdown-citations-raw_html
+                              # "@codebam/x" in the prose is a handle, not a
+                              # citation, so -citations keeps the HTML writer
+                              # from wrapping it in span.citation and the PDF
+                              # from adding a \citep. -raw_html is the gate on
+                              # the other side: /resume injects this fragment
+                              # unescaped, so repository markdown must not be
+                              # able to emit tags or attributes at all.
   --lua-filter="$FILTER"
   --metadata-file="$METADATA"
 )

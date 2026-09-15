@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest';
-import { MIN_QUERY_LENGTH, isSearchableQuery, rank } from './search';
+import Fuse from 'fuse.js';
+import { describe, expect, it, vi } from 'vitest';
+import { MAX_QUERY_LENGTH, MIN_QUERY_LENGTH, clampQuery, isSearchableQuery, rank } from './search';
 
 const records = [
 	{
@@ -72,5 +73,26 @@ describe('rank', () => {
 		expect(MIN_QUERY_LENGTH).toBe(1);
 		expect(isSearchableQuery('r')).toBe(true);
 		expect(isSearchableQuery('  ')).toBe(false);
+	});
+
+	it('keeps a long query searchable but bounds what rank hands Fuse', () => {
+		const long = 'x'.repeat(10_000);
+		expect(isSearchableQuery(long)).toBe(true);
+		expect(clampQuery(long)).toHaveLength(MAX_QUERY_LENGTH);
+
+		const search = vi.spyOn(Fuse.prototype, 'search');
+		try {
+			expect(() => rank(long, records)).not.toThrow();
+			expect(search).toHaveBeenCalledWith('x'.repeat(MAX_QUERY_LENGTH));
+		} finally {
+			search.mockRestore();
+		}
+	});
+
+	it('trims and collapses whitespace before the length cap', () => {
+		expect(clampQuery('  booting \n linux  ')).toBe('booting linux');
+		expect(clampQuery(`${'a'.repeat(MAX_QUERY_LENGTH)}  ignored`)).toBe(
+			'a'.repeat(MAX_QUERY_LENGTH)
+		);
 	});
 });

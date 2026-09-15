@@ -1,7 +1,7 @@
 import cloudflare from '@astrojs/cloudflare';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
-import { d1, r2, sandbox } from '@emdash-cms/cloudflare';
+import { d1, r2 } from '@emdash-cms/cloudflare';
 import { cloudflareEmail } from '@emdash-cms/cloudflare/plugins';
 import { formsPlugin } from '@emdash-cms/plugin-forms';
 import { defineConfig } from 'astro/config';
@@ -102,9 +102,12 @@ export default defineConfig({
 					from: { email: 'cms@seanbehan.ca', name: 'seanbehan.ca' },
 					replyTo: 'codebam@riseup.net'
 				})
-			],
-			sandboxRunner: sandbox(),
-			marketplace: 'https://marketplace.emdashcms.com'
+			]
+			// Marketplace installs and sandboxed plugin execution are disabled until
+			// EmDash enforces `manifest.hooks` and its runtime capability gate: the
+			// installed dispatch path checks neither, so a sandbox plugin's manifest
+			// cannot bound what its hooks run. Deliberate security trade; the trusted
+			// local plugins in `plugins:` above are unaffected.
 		})
 	],
 	vite: {
