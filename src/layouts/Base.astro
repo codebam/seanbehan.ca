@@ -18,7 +18,7 @@ import {
 	site,
 	absolute,
 	canonicalUrl,
-	codebamHref,
+	commerceHref,
 	linkHref,
 	writingHref,
 	LINKEDIN_URL
@@ -301,17 +301,17 @@ const navItems = nav.map((item) => ({
 							</a>
 						</li>
 						<li>
-							<a class="footer-link" href={codebamHref('/services')}>
+							<a class="footer-link" href={commerceHref('/services')}>
 								Services
-								<SiblingMark href={codebamHref('/services')} />
+								<SiblingMark href={commerceHref('/services')} />
 							</a>
 						</li>
-						{site.id === 'codebam' && (
-							// The paid product is this origin's point; on the hiring
-							// variant /products redirects off-origin, so the hiring
-							// footer's Site list stays exactly as it was.
+						{site.id === 'seanbehan' && (
+							// The paid product sells under the legal-name origin, so
+							// this footer carries it locally; the handle's footer
+							// links Services across instead.
 							<li>
-								<a class="footer-link" href={codebamHref('/products')}>
+								<a class="footer-link" href={commerceHref('/products')}>
 									Products
 								</a>
 							</li>
@@ -328,27 +328,27 @@ const navItems = nav.map((item) => ({
 					<p class="eyebrow footer-label">Legal</p>
 					<ul class="footer-links" role="list">
 						<li>
-							<a class="footer-link" href={codebamHref('/legal/privacy')}>
+							<a class="footer-link" href={commerceHref('/legal/privacy')}>
 								Privacy
-								<SiblingMark href={codebamHref('/legal/privacy')} />
+								<SiblingMark href={commerceHref('/legal/privacy')} />
 							</a>
 						</li>
 						<li>
-							<a class="footer-link" href={codebamHref('/legal/terms-of-sale')}>
+							<a class="footer-link" href={commerceHref('/legal/terms-of-sale')}>
 								Terms
-								<SiblingMark href={codebamHref('/legal/terms-of-sale')} />
+								<SiblingMark href={commerceHref('/legal/terms-of-sale')} />
 							</a>
 						</li>
 						<li>
-							<a class="footer-link" href={codebamHref('/legal/refund-policy')}>
+							<a class="footer-link" href={commerceHref('/legal/refund-policy')}>
 								Refunds
-								<SiblingMark href={codebamHref('/legal/refund-policy')} />
+								<SiblingMark href={commerceHref('/legal/refund-policy')} />
 							</a>
 						</li>
 						<li>
-							<a class="footer-link" href={codebamHref('/legal/product-license')}>
+							<a class="footer-link" href={commerceHref('/legal/product-license')}>
 								License
-								<SiblingMark href={codebamHref('/legal/product-license')} />
+								<SiblingMark href={commerceHref('/legal/product-license')} />
 							</a>
 						</li>
 					</ul>

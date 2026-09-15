@@ -83,7 +83,7 @@ export interface SiteConfig {
 export interface SiteLink {
 	label: string;
 	href: string;
-	via?: 'writing' | 'codebam';
+	via?: 'writing' | 'commerce';
 }
 
 /**
@@ -150,8 +150,8 @@ export const sibling = site.id === 'seanbehan' ? SITES.codebam : SITES.seanbehan
 
 /**
  * seanbehan.ca is the publishing origin. The codebam Worker redirects writing
- * there, but this remains the fallback canonical for previews and any response
- * rendered before that redirect policy runs.
+ * and every commercial path there, but this remains the fallback canonical for
+ * previews and any response rendered before that redirect policy runs.
  */
 export const canonicalUrl = (path: string, opts?: { post?: boolean; draft?: boolean }) => {
 	const normalized = path === '/' ? '' : path.replace(/\/+$/, '');
@@ -170,9 +170,9 @@ export const projectHref = (path: string) =>
 /**
  * Whether an href leaves this origin for the repo's other one.
  *
- * The middleware redirects whole sections across (writing to seanbehan.ca,
- * projects and legal to codebam.ca), so chrome links built with writingHref,
- * projectHref and codebamHref silently change origin on one variant. Truly
+ * The middleware redirects whole sections across (writing, the résumé and all
+ * commerce to seanbehan.ca; projects to codebam.ca), so chrome links built with
+ * writingHref, projectHref and commerceHref silently change origin on one variant. Truly
  * external URLs are not siblings — GitHub already announces itself with a new
  * tab — only the family's own other front door counts.
  */
@@ -186,9 +186,16 @@ export const isSiblingHref = (href: string) =>
 /** The host a sibling href points at, for the marker's screen-reader note. */
 export const siblingHost = (href: string) => new URL(href).host;
 
-/** Commercial work ships under the code-first identity. */
-export const codebamHref = (path: string) =>
-	site.id === 'seanbehan' ? `${SITES.codebam.url}${path}` : path;
+/**
+ * Commercial pages ship under the legal-name origin.
+ *
+ * Keeping the storefront, its legal pages and its checkout on seanbehan.ca is
+ * what lets the seller be Sean Behan rather than a registered "codebam" trade
+ * name; the handle keeps the projects. On the codebam build this resolves
+ * cross-origin, and on seanbehan it is local.
+ */
+export const commerceHref = (path: string) =>
+	site.id === 'seanbehan' ? path : `${SITES.seanbehan.url}${path}`;
 
 /**
  * Where a chrome link actually points.
@@ -201,6 +208,6 @@ export const codebamHref = (path: string) =>
 export const linkHref = (link: SiteLink): string =>
 	link.via === 'writing'
 		? writingHref(link.href)
-		: link.via === 'codebam'
-			? codebamHref(link.href)
+		: link.via === 'commerce'
+			? commerceHref(link.href)
 			: link.href;

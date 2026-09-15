@@ -3,6 +3,7 @@ import { SITES } from './site.data.js';
 import { featuredProjects } from './projects';
 import {
 	canonicalUrl,
+	commerceHref,
 	isSiblingHref,
 	linkHref,
 	projectHref,
@@ -36,6 +37,11 @@ describe('content origins', () => {
 
 	it('sends project case studies to codebam.ca', () => {
 		expect(projectHref('/projects/viewport')).toBe('https://codebam.ca/projects/viewport');
+	});
+
+	it('keeps commercial pages on the legal-name variant', () => {
+		expect(commerceHref('/services')).toBe('/services');
+		expect(commerceHref('/legal/privacy')).toBe('/legal/privacy');
 	});
 });
 
@@ -90,11 +96,9 @@ describe('linkHref', () => {
 		expect(linkHref({ label: 'Résumé', href: '/resume' })).toBe('/resume');
 	});
 
-	it('resolves the two cross-origin kinds from the seanbehan build', () => {
+	it('resolves writing and commerce locally from the seanbehan build', () => {
 		expect(linkHref({ label: 'Writing', href: '/posts', via: 'writing' })).toBe('/posts');
-		expect(linkHref({ label: 'Services', href: '/services', via: 'codebam' })).toBe(
-			'https://codebam.ca/services'
-		);
+		expect(linkHref({ label: 'Services', href: '/services', via: 'commerce' })).toBe('/services');
 	});
 });
 
@@ -140,18 +144,27 @@ describe('the hiring variant', () => {
 		expect(SITES.codebam.nav.length).toBeLessThanOrEqual(4);
 	});
 
-	it('points the codebam hero at a local commercial offer', () => {
+	it('sends the codebam hero to the commercial origin, not a local offer', () => {
 		const primary = SITES.codebam.primaryAction;
-		expect(primary.href.startsWith('/')).toBe(true);
-		expect(primary.via).toBeUndefined();
 		expect(primary.href).toBe('/services');
+		expect(primary.via).toBe('commerce');
 	});
 
-	it('lists the paid product in the codebam nav', () => {
+	it('keeps the paid product off the handle nav', () => {
+		expect(SITES.codebam.nav.some((item) => item.href.startsWith('/products'))).toBe(false);
 		expect(SITES.codebam.nav).toContainEqual({
-			label: 'Products',
-			href: '/products/cloudflare-workers-production-kit'
+			label: 'Projects',
+			href: '/projects'
 		});
+		expect(SITES.codebam.nav).toContainEqual({
+			label: 'Services',
+			href: '/services',
+			via: 'commerce'
+		});
+	});
+
+	it('keeps the commercial entry points local on the legal-name variant', () => {
+		expect(SITES.seanbehan.nav).toContainEqual({ label: 'Services', href: '/services' });
 	});
 
 	it('does not claim dated experience the résumé cannot support', () => {

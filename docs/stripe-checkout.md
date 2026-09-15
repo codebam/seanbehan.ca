@@ -11,13 +11,15 @@ quantity, product identity, release, and return URLs stay on the Worker.
 ## 1. Stripe account
 
 1. Finish Stripe account activation, business verification, payout bank details, public business
-   details, support email, and statement descriptor.
+   details, support email, and statement descriptor. The seller is Sean Behan, so the public
+   business name and statement descriptor use that legal name rather than "codebam" — which is
+   what avoids registering a business name for the handle.
 2. Open **Settings → Managed Payments**, confirm the account is eligible, accept its terms, and
    activate it. Canadian businesses and downloadable software are eligible categories, but Stripe
    makes the final account and product decision.
-3. Open Checkout branding settings. Add the codebam logo, brand colour, support contact,
-   `https://codebam.ca/legal/privacy`, and `https://codebam.ca/legal/terms-of-sale`.
-4. Publish `https://codebam.ca/legal/refund-policy` wherever Stripe asks for the refund policy.
+3. Open Checkout branding settings. Add the product logo, brand colour, support contact,
+   `https://seanbehan.ca/legal/privacy`, and `https://seanbehan.ca/legal/terms-of-sale`.
+4. Publish `https://seanbehan.ca/legal/refund-policy` wherever Stripe asks for the refund policy.
    Stripe/Link can issue a refund under Managed Payments; refunded or disputed charges stop passing
    the download check.
 
@@ -54,6 +56,10 @@ Create the bucket once:
 ```bash
 npx wrangler r2 bucket create codebam-product-downloads
 ```
+
+The bucket keeps its historical name because the object keys inside it are what old
+fulfillment links and the release manifest point at. The name is internal and never reaches a
+buyer.
 
 Keep the bucket private: no `r2.dev` URL and no custom public domain. Upload the current immutable
 key exactly as named in `src/lib/product.ts`:
@@ -101,9 +107,10 @@ their originally purchased release available afterward.
 
 ## 4. Fulfillment email
 
-Onboard `codebam.ca` under Cloudflare **Email Service** and verify its DNS records. The Worker sends
-from `products@codebam.ca`, replies to `codebam@codebam.ca`, and the `ORDER_EMAIL` binding restricts
-the sender to that address.
+Onboard `seanbehan.ca` under Cloudflare **Email Service** (the CMS sender `cms@seanbehan.ca` is
+already on it) and verify its DNS records. The Worker sends from `products@seanbehan.ca`, replies to
+`sean@seanbehan.ca`, and the `ORDER_EMAIL` binding on the default Worker restricts the sender to that
+address.
 
 The Stripe webhook sends a download link, not the archive. The link contains a high-entropy Checkout
 Session ID and the Worker rechecks payment, product, Price, refund/dispute state, and release before
@@ -156,10 +163,10 @@ stripe listen \
   --forward-to=http://localhost:4321/api/stripe/webhook
 ```
 
-The listener prints its `whsec_...` value. Put it in `.dev.vars`, then run the codebam variant:
+The listener prints its `whsec_...` value. Put it in `.dev.vars`, then run the default build:
 
 ```bash
-npm run dev:codebam
+npm run dev
 ```
 
 Open the product page, buy with Stripe test card `4242 4242 4242 4242`, any future expiry,
@@ -176,28 +183,34 @@ and any CVC. Verify all of these:
 
 ## 7. Production secrets
 
-The product belongs only to the named `codebam` Worker environment:
+The product belongs to the **default** Worker — the `seanbehan-ca` deployment that serves
+seanbehan.ca. Do not put these on the `codebam` environment; it is a redirect-only portfolio Worker:
 
 ```bash
-npx wrangler secret put STRIPE_SECRET_KEY --env codebam
-npx wrangler secret put STRIPE_PRICE_ID --env codebam
+npx wrangler secret put STRIPE_SECRET_KEY
+npx wrangler secret put STRIPE_PRICE_ID
 ```
 
 Use live values: `rk_live_...` (or `sk_live_...`) and the live `price_...`. Never commit either.
 
 In Stripe Workbench, create a **snapshot webhook endpoint**:
 
-- **URL:** `https://codebam.ca/api/stripe/webhook`
+- **URL:** `https://seanbehan.ca/api/stripe/webhook`
 - **Events:** `checkout.session.completed`, `checkout.session.async_payment_succeeded`
 - **Scope:** this Stripe account, not an organization destination
 - **API version:** current account version (`2025-03-31.basil` or later is required)
 
-Use the apex URL exactly. `www.codebam.ca` returns a redirect, and Stripe treats webhook redirects as
-failed deliveries. Reveal that endpoint's live signing secret, then set it:
+Use the apex URL exactly. `www.seanbehan.ca` returns a redirect, and Stripe treats webhook redirects
+as failed deliveries. Editing an existing endpoint's URL in place keeps its signing secret; creating
+a new endpoint issues a new one. Either way, set it on the default Worker:
 
 ```bash
-npx wrangler secret put STRIPE_WEBHOOK_SECRET --env codebam
+npx wrangler secret put STRIPE_WEBHOOK_SECRET
 ```
+
+Then disable or delete the old `https://codebam.ca/api/stripe/webhook` endpoint in both test and live
+mode. Codebam.ca 301s that path now, and Stripe counts the redirect as a failed delivery, so leaving
+the endpoint registered only produces retry noise.
 
 Webhook signing secrets differ between Stripe CLI, sandbox endpoint, and live endpoint.
 
@@ -211,7 +224,7 @@ Webhook signing secrets differ between Stripe CLI, sandbox endpoint, and live en
 6. Apply the D1 migration.
 7. Set all three live Worker secrets.
 8. Register and test the live webhook.
-9. Deploy codebam.ca and purge its edge cache.
+9. Deploy the default Worker (seanbehan.ca) and purge its edge cache. The codebam Worker only needs a redeploy so its redirects include the moved paths.
 10. Make one real purchase and refund it. Confirm download works before refund and is denied after.
 11. Disable the Lemon Squeezy checkout only after the Stripe purchase, email, download, and refund
     path all pass.
@@ -225,12 +238,14 @@ must be in place for every one of the three routes before the first real sale.
 Install the repository's commerce rules with:
 
 ```sh
-CF_API_TOKEN=… RATE_LIMIT_MODE=commerce bash tools/cloudflare/waf-rules.sh codebam.ca
+CF_API_TOKEN=… RATE_LIMIT_MODE=commerce bash tools/cloudflare/waf-rules.sh seanbehan.ca
 ```
 
 That installs a 10 req/min/IP block on the POST and one shared
-30 req/min/IP managed challenge for the two GETs, host-scoped to `codebam.ca`;
-it needs a plan/API that allows more than one rate-limit rule.
+30 req/min/IP managed challenge for the two GETs, host-scoped to `seanbehan.ca`;
+it needs a plan/API that allows more than one rate-limit rule. The old
+`codebam.ca` zone no longer has checkout routes to guard, so its single free-plan
+slot can go back to `RATE_LIMIT_MODE=admin` for `/_emdash`.
 
 On the free single-slot plan the operator has to choose. The default
 `RATE_LIMIT_MODE=admin` spends the zone's one slot on the /_emdash 2 req/10 s

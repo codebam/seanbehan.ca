@@ -31,22 +31,22 @@ import type { FeaturedProject } from './types';
  */
 export const featuredProjects: Array<FeaturedProject & { seoDescription: string }> = [
 	{
-		slug: 'codebam-stream',
+		slug: 'stream',
 		// The one row without a repository: the control plane takes Stripe money
 		// for a live service, so it stays private and the row links to the
 		// service instead of to source nobody is allowed to read.
 		since: '2026',
-		title: 'Codebam Stream',
+		title: 'Stream',
 		description:
 			'Browser-first multistreaming in early access: OBS pushes one signal in over WHIP, your own watch page is the program output, and the same signal leaves again as RTMPS to YouTube, Twitch, X, Kick and Telegram. Cloudflare Workers, Durable Objects, D1 and LiveKit underneath, prepaid hours on top.',
 		seoDescription:
 			'Multistream to YouTube, Twitch, X, Kick and Telegram from one browser-first control room, billed by prepaid usage.',
 		language: 'TypeScript',
 		stars: 0,
-		homepage: 'https://stream.codebam.ca',
+		homepage: 'https://stream.seanbehan.ca',
 		homepageLabel: 'Open the dashboard',
 		mockup: streamMockup,
-		mockupAlt: 'Codebam Stream control room with one program feed and five relay destinations',
+		mockupAlt: 'Stream control room with one program feed and five relay destinations',
 		tags: ['durable-objects', 'livekit', 'rtmps'],
 		challenge:
 			'Relay one live broadcast to five providers that each have their own stream key, rate limit and way of failing — while taking money for it in advance, and never letting a customer watch or push frames they have not paid for.',

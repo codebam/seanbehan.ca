@@ -30,7 +30,7 @@ export type ContentFormat = 'md' | 'json';
  * Detail pages of the two collections whose words live in the database. Lists
  * and tag archives are navigation rather than content, and the hand-written
  * templates (home, about, contact) have no stored body to convert; projects and
- * products belong to the other origin's templates.
+ * products are hand-written templates on their own origins, not entries.
  */
 const NEGOTIABLE = /^\/(?:posts|pages)\/[^/]+$/;
 

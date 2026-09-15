@@ -32,10 +32,10 @@ export const PRODUCT = {
 	name: 'Cloudflare Workers Production Kit',
 	price: 59,
 	currency: 'CAD',
-	url: `${SITES.codebam.url}/products/cloudflare-workers-production-kit`,
+	url: `${SITES.seanbehan.url}/products/cloudflare-workers-production-kit`,
 	checkoutPath: '/checkout/cloudflare-workers-production-kit',
-	successUrl: `${SITES.codebam.url}/checkout/success`,
-	downloadUrl: `${SITES.codebam.url}/checkout/download`,
+	successUrl: `${SITES.seanbehan.url}/checkout/success`,
+	downloadUrl: `${SITES.seanbehan.url}/checkout/download`,
 	updatesForYears: 1,
 	currentRelease: PRODUCT_RELEASES.at(-1)!
 } as const;

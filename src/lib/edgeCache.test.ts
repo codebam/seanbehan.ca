@@ -141,14 +141,27 @@ describe('owningSite', () => {
 		}
 	});
 
-	it('keeps writing on one origin and commerce on the other', () => {
+	it('keeps writing and commerce on the legal-name origin, projects on the handle', () => {
 		expect(owningSite('/posts/silverblue', 'codebam')).toBe('seanbehan');
 		expect(owningSite('/rss.xml', 'codebam')).toBe('seanbehan');
 		expect(owningSite('/posts', 'seanbehan')).toBeNull();
-		expect(owningSite('/products/cloudflare-workers-production-kit', 'seanbehan')).toBe('codebam');
+		expect(owningSite('/services', 'codebam')).toBe('seanbehan');
+		expect(owningSite('/services', 'seanbehan')).toBeNull();
+		expect(owningSite('/products/cloudflare-workers-production-kit', 'codebam')).toBe('seanbehan');
+		expect(owningSite('/products/cloudflare-workers-production-kit', 'seanbehan')).toBeNull();
+		expect(owningSite('/legal/privacy', 'codebam')).toBe('seanbehan');
+		expect(owningSite('/legal/privacy', 'seanbehan')).toBeNull();
 		expect(owningSite('/projects/viewport', 'seanbehan')).toBe('codebam');
-		expect(owningSite('/legal/privacy', 'seanbehan')).toBe('codebam');
+		expect(owningSite('/projects', 'codebam')).toBeNull();
 		expect(owningSite('/product', 'seanbehan')).toBeNull();
+	});
+
+	it('sends old checkout and webhook links from codebam to the commercial origin', () => {
+		expect(owningSite('/checkout/download', 'codebam')).toBe('seanbehan');
+		expect(owningSite('/checkout/success', 'codebam')).toBe('seanbehan');
+		expect(owningSite('/api/stripe/webhook', 'codebam')).toBe('seanbehan');
+		expect(owningSite('/checkout/download', 'seanbehan')).toBeNull();
+		expect(owningSite('/api/stripe/webhook', 'seanbehan')).toBeNull();
 	});
 });
 

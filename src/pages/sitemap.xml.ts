@@ -11,11 +11,11 @@ const staticPaths = () => [
 	'/',
 	'/about',
 	'/contact',
-	// /links has one canonical home, seanbehan.ca, so the codebam sitemap must
-	// not advertise a second copy of it.
-	...(site.id === 'seanbehan' ? ['/links'] : []),
-	...(site.id === 'codebam'
+	// /links and the whole commercial surface have one canonical home,
+	// seanbehan.ca, so the codebam sitemap must not advertise second copies.
+	...(site.id === 'seanbehan'
 		? [
+				'/links',
 				'/services',
 				'/products/cloudflare-workers-production-kit',
 				'/legal/privacy',

@@ -52,7 +52,7 @@ const seanbehan = {
 		{ label: 'Work', href: '/#work' },
 		{ label: 'Résumé', href: '/resume' },
 		{ label: 'Writing', href: '/posts', via: 'writing' },
-		{ label: 'Services', href: '/services', via: 'codebam' }
+		{ label: 'Services', href: '/services' }
 	],
 	// The home page's work history, condensed from resume/resume.md — that
 	// file is the source, and this follows it the way projects.ts does: when
@@ -63,7 +63,7 @@ const seanbehan = {
 			role: 'Independent Developer',
 			org: 'Open Source',
 			period: '2021 – Present',
-			note: 'Built and run Codebam Stream, a paid live-streaming control plane on Cloudflare; wrote the Telegram bot framework with 214 forks and 120 npm releases.'
+			note: 'Built and run a paid live-streaming control plane on Cloudflare; wrote the Telegram bot framework with 214 forks and 120 npm releases.'
 		},
 		{
 			role: 'Frontend Web Developer',
@@ -99,9 +99,9 @@ const seanbehan = {
 };
 
 /**
- * The handle-first variant. Same posts, same projects, different front door:
- * the work leads, the résumé is not part of the pitch, and the name gives way
- * to the handle people actually find the code under.
+ * The handle-first variant. The public projects lead through a front door
+ * under the handle people find the code under; the résumé and the commercial
+ * pages stay on the legal-name origin and are linked across, not duplicated.
  */
 /** @type {SiteConfig} */
 const codebam = {
@@ -128,12 +128,12 @@ const codebam = {
 	// Nobody is being hired through the handle's front door, so there is no
 	// status to declare and nothing to point at but the work and the writing.
 	availability: null,
-	primaryAction: { label: 'Work with me', href: '/services' },
+	primaryAction: { label: 'Work with me', href: '/services', via: 'commerce' },
 	nav: [
 		{ label: 'Work', href: '/#work' },
-		{ label: 'Products', href: '/products/cloudflare-workers-production-kit' },
+		{ label: 'Projects', href: '/projects' },
 		{ label: 'Writing', href: '/posts', via: 'writing' },
-		{ label: 'Services', href: '/services' }
+		{ label: 'Services', href: '/services', via: 'commerce' }
 	],
 	// No résumé on this origin, so there is no history to shorten into a
 	// section; it renders nothing rather than an empty heading.
@@ -163,18 +163,23 @@ export const SITES = { seanbehan, codebam };
  * @typedef {{
  *   startingPrice: string | null,
  *   timeline: string | null,
- *   replyWindow: string | null
+ *   replyWindow: string | null,
+ *   availability: string | null
  * }} CommerceFacts
  */
-/** @type {{ codebam: CommerceFacts }} */
+/** @type {{ seanbehan: CommerceFacts }} */
 export const COMMERCE = {
-	codebam: {
+	seanbehan: {
 		// OPERATOR: an honest starting price or band, e.g. 'Projects start at $2,000 CAD'.
 		startingPrice: null,
 		// OPERATOR: a typical timeline, e.g. 'Typically 2–4 weeks from an approved scope'.
 		timeline: null,
 		// OPERATOR: a reply window, e.g. 'Replies within 1–2 business days'.
-		replyWindow: null
+		replyWindow: null,
+		// OPERATOR: project availability for the services page, e.g.
+		// 'Taking new projects from October'. Null renders the ask-by-email
+		// fallback rather than borrowing the hiring status.
+		availability: null
 	}
 };
 

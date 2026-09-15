@@ -23,8 +23,8 @@ A fresh database has the schema and no posts. That is expected — the writing l
 
 ## Build Variants
 
-- `seanbehan.ca` — name-first, résumé in the nav
-- `codebam.ca` — handle-first, work leads
+- `seanbehan.ca` — name-first, résumé in the nav, and the commercial home (services, products, checkout, legal)
+- `codebam.ca` — handle-first portfolio; writing and commerce 301 to seanbehan.ca
 
 ```bash
 npm run build

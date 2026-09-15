@@ -1,4 +1,4 @@
-This is seanbehan.ca / codebam.ca: a personal site and technical blog, built on EmDash (a CMS on Astro) and deployed as a Cloudflare Worker with D1 and R2.
+This is seanbehan.ca / codebam.ca: a personal site, technical blog and storefront, built on EmDash (a CMS on Astro) and deployed as a Cloudflare Worker with D1 and R2.
 
 It used to be a SvelteKit site with the posts as markdown files. The design came across intact; the words moved into the database. If something reads like it was written for a static site, it probably was — say so rather than working around it.
 
@@ -9,7 +9,7 @@ npm run dev          # emdash dev: migrate, seed, then serve on :4321
 npm run check        # astro check
 npm run test:run     # vitest over src/lib
 npm run smoke        # ask a running site for one of everything
-npm run build        # seanbehan.ca; build:codebam for the other origin
+npm run build        # seanbehan.ca (writing + commerce); build:codebam for the handle portfolio
 npm run resume       # nix: the résumé PDF and HTML fragment into resume/out/
 npm run resume:seed  # …and into the local bucket, which is what /resume reads
 ```
@@ -18,7 +18,7 @@ The admin UI is at `http://localhost:4321/_emdash/admin`; localhost signs you in
 
 ## Two origins, one repo
 
-`PUBLIC_SITE` picks the identity at build time (`seanbehan` or `codebam`), and `src/lib/site.data.js` holds everything that differs — name, copy, email, whether the résumé exists. Anything that varies between the two belongs in that file, not in a template. Both Workers read the same database.
+`PUBLIC_SITE` picks the identity at build time (`seanbehan` or `codebam`), and `src/lib/site.data.js` holds everything that differs — name, copy, email, whether the résumé exists. Anything that varies between the two belongs in that file, not in a template. Both Workers read the same database. `seanbehan.ca` is the canonical writing and commercial home; `codebam.ca` is the handle portfolio and 301s every moved path to it.
 
 ## Key files
 

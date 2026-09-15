@@ -194,16 +194,15 @@ const isCacheable = async (context: {
 /**
  * The other origin a path belongs to, or null when this Worker already owns it.
  *
- * Writing has one canonical home (seanbehan.ca): posts, CMS pages and the feed
- * are redirected there so codebam never indexes a duplicate. `/resume` joins
- * that list because codebam's footer links to it, the GitHub profile points at
- * codebam.ca, and a 404 is the wrong answer for a person who came to hire.
+ * seanbehan.ca is the canonical home for writing and for everything commercial:
+ * posts, CMS pages, the feed, the résumé, services, products, checkout and the
+ * legal pages. The codebam Worker redirects all of them there, which keeps the
+ * handle's origin a portfolio rather than a second storefront — and keeps old
+ * `/checkout/download` links in buyers' inboxes working, since the redirect
+ * preserves the query string that carries the session credential.
  *
- * Commercial pages point the other way. Projects, products, services and the
- * legal pages pin codebam canonicals already, so answering them on
- * seanbehan.ca gave a hiring reader one origin's chrome around another
- * origin's copy — a page asking them to email someone else at another domain.
- * llms.txt has always promised the 301; this is the routing half.
+ * Projects point the other way: the case studies are the handle's portfolio and
+ * stay on codebam.ca, so seanbehan.ca redirects them across.
  *
  * Exported because the redirect rules are worth testing without a Worker.
  */
@@ -217,20 +216,20 @@ export function owningSite(pathname: string, id: string): 'seanbehan' | 'codebam
 			pathname === '/resume' ||
 			pathname === '/resume.md' ||
 			pathname === '/resume.pdf' ||
-			pathname === '/resume.txt')
+			pathname === '/resume.txt' ||
+			pathname === '/services' ||
+			pathname === '/products' ||
+			pathname.startsWith('/products/') ||
+			pathname === '/legal' ||
+			pathname.startsWith('/legal/') ||
+			pathname === '/checkout' ||
+			pathname.startsWith('/checkout/') ||
+			pathname === '/api/stripe' ||
+			pathname.startsWith('/api/stripe/'))
 	) {
 		return 'seanbehan';
 	}
-	if (
-		id === 'seanbehan' &&
-		(pathname === '/projects' ||
-			pathname.startsWith('/projects/') ||
-			pathname === '/products' ||
-			pathname.startsWith('/products/') ||
-			pathname === '/services' ||
-			pathname === '/legal' ||
-			pathname.startsWith('/legal/'))
-	) {
+	if (id === 'seanbehan' && (pathname === '/projects' || pathname.startsWith('/projects/'))) {
 		return 'codebam';
 	}
 	return null;
@@ -260,10 +259,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
 			redirect = true;
 		}
 
-		// The shared database does not imply two indexed copies. Writing belongs
-		// to Sean's domain; projects and products belong to the code-first
-		// domain — and the résumé now rides with writing, so the URL in the
-		// codebam footer resolves from the handle's origin instead of 404ing.
+		// The shared database does not imply two indexed copies. Writing, the
+		// résumé and the whole commercial surface belong to Sean's domain;
+		// projects belong to the code-first domain. The résumé and commerce
+		// redirects also keep old links working — a footer link on codebam and
+		// a /checkout/download URL in a buyer's inbox both resolve.
 		const owner = owningSite(target.pathname, site.id);
 		if (owner) {
 			target.host = new URL(SITES[owner].url).host;

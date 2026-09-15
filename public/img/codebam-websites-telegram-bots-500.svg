@@ -1,5 +1,5 @@
 <!--
-  codebam.ca — websites and Telegram bots, 500x500.
+  seanbehan.ca — websites and Telegram bots, 500x500.
 
   Drawn in the dark scheme's token values from src/styles/app.css:
   bg #0b1220, panel #111827, line #1e293b, text #f1f5f9,
@@ -57,7 +57,7 @@
 
   <g transform="translate(145 382)">
     <rect width="210" height="43" rx="2" fill="#60a5fa"/>
-    <text x="105" y="27" fill="#0b1220" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" text-anchor="middle">codebam.ca/services</text>
+    <text x="105" y="27" fill="#0b1220" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" text-anchor="middle">seanbehan.ca/services</text>
   </g>
   <circle cx="250" cy="451" r="3" fill="#fbbf24"/>
 </svg>

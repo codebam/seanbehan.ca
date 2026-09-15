@@ -1,6 +1,12 @@
 import Stripe from 'stripe';
 import { PRODUCT, entitledRelease, type ProductRelease } from './product';
 
+/**
+ * Written into every Checkout Session's metadata and checked again on each
+ * download. Sessions created before the storefront moved to seanbehan.ca still
+ * carry this value, so renaming it would revoke access for previous buyers.
+ * Internal only — it never reaches a customer.
+ */
 export const STRIPE_INTEGRATION = 'codebam-store-v1';
 
 export type ProductAccess =
@@ -42,7 +48,7 @@ export function createStripeClient(secretKey: string): Stripe {
 		httpClient: Stripe.createFetchHttpClient(),
 		maxNetworkRetries: 2,
 		appInfo: {
-			name: 'codebam.ca',
+			name: 'seanbehan.ca',
 			version: '1.0.0',
 			url: PRODUCT.url
 		}

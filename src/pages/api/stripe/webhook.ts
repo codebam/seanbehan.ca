@@ -45,7 +45,7 @@ async function readBody(request: Request): Promise<Uint8Array | null> {
 }
 
 export const POST: APIRoute = async ({ request }) => {
-	if (site.id !== 'codebam') return new Response('Not found', { status: 404, headers });
+	if (site.id !== 'seanbehan') return new Response('Not found', { status: 404, headers });
 	if (Number(request.headers.get('Content-Length') ?? 0) > MAX_EVENT_BYTES) {
 		return new Response('Payload too large', { status: 413, headers });
 	}
@@ -114,8 +114,8 @@ export const POST: APIRoute = async ({ request }) => {
 			);
 			const result = await env.ORDER_EMAIL.send({
 				to: access.email,
-				from: { email: 'products@codebam.ca', name: 'codebam' },
-				replyTo: 'codebam@codebam.ca',
+				from: { email: 'products@seanbehan.ca', name: 'Sean Behan' },
+				replyTo: 'sean@seanbehan.ca',
 				...message
 			});
 			await completeFulfillment(env.DB, checkoutSession.id, result.messageId);

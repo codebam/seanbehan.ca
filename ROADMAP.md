@@ -86,7 +86,10 @@ proposed, roughly ordered by value within each section.
       its canonical to. So the page answered 200 on Sean's origin wearing
       Sean's header and footer, told Google it was codebam.ca's, and asked the
       reader to email codebam@codebam.ca. `llms.txt` has always promised every
-      cross-origin section 301s; it does now.
+      cross-origin section 301s; it does now. **Superseded Sept 2026:** the
+      whole commercial surface moved to seanbehan.ca, so the remaining
+      cross-origin redirect is projects to codebam.ca and everything else from
+      codebam.ca to seanbehan.ca.
 
 - [x] `absolutizeUrls()` missed `srcset`/`poster` (`src/lib/rssFeed.ts`); every
       entry in both is now prefixed. Covered in `rssFeed.test.ts`.

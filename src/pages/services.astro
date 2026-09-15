@@ -5,9 +5,8 @@ import { LinkButton } from '@cloudflare/kumo/components/button';
 import { LINKEDIN_URL } from '../lib/site';
 import { COMMERCE, SITES } from '../lib/site.data.js';
 
-const serviceSite = SITES.codebam;
-const operator = COMMERCE.codebam;
-const availability = serviceSite.availability;
+const serviceSite = SITES.seanbehan;
+const operator = COMMERCE.seanbehan;
 
 /**
  * The commercial facts, with a number-free fallback for every field the
@@ -28,9 +27,7 @@ const facts = [
 	},
 	{
 		label: 'Availability',
-		value: availability
-			? `${availability.label} — ${availability.detail}`
-			: 'Ask for the next opening by email.'
+		value: operator.availability ?? 'Ask for the next opening by email.'
 	},
 	{
 		label: 'Reply',
@@ -100,8 +97,8 @@ const schema = JSON.stringify({
 
 <Base
 	title="Website and Telegram Bot Development"
-	description="Custom websites and Telegram bots designed, built, integrated, and launched by codebam."
-	ogTitle="Websites and Telegram bots, built to ship — codebam"
+	description="Custom websites and Telegram bots designed, built, integrated, and launched by Sean Behan."
+	ogTitle="Websites and Telegram bots, built to ship — Sean Behan"
 	ogDescription="Custom web development and Telegram automation without the agency handoff."
 	canonical={canonical}
 >

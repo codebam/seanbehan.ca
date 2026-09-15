@@ -11,18 +11,18 @@ const headers = {
 };
 
 export const GET: APIRoute = ({ redirect }) => {
-	if (site.id !== 'codebam') return new Response('Not found', { status: 404, headers });
+	if (site.id !== 'seanbehan') return new Response('Not found', { status: 404, headers });
 
 	return redirect(`/products/${PRODUCT.id}`, 303);
 };
 
 export const POST: APIRoute = async ({ request, url, rewrite }) => {
-	if (site.id !== 'codebam') return new Response('Not found', { status: 404, headers });
+	if (site.id !== 'seanbehan') return new Response('Not found', { status: 404, headers });
 
 	const origin = request.headers.get('Origin');
 	const fetchSite = request.headers.get('Sec-Fetch-Site');
 	if (
-		(!import.meta.env.DEV && origin !== SITES.codebam.url) ||
+		(!import.meta.env.DEV && origin !== SITES.seanbehan.url) ||
 		(origin && origin !== url.origin) ||
 		(fetchSite && fetchSite !== 'same-origin') ||
 		Number(request.headers.get('Content-Length') ?? 0) > 1024

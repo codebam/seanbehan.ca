@@ -20,7 +20,7 @@ const releaseDate = releasedAt.toLocaleDateString('en-CA', {
 	timeZone: 'UTC'
 });
 const archiveSize = `${Math.ceil(release.size / 1024)} KiB`;
-const ogImage = `${SITES.codebam.url}/og/${PRODUCT.id}.png`;
+const ogImage = `${SITES.seanbehan.url}/og/${PRODUCT.id}.png`;
 
 /** Sanitized from `unzip -l` of releases/…-v1.0.0.zip; lockfiles elided. */
 const fileTree = [
@@ -108,7 +108,7 @@ const schema = JSON.stringify({
 		'A deployment-ready Astro and Cloudflare Workers reference starter with D1, R2, authentication, security, deployment and operations guidance.',
 	url: canonical,
 	image: ogImage,
-	brand: { '@type': 'Brand', name: 'codebam' },
+	brand: { '@type': 'Brand', name: 'Sean Behan' },
 	offers: {
 		'@type': 'Offer',
 		url: canonical,
@@ -123,7 +123,7 @@ const schema = JSON.stringify({
 <Base
 	title={PRODUCT_NAME}
 	description="Ship an Astro service on Cloudflare Workers with D1, R2, authentication, security and deployment already wired together."
-	ogTitle={`${PRODUCT_NAME} — codebam`}
+	ogTitle={`${PRODUCT_NAME} — Sean Behan`}
 	canonical={canonical}
 	image={`/og/${PRODUCT.id}.png`}
 >

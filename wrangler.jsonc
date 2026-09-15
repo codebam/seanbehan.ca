@@ -13,9 +13,10 @@
 	"workers_dev": false,
 	"preview_urls": false,
 
-	// One database, both origins. The `codebam` environment below binds the same
-	// D1 and bucket so either admin can manage the site; public writing redirects
-	// to seanbehan.ca rather than publishing a second indexable copy.
+	// One database, both origins. The default environment is the writing and
+	// commercial home; the `codebam` environment below is the handle portfolio
+	// and redirects writing and commercial paths to seanbehan.ca rather than
+	// publishing a second indexable copy.
 	"d1_databases": [
 		{
 			"binding": "DB",
@@ -37,6 +38,14 @@
 		{
 			"binding": "RESUME",
 			"bucket_name": "private"
+		},
+		// The paid product's immutable archive. The bucket keeps its historical
+		// `codebam-product-downloads` name because the object keys inside it are
+		// what old fulfillment links and the release manifest point at; the name
+		// is internal and never reaches a buyer.
+		{
+			"binding": "DOWNLOADS",
+			"bucket_name": "codebam-product-downloads"
 		}
 	],
 	"images": {
@@ -57,9 +66,17 @@
 
 	// Cloudflare Email Sending: transport for EmDash's mail-dependent auth flows
 	// (magic-link login, invites, password recovery), consumed by the
-	// cloudflareEmail() provider in astro.config.mjs. The sending domain has to
-	// be verified in the dashboard (Email → Email Sending) before anything sends.
-	"send_email": [{ "name": "EMAIL" }],
+	// cloudflareEmail() provider in astro.config.mjs, plus the paid-order
+	// fulfillment mail sent from the Stripe webhook. Both sending domains have
+	// to be verified in the dashboard (Email → Email Sending) before anything
+	// sends.
+	"send_email": [
+		{ "name": "EMAIL" },
+		{
+			"name": "ORDER_EMAIL",
+			"allowed_sender_addresses": ["products@seanbehan.ca"]
+		}
+	],
 
 	"observability": {
 		"enabled": true,
@@ -77,12 +94,16 @@
 	],
 
 	/*
-	 * The second origin. Deployed with `wrangler deploy --env codebam`, which is
-	 * what `npm run deploy:codebam` runs after building with PUBLIC_SITE=codebam.
+	 * The handle-portfolio origin. Deployed with `wrangler deploy --env codebam`,
+	 * which is what `npm run deploy:codebam` runs after building with
+	 * PUBLIC_SITE=codebam. It serves the project case studies and 301s writing,
+	 * the résumé and every commercial path to the default origin; it needs no
+	 * Stripe secrets or order sender. The DOWNLOADS binding below is retained
+	 * only because wrangler does not inherit bindings into a named environment,
+	 * and the route guards return before any read can reach it.
 	 *
 	 * Shared bindings are repeated rather than inherited: wrangler does not carry
-	 * d1_databases, r2_buckets or worker_loaders into a named environment. The
-	 * paid-download bucket and order sender exist only on this Worker.
+	 * d1_databases, r2_buckets or worker_loaders into a named environment.
 	 */
 	"env": {
 		"codebam": {
@@ -101,13 +122,14 @@
 					"binding": "MEDIA",
 					"bucket_name": "seanbehan-ca-media"
 				},
+				// Inert on this Worker: the commerce routes 404 before touching it.
 				{
 					"binding": "DOWNLOADS",
 					"bucket_name": "codebam-product-downloads"
 				},
 				// Not needed here — /resume is the seanbehan variant's page, and
-				// codebam answers 404 for it. Bound anyway, so that the two Workers
-				// describe the same bucket the same way if the résumé ever does move.
+				// codebam 301s it. Bound anyway, so that the two Workers describe
+				// the same bucket the same way if the résumé ever does move.
 				{
 					"binding": "RESUME",
 					"bucket_name": "private"
@@ -124,13 +146,7 @@
 			"triggers": {
 				"crons": ["* * * * *"]
 			},
-			"send_email": [
-				{ "name": "EMAIL" },
-				{
-					"name": "ORDER_EMAIL",
-					"allowed_sender_addresses": ["products@codebam.ca"]
-				}
-			],
+			"send_email": [{ "name": "EMAIL" }],
 			"observability": {
 				"enabled": true,
 				"logs": { "invocation_logs": false }
