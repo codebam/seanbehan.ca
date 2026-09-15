@@ -1,5 +1,5 @@
 <!--
-  codebam.ca — website and Telegram bot services, 500x250.
+  seanbehan.ca — website and Telegram bot services, 500x250.
 
   Drawn in the dark scheme's token values from src/styles/app.css:
   bg #0b1220, panel #111827, line #1e293b, text #f1f5f9,
@@ -14,7 +14,7 @@
 -->
 <svg xmlns="http://www.w3.org/2000/svg" width="500" height="250" viewBox="0 0 500 250" role="img" aria-labelledby="title desc">
   <title id="title">codebam website and Telegram bot services</title>
-  <desc id="desc">Advertisement for custom website and Telegram bot development at codebam.ca/services.</desc>
+  <desc id="desc">Advertisement for custom website and Telegram bot development at seanbehan.ca/services.</desc>
   <defs>
     <linearGradient id="field" x1="0" y1="0" x2="500" y2="250" gradientUnits="userSpaceOnUse">
       <stop stop-color="#0b1220"/>
@@ -59,7 +59,7 @@
 
     <g transform="translate(307 165)">
       <rect width="190" height="47" rx="2" fill="#60a5fa"/>
-      <text x="95" y="30" fill="#0b1220" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle">codebam.ca/services</text>
+      <text x="95" y="30" fill="#0b1220" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle">seanbehan.ca/services</text>
     </g>
   </g>
   <rect x="0.5" y="0.5" width="499" height="249" rx="2.5" fill="none" stroke="#1e293b"/>
