@@ -4,10 +4,10 @@ Personal site and technical blog. [EmDash](https://github.com/emdash-cms/emdash)
 
 One repo, two origins:
 
-- `seanbehan.ca` — name-first, résumé in the nav
-- `codebam.ca` — handle-first, work leads, no résumé
+- `seanbehan.ca` — name-first, résumé in the nav, and the commercial home: services, products, checkout and the legal pages
+- `codebam.ca` — handle-first portfolio: public projects lead, and everything written or sold 301s to `seanbehan.ca`
 
-Same posts. Identity is chosen at build time by `PUBLIC_SITE`.
+Both origins render the same database. Identity is chosen at build time by `PUBLIC_SITE`.
 
 ## Prerequisites
 
@@ -27,7 +27,7 @@ npm run dev
 
 `npm run dev` runs `emdash dev`: it applies any pending migrations, seeds an empty database from `seed/seed.json`, and starts Astro. The site is at `http://localhost:4321` and the admin panel at `http://localhost:4321/_emdash/admin` — on localhost the dev bypass signs you in without a passkey.
 
-Use `npm run dev:codebam` for the codebam variant and its private storefront bindings.
+Use `npm run dev:codebam` for the handle-portfolio variant. The commercial bindings and Stripe secrets live on the default build.
 
 The local database is a SQLite file under `.wrangler/state`, not committed. An empty one is seeded with the schema (posts, pages, tags) but no posts; see **Content** below for how the real ones got there.
 
@@ -51,11 +51,11 @@ npm run build:codebam      # codebam.ca
 ## Deploy
 
 ```bash
-npm run deploy             # build seanbehan, wrangler deploy
-npm run deploy:codebam     # build codebam, deploy as codebam-ca
+npm run deploy             # build seanbehan, wrangler deploy (writing + commerce)
+npm run deploy:codebam     # build codebam, deploy as codebam-ca (portfolio + 301s)
 ```
 
-Both Workers read the same D1 database and R2 bucket, so a post published from either admin panel is live on both origins.
+Both Workers share the same D1 database and media bucket, so a post published from either admin panel reaches both origins. The paid-download bucket and order-email binding exist only on the default Worker.
 
 First deploy needs the bindings to exist:
 
@@ -76,7 +76,7 @@ webhook, artifact, email, and Worker secret setup is documented in
 
 HTML is served with `s-maxage` so Cloudflare can hold it at the edge, but that only takes effect once a Cache Rule marks HTML cacheable — a zone setting, not a repo one. `docs/edge-caching.md` has the rule and the deploy-time purge it requires.
 
-Published posts on both origins canonical to `seanbehan.ca`. Homes stay self-canonical.
+Published posts canonical to `seanbehan.ca`; project case studies canonical to `codebam.ca`. Homes stay self-canonical.
 
 Marketplace plugin installation and sandboxed plugin execution are intentionally disabled in `astro.config.mjs` until EmDash enforces a plugin's declared `manifest.hooks` and runtime capability checks; the trusted local plugins in the `plugins:` array remain in use.
 

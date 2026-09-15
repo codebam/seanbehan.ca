@@ -34,7 +34,7 @@ const htmlError = async (rewrite: APIContext['rewrite'], path: string, status: n
 };
 
 export const GET: APIRoute = async ({ request, url, rewrite }) => {
-	if (site.id !== 'codebam')
+	if (site.id !== 'seanbehan')
 		return new Response('Not found', { status: 404, headers: privateHeaders });
 
 	// The success page shares this bucket, so refreshing the confirmation and

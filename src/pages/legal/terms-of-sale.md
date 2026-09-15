@@ -1,14 +1,14 @@
 ---
 layout: ../../layouts/Legal.astro
 title: Terms of Sale
-description: Purchase, delivery, licensing, support, and liability terms for codebam digital products.
+description: Purchase, delivery, licensing, support, and liability terms for Sean Behan digital products.
 ---
 
 # Terms of Sale
 
-**Effective August 30, 2026**
+**Effective September 15, 2026**
 
-These Terms of Sale govern purchases of the Cloudflare Workers Production Kit from Sean Behan, operating as codebam ("codebam"). By submitting an order, you agree to these terms, the [Refund Policy](/legal/refund-policy), and the [Product License](/legal/product-license). If you purchase for an organization, you confirm that you can bind it to these terms.
+These Terms of Sale govern purchases of the Cloudflare Workers Production Kit from Sean Behan ("I", "me", or "the seller"). By submitting an order, you agree to these terms, the [Refund Policy](/legal/refund-policy), and the [Product License](/legal/product-license). If you purchase for an organization, you confirm that you can bind it to these terms.
 
 ## Product and price
 
@@ -18,19 +18,19 @@ You must provide accurate Checkout and contact information and be old enough to 
 
 ## Merchant of record and payment
 
-Stripe, or the Stripe affiliate identified in Checkout and on your receipt, acts as merchant of record when Stripe Managed Payments covers the transaction. Stripe processes payment, currency conversion, applicable transaction taxes, receipts, fraud review, disputes, and approved refunds under its purchaser terms. codebam never receives your full payment-card details.
+Stripe, or the Stripe affiliate identified in Checkout and on your receipt, acts as merchant of record when Stripe Managed Payments covers the transaction. Stripe processes payment, currency conversion, applicable transaction taxes, receipts, fraud review, disputes, and approved refunds under its purchaser terms. Sean Behan never receives your full payment-card details.
 
-codebam remains the product provider, copyright owner, and licensor. If Checkout does not identify Stripe as merchant of record, do not complete the purchase and contact codebam.
+Sean Behan remains the product provider, copyright owner, and licensor. If Checkout does not identify Stripe as merchant of record, do not complete the purchase and contact Sean Behan.
 
 ## Delivery and access
 
 After Stripe confirms payment, the confirmation page provides a private download link and a second link is sent to the Checkout email address. You are responsible for providing a working email address and keeping the link and downloaded files secure.
 
-Access depends on a valid paid transaction for the correct product and release. A refund, partial refund, dispute, reversal, or material license breach can end access. Contact codebam if delivery fails rather than sharing payment or card details by email.
+Access depends on a valid paid transaction for the correct product and release. A refund, partial refund, dispute, reversal, or material license breach can end access. Contact Sean Behan if delivery fails rather than sharing payment or card details by email.
 
 ## License
 
-Purchase grants only the rights stated in the [Product License](/legal/product-license). The kit is licensed, not sold, and codebam retains ownership of the kit and documentation. Third-party packages remain under their own licenses.
+Purchase grants only the rights stated in the [Product License](/legal/product-license). The kit is licensed, not sold, and Sean Behan retains ownership of the kit and documentation. Third-party packages remain under their own licenses.
 
 One purchase covers the named purchaser and authorized employees or contractors working on that purchaser's applications. It does not permit public distribution, sublicensing, resale, a competing starter-kit product, or reuse by a client outside the privately delivered application.
 
@@ -52,7 +52,7 @@ You are responsible for reviewing and testing the kit, adapting configuration an
 
 The kit is provided "as is" without warranties, including merchantability, fitness for a particular purpose, and non-infringement, to the extent permitted by law.
 
-To the extent permitted by law, codebam's total liability arising from the product or these terms is limited to the amount paid for the product. Neither party is liable for indirect, incidental, special, or consequential damages. Nothing in these terms excludes rights or liabilities that applicable law does not allow parties to exclude.
+To the extent permitted by law, Sean Behan's total liability arising from the product or these terms is limited to the amount paid for the product. Neither party is liable for indirect, incidental, special, or consequential damages. Nothing in these terms excludes rights or liabilities that applicable law does not allow parties to exclude.
 
 ## Changes to these terms
 
@@ -64,6 +64,6 @@ These terms are governed by the laws of Ontario and the federal laws of Canada a
 
 ## Contact
 
-Sean Behan, operating as codebam<br />
+Sean Behan<br />
 Ontario, Canada<br />
-[codebam@codebam.ca](mailto:codebam@codebam.ca)
+[sean@seanbehan.ca](mailto:sean@seanbehan.ca)

@@ -42,4 +42,4 @@ To the extent permitted by law, total liability arising from the kit is limited 
 
 Nothing here excludes rights or liabilities that applicable law does not allow parties to exclude.
 
-Questions: `codebam@codebam.ca`.
+Questions: `sean@seanbehan.ca`.

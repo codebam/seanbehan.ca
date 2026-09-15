@@ -6,17 +6,17 @@ description: The 14-day refund policy for the Cloudflare Workers Production Kit.
 
 # Refund Policy
 
-**Effective August 30, 2026**
+**Effective September 15, 2026**
 
 The Cloudflare Workers Production Kit is a digital source-code product delivered immediately after payment. This policy provides a focused 14-day remedy for duplicate purchases, failed delivery, and material product defects while preserving any non-waivable rights you have under applicable law.
 
 ## Eligible requests
 
-Email [codebam@codebam.ca](mailto:codebam@codebam.ca) within 14 calendar days after purchase if:
+Email [sean@seanbehan.ca](mailto:sean@seanbehan.ca) within 14 calendar days after purchase if:
 
 - the same purchaser accidentally completed a duplicate purchase;
-- the archive or private delivery link cannot be accessed and codebam cannot restore delivery; or
-- a material defect prevents the kit from operating substantially as described and codebam cannot correct it after a reasonable opportunity to reproduce and address the problem.
+- the archive or private delivery link cannot be accessed and Sean Behan cannot restore delivery; or
+- a material defect prevents the kit from operating substantially as described and Sean Behan cannot correct it after a reasonable opportunity to reproduce and address the problem.
 
 Describe the issue and include the Stripe receipt number and purchase email address. Do not email card details or publish the private download link.
 
@@ -28,7 +28,7 @@ This limitation does not override refunds or remedies required by applicable law
 
 ## Resolution and payment
 
-For a delivery or defect report, codebam may first provide a replacement archive, corrected instructions, a workaround, or a fixed release. If the eligible problem cannot be resolved, codebam will approve a refund through Stripe. Stripe returns approved funds to the original payment method; bank timing and exchange-rate effects are outside codebam's control.
+For a delivery or defect report, Sean Behan may first provide a replacement archive, corrected instructions, a workaround, or a fixed release. If the eligible problem cannot be resolved, Sean Behan will approve a refund through Stripe. Stripe returns approved funds to the original payment method; bank timing and exchange-rate effects are outside Sean Behan's control.
 
 ## Effect of a refund
 
@@ -36,10 +36,10 @@ Any full or partial refund ends download and update access. Except where applica
 
 ## Disputes
 
-Contact codebam first so a delivery or technical problem can be investigated. Nothing in this policy limits a right to dispute a transaction or seek a remedy that cannot legally be waived.
+Contact Sean Behan first so a delivery or technical problem can be investigated. Nothing in this policy limits a right to dispute a transaction or seek a remedy that cannot legally be waived.
 
 ## Contact
 
-Sean Behan, operating as codebam<br />
+Sean Behan<br />
 Ontario, Canada<br />
-[codebam@codebam.ca](mailto:codebam@codebam.ca)
+[sean@seanbehan.ca](mailto:sean@seanbehan.ca)

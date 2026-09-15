@@ -21,7 +21,7 @@ Astro.response.headers.set('Referrer-Policy', 'no-referrer');
 // The download route shares this bucket, so following the link after a
 // refresh cannot spend two full budgets in one window.
 const clientIp = getClientIp(Astro.request);
-if (site.id === 'codebam' && clientIp) {
+if (site.id === 'seanbehan' && clientIp) {
 	const rate = await consumeRateLimit(env.DB, {
 		key: `checkout-read:${clientIp}`,
 		limit: 30,
@@ -34,7 +34,7 @@ const sessionId = Astro.url.searchParams.get('session_id');
 let access: ProductAccess = { status: 'invalid' };
 let unavailable = false;
 
-if (site.id !== 'codebam' || !isCheckoutSessionId(sessionId)) {
+if (site.id !== 'seanbehan' || !isCheckoutSessionId(sessionId)) {
 	Astro.response.status = 400;
 } else {
 	try {
@@ -108,12 +108,12 @@ const outcome =
 		) : unavailable ? (
 			<p>
 				The payment service could not be reached. Refresh this page, or email{' '}
-				<a href="mailto:codebam@codebam.ca">codebam@codebam.ca</a> with your receipt.
+				<a href={`mailto:${site.email}`}>{site.email}</a> with your receipt.
 			</p>
 		) : (
 			<p>
 				This confirmation link is invalid. Return to the <a href={PRODUCT.url}>product page</a> or
-				email <a href="mailto:codebam@codebam.ca">codebam@codebam.ca</a> with your receipt.
+				email <a href={`mailto:${site.email}`}>{site.email}</a> with your receipt.
 			</p>
 		)}
 	</Masthead>

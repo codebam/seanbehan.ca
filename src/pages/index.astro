@@ -49,8 +49,8 @@ const HOME_POSTS = 6;
 const substantive = posts.filter((post) => (post.readingMinutes ?? 1) >= MIN_READING_MINUTES);
 const latest = (substantive.length >= HOME_POSTS ? substantive : posts).slice(0, HOME_POSTS);
 
-/** B1: the commercial blocks belong to the handle's front door. */
-const commercial = site.id === 'codebam';
+/** B1: the commercial blocks belong to the legal-name front door. */
+const commercial = site.id === 'seanbehan';
 const productHref = `/products/${PRODUCT.id}`;
 
 /**

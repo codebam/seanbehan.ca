@@ -43,7 +43,7 @@ export const featuredProjects: Array<FeaturedProject & { seoDescription: string 
 			'Multistream to YouTube, Twitch, X, Kick and Telegram from one browser-first control room, billed by prepaid usage.',
 		language: 'TypeScript',
 		stars: 0,
-		homepage: 'https://stream.codebam.ca',
+		homepage: 'https://stream.seanbehan.ca',
 		homepageLabel: 'Open the dashboard',
 		mockup: streamMockup,
 		mockupAlt: 'Codebam Stream control room with one program feed and five relay destinations',

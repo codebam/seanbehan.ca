@@ -42,7 +42,7 @@ abstract: "Senior full-stack and systems developer, open to full-time work — r
 # SELECTED WORK
 
 ### Codebam Stream · Live Streaming Control Plane
-*[stream.codebam.ca](https://stream.codebam.ca)*
+*[stream.seanbehan.ca](https://stream.seanbehan.ca)*
 
 - Cloudflare-native control plane for multistreaming, with a Durable Object per provider relay owning that relay's lifecycle
 - Two channels of prepaid credit — destination-hours and browser viewer-hours — allocated FIFO in D1 and reconciled per customer as usage accrues, with durable refund handling

@@ -20,9 +20,10 @@ import { getEmDashCollection } from 'emdash';
 import { getPosts } from '../lib/posts';
 import { LEGAL_NAME, SITES, site } from '../lib/site';
 
-/** Writing has one canonical origin, whatever door a request came in at. */
+/** Writing and commerce have one canonical origin, whatever door a request
+    came in at. The handle origin keeps the project case studies. */
 const WRITING = SITES.seanbehan.url;
-const WORK = SITES.codebam.url;
+const CODE = SITES.codebam.url;
 
 /** How many recent posts to name. Enough to steer; small enough to stay in. */
 const RECENT_LIMIT = 10;
@@ -90,11 +91,12 @@ ${cmsPages.map((page) => `- [${page.data.title}](${WRITING}/pages/${page.id}.md)
 
 > ${site.description}
 
-${WRITING} is the writing — posts, pages and the résumé of ${LEGAL_NAME}.
-${WORK} is the work — open-source projects, products and services. One
-repository, one database, two front doors: each origin answers requests for
-the other's sections with a 301 to the canonical URL, so follow redirects
-rather than guessing which door serves what.
+${WRITING} is the writing and the commercial home of ${LEGAL_NAME} — posts,
+pages, the résumé, and everything priced or legal (services, products, checkout
+and the policies that govern them). ${CODE} is the handle's portfolio — the
+open-source project case studies. One repository, one database, two front
+doors: each origin answers requests for the other's sections with a 301 to the
+canonical URL, so follow redirects rather than guessing which door serves what.
 
 How to fetch this site:
 
@@ -107,8 +109,9 @@ How to fetch this site:
   user-agent sniffing to trip over.
 - Everything else is HTML only, and appending a suffix is a 404 rather than a
   variant. The section pages — the home page, \`/about\`, \`/contact\` and
-  \`/links\`, plus \`/projects\`, \`/products\` and \`/services\` on the work
-  origin — are hand-written templates with no stored entry behind them; the
+  \`/links\`, plus \`/services\`, \`/products\` and the legal pages on the
+  writing origin and \`/projects\` on the handle origin — are hand-written
+  templates with no stored entry behind them; the
   archive \`/posts\` and the tag index \`/posts/tags\` are navigation over the
   entries. A post's markdown and JSON hang off the post's own URL, never the
   archive's. The résumé is the one section page that also answers as a
@@ -135,10 +138,10 @@ How to fetch this site:
 
 ${pagesSection}## Work
 
-- [Projects](${WORK}/projects): case studies of the software that runs, with what each one had to survive.
-- [Products](${WORK}/products): paid work, with prices.
-- [Services](${WORK}/services): what kind of engagements are taken on.
-- [Legal](${WORK}/legal): the terms, refund, license and privacy policies in one index.
+- [Projects](${CODE}/projects): case studies of the software that runs, with what each one had to survive.
+- [Products](${WRITING}/products): paid work, with prices.
+- [Services](${WRITING}/services): what kind of engagements are taken on.
+- [Legal](${WRITING}/legal): the terms, refund, license and privacy policies in one index.
 - [Contact](${site.url}/contact): the forms and the address.
 
 ## Recent writing
@@ -148,7 +151,7 @@ ${recent}
 ## Optional
 
 - [Sitemap for this origin](${site.url}/sitemap.xml): every indexable URL it serves.
-- [Sitemap for the other origin](${site.id === 'codebam' ? WRITING : WORK}/sitemap.xml): the same, across.
+- [Sitemap for the other origin](${site.id === 'codebam' ? WRITING : CODE}/sitemap.xml): the same, across.
 - [robots.txt](${site.url}/robots.txt): crawl rules — everything is open apart from the admin, and the few scrapers that take without giving back.
 `;
 

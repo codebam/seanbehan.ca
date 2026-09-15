@@ -10,13 +10,13 @@ interface Props {
 }
 
 const { frontmatter } = Astro.props;
-const canonical = `${SITES.codebam.url}${Astro.url.pathname}`;
+const canonical = `${SITES.seanbehan.url}${Astro.url.pathname}`;
 ---
 
 <Base title={frontmatter.title} description={frontmatter.description} canonical={canonical}>
 	<article class="panel pt-14 pb-20 md:pt-16">
 		<div class="legal-shell shell">
-			<p class="eyebrow">Legal / codebam</p>
+			<p class="eyebrow">Legal / Sean Behan</p>
 			<div class="legal-document prose mt-5 max-w-[68ch] text-[1.05rem]" data-prose>
 				<slot />
 			</div>
