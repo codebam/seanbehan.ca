@@ -14,7 +14,7 @@ abstract: "Senior full-stack and systems developer, open to full-time work — r
 ### Independent Developer · Open Source
 *2021 – Present*
 
-- Built and run Codebam Stream, a paid live-streaming service: OBS WHIP ingest, browser WHEP playback and RTMPS relay to five providers
+- Built and run a paid live-streaming service: OBS WHIP ingest, browser WHEP playback and RTMPS relay to five providers
 - Runs it on Cloudflare Workers, Durable Objects, D1 and LiveKit, with prepaid Stripe credit and per-customer reconciliation across 18k lines of tested TypeScript
 - Wrote @codebam/cf-workers-telegram-bot, a TypeScript bot framework for Cloudflare Workers (214 forks, 120 npm releases), then moved my own bots off it onto grammY
 - Write Rust for Linux userspace across eight public repositories, including a Wayland compositor whose desktop shell is a web page; 273 public repositories overall, on NixOS daily
@@ -41,7 +41,7 @@ abstract: "Senior full-stack and systems developer, open to full-time work — r
 
 # SELECTED WORK
 
-### Codebam Stream · Live Streaming Control Plane
+### Live Streaming Control Plane
 *[stream.seanbehan.ca](https://stream.seanbehan.ca)*
 
 - Cloudflare-native control plane for multistreaming, with a Durable Object per provider relay owning that relay's lifecycle

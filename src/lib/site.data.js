@@ -63,7 +63,7 @@ const seanbehan = {
 			role: 'Independent Developer',
 			org: 'Open Source',
 			period: '2021 – Present',
-			note: 'Built and run Codebam Stream, a paid live-streaming control plane on Cloudflare; wrote the Telegram bot framework with 214 forks and 120 npm releases.'
+			note: 'Built and run a paid live-streaming control plane on Cloudflare; wrote the Telegram bot framework with 214 forks and 120 npm releases.'
 		},
 		{
 			role: 'Frontend Web Developer',
