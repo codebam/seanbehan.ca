@@ -73,8 +73,12 @@ pointed at the tokens; headings inside it are sans.
 change. These hold a copy of the values and have to be re-inked with them:
 `src/pages/og/[slug].png.ts` (the light values, hard-coded), `src/pages/site.webmanifest.ts`,
 `public/favicon.svg` and `tools/favicon/build-favicon.sh` (regenerate the
-raster set with it), `resume/metadata.yaml` (the PDF's LaTeX palette), and the
-display ads in `public/img/`, and the `@media print` block in
+raster set with it), `resume/metadata.yaml` (the PDF's LaTeX palette), the
+display ads in `public/img/`, the brand plates and their two figures in
+`public/img/brand/` (generated art, snapped to the token values by hand —
+there is no build step, so the dark figures are recolours of the light
+crops, and both move together when the palette does), and the `@media print`
+block in
 `src/styles/app.css` (it keeps deliberately ink-optimised values — `--muted
 #475569`, `--dim #64748b`, `--accent #1d4ed8` — rather than reading the light
 tokens, because the screen values wash out on paper; that is a decision, not
@@ -197,7 +201,19 @@ reading column is 820 px and the prose sets at 1.75; the section deck caps at
 is an `h2`, which is what keeps a body written entirely in `###` from skipping
 a level under the page's `h1`.
 
-**8. Motion.** One entrance ladder (`fadeInUp`, 0.4–0.6 s, ≤12 px, staggered by
+**8. The two figures.** Imagery is rationed here, and these are the only two
+places it is spent: the product hero, where a $59 download has no object to
+show and an abstract mark gives the purchase a body, and the 404, where the
+page has nothing to do and an orbit that does not close is the whole joke.
+Both are the same drawing — the light plate is the source and the dark
+figure is that crop recoloured, so the mark never changes shape with the
+scheme, only ink. The product figure folds the warm accent into its line
+colour because the headline already spends the page's one warm note; the
+404 keeps the arc, because that page has none. Nothing else gets an image:
+the home hero's allowance is the portrait, and a plate beside the services
+CTA competes with the one thing that page is for.
+
+**9. Motion.** One entrance ladder (`fadeInUp`, 0.4–0.6 s, ≤12 px, staggered by
 `--enter-delay` / `--reveal-delay`), a scroll-driven reading bar with no
 listener, and cross-page view transitions. All of it is off under
 `prefers-reduced-motion`, and the reveal's hidden state is applied by script so

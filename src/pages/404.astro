@@ -3,19 +3,68 @@ import Base from '../layouts/Base.astro';
 ---
 
 <Base title="404" description="That page is not here.">
-	<section class="panel shell flex min-h-[55vh] flex-col justify-center py-20">
-		<p class="eyebrow">Error 404</p>
-		<h1 class="display display-xl mt-5 max-w-[18ch]">That page is not here.</h1>
-		<p class="mt-4 max-w-[50ch] text-[1.1rem] leading-[1.7] text-[var(--body)]">
-			The link may be old, or the page may never have existed.
-		</p>
-		<p class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
-			<a href="/" class="btn">
-				Back home
-			</a>
-			<a href="/posts" class="link-quiet">
-				Read the writing
-			</a>
-		</p>
+	<section class="panel shell not-found">
+		<div>
+			<p class="eyebrow">Error 404</p>
+			<h1 class="display display-xl mt-5 max-w-[18ch]">That page is not here.</h1>
+			<p class="mt-4 max-w-[50ch] text-[1.1rem] leading-[1.7] text-[var(--body)]">
+				The link may be old, or the page may never have existed.
+			</p>
+			<p class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+				<a href="/" class="btn">
+					Back home
+				</a>
+				<a href="/posts" class="link-quiet">
+					Read the writing
+				</a>
+			</p>
+		</div>
+		<!-- The page with nothing to do gets the mark: an orbit that does not
+     close. Decorative, so no alt text and no caption — and it is only
+     shown once the copy no longer needs the whole column. -->
+		<figure class="not-found-figure" aria-hidden="true">
+			<picture>
+				<source
+					media="(prefers-color-scheme: dark)"
+					srcset="/img/brand/figure-404-dark.webp"
+					width="410"
+					height="300"
+				/>
+				<img
+					src="/img/brand/figure-404-light.webp"
+					alt=""
+					width="410"
+					height="300"
+					decoding="async"
+				/>
+			</picture>
+		</figure>
 	</section>
 </Base>
+
+<style>
+	.not-found {
+		display: grid;
+		align-items: center;
+		gap: clamp(2rem, 5vw, 4rem);
+		min-height: 55vh;
+		padding-block: 5rem;
+	}
+	.not-found-figure {
+		display: none;
+		margin: 0;
+	}
+	.not-found-figure img {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+	@media (width >= 64rem) {
+		.not-found {
+			grid-template-columns: minmax(0, 1fr) 25.625rem;
+		}
+		.not-found-figure {
+			display: block;
+		}
+	}
+</style>

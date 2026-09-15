@@ -157,6 +157,27 @@ const schema = JSON.stringify({
 			<a href="/legal/product-license">Product License</a>. See the{' '}
 			<a href="/legal/privacy">Privacy Policy</a>.
 		</p>
+		<!-- The kit is intangible, so the hero carries exactly one figure: the
+		     mark, drawn in the line colour because the headline already spends the
+		     page's warm accent. Both schemes get a plate of their own ground. -->
+		<figure slot="figure" class="kit-figure">
+			<picture>
+				<source
+					media="(prefers-color-scheme: dark)"
+					srcset="/img/brand/figure-product-dark.webp"
+					width="320"
+					height="320"
+				/>
+				<img
+					src="/img/brand/figure-product-light.webp"
+					alt=""
+					width="320"
+					height="320"
+					decoding="async"
+				/>
+			</picture>
+			<figcaption>Fig. 1 — One archive, {modules.length} modules, one deploy path.</figcaption>
+		</figure>
 	</Masthead>
 
 	<!-- Not `contents`: that is a Tailwind utility (display:contents), emitted
@@ -330,6 +351,16 @@ const schema = JSON.stringify({
 <style>
 	.checkout-note {
 		align-self: center;
+	}
+	.kit-figure {
+		margin: 0;
+	}
+	/* The caption is what makes it a figure rather than decoration. */
+	.kit-figure figcaption {
+		margin-top: 0.75rem;
+		font-size: 0.78rem;
+		line-height: 1.55;
+		color: var(--muted);
 	}
 	.masthead-terms {
 		max-width: 66ch;

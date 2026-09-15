@@ -3,6 +3,11 @@
  * The page opening shared by every non-home page: a small label/meta row, one
  * headline, then the deck. Kept deliberately quiet — the header above it is
  * the chrome, and this is where the page states what it is.
+ *
+ * The optional `figure` slot is the one exception, and it exists because a
+ * product page has to show an object and this site has no other place to put
+ * one: the block sits beside the copy from 64rem up and below it on a phone.
+ * On every other page the slot is empty and the hero is what it always was.
  */
 interface Props {
 	label: string;
@@ -10,6 +15,7 @@ interface Props {
 }
 
 const { label, meta } = Astro.props;
+const hasFigure = Astro.slots.has('figure');
 ---
 
 <section class="page-hero panel">
@@ -19,11 +25,20 @@ const { label, meta } = Astro.props;
 			<span class="page-hero-meta">{meta}</span>
 		</p>
 
-		<h1 class="display display-xl page-hero-title">
-			<slot name="title" />
-		</h1>
-		<div class="page-hero-copy enter" style="--enter-delay:60ms">
-			<slot />
+		<div class:list={['page-hero-body', hasFigure && 'has-figure']}>
+			<div class="page-hero-main">
+				<h1 class="display display-xl page-hero-title">
+					<slot name="title" />
+				</h1>
+				<div class="page-hero-copy enter" style="--enter-delay:60ms">
+					<slot />
+				</div>
+			</div>
+			{hasFigure && (
+				<aside class="page-hero-figure">
+					<slot name="figure" />
+				</aside>
+			)}
 		</div>
 	</div>
 </section>
@@ -41,7 +56,7 @@ const { label, meta } = Astro.props;
 		gap: 1rem;
 	}
 	/* The meta half is a count or a place — breaking it across two lines makes
-	   the folio line read as two facts instead of one line of them. */
+   the folio line read as two facts instead of one line of them. */
 	.page-hero-meta {
 		white-space: nowrap;
 	}
@@ -86,6 +101,42 @@ const { label, meta } = Astro.props;
 		border-radius: var(--radius);
 		border: 1px solid var(--line);
 		object-fit: cover;
+	}
+	/* The figure column. Its top margin matches the title's so the two start on
+   the same line; the width is fixed so the copy column keeps its measure. */
+	/* Two columns only where there is room for both: below this the figure
+	   stacks under the copy instead of squeezing it into a gutter. */
+	@media (width >= 64rem) {
+		.page-hero-body.has-figure {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) 22rem;
+			column-gap: clamp(2rem, 4vw, 3.5rem);
+			align-items: start;
+		}
+	}
+	.page-hero-figure {
+		margin-top: clamp(1.5rem, 3.5vw, 2.25rem);
+		max-width: 22rem;
+	}
+	/* The figure fills its column rather than sizing itself: the crop is
+	   centred on the mark, so a fixed box keeps the mark on the column's
+	   axis and a caption centred under it. */
+	.page-hero-figure :global(figure) {
+		margin: 0;
+	}
+	.page-hero-figure :global(picture),
+	.page-hero-figure :global(figure img) {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+	.page-hero-figure :global(figcaption) {
+		text-align: center;
+	}
+	@media (width < 64rem) {
+		.page-hero-figure {
+			margin-top: clamp(1.75rem, 4vw, 2.5rem);
+		}
 	}
 	@media (width < 48rem) {
 		.page-hero-kicker {
