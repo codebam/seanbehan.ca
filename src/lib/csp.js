@@ -22,6 +22,17 @@
  * protect — legitimately must run inline code that the build did not see.
  */
 
+import { SITES } from './site.data.js';
+
+/**
+ * A subscribe form leaves this origin in a top-level POST. `form-action` must
+ * name the list service or the browser blocks the submission before it is
+ * sent; both front doors currently share the same list origin.
+ */
+const NEWSLETTER_FORM_ORIGINS = [
+	...new Set(Object.values(SITES).map((variant) => variant.newsletter.url))
+].join(' ');
+
 export const CSP_DIRECTIVES = [
 	"default-src 'self'",
 	// Media uploaded through the CMS is served from this origin;
@@ -39,7 +50,7 @@ export const CSP_DIRECTIVES = [
 	"frame-src 'none'",
 	"frame-ancestors 'none'",
 	"base-uri 'self'",
-	"form-action 'self' https://checkout.stripe.com",
+	`form-action 'self' https://checkout.stripe.com ${NEWSLETTER_FORM_ORIGINS}`,
 	"manifest-src 'self'"
 ];
 

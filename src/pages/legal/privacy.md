@@ -6,7 +6,7 @@ description: How Sean Behan collects, uses, shares, and protects information fro
 
 # Privacy Policy
 
-**Effective September 15, 2026**
+**Effective September 16, 2026**
 
 This policy explains how Sean Behan ("I", "me", or "the seller") handles personal information when you visit seanbehan.ca, purchase the Cloudflare Workers Production Kit, download a purchased release, or contact me.
 
@@ -15,6 +15,10 @@ This policy explains how Sean Behan ("I", "me", or "the seller") handles persona
 ### Site visits
 
 Cloudflare processes technical request information needed to deliver and protect the site. This can include your IP address, browser and device information, requested URL, timestamps, and security signals. Sean Behan uses Cloudflare Web Analytics to understand aggregate site performance and usage; Cloudflare states that this service is cookieless, does not access browser storage, and discards the visitor IP address at the nearest data centre. Sean Behan does not use advertising pixels and does not intentionally set analytics or advertising cookies. Cloudflare may also use strictly necessary security technologies as part of its service.
+
+### Email list
+
+If you subscribe to the email list, the email address you enter is sent to the list service at lists.seanbehan.ca, which runs on Cloudflare, and is used only to send the updates you asked for. The list uses double opt-in: your address is not added to the active list until you click the confirmation link in the first email. Every message includes an unsubscribe link, and unsubscribing removes your address from the active list.
 
 ### Purchases
 
@@ -35,6 +39,7 @@ Information is used to:
 - provide and secure the site;
 - process, verify, and fulfill purchases;
 - send purchase and download messages;
+- send the email updates you asked for;
 - confirm license and update eligibility;
 - reject access after a refund, partial refund, or dispute;
 - investigate abuse, fraud, security incidents, and delivery failures;
@@ -45,13 +50,13 @@ Where applicable law requires a legal basis, processing is based on performing t
 
 ## Service providers and disclosure
 
-Sean Behan uses [Stripe](https://stripe.com/privacy) for Checkout, payments, tax handling, fraud controls, and transaction records, and [Cloudflare](https://www.cloudflare.com/privacypolicy/) for hosting, storage, database services, security, observability, analytics, and fulfillment email. These providers process information under their own terms and privacy policies and may process it outside your province or country.
+Sean Behan uses [Stripe](https://stripe.com/privacy) for Checkout, payments, tax handling, fraud controls, and transaction records, and [Cloudflare](https://www.cloudflare.com/privacypolicy/) for hosting, storage, database services, security, observability, analytics, and fulfillment email. Cloudflare also hosts and delivers the self-hosted email list at lists.seanbehan.ca. These providers process information under their own terms and privacy policies and may process it outside your province or country.
 
 Sean Behan does not sell or rent personal information. Information may be disclosed when required by law, to protect rights or security, to investigate fraud or abuse, or as part of a business transfer subject to appropriate protections.
 
 ## Retention
 
-Order identifiers and fulfillment records are retained as reasonably needed to provide licensed access, document the transaction, handle refunds and disputes, and meet accounting or legal obligations. Support correspondence is retained while needed to resolve the request and maintain appropriate records. Infrastructure and security logs follow the retention settings of the relevant Cloudflare service.
+Order identifiers and fulfillment records are retained as reasonably needed to provide licensed access, document the transaction, handle refunds and disputes, and meet accounting or legal obligations. Support correspondence is retained while needed to resolve the request and maintain appropriate records. Email-list addresses are retained until you unsubscribe. Infrastructure and security logs follow the retention settings of the relevant Cloudflare service.
 
 Information is deleted or de-identified when it is no longer reasonably needed, unless law requires or permits longer retention.
 

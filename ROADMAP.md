@@ -72,8 +72,12 @@ proposed, roughly ordered by value within each section.
       a design decision; invariant 2 still requires the no-JS path.
 - [ ] `reveal` ships globally (`src/layouts/Base.astro`, the `reveal` import at the end of the body). **Dropped:**
       one tiny inline bundle per page; scoping it buys nothing measurable.
-- [ ] No newsletter capture, comments/webmentions, or per-post “suggest an edit”
-      link. Needs service decisions.
+- [x] Email-list capture: a closing panel on both home pages and a compact
+      footer form on every other page, posting directly to the `seanbehan`
+      group on lists.seanbehan.ca, whose origin allowlist names both front
+      doors (`src/components/Newsletter*.astro`).
+- [ ] No comments/webmentions or per-post “suggest an edit” link. Needs service
+      decisions.
 - [x] Services schema: provider `sameAs` (GitHub, LinkedIn) added
       (`src/pages/services.astro`). No `offers`/`priceRange`/FAQ — prices are
       unknown and FAQ copy is unwritten; both need authoring, not code.

@@ -1,0 +1,55 @@
+---
+/**
+ * The front page's email-list panel.
+ *
+ * It closes the home page after the writing, where a reader has just seen what
+ * they would be subscribing to. The footer carries the compact form on every
+ * other page; the two never appear together. Copy is data in
+ * src/lib/site.data.js, so each front door asks in its own voice.
+ *
+ * The service's origin allowlist has to name this origin, or the browser's
+ * cross-origin form POST is answered with 403 instead of a redirect back.
+ */
+import { site } from '../lib/site';
+import NewsletterForm from './NewsletterForm.astro';
+---
+
+<section class="section panel-alt newsletter" aria-labelledby="newsletter-heading">
+	<div class="shell newsletter-inner">
+		<div class="newsletter-copy">
+			<p class="eyebrow">{site.newsletter.eyebrow}</p>
+			<h2 class="display display-lg" id="newsletter-heading">
+				{site.newsletter.heading}
+			</h2>
+			<p class="newsletter-blurb">{site.newsletter.blurb}</p>
+		</div>
+		<div class="newsletter-action">
+			<NewsletterForm id="newsletter" />
+		</div>
+	</div>
+</section>
+
+<style>
+	.newsletter-inner {
+		display: grid;
+		gap: clamp(1.75rem, 4vw, 3rem);
+	}
+	@media (width >= 56rem) {
+		.newsletter-inner {
+			grid-template-columns: minmax(0, 1.1fr) minmax(20rem, 26rem);
+			align-items: center;
+		}
+	}
+	.newsletter-copy {
+		max-width: 54ch;
+	}
+	.newsletter-blurb {
+		margin-top: 0.8rem;
+		font-size: 1rem;
+		line-height: 1.7;
+		color: var(--body);
+	}
+	.newsletter-action {
+		width: 100%;
+	}
+</style>

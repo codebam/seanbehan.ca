@@ -17,11 +17,21 @@ const base = (process.argv[2] ?? 'http://localhost:4321').replace(/\/$/, '');
 /** Each check: a path, optional request headers, the status it must answer
     with, and what must be in it. */
 const CHECKS = [
-	{ path: '/', contains: ['Latest writing', 'Selected work'] },
+	{
+		path: '/',
+		contains: [
+			'Latest writing',
+			'Selected work',
+			'action="https://lists.seanbehan.ca/api/public/subscribe"'
+		]
+	},
 	{ path: '/posts', contains: ['Writing', 'Search posts'] },
 	{ path: '/posts/tags', contains: ['Tags'] },
 	{ path: '/posts/tag/nixos', contains: ['NixOS', 'Subscribe via RSS'] },
-	{ path: '/posts/nixos', contains: ['NixOS Flakes', 'shiki', 'On this page'] },
+	{
+		path: '/posts/nixos',
+		contains: ['NixOS Flakes', 'shiki', 'On this page', 'id="footer-newsletter"']
+	},
 	// The machine-readable variants of that post: the suffixed routes directly,
 	// and the header negotiation that reaches the same answer from the HTML URL.
 	{
