@@ -17,10 +17,11 @@ import { decodeSlug, getEmDashCollection, getEmDashEntry, getEntryTerms } from '
 import { getPosts, plainText } from '../posts';
 import { markdownDocument } from '../markdown';
 import { getResumeMarkdown } from '../resume';
-import { clampQuery, rank, searchPosts, type SearchRecord } from '../search';
+import { buildRecords, clampQuery, type SearchRecord } from '../search';
 import { SITES } from '../site';
 import { slugifyTag } from '../tags';
 import { personFacts } from './facts';
+import { rankedSlugs } from './ranking';
 
 export type EntryType = 'post' | 'page';
 
@@ -109,7 +110,8 @@ export async function searchContent(query: string, limit = 6) {
 
 	const { posts, bodies } = await postIndex();
 	const bySlug = new Map(posts.map((post) => [post.slug, post]));
-	for (const slug of searchPosts(q, posts, bodies)) {
+	const postRecords = buildRecords(posts, bodies);
+	for (const slug of rankedSlugs(q, postRecords, limit)) {
 		if (results.length >= limit) break;
 		const post = bySlug.get(slug);
 		if (!post) continue;
@@ -140,8 +142,7 @@ export async function searchContent(query: string, limit = 6) {
 			tags: [],
 			body: plainText(page.data.content)
 		}));
-	for (const slug of rank(q, records)) {
-		if (results.length >= limit) break;
+	for (const slug of rankedSlugs(q, records, limit - results.length)) {
 		const page = pages.find((candidate) => candidate.id === slug);
 		if (!page) continue;
 		results.push({
