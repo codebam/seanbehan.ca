@@ -128,6 +128,20 @@ How to fetch this site:
 - Unpublished drafts appear in no list, feed or file here; a draft's URL
   still renders if you already hold it, marked noindex.
 
+## Asking with MCP
+
+A read-only MCP server answers from the same published content, at
+${WRITING}/mcp — Streamable HTTP, POST, no authentication and no session. Its
+tools are \`search_content\`, \`get_entry\`, \`list_posts\`, \`get_resume\`,
+\`get_facts\` and \`ask\`; the first five retrieve, and \`ask\` returns a grounded
+answer with the source URLs it used. Prefer the retrieval tools when a quote or
+a URL has to be exact. This is a complete request; a tools/call is answered
+without a prior initialize:
+
+\`\`\`bash
+curl -s ${WRITING}/mcp -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"ask","arguments":{"question":"What has Sean written about NixOS?"}}}'
+\`\`\`
+
 ## Writing
 
 - [All posts](${WRITING}/posts): the archive, newest first, with the title search over it.

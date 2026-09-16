@@ -51,6 +51,8 @@
 	"images": {
 		"binding": "IMAGES"
 	},
+	// Workers AI backs the /mcp `ask` tool; it is called only from there.
+	"ai": { "binding": "AI" },
 
 	// Worker Loader for plugin sandboxing
 	"worker_loaders": [
@@ -138,6 +140,9 @@
 			"images": {
 				"binding": "IMAGES"
 			},
+			// Same binding as the default environment: /mcp is answered by the
+			// Worker entry, so both origins can serve it.
+			"ai": { "binding": "AI" },
 			"worker_loaders": [
 				{
 					"binding": "LOADER"

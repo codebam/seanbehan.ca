@@ -9,6 +9,7 @@ interface __BaseEnv_Env {
 	EMAIL: SendEmail;
 	ORDER_EMAIL?: SendEmail;
 	LOADER: WorkerLoader;
+	AI: Ai;
 	IMAGES: ImagesBinding;
 	STRIPE_SECRET_KEY: string;
 	STRIPE_PRICE_ID: string;
@@ -26,6 +27,7 @@ declare namespace Cloudflare {
 		EMAIL: SendEmail;
 		ORDER_EMAIL: SendEmail;
 		LOADER: WorkerLoader;
+		AI: Ai;
 		IMAGES: ImagesBinding;
 		STRIPE_SECRET_KEY: string;
 		STRIPE_PRICE_ID: string;
