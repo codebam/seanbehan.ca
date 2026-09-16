@@ -178,3 +178,17 @@ describe('the hiring variant', () => {
 		expect(SITES.codebam.headline.before).toContain('Most of what I build');
 	});
 });
+
+describe('the email list', () => {
+	it('writes both front doors to the same group without hardcoding its API path', () => {
+		for (const variant of Object.values(SITES)) {
+			expect(variant.newsletter.url).toBe('https://lists.seanbehan.ca');
+			expect(variant.newsletter.slug).toBe('seanbehan');
+			expect(variant.newsletter.submitPath).toBe('/api/public/subscribe');
+			expect(variant.newsletter.eyebrow).toBeTruthy();
+			expect(variant.newsletter.heading).toBeTruthy();
+			expect(variant.newsletter.blurb).toBeTruthy();
+			expect(variant.newsletter.shortBlurb).toBeTruthy();
+		}
+	});
+});

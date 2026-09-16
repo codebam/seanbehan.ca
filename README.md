@@ -9,6 +9,8 @@ One repo, two origins:
 
 Both origins render the same database. Identity is chosen at build time by `PUBLIC_SITE`.
 
+The email-list form on both origins posts directly to `lists.seanbehan.ca`. That Worker's `ALLOWED_SIGNUP_ORIGINS` must name a front door before the form there can return a reader to it; adding a third origin means adding its origin to that list.
+
 ## Prerequisites
 
 - Node.js 26 (see `.node-version`)

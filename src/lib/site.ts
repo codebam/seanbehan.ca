@@ -28,6 +28,30 @@ export interface SiteConfig {
 	/** Home page opening paragraph. `{years}` is replaced with the year count. */
 	intro: string;
 	email: string;
+	/**
+	 * The email list, and the words each front door uses to ask for it.
+	 *
+	 * The list is a separate Cloudflare service at `url`; the form posts
+	 * straight to its public endpoint, so the service's origin allowlist has
+	 * to include this front door. The copy lives here so each origin can ask
+	 * in its own voice while writing to the same group.
+	 */
+	newsletter: {
+		/** Origin of the list service, no trailing slash. */
+		url: string;
+		/** Group slug on that service. */
+		slug: string;
+		/** Endpoint path on `url` that accepts the public form post. */
+		submitPath: string;
+		/** Small caps label above both the full panel form and the footer form. */
+		eyebrow: string;
+		/** The full panel's heading. */
+		heading: string;
+		/** The full panel's sentence. */
+		blurb: string;
+		/** One line for the footer, where the panel's blurb would be too tall. */
+		shortBlurb: string;
+	};
 	/** <meta name="description"> for the whole site. */
 	description: string;
 	ogTitle: string;

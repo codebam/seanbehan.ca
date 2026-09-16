@@ -10,6 +10,22 @@
  * @typedef {import('./site').SiteConfig} SiteConfig
  */
 
+/**
+ * The email list lives on its own origin, outside this repo.
+ *
+ * Both front doors write to the same group; only the words asking for the
+ * subscription differ. The service's public form endpoint accepts this site's
+ * origins directly — the form posts cross-origin with no JavaScript, and the
+ * service redirects back to `next` with a result banner. The allowlist on the
+ * service must name https://seanbehan.ca and https://codebam.ca; adding a
+ * front door means adding it there too.
+ */
+const NEWSLETTER = {
+	url: 'https://lists.seanbehan.ca',
+	slug: 'seanbehan',
+	submitPath: '/api/public/subscribe'
+};
+
 /** @type {SiteConfig} */
 const seanbehan = {
 	id: 'seanbehan',
@@ -26,6 +42,14 @@ const seanbehan = {
 	intro:
 		'Professional web experience since 2018, from database to frontend. I daily-drive NixOS, write Rust and TypeScript, and ship most of what I build in the open — a Wayland compositor, bots on Cloudflare Workers, and a pastebin on R2. The paid Stream control plane is the exception.',
 	email: 'sean@seanbehan.ca',
+	newsletter: {
+		...NEWSLETTER,
+		eyebrow: 'Email updates',
+		heading: 'New posts, straight to your inbox.',
+		blurb:
+			'Occasional notes from Sean — new writing, releases, and whatever I am taking apart. No spam, unsubscribe any time.',
+		shortBlurb: 'Occasional notes from Sean. Unsubscribe any time.'
+	},
 	// The two lines below are the ones a hiring reader meets before the page:
 	// Google's snippet, the social card, the footer and /llms.txt all quote
 	// them. Both name the place and the status, because a recruiter filtering
@@ -119,6 +143,14 @@ const codebam = {
 	intro:
 		'Building software since 2018, most of it in public. I daily-drive NixOS, write Rust and TypeScript, and put the results on GitHub — a Wayland compositor, bots on Cloudflare Workers, and a pastebin on R2. The paid Stream control plane stays private.',
 	email: 'codebam@codebam.ca',
+	newsletter: {
+		...NEWSLETTER,
+		eyebrow: 'Email updates',
+		heading: 'Follow the build by email.',
+		blurb:
+			'Occasional notes from Sean on new projects, releases and writing. No spam, unsubscribe any time.',
+		shortBlurb: 'Occasional notes from Sean. Unsubscribe any time.'
+	},
 	description:
 		'codebam — open source in Rust, TypeScript and NixOS. A Wayland compositor, Cloudflare Workers, and writing about Linux.',
 	ogTitle: 'codebam',

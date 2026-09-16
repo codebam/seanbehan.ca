@@ -14,6 +14,7 @@ import Facts from '../components/home/Facts.astro';
 import Work from '../components/home/Work.astro';
 import Experience from '../components/home/Experience.astro';
 import Writing from '../components/home/Writing.astro';
+import Newsletter from '../components/Newsletter.astro';
 import Availability from '../components/Availability.astro';
 import { LinkButton } from '@cloudflare/kumo/components/button';
 import { getPosts } from '../lib/posts';
@@ -190,6 +191,10 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 		)}
 
 		<Writing posts={latest} total={posts.length} />
+
+		{/* The home page's one ask, after the writing has shown what arriving in
+		    the inbox would look like. The footer form is for every other page. */}
+		<Newsletter />
 	</article>
 </Base>
 

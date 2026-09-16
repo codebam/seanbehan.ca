@@ -1,0 +1,169 @@
+---
+/**
+ * The subscribe form, shared by the home page's panel and the footer.
+ *
+ * A real HTML form: the browser posts straight to the list service, which
+ * allowlists both front doors. No JavaScript is involved, the "service leaves
+ * and comes back" is a 303, and `next` carries this page — absolute, because
+ * the list validates the return origin — so the result banner appears beside
+ * the exact form the reader used.
+ */
+import { site } from '../lib/site';
+import { subscribeBanner } from '../lib/newsletter';
+
+interface Props {
+	/** Unique on the page; also the id the redirect anchor targets. */
+	id: string;
+	/** Footer sizing: stacked fields and the footer's own button colours. */
+	compact?: boolean;
+}
+
+const { id, compact = false } = Astro.props;
+const banner = subscribeBanner(Astro.url.searchParams);
+const emailId = `${id}-email`;
+const honeypotId = `${id}-website`;
+const noteId = `${id}-note`;
+
+/**
+ * The reader's current page and query, minus any previous result, plus this
+ * form's anchor. Stripping the result params keeps a second submit from
+ * inheriting the last banner.
+ */
+const back = new URL(Astro.url);
+back.searchParams.delete('subscribed');
+back.searchParams.delete('subscribe_error');
+const next = `${site.url}${back.pathname}${back.search}#${id}`;
+const action = new URL(site.newsletter.submitPath, site.newsletter.url).toString();
+---
+
+<form
+	class:list={['newsletter-form', compact && 'newsletter-form-compact']}
+	id={id}
+	method="post"
+	action={action}
+>
+	<input type="hidden" name="slug" value={site.newsletter.slug} />
+	<input type="hidden" name="next" value={next} />
+
+	{banner && (
+		<p
+			class:list={['newsletter-banner', banner.tone === 'error' && 'newsletter-banner-error']}
+			role={banner.tone === 'error' ? 'alert' : 'status'}
+		>
+			{banner.text}
+		</p>
+	)}
+
+	<div class:list={['newsletter-fields', !compact && 'newsletter-fields-inline']}>
+		<label class="sr-only" for={emailId}>
+			Email address
+		</label>
+		<input
+			class="newsletter-field"
+			id={emailId}
+			type="email"
+			name="email"
+			required
+			maxlength="254"
+			autocomplete="email"
+			inputmode="email"
+			autocapitalize="off"
+			spellcheck="false"
+			placeholder="you@example.com"
+			aria-describedby={noteId}
+		/>
+		<button class="btn newsletter-submit" type="submit">
+			Subscribe
+		</button>
+	</div>
+
+	<!-- Same honeypot the list service's own form uses: off-screen rather
+     than display:none, so a script that reads layout still fills it. -->
+	<div class="newsletter-honeypot" aria-hidden="true">
+		<label for={honeypotId}>Website</label>
+		<input id={honeypotId} type="text" name="website" tabindex="-1" autocomplete="off" />
+	</div>
+
+	<p class="newsletter-note" id={noteId}>
+		We&rsquo;ll send a confirmation email first. Unsubscribe any time.
+	</p>
+</form>
+
+<style>
+	.newsletter-form {
+		display: grid;
+		gap: 0.75rem;
+		position: relative;
+		scroll-margin-top: 5rem;
+	}
+	.newsletter-fields {
+		display: grid;
+		gap: 0.6rem;
+	}
+	.newsletter-fields-inline {
+		grid-template-columns: minmax(0, 1fr) auto;
+	}
+	@media (width < 30rem) {
+		.newsletter-fields-inline {
+			grid-template-columns: minmax(0, 1fr);
+		}
+	}
+
+	.newsletter-field {
+		width: 100%;
+		min-width: 0;
+		padding: 0.7rem 0.9rem;
+		/* 1rem, not 0.95: anything smaller makes iOS zoom on focus. */
+		font: inherit;
+		font-size: 1rem;
+		color: var(--text);
+		background: var(--panel);
+		border: 1px solid var(--dim);
+		border-radius: var(--radius-sm);
+		box-shadow: var(--shadow-sm);
+	}
+	.newsletter-field::placeholder {
+		color: var(--muted);
+	}
+
+	/* In the footer, --accent is the light footer blue while --accent-on is
+   still the page theme's, which can put white on #60a5fa. --text/--bg are
+   both re-pointed by .panel-invert, so the button borrows those. */
+	.newsletter-form-compact .newsletter-submit {
+		background: var(--text);
+		color: var(--bg);
+		box-shadow: none;
+	}
+	.newsletter-form-compact .newsletter-submit:hover {
+		background: var(--footer-accent);
+		color: var(--footer-bg);
+		box-shadow: none;
+	}
+
+	.newsletter-banner {
+		padding: 0.6rem 0.75rem;
+		border-left: 3px solid var(--accent);
+		border-radius: var(--radius-sm);
+		background: var(--surface-alt);
+		font-size: 0.9rem;
+		line-height: 1.5;
+		color: var(--text);
+	}
+	.newsletter-banner-error {
+		border-left-color: var(--accent-warm);
+	}
+
+	.newsletter-note {
+		font-size: 0.82rem;
+		line-height: 1.5;
+		color: var(--muted);
+	}
+
+	.newsletter-honeypot {
+		position: absolute;
+		left: -9999px;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+	}
+</style>
