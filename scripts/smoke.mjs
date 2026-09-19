@@ -116,10 +116,12 @@ const CHECKS = [
  * The www-to-apex redirect is asserted here rather than in a unit test.
  *
  * `src/lib/edgeCache.test.ts` proves the Worker's Cache API key carries the
- * host, but HTML never reaches that cache: the middleware keeps it `private`
- * and `safeToStore` refuses the put. The failure this check exists for is a
+ * host, but HTML never reaches that cache: `HTML_CACHE` is `no-store` and
+ * `safeToStore` refuses the put. The failure this check exists for is a
  * zone-level Cache Rule answering a www request with the apex copy before the
- * Worker runs, and no test that stops at the middleware can see that.
+ * Worker runs, and no test that stops at the middleware can see that — which is
+ * why the middleware sends the one policy the zone cannot override rather than
+ * relying on a dashboard rule to stay scoped.
  */
 const apex = new URL(base);
 apex.protocol = 'https:';

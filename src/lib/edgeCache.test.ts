@@ -242,25 +242,27 @@ describe('security headers', () => {
 		const response = await runMiddleware(makeContext('/about'), respondWith());
 
 		expect(response.headers.get('Permissions-Policy')).toContain('publickey-credentials-get=()');
-		expect(response.headers.get('Cache-Control')).toBe('private, max-age=0, must-revalidate');
+		expect(response.headers.get('Cache-Control')).toBe('private, no-store');
 	});
 });
 
 describe('edge cache policy', () => {
-	it('never stores HTML in the Worker cache even though the zone rule can override private', async () => {
+	it('never stores HTML in the Worker cache, and refuses the zone cache too', async () => {
 		installFakeCache();
 		vi.stubEnv('DEV', false);
 		try {
 			const first = await runMiddleware(makeContext('/about'), respondWith());
 			const second = await runMiddleware(makeContext('/about'), respondWith());
 
-			// This proves only the Worker half: `private` makes safeToStore refuse
-			// the put, so neither request is marked HIT. It says nothing about
-			// Cloudflare's zone cache, whose Cache Rule overrides `private`; the
-			// smoke test's www check is the end-to-end detector for a zone copy
-			// answering before this redirect can run.
+			// The Worker half is all this can see: `no-store` makes safeToStore
+			// refuse the put, so neither request is marked HIT. The value is
+			// chosen for the other half — it is the one policy Cloudflare's zone
+			// cache will not override, and the zone's HTML rule was overriding
+			// `private` and answering a www request with the apex copy before
+			// this middleware's redirect could run. The smoke test's www check is
+			// the end-to-end detector for that.
 			for (const response of [first, second]) {
-				expect(response.headers.get('Cache-Control')).toBe('private, max-age=0, must-revalidate');
+				expect(response.headers.get('Cache-Control')).toBe('private, no-store');
 				expect(response.headers.has('X-Edge-Cache')).toBe(false);
 			}
 		} finally {

@@ -82,27 +82,43 @@ const LONG_LIVED = /^\/(fonts|og|img|optimized)\/|\.(webp|png|svg|ico)$/;
 const COMMERCE_PRIVATE = /^\/(checkout|api\/stripe)(?:\/|$)/;
 
 /**
- * HTML is revalidated by the browser, and this value is not what keeps it out
- * of Cloudflare's zone cache.
+ * HTML is `no-store` because it is the only policy a zone Cache Rule will not
+ * override.
  *
- * The zones' Cache Rule marks extensionless and .html paths eligible and
- * overrides the origin's `private`; only `no-store` survives it. Proved live:
- * `/` (which carried `private, max-age=0, must-revalidate`) answered 200 with a
- * rising `age` and a byte-identical body on www, while an extensionless admin
- * page carrying `private, no-store` answered `cf-cache-status: BYPASS` every
- * time. A host-agnostic copy of that rule is what let the apex copy answer www
- * before this middleware could 301 it; tools/cloudflare/cache-bypass.sh now
- * replaces that copy in place, and cache-rule.sh puts back a host-scoped one.
+ * The zones' rule marks extensionless and .html paths eligible in place of
+ * whatever the origin sent, and its cache key does not separate hosts: the copy
+ * the apex created was answered to www byte for byte, so this file's
+ * www-to-apex 301 never ran and the handle origin served the other origin's
+ * page. Proved live on both zones — `/` carried `private, max-age=0,
+ * must-revalidate` and came back `cf-cache-status: HIT` with a rising `age`,
+ * while the same CMS page on the `_preview` path, which this file sends
+ * `private, no-store`, came back `BYPASS` every time. A dashboard rule was
+ * never going to be the place this held, because a cache HIT never runs this
+ * file at all.
  *
- * `private` is still the right browser policy here, and it is also what keeps
- * HTML out of the Worker's own `cache.put`: `safeToStore` below rejects it, so
- * no HTML ever lands under edgeCacheKey's `/__host/<host>` key. Feeds, images,
- * the immutable routes and the social cards set public policies and are stored.
+ * `private` is what HTML wants for the browser, and it was already enough to
+ * keep HTML out of the Worker's own `cache.put`: `safeToStore` below refuses
+ * either value, so no HTML lands under edgeCacheKey's `/__host/<host>` key.
+ * What `private` could not do is stop a shared cache that had been told to
+ * ignore it. Feeds, images, the immutable routes and the social cards set
+ * public policies and are unaffected — they are still stored.
+ *
+ * The price is that HTML is now cached nowhere: every page view reaches the
+ * Worker and D1, and a repeat navigation re-fetches the document instead of
+ * revalidating it. That is the posture tools/cloudflare/cache-bypass.sh already
+ * calls safe, moved to the one place a zone rule cannot drift away from.
+ *
+ * Getting an edge window back is two changes, not one: give the zone's HTML
+ * rule an `http.host` clause so a www request is never eligible, verify that
+ * through the real edge, and only then restore `private, max-age=0,
+ * must-revalidate` here.
  */
 const EDGE_SECONDS = 600;
 const IMMUTABLE_SECONDS = 31536000;
 
-const HTML_CACHE = 'private, max-age=0, must-revalidate';
+// Deliberately the same value as NO_STORE below, spelled out here so each
+// constant keeps the reason it was given.
+const HTML_CACHE = 'private, no-store';
 
 /**
  * The one value Cloudflare's Cache Rule cannot override, and the reason editor

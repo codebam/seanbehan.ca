@@ -78,7 +78,7 @@ export function edgeCacheKey(url: URL): Request {
 	 * cannot scope Cloudflare's zone cache, which keys the URL the client sent
 	 * before the Worker runs; that cache is governed by the zone's Cache Rule
 	 * (tools/cloudflare/cache-rule.sh, docs/edge-caching.md). HTML never gets a
-	 * key here anyway — the middleware's HTML_CACHE keeps it `private`, so
+	 * key here anyway — the middleware's HTML_CACHE is `no-store`, so
 	 * `safeToStore` refuses the put — and that, not this prefix, is why the www
 	 * redirect cannot depend on the Worker cache. Entries that do get stored
 	 * (feeds, transforms, cards) stay per-host because of the prefix. The

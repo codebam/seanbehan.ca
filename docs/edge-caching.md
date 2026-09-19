@@ -5,16 +5,18 @@ prevent is believing a header set for one of them controls the other.
 
 - **Cloudflare's zone cache** runs before the Worker. The zone's Cache Rule
   decides whether a response is eligible, and that rule **overrides the origin's
-  `Cache-Control: private`**. Only `no-store` survives it. An extensionless
-  admin page carrying `private, no-store` answers `cf-cache-status: BYPASS`
-  every time, while `/` carrying `private, max-age=0, must-revalidate` answers
-  from cache with a rising `age`.
+  `Cache-Control: private`**. Only `no-store` survives it. Proved live on both
+  zones: an extensionless admin page carrying `private, no-store` answers
+  `cf-cache-status: BYPASS` every time, while `/` carrying `private, max-age=0,
+must-revalidate` answered from cache with a rising `age`. A cached entry is
+  served before the Worker runs, so no middleware can correct it afterwards.
 - **The Worker's own Cache API** (`caches.default`) is inside the Worker, and
   `src/middleware.ts` is its only policy. It is the cache that stores a route's
   own public policy, keeps the browser-facing policy beside it in
   `X-Edge-Browser-Cache-Control`, and reports itself as `X-Edge-Cache: HIT` or
-  `MISS`. HTML never enters it: `HTML_CACHE` is `private`, and the
-  middleware's `safeToStore` refuses a `private` response.
+  `MISS`. HTML never enters it: `HTML_CACHE` is `no-store` and the middleware's
+  `safeToStore` refuses that value. It is `no-store` rather than `private` for
+  the zone's sake, not the Worker's.
 
 The `/__host/<host>` prefix in `edgeCacheKey` scopes the Worker cache key only.
 It does not and cannot scope Cloudflare's zone cache, which keys the URL the
@@ -63,15 +65,22 @@ nothing is an error, not a silent append.
 
 The safe posture is:
 
+- **HTML: `no-store` from the Worker.** That is `HTML_CACHE` in
+  `src/middleware.ts`, not a dashboard setting, and it is the load-bearing half:
+  the zone cannot hold what the origin refuses to let it store, so nothing can
+  answer a www request before the Worker's 301, and the guard survives a Cache
+  Rule that is later added, renamed or left hostless.
 - **HTML rule: bypass** (`cache-bypass.sh`, the `--no-edge-cache` path in
-  `zone-posture.sh`). With the HTML rule off, nothing can answer a www request
-  before the Worker's 301, and the Worker never stores HTML itself.
+  `zone-posture.sh`). Belt and braces while the zone still has a rule of its
+  own, and what keeps the zone from holding anything if the header is ever
+  relaxed.
 - **Card rule: cache on** and host-scoped. `/og/<slug>.png` is public, stable,
   host-scoped and draws with satori and resvg when cold, so it keeps a rule of
   its own even while HTML is bypassed.
 
-Re-run `cache-rule.sh` to put the HTML rule back as host-scoped and
-cache-eligible once the www redirect is verified through the real edge.
+An edge window for HTML is two changes, not one: re-run `cache-rule.sh` for the
+host-scoped, cache-eligible rule, verify the www redirect through the real edge,
+and only then set `HTML_CACHE` back to `private, max-age=0, must-revalidate`.
 
 ## Why the Worker caches public routes at all
 
@@ -115,6 +124,10 @@ scripts write the same two rules without the dashboard:
 
 The host clause is the whole point of the HTML rule: without it a cached apex
 entry can answer www. The card rule carries the same clause for the same reason.
+While `HTML_CACHE` is `no-store` the rule cannot hold anything — the origin's
+value wins — so it is a second line of defence rather than the mechanism. It
+becomes the mechanism again the moment that header is relaxed, which is why the
+host clause is worth keeping in place.
 The HTML rule also configures `Vary: Accept`, because the Worker sends that
 header on `/posts/<slug>`, `/pages/<slug>` and `/resume` (the paths
 `isNegotiablePath()` recognises in `src/lib/accept.ts`). Without the Cache Rule
@@ -194,9 +207,10 @@ from a machine without the token still works and says so.
 
 ## Content changes are not deploys
 
-Publishing a post does not run a deploy, so nothing purges automatically. With
-the HTML rule in bypass every page is rendered fresh; once the host-scoped rule
-is back, a cached page can be up to its edge window old.
+Publishing a post does not run a deploy, so nothing purges automatically. Every
+page is rendered fresh, because the origin sends `no-store`; once that header is
+relaxed and the host-scoped rule is trusted, a cached page can be up to its edge
+window old.
 
 That is the intended behaviour: a short window is how the site "catches up"
 without purging the whole zone every time a typo is fixed. The targeted purge
@@ -252,7 +266,8 @@ but confusing, and easy to read as a bug. One rule per extension.
 
 Reproduced live on 2026-09-13. A warm Worker HIT for HTML returned
 `Cache-Control: public, max-age=86400`, while the route and middleware sent
-`private, max-age=0, must-revalidate`. The Worker was doing its job; the zone's
+`private, max-age=0, must-revalidate` — the value HTML carried before it became
+`no-store`. The Worker was doing its job; the zone's
 Browser Cache TTL rewrote the browser-facing `max-age` to a day on the way out.
 The route files were correct; changing their TTLs would not fix that. The
 operator step is the zone setting, and it is deliberately not attempted from
@@ -270,9 +285,9 @@ this repo.
 **Acceptance — run each command twice and read the second response:**
 
 ```sh
-# HTML: the reader must revalidate, and the Worker refuses to store it.
+# HTML: nothing may store it, and the Worker refuses the put too.
 curl -sS -D - -o /dev/null https://seanbehan.ca/about | grep -i cache-control
-# expect: cache-control: private, max-age=0, must-revalidate
+# expect: cache-control: private, no-store
 
 # A route policy is left alone.
 curl -sS -D - -o /dev/null https://seanbehan.ca/rss.xml | grep -i cache-control
