@@ -204,7 +204,7 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 	}
 
 	.hero {
-		padding-block: clamp(3rem, 7vw, 5.5rem);
+		padding-block: var(--pad-hero);
 	}
 	.hero-inner {
 		display: grid;
@@ -217,17 +217,14 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 		}
 	}
 
-	.hero-eyebrow {
-		color: var(--accent);
-	}
 	.hero-title {
 		max-width: 22ch;
 		margin-top: 1rem;
 	}
 	.hero-lead {
-		max-width: 60ch;
+		max-width: 58ch;
 		margin-top: clamp(1.25rem, 3vw, 1.75rem);
-		font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+		font-size: 1.1875rem;
 		line-height: 1.7;
 		color: var(--body);
 	}
@@ -249,9 +246,7 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 		max-width: 20rem;
 		aspect-ratio: 1;
 		object-fit: cover;
-		border-radius: var(--radius-lg);
-		border: 1px solid var(--line);
-		box-shadow: var(--shadow-md);
+		border-radius: var(--radius);
 	}
 	/* On a phone the aside stacks under the hero text, and the portrait alone
 	   is tall enough to push the availability mark past the fold — measured on
@@ -273,18 +268,18 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 	}
 	.offer-grid {
 		display: grid;
-		gap: 1.25rem;
-		margin-top: 1.5rem;
+		gap: 0 1.25rem;
+		margin-top: 2rem;
 	}
 	.offer-card {
-		padding: 1.75rem;
+		padding-block: 1.25rem;
 	}
 	.offer-title {
 		margin-top: 0.55rem;
-		font-size: 1.35rem;
+		font-size: 1.125rem;
 		font-weight: 600;
-		letter-spacing: -0.02em;
-		line-height: 1.25;
+		letter-spacing: -0.01em;
+		line-height: 1.3;
 	}
 	.offer-title a {
 		color: var(--text);
@@ -293,10 +288,13 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 	.offer-title a:hover,
 	.offer-title a:focus-visible {
 		color: var(--accent);
+		text-decoration: underline;
+		text-decoration-color: var(--accent);
+		text-underline-offset: 0.18em;
 	}
 	.offer-copy {
 		margin-top: 0.6rem;
-		font-size: 0.95rem;
+		font-size: 0.9375rem;
 		line-height: 1.65;
 		color: var(--body);
 	}

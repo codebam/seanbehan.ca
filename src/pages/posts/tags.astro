@@ -59,17 +59,19 @@ const tags = tagCounts(posts);
 <style>
 	.empty {
 		padding-block: 2.5rem;
-		border-block: 1px solid var(--line);
+		border-top: 1px solid var(--line);
 		color: var(--muted);
 	}
 	.tag-grid {
 		display: grid;
-		gap: 0.75rem;
 		list-style: none;
+		margin: 0;
+		padding: 0;
 	}
 	@media (width >= 48rem) {
 		.tag-grid {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
+			column-gap: 1.25rem;
 		}
 	}
 	@media (width >= 64rem) {
@@ -79,30 +81,26 @@ const tags = tagCounts(posts);
 	}
 	.tag-grid a {
 		display: flex;
-		align-items: center;
+		align-items: baseline;
 		justify-content: space-between;
 		gap: 1rem;
-		padding: 1rem 1.25rem;
-		background: var(--panel);
-		border: 1px solid var(--line);
-		border-radius: var(--radius);
-		transition:
-			border-color 0.2s ease,
-			box-shadow 0.2s ease;
-	}
-	.tag-grid a:hover,
-	.tag-grid a:focus-visible {
-		border-color: var(--accent);
-		box-shadow: var(--shadow-sm);
+		padding-block: 1rem;
+		border-top: 1px solid var(--line);
 	}
 	.tag-grid strong {
 		font-size: 1rem;
 		font-weight: 600;
 		letter-spacing: -0.01em;
 		color: var(--text);
+		transition: color 120ms ease;
+	}
+	.tag-grid a:hover strong,
+	.tag-grid a:focus-visible strong {
+		color: var(--accent);
 	}
 	.tag-count {
-		font-size: 0.82rem;
+		font-size: 0.8125rem;
+		font-variant-numeric: tabular-nums;
 		color: var(--muted);
 		white-space: nowrap;
 	}

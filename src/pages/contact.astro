@@ -181,7 +181,7 @@ const askingFor = site.showResume
 	}
 	.brief-copy {
 		max-width: 52ch;
-		font-size: 1rem;
+		font-size: 1.0625rem;
 		line-height: 1.7;
 		color: var(--body);
 	}
@@ -190,37 +190,33 @@ const askingFor = site.showResume
 		gap: 0.6rem;
 		align-content: start;
 		list-style: none;
-		font-size: 0.95rem;
-		line-height: 1.55;
+		font-size: 0.9375rem;
+		line-height: 1.6;
 		color: var(--body);
 	}
 	.brief-list li::before {
 		content: '—';
 		margin-right: 0.65rem;
-		color: var(--accent);
+		color: var(--dim);
 	}
 	.channel-list {
 		display: grid;
-		gap: 0.75rem;
 		list-style: none;
+		margin: 0;
+		padding: 0;
 	}
 	.channel-list a {
 		display: flex;
-		align-items: center;
+		align-items: baseline;
 		justify-content: space-between;
 		gap: 1.5rem;
-		padding: 1.1rem 1.25rem;
-		background: var(--panel);
-		border: 1px solid var(--line);
-		border-radius: var(--radius);
-		transition:
-			border-color 0.2s ease,
-			box-shadow 0.2s ease;
+		padding-block: 1.1rem;
+		border-top: 1px solid var(--line);
+		transition: color 120ms ease;
 	}
 	.channel-list a:hover,
 	.channel-list a:focus-visible {
-		border-color: var(--accent);
-		box-shadow: var(--shadow-sm);
+		color: var(--accent);
 	}
 	.channel-main {
 		min-width: 0;
@@ -228,20 +224,20 @@ const askingFor = site.showResume
 	.channel-list strong {
 		display: block;
 		overflow-wrap: anywhere;
-		font-size: 1.05rem;
+		font-size: 1.0625rem;
 		font-weight: 600;
 		letter-spacing: -0.01em;
-		color: var(--text);
+		color: inherit;
 	}
 	.channel-note {
 		display: block;
 		margin-top: 0.15rem;
-		font-size: 0.9rem;
+		font-size: 0.875rem;
 		color: var(--muted);
 	}
 	.channel-end {
 		display: flex;
-		align-items: center;
+		align-items: baseline;
 		gap: 0.75rem;
 		flex-shrink: 0;
 	}
@@ -249,12 +245,12 @@ const askingFor = site.showResume
 		white-space: nowrap;
 	}
 	.channel-arrow {
-		color: var(--accent);
-		transition: transform 0.2s ease;
+		color: var(--dim);
+		transition: color 120ms ease;
 	}
 	.channel-list a:hover .channel-arrow,
 	.channel-list a:focus-visible .channel-arrow {
-		transform: translateX(3px);
+		color: var(--accent);
 	}
 	@media (width >= 48rem) {
 		.brief-grid {
