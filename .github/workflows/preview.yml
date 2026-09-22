@@ -1,0 +1,79 @@
+name: Design preview
+
+# Design branches get a Cloudflare Worker Preview: a branch-scoped environment
+# under the same Worker, served on its own workers.dev URL. This is the only
+# workflow that publishes anything from a non-master ref — `deploy.yml` still
+# owns production and only runs on master, and `preview_urls`/`workers_dev`
+# stay off for the deployed Worker (docs/edge-caching.md §1). The trigger is
+# deliberately narrow: a Preview URL is public by default and reaches the
+# Worker without the zone, so only explicit design explorations get one.
+#
+# Worker Previews need Wrangler 4.135 or newer; the repo pins 4.131, so this
+# job runs the command through `npx wrangler@latest` instead of bumping the
+# project dependency for a beta feature. See wrangler.jsonc's `previews` block
+# for what the preview is bound to, and docs/edge-caching.md for the posture
+# this deliberately steps around.
+on:
+  push:
+    branches: ['redesign/**']
+  # For a re-run after preview-side settings change, without an empty commit.
+  workflow_dispatch:
+
+concurrency:
+  group: preview-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          # npm ci and the build below execute code from the branch; without
+          # this the checkout leaves a token in .git/config for that code.
+          persist-credentials: false
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - run: npm ci
+
+      # One variant: the preview exists to judge the design, and seanbehan.ca
+      # is the origin the writing and the commerce live on.
+      - name: Build
+        run: npm run build
+
+      # `wrangler preview` reads the config the adapter wrote into
+      # dist/server/wrangler.json (via .wrangler/deploy/config.json), so the
+      # build above has to run first. The name is the branch with its slash
+      # flattened; it defaults to the git branch, which is detached here.
+      - name: Publish Preview
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          PREVIEW_NAME: ${{ github.ref_name }}
+        run: |
+          set -o pipefail
+          name="$(printf '%s' "$PREVIEW_NAME" | tr '[:upper:]/' '[:lower:]-')"
+          message="$(git log -1 --format='%h %s')"
+          npx --yes wrangler@latest preview \
+            --name "$name" \
+            --message "$message" \
+            2>&1 | tee preview.log
+          url="$(grep -oE 'https://[A-Za-z0-9._-]+workers\.dev[^[:space:]]*' preview.log | head -1 || true)"
+          if [ -z "$url" ]; then
+            echo "::error::wrangler preview finished without printing a workers.dev URL."
+            exit 1
+          fi
+          {
+            echo "## Preview: \`$name\`"
+            echo
+            echo "$url"
+            echo
+            echo "_Public by default and outside the zone. Delete the branch or the Preview when the design decision is made._"
+          } >> "$GITHUB_STEP_SUMMARY"
