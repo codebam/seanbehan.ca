@@ -25,11 +25,11 @@ subtitleTracking: 16
 # describe the same document in the same colours: accentcolor is --accent-warm
 # (the editorial mark) and linkcolor is --accent (the interactive one).
 # src/styles/app.css is the source of truth; change both together.
-accentcolor: B45309     # warm accent: rules, section titles, company names
-inkcolor: 0F172A
-mutedcolor: 64748B      # dates, contact line
-rulecolor: CBD5E1
-linkcolor: 2563EB
+accentcolor: 9E3B22     # warm accent: rules, section titles, company names
+inkcolor: 17140F
+mutedcolor: 6B6559      # dates, contact line
+rulecolor: D9D0C0
+linkcolor: 1F4E6B
 
 # ---------- behaviour ----------
 links: true             # clickable, colourised links

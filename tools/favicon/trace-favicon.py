@@ -1,6 +1,6 @@
 """Trace the favicon lettering to SVG paths.
 
-The icon is Newsreader "SB" in pale grey on the blue accent. Referencing the font
+The icon is Newsreader "SB" in paper white on the warm accent. Referencing the font
 by name in an SVG only works on machines that have Newsreader installed, so
 the glyphs are converted to outlines here: decompress the woff2, pin the
 variable font at the weight the icon uses, then walk each glyph with a pen.
@@ -30,8 +30,8 @@ TRACKING = -2.0
 BASELINE = 47.0
 RADIUS = 9
 TEXT = 'SB'
-ACCENT = '#b45309'
-PAPER = '#ffffff'
+ACCENT = '#9e3b22'
+PAPER = '#f7f4ed'
 
 ttf = D / '_newsreader.ttf'
 if not ttf.exists():

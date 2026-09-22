@@ -1,6 +1,6 @@
 # Favicon
 
-The mark is Newsreader `SB` in white (`#ffffff`) on the warm accent (`#b45309`)
+The mark is Newsreader `SB` in paper (`#f7f4ed`) on the warm accent (`#9e3b22`)
 — `--accent-warm` and `--accent-on`'s light value in `src/styles/app.css`.
 Re-ink both files below when the palette moves, or the tab stops matching the
 page.

@@ -47,11 +47,11 @@ const HEIGHT = 630;
 // so the light values are the values. ACCENT is the warm editorial token
 // rather than the interactive blue: a card has nothing to click, and this is
 // the one mark it makes about itself.
-const BG = '#ffffff';
-const TEXT = '#0f172a';
-const MUTED = '#64748b';
-const ACCENT = '#b45309';
-const LINE = '#cbd5e1';
+const BG = '#f7f4ed';
+const TEXT = '#17140f';
+const MUTED = '#6b6559';
+const ACCENT = '#9e3b22';
+const LINE = '#d9d0c0';
 
 /**
  * Long titles step down a size rather than wrapping into a fourth line, which

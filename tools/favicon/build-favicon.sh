@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Renders the favicon (white serif SB on the warm accent) at every size we ship.
+# Renders the favicon (paper serif SB on the warm accent) at every size we ship.
 #
-# The two colours are the site's own: #b45309 is --accent-warm and #ffffff is
-# --accent-on's light value, the same pair the header wordmark's dot draws from.
+# The two colours are the site's own: #9e3b22 is --accent-warm and #f7f4ed is
+# --accent-on's light value, the paper ground the light scheme is printed on.
 # Re-ink them here and in public/favicon.svg together, or the tab and the
 # manifest start disagreeing with the page.
 #
@@ -30,9 +30,9 @@ html,body{margin:0;padding:0;background:transparent}
 svg{display:block;width:100vw;height:100vw}
 </style></head><body>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="$5" fill="#b45309"/>
+  <rect width="64" height="64" rx="$5" fill="#9e3b22"/>
   <text x="32" y="$6" text-anchor="middle" font-family="Newsreader" font-weight="$3"
-    font-size="$2" fill="#ffffff" letter-spacing="$4">SB</text>
+    font-size="$2" fill="#f7f4ed" letter-spacing="$4">SB</text>
 </svg></body></html>
 EOF
 }
