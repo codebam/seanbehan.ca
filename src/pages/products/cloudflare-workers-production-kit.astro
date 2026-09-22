@@ -455,10 +455,11 @@ const schema = JSON.stringify({
 		box-shadow: var(--shadow-sm);
 	}
 	.price {
-		font-size: clamp(2.75rem, 5vw, 3.75rem);
+		font-size: clamp(2rem, 4vw, 2.5rem);
 		font-weight: 700;
-		letter-spacing: -0.03em;
+		letter-spacing: -0.02em;
 		line-height: 1;
+		font-variant-numeric: tabular-nums;
 	}
 	.price span,
 	.price small {
@@ -479,7 +480,7 @@ const schema = JSON.stringify({
 	.price-card li::before {
 		content: '—';
 		margin-right: 0.65rem;
-		color: var(--accent);
+		color: var(--muted);
 	}
 	.terms {
 		margin-top: 1.25rem;

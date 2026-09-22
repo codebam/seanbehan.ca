@@ -127,22 +127,22 @@ const action = new URL(site.newsletter.submitPath, site.newsletter.url).toString
 	}
 
 	/* In the footer, --accent is the light footer blue while --accent-on is
-   still the page theme's, which can put white on #60a5fa. --text/--bg are
+   still the page theme's, which can put white on #7aaec8. --text/--bg are
    both re-pointed by .panel-invert, so the button borrows those. */
 	.newsletter-form-compact .newsletter-submit {
 		background: var(--text);
+		border-color: var(--text);
 		color: var(--bg);
-		box-shadow: none;
 	}
 	.newsletter-form-compact .newsletter-submit:hover {
 		background: var(--footer-accent);
+		border-color: var(--footer-accent);
 		color: var(--footer-bg);
-		box-shadow: none;
 	}
 
 	.newsletter-banner {
 		padding: 0.6rem 0.75rem;
-		border-left: 3px solid var(--accent);
+		border-left: 2px solid var(--accent);
 		border-radius: var(--radius-sm);
 		background: var(--surface-alt);
 		font-size: 0.9rem;

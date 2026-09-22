@@ -81,8 +81,13 @@ const monthYear = (date: string) =>
 		flex-wrap: wrap;
 		align-items: baseline;
 		gap: 0.4rem;
-		font-size: 0.8rem;
-		font-weight: 500;
+		font-size: 0.6875rem;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		font-feature-settings:
+			'case' 1,
+			'tnum' 1;
 		color: var(--muted);
 	}
 
@@ -92,7 +97,7 @@ const monthYear = (date: string) =>
 	.writing-lead-title {
 		max-width: 30ch;
 		margin-top: 0.6rem;
-		font-size: clamp(1.5rem, 2.8vw, 2rem);
+		font-size: clamp(1.5rem, 2.6vw, 1.625rem);
 		font-weight: 600;
 		letter-spacing: -0.02em;
 		line-height: 1.2;
@@ -131,7 +136,7 @@ const monthYear = (date: string) =>
 	}
 	.writing-card-title {
 		margin-top: 0.5rem;
-		font-size: 1.15rem;
+		font-size: 1.3125rem;
 		font-weight: 600;
 		letter-spacing: -0.015em;
 		line-height: 1.3;

@@ -104,13 +104,20 @@ const monthYear = (date: string) =>
 	.post-card-link {
 		display: block;
 	}
+	/* A dateline: caps, tracked, tabular, so a column of entries lines up its
+	   months down the left edge. */
 	.post-card-meta {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: baseline;
 		gap: 0.4rem;
-		font-size: 0.8rem;
-		font-weight: 500;
+		font-size: 0.6875rem;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		font-feature-settings:
+			'case' 1,
+			'tnum' 1;
 		color: var(--muted);
 	}
 	/* Selector is the class, not the tag: the level varies with where the list
@@ -118,7 +125,7 @@ const monthYear = (date: string) =>
 	.post-card-title {
 		margin-top: 0.5rem;
 		font-family: var(--font-sans);
-		font-size: 1.2rem;
+		font-size: 1.3125rem;
 		font-weight: 600;
 		letter-spacing: -0.015em;
 		line-height: 1.3;

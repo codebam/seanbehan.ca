@@ -49,7 +49,8 @@ const sibling = isSiblingHref(href);
 		font-size: 0.85em;
 		color: var(--muted);
 	}
-	/* The media-link variant: a small quiet badge the anchor can position. */
+	/* The media-link variant: a small quiet badge the anchor can position.
+	   Square, like every other mark: the design has no round pills. */
 	.sibling-mark-overlay {
 		position: absolute;
 		right: 0.65rem;
@@ -63,8 +64,8 @@ const sibling = isSiblingHref(href);
 		font-size: 1rem;
 		line-height: 1;
 		color: var(--text);
-		border: 1px solid var(--line);
-		border-radius: 999px;
+		border: 1px solid var(--line-strong);
+		border-radius: var(--radius-sm);
 		background: color-mix(in srgb, var(--panel) 88%, transparent);
 		pointer-events: none;
 	}

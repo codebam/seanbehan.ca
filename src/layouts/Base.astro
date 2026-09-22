@@ -154,8 +154,8 @@ const navItems = nav.map((item) => ({
 			/>
 		)}
 
-		<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
-		<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b1220" />
+		<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f4ed" />
+		<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#121110" />
 
 		<meta property="og:locale" content="en_CA" />
 		{/* Describe the card that is actually shared: a post names its own, a
@@ -435,16 +435,17 @@ const navItems = nav.map((item) => ({
 
 <style>
 	/* ── Header ──
-	   Sticky, translucent, and one row tall. The name is the only brand mark;
-	   the nav is a plain row of links with a single accent button, so the way
-	   in is obvious from any page. */
+	   The masthead: sticky and opaque, because it is a rule on a page and
+	   not a pane of glass — the blur is gone and the 2px ink line under it is
+	   the one heavy rule the design spends. The name is the only brand mark;
+	   the nav is a plain row of links with a single outlined action, so the
+	   way in is obvious from any page. */
 	.site-header {
 		position: sticky;
 		top: 0;
 		z-index: 50;
-		background: color-mix(in srgb, var(--bg) 88%, transparent);
-		backdrop-filter: blur(12px);
-		border-bottom: 1px solid var(--line);
+		background: var(--bg);
+		border-bottom: 2px solid var(--text);
 	}
 	.header-inner {
 		display: flex;
@@ -474,6 +475,9 @@ const navItems = nav.map((item) => ({
 		align-items: center;
 		gap: 0.125rem;
 	}
+	/* A nav link is a label, so it underlines on hover and marks the current
+	   page with a 2px rule beneath it — no fills, and ink rather than the
+	   warm accent, which the page spends elsewhere. */
 	.nav-link {
 		display: inline-flex;
 		align-items: center;
@@ -483,18 +487,20 @@ const navItems = nav.map((item) => ({
 		font-size: 0.9rem;
 		font-weight: 500;
 		color: var(--body);
-		transition:
-			background 0.2s ease,
-			color 0.2s ease;
+		transition: color 0.2s ease;
 	}
 	.nav-link:hover {
-		background: var(--surface-alt);
 		color: var(--text);
+		text-decoration: underline;
+		text-decoration-thickness: 1px;
+		text-underline-offset: 0.35em;
 	}
 	.nav-link[aria-current='page'],
 	.nav-link[aria-current='true'] {
 		color: var(--text);
-		background: var(--surface-alt);
+		text-decoration: underline;
+		text-decoration-thickness: 2px;
+		text-underline-offset: 0.35em;
 	}
 	.header-cta {
 		display: none;
@@ -647,6 +653,9 @@ const navItems = nav.map((item) => ({
 	}
 	.footer-link:hover {
 		color: var(--accent);
+		text-decoration: underline;
+		text-decoration-thickness: 1px;
+		text-underline-offset: 0.18em;
 	}
 	.footer-base {
 		display: flex;

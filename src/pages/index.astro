@@ -218,7 +218,10 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 	}
 
 	.hero-eyebrow {
-		color: var(--accent);
+		/* The label keeps the muted ink the rest of the site's labels use:
+		   the page's warm note is the wordmark, the italic word and the one
+		   filled action, and a fourth would stop being an accent. */
+		color: var(--muted);
 	}
 	.hero-title {
 		max-width: 22ch;
@@ -251,7 +254,6 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 		object-fit: cover;
 		border-radius: var(--radius-lg);
 		border: 1px solid var(--line);
-		box-shadow: var(--shadow-md);
 	}
 	/* On a phone the aside stacks under the hero text, and the portrait alone
 	   is tall enough to push the availability mark past the fold — measured on
@@ -281,7 +283,7 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 	}
 	.offer-title {
 		margin-top: 0.55rem;
-		font-size: 1.35rem;
+		font-size: 1.3125rem;
 		font-weight: 600;
 		letter-spacing: -0.02em;
 		line-height: 1.25;

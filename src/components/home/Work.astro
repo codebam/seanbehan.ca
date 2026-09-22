@@ -200,10 +200,6 @@ const metaLine = (project: FeaturedProject) =>
 		height: 100%;
 		aspect-ratio: 16 / 10;
 		object-fit: cover;
-		transition: transform 0.35s var(--ease-out-soft);
-	}
-	.card:hover .project-media img {
-		transform: scale(1.02);
 	}
 
 	.project-card {
@@ -216,13 +212,18 @@ const metaLine = (project: FeaturedProject) =>
 	}
 
 	.project-meta {
-		font-size: 0.8rem;
-		font-weight: 500;
+		font-size: 0.6875rem;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		font-feature-settings:
+			'case' 1,
+			'tnum' 1;
 		color: var(--muted);
 	}
 	.project-title {
 		margin-top: 0.4rem;
-		font-size: 1.3rem;
+		font-size: 1.3125rem;
 		font-weight: 600;
 		letter-spacing: -0.02em;
 		line-height: 1.25;

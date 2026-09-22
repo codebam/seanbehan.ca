@@ -157,7 +157,9 @@ const schema = JSON.stringify({
 		border-radius: var(--radius-lg);
 	}
 	.case-cta .eyebrow {
-		color: var(--accent);
+		/* The label stays a label; the colour on this panel belongs to the
+		   action below it, not to a second warm mark beside it. */
+		color: var(--muted);
 	}
 	.case-cta h2 {
 		margin-top: 0.6rem;

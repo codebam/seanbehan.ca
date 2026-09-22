@@ -292,8 +292,13 @@ const updated = post.meta.updated
 		align-items: baseline;
 		justify-content: space-between;
 		gap: 1rem;
-		font-size: 0.82rem;
-		font-weight: 500;
+		font-size: 0.6875rem;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		font-feature-settings:
+			'case' 1,
+			'tnum' 1;
 		color: var(--muted);
 	}
 	.post-kicker a {
@@ -308,7 +313,9 @@ const updated = post.meta.updated
 	}
 	.article-title {
 		margin-top: clamp(1.5rem, 4vw, 2.5rem);
-		font-size: clamp(2.25rem, 5vw, 3.5rem);
+		/* The 32px step of the scale, opening to 40px where the column has
+		   room: the headline leads the page, it does not fill it. */
+		font-size: clamp(2rem, 4vw, 2.5rem);
 		line-height: 1.08;
 	}
 	.post-deck {
@@ -326,8 +333,9 @@ const updated = post.meta.updated
 		align-items: center;
 		gap: 0.5rem 0.65rem;
 		margin-top: 1.25rem;
-		font-size: 0.875rem;
+		font-size: 0.8125rem;
 		line-height: 1.5;
+		font-variant-numeric: tabular-nums;
 		color: var(--muted);
 	}
 	.post-meta a {
