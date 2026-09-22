@@ -30,6 +30,11 @@ import NewsletterForm from './NewsletterForm.astro';
 </section>
 
 <style>
+	/* The page's one ask gets its own rule, because it is the only section on
+	   the page without a .section-head to carry one. */
+	.newsletter {
+		border-top: 1px solid var(--line);
+	}
 	.newsletter-inner {
 		display: grid;
 		gap: clamp(1.75rem, 4vw, 3rem);
@@ -45,7 +50,7 @@ import NewsletterForm from './NewsletterForm.astro';
 	}
 	.newsletter-blurb {
 		margin-top: 0.8rem;
-		font-size: 1rem;
+		font-size: 1.0625rem;
 		line-height: 1.7;
 		color: var(--body);
 	}

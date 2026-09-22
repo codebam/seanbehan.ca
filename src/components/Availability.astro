@@ -30,25 +30,24 @@ const { availability } = Astro.props;
 )}
 
 <style>
+	/* A status line, not a panel: a dot and a sentence on the page's own
+	   ground. It was a tinted box with a border, which put a container around
+	   two lines of text that the dot already marks. */
 	.availability {
 		display: flex;
 		align-items: flex-start;
 		gap: 0.65rem;
-		padding: 0.8rem 1rem;
-		background: var(--surface-alt);
-		border: 1px solid var(--line);
-		border-radius: var(--radius);
 	}
 	/* Green is the one signal a reader already knows for "available"; the warm
-	   accent stays for editorial emphasis. */
+	   accent stays for editorial emphasis. 6:1 on either ground, because a
+	   status a reader has to perceive is a mark, not decoration. */
 	.availability-dot {
 		width: 0.5rem;
 		height: 0.5rem;
-		margin-top: 0.4rem;
+		margin-top: 0.42rem;
 		flex-shrink: 0;
 		border-radius: 50%;
 		background: var(--positive);
-		box-shadow: 0 0 0 3px color-mix(in srgb, var(--positive) 18%, transparent);
 	}
 	.availability-text {
 		display: flex;
@@ -57,12 +56,12 @@ const { availability } = Astro.props;
 		min-width: 0;
 	}
 	.availability strong {
-		font-size: 0.9rem;
+		font-size: 0.9375rem;
 		font-weight: 600;
 		color: var(--text);
 	}
 	.availability-detail {
-		font-size: 0.85rem;
+		font-size: 0.875rem;
 		line-height: 1.5;
 		color: var(--muted);
 	}

@@ -117,35 +117,46 @@ const action = new URL(site.newsletter.submitPath, site.newsletter.url).toString
 		font: inherit;
 		font-size: 1rem;
 		color: var(--text);
-		background: var(--panel);
+		background: transparent;
 		border: 1px solid var(--dim);
 		border-radius: var(--radius-sm);
-		box-shadow: var(--shadow-sm);
 	}
 	.newsletter-field::placeholder {
 		color: var(--muted);
 	}
 
-	/* In the footer, --accent is the light footer blue while --accent-on is
-   still the page theme's, which can put white on #60a5fa. --text/--bg are
-   both re-pointed by .panel-invert, so the button borrows those. */
+	/* Subscribe is one of the two filled controls on the site: it is the ask
+	   the form exists for, and a transparent button would be an instruction
+	   with nothing behind it. */
+	.newsletter-submit {
+		background: var(--accent);
+		border-color: transparent;
+		color: var(--accent-on);
+	}
+	.newsletter-submit:hover {
+		background: var(--accent-hover);
+		border-color: transparent;
+		color: var(--accent-on);
+	}
+
+	/* In the footer, --accent is the footer's blue while --accent-on is still
+   the page theme's, which can put ink on a dark blue. --text/--bg are both
+   re-pointed by .panel-invert, so the button borrows those. */
 	.newsletter-form-compact .newsletter-submit {
 		background: var(--text);
 		color: var(--bg);
-		box-shadow: none;
 	}
 	.newsletter-form-compact .newsletter-submit:hover {
 		background: var(--footer-accent);
 		color: var(--footer-bg);
-		box-shadow: none;
 	}
 
 	.newsletter-banner {
 		padding: 0.6rem 0.75rem;
-		border-left: 3px solid var(--accent);
+		border-left: 2px solid var(--accent);
 		border-radius: var(--radius-sm);
 		background: var(--surface-alt);
-		font-size: 0.9rem;
+		font-size: 0.9375rem;
 		line-height: 1.5;
 		color: var(--text);
 	}
@@ -154,7 +165,7 @@ const action = new URL(site.newsletter.submitPath, site.newsletter.url).toString
 	}
 
 	.newsletter-note {
-		font-size: 0.82rem;
+		font-size: 0.8125rem;
 		line-height: 1.5;
 		color: var(--muted);
 	}

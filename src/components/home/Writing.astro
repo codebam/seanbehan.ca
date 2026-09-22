@@ -72,7 +72,7 @@ const monthYear = (date: string) =>
 	}
 	.section-sub {
 		margin-top: 0.35rem;
-		font-size: 0.95rem;
+		font-size: 0.9375rem;
 		color: var(--muted);
 	}
 
@@ -81,39 +81,43 @@ const monthYear = (date: string) =>
 		flex-wrap: wrap;
 		align-items: baseline;
 		gap: 0.4rem;
-		font-size: 0.8rem;
+		font-size: 0.8125rem;
 		font-weight: 500;
+		font-variant-numeric: tabular-nums;
 		color: var(--muted);
 	}
 
 	.writing-lead {
-		padding: clamp(1.5rem, 3vw, 2.5rem);
+		padding-block: 1.5rem;
 	}
 	.writing-lead-title {
 		max-width: 30ch;
 		margin-top: 0.6rem;
-		font-size: clamp(1.5rem, 2.8vw, 2rem);
+		font-size: clamp(1.375rem, 2.2vw, 1.625rem);
 		font-weight: 600;
-		letter-spacing: -0.02em;
-		line-height: 1.2;
+		letter-spacing: -0.01em;
+		line-height: 1.25;
 	}
 	.writing-lead-title a,
 	.writing-card-title a {
 		color: var(--text);
 		text-decoration: none;
-		transition: color 0.2s ease;
+		transition: color 120ms ease;
 	}
 	.writing-lead-title a:hover,
 	.writing-lead-title a:focus-visible,
 	.writing-card-title a:hover,
 	.writing-card-title a:focus-visible {
 		color: var(--accent);
+		text-decoration: underline;
+		text-decoration-color: var(--accent);
+		text-underline-offset: 0.18em;
 	}
 	.writing-lead-desc {
 		max-width: 62ch;
 		margin-top: 0.75rem;
-		font-size: 1.02rem;
-		line-height: 1.65;
+		font-size: 1rem;
+		line-height: 1.7;
 		color: var(--body);
 	}
 	.writing-lead-more {
@@ -122,24 +126,24 @@ const monthYear = (date: string) =>
 
 	.writing-grid {
 		display: grid;
-		gap: 1.25rem;
-		margin-top: 1.25rem;
+		gap: 0 1.25rem;
+		margin-top: 2rem;
 		grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
 	}
 	.writing-card {
-		padding: 1.5rem;
+		padding-block: 1.25rem;
 	}
 	.writing-card-title {
 		margin-top: 0.5rem;
-		font-size: 1.15rem;
+		font-size: 1.125rem;
 		font-weight: 600;
-		letter-spacing: -0.015em;
+		letter-spacing: -0.01em;
 		line-height: 1.3;
 	}
 	.writing-card-desc {
 		margin-top: 0.5rem;
-		font-size: 0.95rem;
-		line-height: 1.6;
+		font-size: 0.9375rem;
+		line-height: 1.65;
 		color: var(--body);
 	}
 </style>
