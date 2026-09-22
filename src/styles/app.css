@@ -284,7 +284,7 @@
 	[tabindex]:not([tabindex='-1']):focus-visible {
 		outline: 2px solid var(--accent);
 		outline-offset: 2px;
-		border-radius: 3px;
+		border-radius: var(--radius-sm);
 	}
 }
 
@@ -334,7 +334,7 @@
 	.eyebrow a {
 		color: inherit;
 		text-decoration: none;
-		transition: color 0.2s ease;
+		transition: color 120ms ease;
 	}
 	.eyebrow a:hover,
 	.eyebrow a:focus-visible {
@@ -728,7 +728,7 @@
 	left: -0.85em;
 	color: var(--accent);
 	opacity: 0;
-	transition: opacity 0.2s ease;
+	transition: opacity 120ms ease;
 }
 .prose :where(h2, h3, h4, h5, h6):hover > .heading-anchor::before,
 .prose :where(h2, h3, h4, h5, h6) > .heading-anchor:focus-visible::before {
