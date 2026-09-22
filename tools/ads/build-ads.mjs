@@ -34,7 +34,7 @@ const ads = [
 	{
 		svg: 'seanbehan-ad-800x360.svg',
 		name: 'seanbehan-ad',
-		bg: '#ffffff',
+		bg: '#fbf9f4',
 		sizes: [
 			[800, 360, 1],
 			[800, 360, 2]
@@ -43,7 +43,7 @@ const ads = [
 	{
 		svg: 'seanbehan-ad-dark-800x360.svg',
 		name: 'seanbehan-ad-dark',
-		bg: '#0b1220',
+		bg: '#131110',
 		sizes: [
 			[800, 360, 1],
 			[800, 360, 2]
@@ -55,7 +55,7 @@ const ads = [
 	{
 		svg: 'seanbehan-billboard-dark-2400x800.svg',
 		name: 'seanbehan-billboard-dark',
-		bg: '#0b1220',
+		bg: '#131110',
 		sizes: [
 			[2400, 800, 1],
 			[2400, 800, 2],
@@ -65,7 +65,7 @@ const ads = [
 	{
 		svg: 'seanbehan-billboard-dark-800x360.svg',
 		name: 'seanbehan-billboard-dark',
-		bg: '#0b1220',
+		bg: '#131110',
 		sizes: [[800, 360, 1]]
 	},
 
@@ -77,13 +77,13 @@ const ads = [
 	{
 		svg: 'codebam-services-ad-500x250.svg',
 		name: 'codebam-services-ad',
-		bg: '#0b1220',
+		bg: '#131110',
 		sizes: [[500, 250, 1]]
 	},
 	{
 		svg: 'codebam-websites-telegram-bots-500.svg',
 		name: 'codebam-websites-telegram-bots',
-		bg: '#0b1220',
+		bg: '#131110',
 		sizes: [[500, 500, 1, 'codebam-websites-telegram-bots-500.png']]
 	}
 

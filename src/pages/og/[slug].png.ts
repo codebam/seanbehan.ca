@@ -42,16 +42,17 @@ import { displayTag } from '../../lib/tags';
 const WIDTH = 1200;
 const HEIGHT = 630;
 
-// The light palette from app.css, and the values to change when it does. The
+// The dark palette from app.css, and the values to change when it does. The
 // cards are a fixed surface — a social preview has no reader theme to follow —
-// so the light values are the values. ACCENT is the warm editorial token
-// rather than the interactive blue: a card has nothing to click, and this is
-// the one mark it makes about itself.
-const BG = '#ffffff';
-const TEXT = '#0f172a';
-const MUTED = '#64748b';
-const ACCENT = '#b45309';
-const LINE = '#cbd5e1';
+// so one scheme is the scheme, and the direction is dark first: the card is
+// the near-black ash of the page with cream type. ACCENT is the warm editorial
+// token rather than the interactive blue: a card has nothing to click, and
+// this is the one mark it makes about itself.
+const BG = '#131110';
+const TEXT = '#f2ede4';
+const MUTED = '#9c9386';
+const ACCENT = '#e0a458';
+const LINE = '#47403b';
 
 /**
  * Long titles step down a size rather than wrapping into a fourth line, which
@@ -156,16 +157,17 @@ function staticCardPayload(slug: string, host: string): Card | undefined {
 }
 
 /**
- * Newsreader for the title, Inter for everything else — the site's own
- * pairing, but the static @fontsource cuts rather than the variable files the
- * site serves: satori reads the `fvar` table of a variable font wrong and
- * throws, and a card needs one weight of each face anyway. `.woff` rather than
- * `.woff2` because satori reads ttf, otf and woff.
+ * Newsreader for the title, Inter for everything else — Inter is the OG
+ * route's own face, not the site's: the interface there is the mono stack,
+ * which ships no webfont, and satori needs a file per face. The two static
+ * @fontsource cuts rather than the variable files the site serves, because
+ * satori reads the `fvar` table of a variable font wrong and throws, and a
+ * card needs one weight of each face anyway. `.woff` rather than `.woff2`
+ * because satori reads ttf, otf and woff.
  *
- * The title stays in the serif even though the site's headings are Inter now:
- * a card is a headline to be read, which is the job the serif still does on
- * the article body and the résumé, and there is no bold cut of Inter here to
- * set it in.
+ * The title stays in the serif: a card is a headline to be read, which is the
+ * job the serif still does on the article body and the résumé, and there is
+ * no bold cut of Inter here to set it in.
  */
 async function fonts(origin: string) {
 	/*

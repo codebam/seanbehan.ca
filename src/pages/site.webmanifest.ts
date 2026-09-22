@@ -18,12 +18,13 @@ export const GET: APIRoute = async () => {
 			{ src: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }
 		],
 		// The same pair as the theme-color metas in Base.astro; app.css owns the
-		// values, so this is the surface to change when the palette does.
-		theme_color: '#ffffff',
-		background_color: '#ffffff',
+		// values, so this is the surface to change when the palette does. Dark
+		// is the default scheme, so the bare theme_color is the dark ground.
+		theme_color: '#131110',
+		background_color: '#131110',
 		theme_colors: [
-			{ color: '#ffffff', media: '(prefers-color-scheme: light)' },
-			{ color: '#0b1220', media: '(prefers-color-scheme: dark)' }
+			{ color: '#fbf9f4', media: '(prefers-color-scheme: light)' },
+			{ color: '#131110', media: '(prefers-color-scheme: dark)' }
 		],
 		display: 'standalone',
 		scope: '/'
