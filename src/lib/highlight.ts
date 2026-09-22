@@ -57,7 +57,16 @@ let highlighterPromise: Promise<HighlighterCore> | null = null;
 
 function getHighlighter() {
 	highlighterPromise ??= createHighlighterCore({
-		themes: [import('@shikijs/themes/github-light'), import('@shikijs/themes/github-dark')],
+		// Gruvbox, not GitHub: the theme's ground (#282828 / #fbf1c7) is the
+		// warm ash and cream the palette is built from, and on this site's own
+		// code ground (--panel) its worst token is 4.81:1 in the dark scheme,
+		// where github-dark's was 3.35:1. Shiki only writes token colours here
+		// (defaultColor: false), so the block keeps --panel under both
+		// schemes.
+		themes: [
+			import('@shikijs/themes/gruvbox-light-medium'),
+			import('@shikijs/themes/gruvbox-dark-medium')
+		],
 		langs: Object.values(LANGS),
 		engine: createJavaScriptRegexEngine()
 	});
@@ -73,10 +82,23 @@ export async function highlight(code: string, lang?: string): Promise<string> {
 	const label = lang?.toLowerCase() ?? '';
 	const resolved = label in LANGS ? label : (ALIASES[label] ?? null);
 
+	/*
+	 * `data-language` is the fence's own label, carried on the <pre> so the
+	 * stylesheet can caption the full-bleed block with it — a fact about the
+	 * source, not something the page has to restate in markup. It rides the
+	 * attribute name the style uses rather than a class, and it is only set
+	 * when a fence had a label: a block without one gets no caption.
+	 */
+	const meta: Record<string, string> = {
+		role: 'region',
+		'aria-label': label ? `Code block: ${label}` : 'Code block'
+	};
+	if (label) meta['data-language'] = resolved ?? label;
+
 	const highlighter = await getHighlighter();
 	return highlighter.codeToHtml(code, {
 		lang: resolved ?? 'plaintext',
-		themes: { light: 'github-light', dark: 'github-dark' },
+		themes: { light: 'gruvbox-light-medium', dark: 'gruvbox-dark-medium' },
 		defaultColor: false,
 		// Shiki makes the <pre> focusable (tabindex="0") because a long line
 		// can make it a scroll container. Dropping the tabindex would hurt the
@@ -84,9 +106,6 @@ export async function highlight(code: string, lang?: string): Promise<string> {
 		// it and gets the name the default omitted: an unlabelled tab stop
 		// tells a screen reader nothing about what it just landed on. `meta`
 		// entries become attributes on the <pre> shiki renders.
-		meta: {
-			role: 'region',
-			'aria-label': label ? `Code block: ${label}` : 'Code block'
-		}
+		meta
 	});
 }

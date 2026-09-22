@@ -17,7 +17,7 @@ const canonical = `${SITES.seanbehan.url}${Astro.url.pathname}`;
 	<article class="panel pt-14 pb-20 md:pt-16">
 		<div class="legal-shell shell">
 			<p class="eyebrow">Legal / Sean Behan</p>
-			<div class="legal-document prose mt-5 max-w-[68ch] text-[1.05rem]" data-prose>
+			<div class="legal-document prose mt-5" data-prose>
 				<slot />
 			</div>
 		</div>
@@ -31,7 +31,7 @@ const canonical = `${SITES.seanbehan.url}${Astro.url.pathname}`;
 	.legal-document :global(h1) {
 		max-width: 22ch;
 		margin-bottom: 2.5rem;
-		font-size: clamp(2.4rem, 6vw, 3.4rem);
+		font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.25rem);
 	}
 	.legal-document :global(h2) {
 		margin-top: 3rem;

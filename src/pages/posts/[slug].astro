@@ -216,7 +216,7 @@ const updated = post.meta.updated
 			)}
 
 			<div
-				class:list={['enter prose text-[1.08rem]', toc.length > 0 && 'mt-12']}
+				class:list={['enter prose', toc.length > 0 && 'mt-12']}
 				style="--enter-delay:60ms"
 				data-prose
 			>
@@ -285,15 +285,17 @@ const updated = post.meta.updated
 	}
 	.post-masthead {
 		padding-block: clamp(2.5rem, 6vw, 4rem) clamp(2rem, 4vw, 3rem);
-		border-bottom: 1px solid var(--line);
+		border-bottom: 1px dashed var(--line-strong);
 	}
 	.post-kicker {
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
 		gap: 1rem;
-		font-size: 0.82rem;
+		font-family: var(--font-sans);
+		font-size: 0.8125rem;
 		font-weight: 500;
+		font-variant-numeric: tabular-nums;
 		color: var(--muted);
 	}
 	.post-kicker a {
@@ -360,9 +362,9 @@ const updated = post.meta.updated
 		display: flex;
 		flex-direction: column;
 		gap: 0.55rem;
-		border-left: 2px solid var(--line);
+		border-left: 1px dashed var(--line-strong);
 		padding-left: 1.1rem;
-		font-size: 0.95rem;
+		font-size: 0.875rem;
 	}
 	.toc li.sub {
 		padding-left: 1.1rem;

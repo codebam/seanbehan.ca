@@ -113,14 +113,16 @@ const action = new URL(site.newsletter.submitPath, site.newsletter.url).toString
 		width: 100%;
 		min-width: 0;
 		padding: 0.7rem 0.9rem;
-		/* 1rem, not 0.95: anything smaller makes iOS zoom on focus. */
+		/* 1rem, not 0.95: anything smaller makes iOS zoom on focus. The face
+		   is named rather than inherited — body is the reading serif, and a
+		   field is chrome. */
 		font: inherit;
+		font-family: var(--font-sans);
 		font-size: 1rem;
 		color: var(--text);
 		background: var(--panel);
 		border: 1px solid var(--dim);
 		border-radius: var(--radius-sm);
-		box-shadow: var(--shadow-sm);
 	}
 	.newsletter-field::placeholder {
 		color: var(--muted);

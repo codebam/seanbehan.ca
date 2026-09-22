@@ -32,25 +32,23 @@
 
 /* ═══════════════════════════════════════════════════════════
    Fonts
-   Inter carries the interface: navigation, headings, labels,
-   buttons, metadata. Newsreader is kept for reading — the body
-   of a long article, and the résumé, which is a document — because
-   a serif column is still the most comfortable way to read prose.
+   The interface face is the mono stack: navigation, headings,
+   labels, buttons, metadata — everything that is machinery. The
+   mono is local-first, not a webfont: Fira Code is named first in
+   --font-mono, but no file ships for it, so a reader who has Fira
+   Code (or JetBrains Mono, Cascadia Code) gets it and everyone
+   else falls through to the platform monospace. Inter's variable
+   file used to carry the interface and is gone with the switch;
+   Newsreader is the one webfont left and it is the reading voice —
+   the body of a long article, the résumé, and the paragraph copy
+   body defaults to below.
 
-   Code is local-first, not a third webfont: Fira Code is named
-   first in --font-mono, but no file ships for it, so a reader who
-   has Fira Code (or JetBrains Mono, Cascadia Code) gets it and
-   everyone else falls through to the platform monospace. The two
-   variable files above are the whole font payload; there is no
-   missing Fira Code @font-face to add.
+   There is no missing mono @font-face to add. `font-synthesis` on
+   the body is deliberate: weight synthesis is off because platform
+   monos rarely carry a 600 and a faux-bold mono smears the display
+   type, while style synthesis stays on so a headline's italic word
+   survives a mono with no true italic cut.
    ═══════════════════════════════════════════════════════════ */
-@font-face {
-	font-family: 'Inter Variable';
-	font-style: normal;
-	font-display: swap;
-	font-weight: 400 700;
-	src: url('/fonts/inter-latin.woff2') format('woff2-variations');
-}
 @font-face {
 	font-family: 'Newsreader Variable';
 	font-style: normal;
@@ -66,15 +64,7 @@
 	src: url('/fonts/newsreader-latin-italic.woff2') format('woff2-variations');
 }
 
-/* Metric-matched stand-ins for the two webfaces, so the swap does not reflow. */
-@font-face {
-	font-family: 'Inter Variable Fallback';
-	src: local('Arial');
-	size-adjust: 105.31%;
-	ascent-override: 91.99%;
-	descent-override: 22.91%;
-	line-gap-override: 0%;
-}
+/* A metric-matched stand-in for the one webfont, so the swap does not reflow. */
 @font-face {
 	font-family: 'Newsreader Variable Fallback';
 	src: local('Times New Roman');
@@ -87,20 +77,27 @@
 /* ═══════════════════════════════════════════════════════════
    Design tokens
 
-   A neutral, high-contrast palette: white paper, slate ink, a
-   single blue for anything interactive and a warm amber reserved
-   for editorial emphasis (the wordmark dot, an italic phrase).
-   The same names carry both themes; components never branch on
-   the scheme.
+   Dark first: the journal's default ground is the near-black ash
+   of a terminal, with a warm amber for the editorial voice and a
+   pale blue for anything interactive. Light is the alternative —
+   cream paper and ink — and lives behind prefers-color-scheme, so
+   both schemes survive with no script. The same names carry both
+   themes; components never branch on the scheme.
    ═══════════════════════════════════════════════════════════ */
 @theme {
+	/* The interface face. It carries the mono stack deliberately: the site
+	   speaks in a terminal's voice everywhere it is machinery, and the name
+	   stays --font-sans because every component asks for it by that name and
+	   the two Kumo controls resolve Tailwind's `font-sans` utility here. */
 	--font-sans:
-		'Inter Variable', 'Inter Variable Fallback', Inter, ui-sans-serif, system-ui, -apple-system,
-		'Segoe UI', sans-serif;
+		'Fira Code', 'JetBrains Mono', 'Cascadia Code', ui-monospace, SFMono-Regular, Menlo, Monaco,
+		Consolas, 'Liberation Mono', monospace;
 	--font-serif:
 		'Newsreader Variable', 'Newsreader Variable Fallback', Newsreader, Georgia, 'Times New Roman',
 		serif;
-	/* Local-first; no file ships for the named faces. See the Fonts note. */
+	/* The same stack again: code is not a different voice, it is the interface
+	   voice at its most literal. Kept as its own token so the two can part
+	   ways if a code face ever ships. */
 	--font-mono:
 		'Fira Code', 'JetBrains Mono', 'Cascadia Code', ui-monospace, SFMono-Regular, Menlo, Monaco,
 		Consolas, 'Liberation Mono', monospace;
@@ -108,51 +105,57 @@
 
 @layer base {
 	:root {
-		color-scheme: light dark;
+		color-scheme: dark;
 		--kumo-button-emphasis-bg: var(--accent);
 		--kumo-button-emphasis-ring: var(--accent-hover);
 
 		/* Surfaces */
-		--bg: #ffffff;
-		--surface-alt: #f8fafc;
-		--panel: #ffffff;
-		/* Hairline only (1.23:1 on white). WCAG 1.4.11 wants 3:1 for a
+		--bg: #131110;
+		/* The recessed fill: code blocks, tags, the alt bands. In dark it sits
+		   above the page ground, in light below it — one name, the scheme
+		   decides the direction. */
+		--surface-alt: #242020;
+		--panel: #1b1817;
+		/* Hairline only (1.38:1 on the page). WCAG 1.4.11 wants 3:1 for a
 		   boundary a reader has to perceive to operate a control; --dim is
 		   the token for that and .site-field uses it. Do not reach for
 		   --line to outline a field, button or other control. */
-		--line: #e2e8f0;
-		--line-strong: #cbd5e1;
+		--line: #322d2a;
+		/* Dashed rules and the scrollbar thumb. Still a hairline: 1.85:1. */
+		--line-strong: #47403b;
 
 		/* Text */
-		--text: #0f172a;
-		--body: #334155;
-		--muted: #64748b;
+		--text: #f2ede4;
+		--body: #d6cec2;
+		--muted: #9c9386;
 		/* Not merely decorative: this is the quietest mark the site draws, and
 		   everything it draws — the search glyph, the scrollbar thumb, the
 		   search field's own boundary — is a UI mark that WCAG 1.4.11 wants at
-		   3:1. #94a3b8 was 2.56:1 on white. */
-		--dim: #828d9d;
+		   3:1. 3.97:1 on the dark ground, 3.72:1 on a panel; the light
+		   scheme's is 3.65:1. */
+		--dim: #7a7266;
 
-		/* Accent */
-		--accent: #2563eb;
-		--accent-hover: #1d4ed8;
-		--accent-on: #ffffff;
-		--accent-warm: #b45309;
-		--accent-wash: color-mix(in srgb, var(--accent) 8%, transparent);
-		--positive: #16a34a;
+		/* Accent — warm is the site's voice, blue is the user's reach. */
+		--accent: #7fb3e0;
+		--accent-hover: #a5cdec;
+		/* The label on an accent-filled control: 8.45:1 on --accent. */
+		--accent-on: #131110;
+		--accent-warm: #e0a458;
+		--positive: #8fbf7f;
 
 		/* Footer is dark in both themes, so it needs its own small set — the
-		   accent included. --accent is chosen against a light ground and reads
-		   at 3.45:1 on the footer's; the footer takes the blue the dark palette
-		   already picked for a dark ground, which is 7:1 on either footer. */
-		--footer-bg: #0f172a;
-		--footer-text: #e2e8f0;
-		--footer-muted: #94a3b8;
-		/* Same intent as --line: a column rule, not a control boundary. It
-		   is 1.22:1 against --footer-bg, so a required edge here would need
-		   --footer-muted instead. */
-		--footer-line: #1e293b;
-		--footer-accent: #60a5fa;
+		   accents included. --accent is chosen against a page ground; the
+		   footer takes the blues and ambers the dark palette already picked
+		   for a dark ground, which is what lets one inversion work under two
+		   schemes. --footer-accent and --footer-warm are scheme-independent
+		   and are set once here. */
+		--footer-bg: #0b0a09;
+		--footer-text: #f2ede4;
+		--footer-muted: #9c9386;
+		/* Same intent as --line: a column rule, not a control boundary. */
+		--footer-line: #2c2724;
+		--footer-accent: #7fb3e0;
+		--footer-warm: #e0a458;
 
 		/* Geometry */
 		/* .section (below) is the shared page-level rhythm. These are the
@@ -179,52 +182,65 @@
 		--pad-post-body: clamp(2.5rem, 6vw, 4rem) clamp(4rem, 8vw, 6rem);
 		--pad-footer-grid: clamp(3rem, 6vw, 4.5rem) 2.5rem;
 		--pad-stats-grid: clamp(1.75rem, 3vw, 2.5rem);
-		--radius-sm: 6px;
-		--radius: 10px;
-		--radius-lg: 16px;
-		--shadow-sm: 0 1px 2px rgb(15 23 42 / 0.06), 0 1px 3px rgb(15 23 42 / 0.08);
-		--shadow-md: 0 4px 12px rgb(15 23 42 / 0.08), 0 2px 4px rgb(15 23 42 / 0.05);
+		/* A console draws its edges: 0 on code, 4 on controls, 6 on the
+		   surfaces a card is made of. */
+		--radius-sm: 4px;
+		--radius: 6px;
+		--radius-lg: 6px;
+		/* Shadows are retired. The call sites still ask for these tokens — a
+		   dozen of them — so they resolve to nothing here rather than being
+		   edited out one by one; an edge is a hairline now. */
+		--shadow-sm: none;
+		--shadow-md: none;
 	}
 
-	@media (prefers-color-scheme: dark) {
+	@media (prefers-color-scheme: light) {
 		:root {
-			--bg: #0b1220;
-			--surface-alt: #0f172a;
-			--panel: #111827;
-			--line: #1e293b;
-			--line-strong: #334155;
+			color-scheme: light;
+			/* Cream paper, and the same accent split at paper weights. */
+			--bg: #fbf9f4;
+			--surface-alt: #f2eee6;
+			--panel: #ffffff;
+			--line: #e0d9cc;
+			--line-strong: #c3b9a6;
 
-			--text: #f1f5f9;
-			--body: #cbd5e1;
-			--muted: #94a3b8;
-			--dim: #64748b;
+			--text: #1c1917;
+			--body: #3b352d;
+			--muted: #6b6355;
+			--dim: #8a8172;
 
-			--accent: #60a5fa;
-			--accent-hover: #93c5fd;
-			--accent-on: #0b1220;
-			--accent-warm: #fbbf24;
-			--accent-wash: color-mix(in srgb, var(--accent) 16%, transparent);
-			--positive: #4ade80;
+			--accent: #1f5fa8;
+			--accent-hover: #194d87;
+			--accent-on: #ffffff;
+			--accent-warm: #8a5a12;
+			--positive: #3f6b35;
 
-			--footer-bg: #020617;
-			--footer-text: #e2e8f0;
-			--footer-muted: #94a3b8;
-			--footer-line: #1e293b;
-
-			--shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
-			--shadow-md: 0 6px 16px rgb(0 0 0 / 0.45);
+			--footer-bg: #1c1917;
+			--footer-text: #f2ede4;
+			--footer-muted: #a39a8d;
+			--footer-line: #3a332f;
 		}
 	}
 
 	html {
 		scroll-behavior: smooth;
 		scrollbar-gutter: stable;
+		/* Full-bleed code blocks are 100vw wide by design; `clip` keeps the
+		   viewport from gaining a horizontal scrollbar without creating a
+		   scroll container that would re-anchor the sticky header (`hidden`
+		   would do exactly that). */
+		overflow-x: clip;
+		scrollbar-width: thin;
+		scrollbar-color: var(--line-strong) transparent;
 	}
 
 	body {
 		background: var(--bg);
 		color: var(--text);
-		font-family: var(--font-sans);
+		/* The reading voice is the default: any paragraph that falls through
+		   the interface's net should still be readable, and the machinery
+		   names the mono face explicitly instead of the other way around. */
+		font-family: var(--font-serif);
 		font-size: 1rem;
 		line-height: 1.6;
 		min-height: 100vh;
@@ -232,10 +248,24 @@
 		text-rendering: optimizeLegibility;
 		font-kerning: normal;
 		font-variant-ligatures: common-ligatures;
+		/* Weight synthesis is off because platform monos rarely carry a 600
+		   and a faux-bold mono smears the display type; style synthesis stays
+		   on so the headline's italic word survives a mono with no true
+		   italic cut. */
+		font-synthesis: style;
+	}
+
+	/* Headings and controls are the interface, wherever they appear. */
+	:where(h1, h2, h3, h4, h5, h6),
+	:where(button, input, select, textarea, optgroup, summary, label, legend) {
+		font-family: var(--font-sans);
+	}
+	:where(code, kbd, samp, pre) {
+		font-family: var(--font-mono);
 	}
 
 	::selection {
-		background: var(--accent-wash);
+		background: color-mix(in srgb, var(--accent) 30%, var(--bg));
 		color: var(--text);
 	}
 
@@ -244,7 +274,7 @@
 		height: 10px;
 	}
 	::-webkit-scrollbar-track {
-		background: var(--bg);
+		background: transparent;
 	}
 	::-webkit-scrollbar-thumb {
 		background: var(--line-strong);
@@ -262,7 +292,7 @@
 	[tabindex]:not([tabindex='-1']):focus-visible {
 		outline: 2px solid var(--accent);
 		outline-offset: 2px;
-		border-radius: 3px;
+		border-radius: 2px;
 	}
 }
 
@@ -285,12 +315,12 @@
 		text-wrap: balance;
 	}
 	.display-xl {
-		font-size: clamp(2.25rem, 5vw, 3.5rem);
+		font-size: clamp(2rem, 1.45rem + 2.4vw, 3rem);
 		line-height: 1.08;
 	}
 	.display-lg {
-		font-size: clamp(1.5rem, 2.6vw, 2rem);
-		line-height: 1.15;
+		font-size: clamp(1.35rem, 1.1rem + 1vw, 1.75rem);
+		line-height: 1.2;
 	}
 
 	/* Italic, in the warm accent: the one decorative move a headline gets. */
@@ -299,11 +329,11 @@
 		color: var(--accent-warm);
 	}
 
-	/* Section label: small, uppercase, tracked. Inter, not the serif. */
+	/* Section label: mono, small, uppercase, tracked. */
 	.eyebrow {
 		font-family: var(--font-sans);
-		font-size: 0.78rem;
-		font-weight: 600;
+		font-size: 0.75rem;
+		font-weight: 500;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
 		color: var(--muted);
@@ -316,6 +346,79 @@
 	.eyebrow a:hover,
 	.eyebrow a:focus-visible {
 		color: var(--accent);
+	}
+
+	/* ═══════════════════════════════════════════════════════════
+	   The interface voice
+	   Mono is the machine speaking: headings (the base rules),
+	   labels, controls, captions and every line of metadata. The
+	   body default is the serif, so this list is the promise that
+	   each of these is chrome, not prose — anything not named here
+	   stays in the reading voice.
+	   ═══════════════════════════════════════════════════════════ */
+	.brand,
+	.nav-link,
+	.nav-toggle,
+	.btn,
+	.site-cta,
+	.flat-control,
+	.site-field,
+	.skip-link,
+	.footer-link,
+	.footer-wordmark,
+	.footer-base,
+	.link-accent,
+	.link-quiet,
+	.tag,
+	.section-sub,
+	.stat-value,
+	.stat-label,
+	.facts,
+	.domain,
+	.external,
+	.post-card-meta,
+	.post-meta,
+	.post-kicker,
+	.entry-meta,
+	.project-meta,
+	.page-hero-meta,
+	.toc,
+	.code-copy,
+	.copy-address,
+	.code-filename,
+	.policy-date,
+	.checksum,
+	.document-note,
+	.step-index,
+	.channel-label,
+	.price,
+	.purchase-terms,
+	.inside-note,
+	.refund-note,
+	.availability,
+	.newsletter-note,
+	.experience-period,
+	.sibling .title,
+	.destination-list strong,
+	.tag-count,
+	.search-empty,
+	figcaption {
+		font-family: var(--font-sans);
+		/* Fira Code's programming ligatures are for code, not prose labels. */
+		font-variant-ligatures: none;
+	}
+	/* Counts and dates line up in the mono grid. */
+	.stat-value,
+	.stat-label,
+	.facts,
+	.experience-period,
+	.post-card-meta,
+	.post-kicker,
+	.post-meta,
+	.entry-meta,
+	.project-meta,
+	.resume-meta {
+		font-variant-numeric: tabular-nums;
 	}
 
 	.sibling .title,
@@ -373,8 +476,12 @@
 		--dim: var(--footer-muted);
 		/* Reassigned, not self-referenced: `--accent: var(--accent)` resolves to
 		   the guaranteed-invalid value and quietly inherits the light-ground
-		   blue, which put footer link hovers at 3.45:1. */
+		   blue, which put footer link hovers at 3.45:1. The warm is reassigned
+		   for the same reason — the footer's ground is dark under both
+		   schemes, so the light scheme's brown (#8a5a12, 3.0:1 there) is not
+		   the warm it needs. */
 		--accent: var(--footer-accent);
+		--accent-warm: var(--footer-warm);
 		--text-color-kumo-default: var(--text);
 		--color-kumo-fill: var(--line-strong);
 		background: var(--bg);
@@ -383,7 +490,9 @@
 
 	/* The heading row shared by every content section: a title on the left, a
 	   count, link or note on the right, separated from the content below by a
-	   single hairline. */
+	   dashed rule — the console's line, where a solid hairline means a band
+	   edge. The `#` is the section mark: pseudo-content, so a screen reader
+	   never hears it. */
 	.section-head,
 	.section-heading,
 	.archive-heading {
@@ -393,13 +502,22 @@
 		gap: 1.5rem;
 		padding-bottom: 1rem;
 		margin-bottom: clamp(2rem, 4vw, 3rem);
-		border-bottom: 1px solid var(--line);
+		border-bottom: 1px dashed var(--line-strong);
+	}
+	.section-head h2::before,
+	.section-heading h2::before,
+	.archive-heading h2::before {
+		content: '#';
+		margin-right: 0.45em;
+		color: var(--accent-warm);
 	}
 	.section-head > p,
 	.section-heading > p,
 	.archive-heading > p {
-		font-size: 0.8rem;
+		font-family: var(--font-sans);
+		font-size: 0.8125rem;
 		font-weight: 500;
+		font-variant-numeric: tabular-nums;
 		color: var(--muted);
 		white-space: nowrap;
 	}
@@ -426,18 +544,15 @@
 		background: var(--accent);
 		color: var(--accent-on);
 		padding: 0.65rem 1.25rem;
-		font-size: 0.95rem;
+		font-family: var(--font-sans);
+		font-size: 0.8125rem;
 		font-weight: 600;
+		letter-spacing: 0.02em;
 		line-height: 1.2;
-		box-shadow: var(--shadow-sm);
-		transition:
-			background 0.2s ease,
-			transform 0.12s ease,
-			box-shadow 0.2s ease;
+		transition: background 0.2s ease;
 	}
 	.btn:hover {
 		background: var(--accent-hover);
-		box-shadow: var(--shadow-md);
 	}
 	.btn:active {
 		transform: translateY(1px);
@@ -451,7 +566,7 @@
 	   paint the button live in the layer after this one. That is the deal
 	   .flat-control already makes for the geometry. Without it the label sits
 	   on a gradient mixed 30% toward white: 3.47:1 at the top, 2.68:1 where
-	   the hover layer shows, and white on the dark palette's #60a5fa is 2:1. */
+	   the hover layer shows, and white on the dark palette's accent is 2:1. */
 	.site-cta {
 		background-color: var(--accent) !important;
 		background-image: none !important;
@@ -466,17 +581,15 @@
 	   without forking the component. */
 	.flat-control {
 		border-radius: var(--radius-sm) !important;
-		box-shadow: var(--shadow-sm);
+		box-shadow: none;
 	}
 
 	/* Keyboard focus on the controls Kumo paints over. Its `focus:outline-none`
-	   lives in the utilities layer and `.flat-control`'s resting box-shadow in
-	   this one, so the base ring at the top of the file loses either way:
-	   outline none on the button, and the shadow hides Kumo's own ring on the
-	   field. Declaring the ring here — the last layer — wins over both without
-	   `!important`. `summary` is named because the base selector list never
-	   included it, which left the mobile menu toggle on the browser's 1px
-	   auto outline. Focus-only, so nothing resting changes. */
+	   lives in the utilities layer, so the base ring at the top of the file
+	   loses on the button; declaring the ring here — the last layer — wins
+	   without `!important`. `summary` is named because the base selector list
+	   never included it, which left the mobile menu toggle on the browser's
+	   1px auto outline. Focus-only, so nothing resting changes. */
 	.site-cta:focus-visible,
 	.flat-control:focus-visible,
 	.site-field:focus-visible,
@@ -485,12 +598,16 @@
 		outline-offset: 2px;
 	}
 
+	/* The quiet inline link: a hairline under the words, the accent under the
+	   pointer. */
 	.link-quiet {
 		position: relative;
 		color: var(--body);
 		border-bottom: 1px solid var(--line-strong);
 		padding-bottom: 2px;
-		transition: color 0.2s ease;
+		transition:
+			color 0.2s ease,
+			border-color 0.2s ease;
 	}
 	.link-quiet:hover {
 		color: var(--accent);
@@ -502,8 +619,10 @@
 		align-items: center;
 		gap: 0.35rem;
 		color: var(--accent);
-		font-size: 0.95rem;
+		font-family: var(--font-sans);
+		font-size: 0.8125rem;
 		font-weight: 600;
+		letter-spacing: 0.02em;
 		transition: color 0.2s ease;
 	}
 	.link-accent:hover {
@@ -537,30 +656,29 @@
 		background: var(--panel);
 		border: 1px solid var(--line);
 		border-radius: var(--radius);
-		box-shadow: var(--shadow-sm);
-		transition:
-			border-color 0.2s ease,
-			box-shadow 0.2s ease,
-			transform 0.2s ease;
+		transition: border-color 0.2s ease;
 	}
+	/* No lift and no shadow: a console's surfaces do not float, they change
+	   state. The edge brightens instead. */
 	.card:hover {
 		border-color: var(--line-strong);
-		box-shadow: var(--shadow-md);
-		transform: translateY(-2px);
 	}
 
 	/* Tag: language tags name the site's materials, so they take the warm
 	   accent; topic tags stay quiet. Interaction blue is reserved for what is
-	   clickable. */
+	   clickable. Square-ish chips, mono, uppercase — the label voice. */
 	.tag {
 		display: inline-flex;
 		align-items: center;
-		border-radius: 999px;
+		border-radius: var(--radius-sm);
 		background: var(--surface-alt);
 		border: 1px solid var(--line);
-		padding: 0.15rem 0.6rem;
-		font-size: 0.78rem;
+		padding: 0.12rem 0.5rem;
+		font-family: var(--font-sans);
+		font-size: 0.6875rem;
 		font-weight: 500;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
 		color: var(--muted);
 	}
 	.tag-lang {
@@ -572,7 +690,12 @@
    Long-form content
    Tailwind's typography plugin, pointed at our tokens so a single
    `.prose` works in both themes with no `prose-invert` swap. The
-   reading column is the serif; the headings around it stay sans.
+   reading column is the serif; the headings inside it are the
+   mono interface voice, and so is code. The measure is stated
+   here rather than inherited from the plugin's default: 66ch at
+   1.125rem, centred inside the 820px article column, which is the
+   box the full-bleed code blocks below measure themselves
+   against.
    ═══════════════════════════════════════════════════════════ */
 .prose {
 	font-family: var(--font-serif);
@@ -589,10 +712,13 @@
 	--tw-prose-captions: var(--muted);
 	--tw-prose-code: var(--text);
 	--tw-prose-pre-code: var(--body);
-	--tw-prose-pre-bg: var(--surface-alt);
+	--tw-prose-pre-bg: var(--panel);
 	--tw-prose-th-borders: var(--line-strong);
 	--tw-prose-td-borders: var(--line);
-	line-height: 1.75;
+	font-size: 1.125rem;
+	line-height: 1.7;
+	max-width: 66ch;
+	margin-inline: auto;
 	text-wrap: pretty;
 }
 
@@ -620,6 +746,17 @@
 	max-width: 100%;
 	height: auto;
 	border-radius: var(--radius);
+}
+
+/* `html` clips horizontal overflow so the full-bleed code can reach the
+   viewport's edges without giving the page a horizontal scrollbar. Anything
+   else that can be wider than the measure has to scroll itself, or the clip
+   makes it unreachable on a narrow screen. The typography plugin already
+   gives <pre> its own overflow; a wide table does not have one. */
+.prose :where(table) {
+	display: block;
+	max-width: 100%;
+	overflow-x: auto;
 }
 
 /* Section headings are wrapped in a link to themselves, so a reader can copy
@@ -658,7 +795,7 @@
 	font-weight: 400;
 	background: var(--surface-alt);
 	border: 1px solid var(--line);
-	border-radius: 5px;
+	border-radius: var(--radius-sm);
 	padding: 0.1em 0.35em;
 }
 .prose :where(code)::before,
@@ -668,8 +805,8 @@
 
 .prose :where(pre):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
 	font-family: var(--font-mono);
-	font-size: 0.85em;
-	line-height: 1.65;
+	font-size: 0.875rem;
+	line-height: 1.6;
 	border: 1px solid var(--line);
 	border-radius: var(--radius);
 }
@@ -677,6 +814,50 @@
 	background: transparent;
 	border: 0;
 	padding: 0;
+}
+
+/* ── Full-bleed code ──
+   A block of code is a panel of the machine, not a quotation in a
+   paragraph: it leaves the reading measure and runs to the
+   viewport's edges, with its own hairline top and bottom and the
+   language as a mono caption. `100vw` inside a `100vw`-wide
+   element is why html carries `overflow-x: clip`.
+
+   The ground is --panel rather than --surface-alt: it is the
+   raised surface of the page, and it is also what keeps the
+   gruvbox tokens legible — the dark scheme's worst token is
+   4.81:1 on #1b1817 and only 4.39:1 on #242020.
+
+   The padding is what keeps the code itself on the reading
+   column's left edge: 50% resolves against the containing block
+   (`.prose`, which is centred), so `50vw - 50%` is exactly the
+   distance from the viewport's edge to the column's. The `max()`
+   keeps a margin when the viewport is narrower than the column. */
+.prose :where(pre.shiki) {
+	width: 100vw;
+	margin-inline: calc(50% - 50vw);
+	padding: 1.1rem max(1.25rem, calc(50vw - 50%)) 1.25rem;
+	border: 0;
+	border-block: 1px solid var(--line);
+	border-radius: 0;
+	background-color: var(--panel) !important;
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+}
+/* The language caption, from the `data-language` attribute
+   lib/highlight.ts puts on the <pre>. Rendered only when the fence
+   had a label: a block without one has no caption, not an empty
+   line. */
+.prose :where(pre.shiki[data-language])::before {
+	content: attr(data-language);
+	display: block;
+	margin-bottom: 0.7rem;
+	font-family: var(--font-sans);
+	font-size: 0.6875rem;
+	font-weight: 500;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--muted);
 }
 
 /* ── Shiki ──
@@ -691,9 +872,6 @@
 	.shiki span {
 		color: var(--shiki-dark);
 	}
-}
-.prose :where(pre.shiki) {
-	background-color: var(--surface-alt) !important;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -911,9 +1089,29 @@
    revealed only by the reader's intent — the pointer already over
    this block, or a tab key that has arrived at the button. On
    touch, where there is no pointer to reveal it, it is always up.
+
+   The wrapper repeats the full-bleed geometry the pre carries on
+   its own, so the hover target, the panel's paint and the
+   button's corner are the whole strip rather than the reading
+   column it is centred on. The percentage in the padding resolves
+   against the wrapper's containing block — the prose — which is
+   the same measure the standalone rule uses. The pre inside then
+   fills the wrapper, unpainted, keeping only its block padding.
    ═══════════════════════════════════════════════════════════ */
 .code-block {
 	position: relative;
+	width: 100vw;
+	margin-inline: calc(50% - 50vw);
+	padding-inline: max(1.25rem, calc(50vw - 50%));
+	background: var(--panel);
+	border-block: 1px solid var(--line);
+}
+.code-block > pre.shiki {
+	width: 100%;
+	margin-inline: 0;
+	padding: 1.1rem 0 1.25rem;
+	background: transparent !important;
+	border-block: 0;
 }
 .code-copy {
 	position: absolute;
@@ -1033,7 +1231,7 @@
 .read-progress {
 	position: fixed;
 	inset: 0 0 auto 0;
-	height: 3px;
+	height: 2px;
 	transform-origin: left;
 	transform: scaleX(0);
 	background: var(--accent);
@@ -1103,29 +1301,31 @@
    ═══════════════════════════════════════════════════════════ */
 @media print {
 	/* Print keeps deliberately darker values rather than reading the light
-	   tokens: a laser printer lays the screen's #64748b muted down as a light
-	   grey and washes #2563eb out on paper. This block is a documented
-	   palette surface (DESIGN.md §1), not drift; move it with the tokens. The
-	   ratios in DESIGN.md §3.6 are computed from the values here. */
+	   tokens: a laser printer lays the screen's #6b6355 muted down as a light
+	   grey and washes #1f5fa8 out on paper, and the dark scheme's pale amber
+	   (#e0a458) is a highlighter stroke on a white page. This block is a
+	   documented palette surface (DESIGN.md §1), not drift; move it with the
+	   tokens. Ratios on #ffffff: muted 8.00:1, dim 5.93:1, accent 8.27:1,
+	   warm 8.05:1. */
 	:root {
 		color-scheme: light;
 
 		--bg: #ffffff;
 		--surface-alt: #ffffff;
 		--panel: #ffffff;
-		--line: #e2e8f0;
-		--line-strong: #cbd5e1;
+		--line: #e0d9cc;
+		--line-strong: #c3b9a6;
 
-		--text: #0f172a;
-		--body: #334155;
-		--muted: #475569;
-		--dim: #64748b;
+		--text: #1c1917;
+		--body: #3b352d;
+		--muted: #57503f;
+		--dim: #6b6355;
 
-		--accent: #1d4ed8;
-		--accent-hover: #1e40af;
-		--accent-warm: #b45309;
+		--accent: #1d4e8f;
+		--accent-hover: #163c6f;
+		--accent-warm: #71470d;
 		--accent-on: #ffffff;
-		--accent-wash: transparent;
+		--positive: #2f5a2a;
 	}
 
 	* {
@@ -1152,22 +1352,41 @@
 
 	body {
 		background: #ffffff;
-		color: #0f172a;
+		color: #1c1917;
 		min-height: 0;
 	}
 	.panel,
 	.panel-alt {
 		background: #ffffff;
-		color: #0f172a;
+		color: #1c1917;
 	}
 
 	.shiki,
 	.shiki span {
 		color: var(--shiki-light) !important;
 	}
+	/* The screen's full-bleed code is a panel to the viewport's edges; a
+	   printed page has no viewport, so the block and its JS-injected wrapper
+	   come back inside the measure with hairlines instead of an overhang.
+	   The child selector is repeated so it still outranks the wrapper's
+	   own full-bleed paint. */
+	.code-block,
+	pre.shiki {
+		width: auto;
+		margin-inline: 0;
+		padding: 0.6rem 0;
+	}
+	.code-block {
+		background: transparent;
+		border-block: 0;
+	}
+	.code-block > pre.shiki,
 	pre.shiki {
 		background: #ffffff !important;
-		border: 1px solid var(--line);
+		border: 0;
+		border-block: 1px solid var(--line);
+		border-radius: 0;
+		overflow-x: visible;
 	}
 
 	.prose :where(h2, h3, h4, h5, h6) > .heading-anchor::before {

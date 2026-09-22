@@ -38,7 +38,10 @@ interface Props {
 	/** Set on a post page; drives the article metadata and the canonical rule. */
 	post?: PostSummary;
 	image?: string;
-	/** Preload Newsreader too; only article bodies and the résumé render the serif. */
+	/** Kept for the two pages that are mostly the reading column; the reading
+	 * face is the body default and is preloaded everywhere now, so this no
+	 * longer changes the head — remove it when those call sites are next
+	 * touched. */
 	serif?: boolean;
 	robots?: string;
 	canonical?: string;
@@ -53,7 +56,6 @@ const {
 	ogDescription,
 	post,
 	image,
-	serif = false,
 	robots,
 	canonical: canonicalOverride,
 	content
@@ -143,19 +145,19 @@ const navItems = nav.map((item) => ({
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>{fullTitle}</title>
 
-		<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
-		{serif && (
-			<link
-				rel="preload"
-				href="/fonts/newsreader-latin.woff2"
-				as="font"
-				type="font/woff2"
-				crossorigin
-			/>
-		)}
+		{/* The reading face is the body default now, so it is preloaded on
+		    every page — it is above the fold on all of them. The interface
+		    face is the mono stack and ships no file to preload. */}
+		<link
+			rel="preload"
+			href="/fonts/newsreader-latin.woff2"
+			as="font"
+			type="font/woff2"
+			crossorigin
+		/>
 
-		<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
-		<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b1220" />
+		<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fbf9f4" />
+		<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#131110" />
 
 		<meta property="og:locale" content="en_CA" />
 		{/* Describe the card that is actually shared: a post names its own, a
@@ -453,14 +455,32 @@ const navItems = nav.map((item) => ({
 		min-height: 4rem;
 	}
 	.brand {
+		/* A prompt line: the static block cursor sits before the name. Drawn
+		   as a pseudo-element, not a `$` in generated content — VoiceOver and
+		   ChromeVox announce generated content, and a prompt the ear cannot
+		   skip is noise in a heading. It does not blink: WCAG 2.2.2 wants a
+		   pause control for anything that blinks past five seconds, and a
+		   status mark on a page is not a feed. */
+		position: relative;
 		display: inline-flex;
 		align-items: baseline;
 		margin-right: auto;
-		font-size: 1.125rem;
+		padding-inline-start: 1.15em;
+		font-family: var(--font-sans);
+		font-size: 1.0625rem;
 		font-weight: 700;
-		letter-spacing: -0.02em;
+		letter-spacing: -0.01em;
 		color: var(--text);
 		transition: color 0.2s ease;
+	}
+	.brand::before {
+		content: '';
+		position: absolute;
+		inset-inline-start: 0;
+		inset-block-start: 0.16em;
+		inline-size: 0.55em;
+		block-size: 1em;
+		background: var(--accent-warm);
 	}
 	.brand:hover {
 		color: var(--accent);
@@ -480,8 +500,11 @@ const navItems = nav.map((item) => ({
 		gap: 0.2rem;
 		padding: 0.5rem 0.75rem;
 		border-radius: var(--radius-sm);
-		font-size: 0.9rem;
+		font-family: var(--font-sans);
+		font-size: 0.75rem;
 		font-weight: 500;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
 		color: var(--body);
 		transition:
 			background 0.2s ease,
@@ -547,7 +570,7 @@ const navItems = nav.map((item) => ({
 	.nav-menu .nav-link {
 		width: 100%;
 		padding: 0.6rem 0.75rem;
-		font-size: 1rem;
+		font-size: 0.875rem;
 	}
 	.nav-menu-cta {
 		width: 100%;
@@ -590,9 +613,22 @@ const navItems = nav.map((item) => ({
 		}
 	}
 	.footer-wordmark {
-		font-size: 1.2rem;
+		/* The same prompt line that opens the page closes it. */
+		position: relative;
+		padding-inline-start: 1.15em;
+		font-family: var(--font-sans);
+		font-size: 1.0625rem;
 		font-weight: 700;
-		letter-spacing: -0.02em;
+		letter-spacing: -0.01em;
+	}
+	.footer-wordmark::before {
+		content: '';
+		position: absolute;
+		inset-inline-start: 0;
+		inset-block-start: 0.16em;
+		inline-size: 0.55em;
+		block-size: 1em;
+		background: var(--accent-warm);
 	}
 	.footer-wordmark span {
 		color: var(--accent-warm);

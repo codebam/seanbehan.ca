@@ -400,9 +400,10 @@ const schema = JSON.stringify({
 	.module-grid h3,
 	.workflow-list h3,
 	.fit-grid h3 {
-		font-size: 1.15rem;
+		font-size: 1.0625rem;
 		font-weight: 600;
-		letter-spacing: -0.015em;
+		letter-spacing: -0.01em;
+		line-height: 1.35;
 	}
 	.module-grid p,
 	.workflow-list p,
@@ -425,9 +426,10 @@ const schema = JSON.stringify({
 	}
 	.step-index {
 		display: block;
-		font-size: 0.8rem;
+		font-size: 0.75rem;
 		font-weight: 700;
-		color: var(--accent);
+		letter-spacing: 0.08em;
+		color: var(--accent-warm);
 	}
 	.workflow-list h3 {
 		margin-top: 0.5rem;
@@ -455,10 +457,12 @@ const schema = JSON.stringify({
 		box-shadow: var(--shadow-sm);
 	}
 	.price {
-		font-size: clamp(2.75rem, 5vw, 3.75rem);
+		font-family: var(--font-sans);
+		font-size: clamp(2.25rem, 4vw, 3rem);
 		font-weight: 700;
-		letter-spacing: -0.03em;
+		letter-spacing: -0.02em;
 		line-height: 1;
+		font-variant-numeric: tabular-nums;
 	}
 	.price span,
 	.price small {
@@ -479,7 +483,7 @@ const schema = JSON.stringify({
 	.price-card li::before {
 		content: '—';
 		margin-right: 0.65rem;
-		color: var(--accent);
+		color: var(--accent-warm);
 	}
 	.terms {
 		margin-top: 1.25rem;
@@ -515,9 +519,10 @@ const schema = JSON.stringify({
 		margin-top: 1.5rem;
 	}
 	.inside-grid h3 {
-		font-size: 1.15rem;
+		font-size: 1.0625rem;
 		font-weight: 600;
-		letter-spacing: -0.015em;
+		letter-spacing: -0.01em;
+		line-height: 1.35;
 	}
 	.file-tree {
 		margin-top: 1rem;
@@ -552,7 +557,7 @@ const schema = JSON.stringify({
 	.changelog-list li::before {
 		content: '—';
 		margin-right: 0.65rem;
-		color: var(--accent);
+		color: var(--accent-warm);
 	}
 	.handbook-sample {
 		margin-top: 1.5rem;
