@@ -47,11 +47,11 @@ const HEIGHT = 630;
 // so the light values are the values. ACCENT is the warm editorial token
 // rather than the interactive blue: a card has nothing to click, and this is
 // the one mark it makes about itself.
-const BG = '#ffffff';
-const TEXT = '#0f172a';
-const MUTED = '#64748b';
-const ACCENT = '#b45309';
-const LINE = '#cbd5e1';
+const BG = '#fffcf0';
+const TEXT = '#100f0f';
+const MUTED = '#6f6e69';
+const ACCENT = '#bc5215';
+const LINE = '#cecdc3';
 
 /**
  * Long titles step down a size rather than wrapping into a fourth line, which
@@ -78,7 +78,7 @@ const card = (post: Card) => ({
 			justifyContent: 'space-between',
 			background: BG,
 			padding: '68px 76px',
-			borderTop: `14px solid ${ACCENT}`
+			borderTop: `6px solid ${ACCENT}`
 		},
 		children: [
 			{
@@ -112,7 +112,7 @@ const card = (post: Card) => ({
 						display: 'flex',
 						justifyContent: 'space-between',
 						alignItems: 'center',
-						borderTop: `2px solid ${LINE}`,
+						borderTop: `1px solid ${LINE}`,
 						paddingTop: 26,
 						fontFamily: 'Inter',
 						fontSize: 26,

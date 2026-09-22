@@ -2,8 +2,8 @@
   seanbehan.ca — website and Telegram bot services, 500x250.
 
   Drawn in the dark scheme's token values from src/styles/app.css:
-  bg #0b1220, panel #111827, line #1e293b, text #f1f5f9,
-  body #cbd5e1, accent #60a5fa, accent-on #0b1220 and warm #fbbf24.
+  bg #100f0f, panel #1c1b1a, line #282726, text #cecdc3,
+  body #b7b5ac, accent #4385be, accent-on #100f0f and warm #da702c.
   The call to action is the accent / accent-on pair; everything else is type
   on those grounds.
 
@@ -17,14 +17,14 @@
   <desc id="desc">Advertisement for custom website and Telegram bot development at seanbehan.ca/services.</desc>
   <defs>
     <linearGradient id="field" x1="0" y1="0" x2="500" y2="250" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#0b1220"/>
-      <stop offset="0.58" stop-color="#111827"/>
-      <stop offset="1" stop-color="#1e293b"/>
+      <stop stop-color="#100f0f"/>
+      <stop offset="0.58" stop-color="#1c1b1a"/>
+      <stop offset="1" stop-color="#282726"/>
     </linearGradient>
     <linearGradient id="accent" x1="278" y1="33" x2="477" y2="217" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#60a5fa"/>
-      <stop offset="0.5" stop-color="#fbbf24"/>
-      <stop offset="1" stop-color="#60a5fa"/>
+      <stop stop-color="#4385be"/>
+      <stop offset="0.5" stop-color="#da702c"/>
+      <stop offset="1" stop-color="#4385be"/>
     </linearGradient>
     <clipPath id="frame">
       <rect width="500" height="250" rx="3"/>
@@ -33,34 +33,34 @@
 
   <g clip-path="url(#frame)">
     <rect width="500" height="250" fill="url(#field)"/>
-    <g opacity="0.14" stroke="#60a5fa" stroke-width="1">
+    <g opacity="0.14" stroke="#4385be" stroke-width="1">
       <path d="M0 25h500M0 50h500M0 75h500M0 100h500M0 125h500M0 150h500M0 175h500M0 200h500M0 225h500"/>
       <path d="M25 0v250M50 0v250M75 0v250M100 0v250M125 0v250M150 0v250M175 0v250M200 0v250M225 0v250M250 0v250M275 0v250M300 0v250M325 0v250M350 0v250M375 0v250M400 0v250M425 0v250M450 0v250M475 0v250"/>
     </g>
 
-    <circle cx="403" cy="125" r="98" fill="#111827" stroke="url(#accent)" stroke-width="2"/>
-    <circle cx="403" cy="125" r="76" fill="none" stroke="#60a5fa" stroke-opacity="0.2"/>
-    <path d="M307 168 492 89" stroke="#60a5fa" stroke-opacity="0.13" stroke-width="42"/>
+    <circle cx="403" cy="125" r="98" fill="#1c1b1a" stroke="url(#accent)" stroke-width="2"/>
+    <circle cx="403" cy="125" r="76" fill="none" stroke="#4385be" stroke-opacity="0.2"/>
+    <path d="M307 168 492 89" stroke="#4385be" stroke-opacity="0.13" stroke-width="42"/>
 
-    <g fill="#f1f5f9" font-family="Inter, Arial, sans-serif">
-      <text x="20" y="31" font-size="18" font-weight="700">codebam<tspan fill="#fbbf24">.</tspan></text>
-      <text x="20" y="61" fill="#60a5fa" font-family="monospace" font-size="10" letter-spacing="1.5">CUSTOM DEVELOPMENT</text>
+    <g fill="#cecdc3" font-family="Inter, Arial, sans-serif">
+      <text x="20" y="31" font-size="18" font-weight="700">codebam<tspan fill="#da702c">.</tspan></text>
+      <text x="20" y="61" fill="#4385be" font-family="monospace" font-size="10" letter-spacing="1.5">CUSTOM DEVELOPMENT</text>
       <text x="20" y="103" font-size="39" font-weight="750" letter-spacing="-1.7">Websites</text>
       <text x="20" y="139" font-size="20" font-weight="500">+</text>
       <text x="20" y="178" font-size="35" font-weight="750" letter-spacing="-1.4">Telegram Bots</text>
-      <text x="20" y="204" fill="#cbd5e1" font-size="13">Scoped with you. Built to ship.</text>
+      <text x="20" y="204" fill="#b7b5ac" font-size="13">Scoped with you. Built to ship.</text>
     </g>
 
-    <g fill="#f1f5f9" font-family="Inter, Arial, sans-serif" text-anchor="middle">
-      <text x="403" y="88" fill="#60a5fa" font-family="monospace" font-size="10" letter-spacing="1.2">HAVE AN IDEA?</text>
+    <g fill="#cecdc3" font-family="Inter, Arial, sans-serif" text-anchor="middle">
+      <text x="403" y="88" fill="#4385be" font-family="monospace" font-size="10" letter-spacing="1.2">HAVE AN IDEA?</text>
       <text x="403" y="121" font-size="25" font-weight="700">Start a</text>
       <text x="403" y="149" font-size="25" font-weight="700">project.</text>
     </g>
 
     <g transform="translate(307 165)">
-      <rect width="190" height="47" rx="2" fill="#60a5fa"/>
-      <text x="95" y="30" fill="#0b1220" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle">seanbehan.ca/services</text>
+      <rect width="190" height="47" rx="2" fill="#4385be"/>
+      <text x="95" y="30" fill="#100f0f" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle">seanbehan.ca/services</text>
     </g>
   </g>
-  <rect x="0.5" y="0.5" width="499" height="249" rx="2.5" fill="none" stroke="#1e293b"/>
+  <rect x="0.5" y="0.5" width="499" height="249" rx="2.5" fill="none" stroke="#282726"/>
 </svg>

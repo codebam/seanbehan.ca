@@ -87,11 +87,12 @@
 /* ═══════════════════════════════════════════════════════════
    Design tokens
 
-   A neutral, high-contrast palette: white paper, slate ink, a
-   single blue for anything interactive and a warm amber reserved
-   for editorial emphasis (the wordmark dot, an italic phrase).
-   The same names carry both themes; components never branch on
-   the scheme.
+   Flexoki's paper and ink: a warm ground, near-black type, one blue
+   for anything the reader can reach and one orange for the site's
+   own voice (the wordmark dot, an italic phrase). Hairlines and
+   space do the separating; there are no panels, no shadows and no
+   decorative fills left to carry a value. The same names carry both
+   themes; components never branch on the scheme.
    ═══════════════════════════════════════════════════════════ */
 @theme {
 	--font-sans:
@@ -106,116 +107,137 @@
 		Consolas, 'Liberation Mono', monospace;
 }
 
-@layer base {
+/* The tokens sit outside @layer base on purpose. Tailwind's theme layer also
+   defines --radius-* and --shadow-*, and it is declared after base, so a
+   layered :root loses to it — every Kumo control would quietly take Tailwind's
+   4px/8px instead of the house radius, which is what the old 6px/10px names
+   did. Unlayered declarations outrank every layer. */
+:root {
+	color-scheme: light dark;
+	--kumo-button-emphasis-bg: var(--accent);
+	--kumo-button-emphasis-ring: var(--accent-hover);
+	/* Kumo's own neutrals, re-pointed at the site's tokens, so its one
+	   remaining control (the résumé's secondary email button) is not a grey
+	   box from a palette this site never chose. --color-kumo-line takes the
+	   one 3:1 mark rather than a hairline, because Kumo uses it to draw a
+	   control's edge. Its emphasis pair keeps the two names above; .site-cta
+	   pins the rest. */
+	--color-kumo-base: var(--bg);
+	--color-kumo-tint: var(--surface-alt);
+	--color-kumo-line: var(--dim);
+
+	/* Surfaces. Flexoki's paper and ink. There are only two grounds: the
+	   page and the tint that code and quotations sit in. Panels are the
+	   page — the card chrome is gone, so --panel resolves to --bg rather
+	   than holding a third value that nothing separates by. */
+	--bg: #fffcf0;
+	--surface-alt: #f2f0e5;
+	--panel: var(--bg);
+	/* Hairlines, both under 2:1 because neither outlines a control. WCAG
+	   1.4.11 wants 3:1 for a boundary a reader has to perceive to operate
+	   something; --dim is that token and .site-field uses it. Do not reach
+	   for --line to outline a field, button or other control. */
+	--line: #e6e4d9;
+	--line-strong: #cecdc3;
+
+	/* Text */
+	--text: #100f0f;
+	--body: #575653;
+	--muted: #6f6e69;
+	/* Not merely decorative: this is the quietest mark the site draws, and
+	   everything it draws — the search glyph, the scrollbar thumb, the
+	   search field's own boundary — is a UI mark that WCAG 1.4.11 wants at
+	   3:1. It sits at 3.6:1 on paper; do not go quieter. */
+	--dim: #878580;
+
+	/* Accent. Blue is the reader's reach, orange is the site's voice; each
+	   is one Flexoki step dark enough to read as text on paper. */
+	--accent: #205ea6;
+	/* Toward the ink rather than a second named value: the mix darkens on
+	   paper and lightens on ink, so hover always raises contrast. */
+	--accent-hover: color-mix(in srgb, var(--accent) 85%, var(--text));
+	--accent-on: #ffffff;
+	--accent-warm: #bc5215;
+	--accent-wash: color-mix(in srgb, var(--accent) 8%, transparent);
+	--positive: #536907;
+
+	/* The footer is the one band on the page's own ground: it needs its own
+	   small set — the accent included, because --accent is chosen against
+	   paper and would read at 4.2:1 on the ink. */
+	--footer-bg: #100f0f;
+	--footer-text: #cecdc3;
+	--footer-muted: #878580;
+	/* Same intent as --line: a column rule, not a control boundary. */
+	--footer-line: #282726;
+	--footer-accent: #4385be;
+
+	/* Geometry */
+	/* .section (below) is the shared page-level rhythm. These are the
+	   genuine exceptions, named so the next change picks one instead of
+	   restating a clamp; every call site now reads the name:
+	   - --pad-hero opens the first screen (index.astro's .hero); its
+	     smaller minimum keeps the statement above the fold on a phone.
+	   - --pad-masthead frames every non-home opener (Masthead.astro)
+	     and --pad-post-masthead / --pad-post-body frame an article
+	     ([slug].astro) — a compact opener, then the reading body, whose
+	     bottom is larger to separate the post from what follows.
+	   - --pad-footer-grid is the footer band's own rhythm (Base.astro):
+	     top clearance from the page, a fixed 2.5rem to the footer bar.
+	   - --pad-stats-grid is an inset strip (Facts.astro), not a
+	     page-level section, so it stays tighter than .section at both
+	     ends.
+	   Each expands to `padding-block` values. */
+	--pad-hero: clamp(3rem, 7vw, 5.5rem);
+	--pad-masthead: clamp(2.75rem, 5vw, 4rem) clamp(2.5rem, 5vw, 4rem);
+	--pad-post-masthead: clamp(2.5rem, 6vw, 4rem) clamp(2rem, 4vw, 3rem);
+	--pad-post-body: clamp(2.5rem, 6vw, 4rem) clamp(4rem, 8vw, 6rem);
+	--pad-footer-grid: clamp(3rem, 6vw, 4.5rem) 2.5rem;
+	--pad-stats-grid: clamp(1.75rem, 3vw, 2.5rem);
+	/* One radius for everything the page still rounds. The boxes are gone,
+	   so 6/10/16px collapsed to the 2px a control or an image wants; the
+	   three names stay because the call sites and Kumo's rounded-*
+	   utilities read them. */
+	--radius-sm: 2px;
+	--radius: 2px;
+	--radius-lg: 2px;
+	/* Shadows are deleted, not re-tuned: a hairline and space do the
+	   separating now. The names stay because Tailwind's own theme defines
+	   them — leaving them out would hand every `box-shadow:
+	   var(--shadow-sm)` Tailwind's default back. */
+	--shadow-sm: none;
+	--shadow-md: none;
+}
+
+@media (prefers-color-scheme: dark) {
 	:root {
-		color-scheme: light dark;
-		--kumo-button-emphasis-bg: var(--accent);
-		--kumo-button-emphasis-ring: var(--accent-hover);
+		--bg: #100f0f;
+		--surface-alt: #1c1b1a;
+		--line: #282726;
+		--line-strong: #343331;
 
-		/* Surfaces */
-		--bg: #ffffff;
-		--surface-alt: #f8fafc;
-		--panel: #ffffff;
-		/* Hairline only (1.23:1 on white). WCAG 1.4.11 wants 3:1 for a
-		   boundary a reader has to perceive to operate a control; --dim is
-		   the token for that and .site-field uses it. Do not reach for
-		   --line to outline a field, button or other control. */
-		--line: #e2e8f0;
-		--line-strong: #cbd5e1;
+		--text: #cecdc3;
+		--body: #b7b5ac;
+		--muted: #878580;
+		--dim: #6f6e69;
 
-		/* Text */
-		--text: #0f172a;
-		--body: #334155;
-		--muted: #64748b;
-		/* Not merely decorative: this is the quietest mark the site draws, and
-		   everything it draws — the search glyph, the scrollbar thumb, the
-		   search field's own boundary — is a UI mark that WCAG 1.4.11 wants at
-		   3:1. #94a3b8 was 2.56:1 on white. */
-		--dim: #828d9d;
+		--accent: #4385be;
+		--accent-hover: color-mix(in srgb, var(--accent) 85%, var(--text));
+		--accent-on: #100f0f;
+		--accent-warm: #da702c;
+		--accent-wash: color-mix(in srgb, var(--accent) 16%, transparent);
+		--positive: #879a39;
 
-		/* Accent */
-		--accent: #2563eb;
-		--accent-hover: #1d4ed8;
-		--accent-on: #ffffff;
-		--accent-warm: #b45309;
-		--accent-wash: color-mix(in srgb, var(--accent) 8%, transparent);
-		--positive: #16a34a;
-
-		/* Footer is dark in both themes, so it needs its own small set — the
-		   accent included. --accent is chosen against a light ground and reads
-		   at 3.45:1 on the footer's; the footer takes the blue the dark palette
-		   already picked for a dark ground, which is 7:1 on either footer. */
-		--footer-bg: #0f172a;
-		--footer-text: #e2e8f0;
-		--footer-muted: #94a3b8;
-		/* Same intent as --line: a column rule, not a control boundary. It
-		   is 1.22:1 against --footer-bg, so a required edge here would need
-		   --footer-muted instead. */
-		--footer-line: #1e293b;
-		--footer-accent: #60a5fa;
-
-		/* Geometry */
-		/* .section (below) is the shared page-level rhythm. These are the
-		   genuine exceptions, named so the next change picks one instead of
-		   restating a clamp:
-		   - --pad-hero opens the first screen (index.astro's .hero); its
-		     smaller minimum keeps the statement above the fold on a phone.
-		   - --pad-masthead frames every non-home opener (Masthead.astro)
-		     and --pad-post-masthead / --pad-post-body frame an article
-		     ([slug].astro) — a compact opener, then the reading body, whose
-		     bottom is larger to separate the post from what follows.
-		   - --pad-footer-grid is the inverted band's own rhythm
-		     (Base.astro): top clearance from the page, a fixed 2.5rem to
-		     the footer bar.
-		   - --pad-stats-grid is an inset strip (Facts.astro), not a
-		     page-level section, so it stays tighter than .section at both
-		     ends.
-		   Each expands to `padding-block` values. The call sites still
-		   hard-code the clamps — route them through these names when their
-		   files are next touched. */
-		--pad-hero: clamp(3rem, 7vw, 5.5rem);
-		--pad-masthead: clamp(2.75rem, 5vw, 4rem) clamp(2.5rem, 5vw, 4rem);
-		--pad-post-masthead: clamp(2.5rem, 6vw, 4rem) clamp(2rem, 4vw, 3rem);
-		--pad-post-body: clamp(2.5rem, 6vw, 4rem) clamp(4rem, 8vw, 6rem);
-		--pad-footer-grid: clamp(3rem, 6vw, 4.5rem) 2.5rem;
-		--pad-stats-grid: clamp(1.75rem, 3vw, 2.5rem);
-		--radius-sm: 6px;
-		--radius: 10px;
-		--radius-lg: 16px;
-		--shadow-sm: 0 1px 2px rgb(15 23 42 / 0.06), 0 1px 3px rgb(15 23 42 / 0.08);
-		--shadow-md: 0 4px 12px rgb(15 23 42 / 0.08), 0 2px 4px rgb(15 23 42 / 0.05);
+		/* Dark has nothing darker to invert to, so the band steps one value
+		   up the base ramp instead and keeps its own lighter blue. */
+		--footer-bg: #1c1b1a;
+		--footer-text: #cecdc3;
+		--footer-muted: #878580;
+		--footer-line: #282726;
+		--footer-accent: #66a0c8;
 	}
+}
 
-	@media (prefers-color-scheme: dark) {
-		:root {
-			--bg: #0b1220;
-			--surface-alt: #0f172a;
-			--panel: #111827;
-			--line: #1e293b;
-			--line-strong: #334155;
-
-			--text: #f1f5f9;
-			--body: #cbd5e1;
-			--muted: #94a3b8;
-			--dim: #64748b;
-
-			--accent: #60a5fa;
-			--accent-hover: #93c5fd;
-			--accent-on: #0b1220;
-			--accent-warm: #fbbf24;
-			--accent-wash: color-mix(in srgb, var(--accent) 16%, transparent);
-			--positive: #4ade80;
-
-			--footer-bg: #020617;
-			--footer-text: #e2e8f0;
-			--footer-muted: #94a3b8;
-			--footer-line: #1e293b;
-
-			--shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
-			--shadow-md: 0 6px 16px rgb(0 0 0 / 0.45);
-		}
-	}
-
+@layer base {
 	html {
 		scroll-behavior: smooth;
 		scrollbar-gutter: stable;
@@ -247,11 +269,11 @@
 		background: var(--bg);
 	}
 	::-webkit-scrollbar-thumb {
-		background: var(--line-strong);
+		background: var(--dim);
 		border-radius: 6px;
 	}
 	::-webkit-scrollbar-thumb:hover {
-		background: var(--dim);
+		background: var(--muted);
 	}
 
 	a:focus-visible,
@@ -279,9 +301,9 @@
 
 	.display {
 		font-family: var(--font-sans);
-		font-weight: 700;
-		letter-spacing: -0.02em;
-		line-height: 1.12;
+		font-weight: 600;
+		letter-spacing: -0.01em;
+		line-height: 1.15;
 		text-wrap: balance;
 	}
 	.display-xl {
@@ -289,8 +311,8 @@
 		line-height: 1.08;
 	}
 	.display-lg {
-		font-size: clamp(1.5rem, 2.6vw, 2rem);
-		line-height: 1.15;
+		font-size: clamp(1.25rem, 1.7vw, 1.5rem);
+		line-height: 1.25;
 	}
 
 	/* Italic, in the warm accent: the one decorative move a headline gets. */
@@ -299,13 +321,14 @@
 		color: var(--accent-warm);
 	}
 
-	/* Section label: small, uppercase, tracked. Inter, not the serif. */
+	/* Section label: small, sentence case, quiet. It used to be tracked
+	   uppercase at 0.78rem, which read as a label shouted over a page whose
+	   headings are now barely larger than its text. */
 	.eyebrow {
 		font-family: var(--font-sans);
-		font-size: 0.78rem;
-		font-weight: 600;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
+		font-size: 0.8125rem;
+		font-weight: 500;
+		letter-spacing: 0.02em;
 		color: var(--muted);
 	}
 	.eyebrow a {
@@ -357,8 +380,12 @@
 		background: var(--bg);
 		color: var(--text);
 	}
+	/* The mid-page bands are gone. They used to be a fill a shade off the page,
+	   which is a surface doing work that space and the section's own heading
+	   rule do better; the one tint left (--surface-alt) belongs to code and
+	   quotations, not to a section. */
 	.panel-alt {
-		background: var(--surface-alt);
+		background: transparent;
 		color: var(--text);
 	}
 	.panel-invert {
@@ -382,23 +409,25 @@
 	}
 
 	/* The heading row shared by every content section: a title on the left, a
-	   count, link or note on the right, separated from the content below by a
-	   single hairline. */
+	   count, link or note on the right, and one hairline above the heading —
+	   never below it, where it would underline a heading the way a table
+	   underlines a column. The rule is the section's opening bracket; the
+	   content below is set off by space instead. */
 	.section-head,
 	.section-heading,
 	.archive-heading {
 		display: flex;
-		align-items: flex-end;
+		align-items: baseline;
 		justify-content: space-between;
 		gap: 1.5rem;
-		padding-bottom: 1rem;
-		margin-bottom: clamp(2rem, 4vw, 3rem);
-		border-bottom: 1px solid var(--line);
+		padding-top: 1rem;
+		margin-bottom: clamp(1.75rem, 3.5vw, 2.5rem);
+		border-top: 1px solid var(--line);
 	}
 	.section-head > p,
 	.section-heading > p,
 	.archive-heading > p {
-		font-size: 0.8rem;
+		font-size: 0.8125rem;
 		font-weight: 500;
 		color: var(--muted);
 		white-space: nowrap;
@@ -417,30 +446,32 @@
 	   Controls
 	   ═══════════════════════════════════════════════════════════ */
 
+	/* A button is a boundary, not a fill. The boundary is --dim because a
+	   reader has to perceive it to read it as a control (WCAG 1.4.11 wants
+	   3:1 for that) — the hairlines are 1.2–1.5:1 and are used for rules,
+	   never for something operable. The only filled control on the site is
+	   the Kumo emphasis button wearing .site-cta — the page's one action —
+	   plus the newsletter's Subscribe, which is the same kind of ask. */
 	.btn {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 		gap: 0.5rem;
+		border: 1px solid var(--dim);
 		border-radius: var(--radius-sm);
-		background: var(--accent);
-		color: var(--accent-on);
-		padding: 0.65rem 1.25rem;
-		font-size: 0.95rem;
-		font-weight: 600;
+		background: transparent;
+		color: var(--text);
+		padding: 0.6rem 1.1rem;
+		font-size: 0.9375rem;
+		font-weight: 500;
 		line-height: 1.2;
-		box-shadow: var(--shadow-sm);
 		transition:
-			background 0.2s ease,
-			transform 0.12s ease,
-			box-shadow 0.2s ease;
+			color 120ms ease,
+			border-color 120ms ease;
 	}
 	.btn:hover {
-		background: var(--accent-hover);
-		box-shadow: var(--shadow-md);
-	}
-	.btn:active {
-		transform: translateY(1px);
+		border-color: var(--accent);
+		color: var(--accent);
 	}
 
 	/* Kumo's emphasis button, re-inked to the house pair.
@@ -451,11 +482,15 @@
 	   paint the button live in the layer after this one. That is the deal
 	   .flat-control already makes for the geometry. Without it the label sits
 	   on a gradient mixed 30% toward white: 3.47:1 at the top, 2.68:1 where
-	   the hover layer shows, and white on the dark palette's #60a5fa is 2:1. */
+	   the hover layer shows, and white on the old dark blue was 2:1.
+	   The ring Kumo draws around a button is a box-shadow; a filled shape is
+	   its own boundary, so this one does not need it — the secondary button,
+	   which is paper on paper, keeps it. */
 	.site-cta {
 		background-color: var(--accent) !important;
 		background-image: none !important;
 		color: var(--accent-on) !important;
+		box-shadow: none !important;
 	}
 	.site-cta:hover {
 		background-color: var(--accent-hover) !important;
@@ -466,17 +501,14 @@
 	   without forking the component. */
 	.flat-control {
 		border-radius: var(--radius-sm) !important;
-		box-shadow: var(--shadow-sm);
 	}
 
 	/* Keyboard focus on the controls Kumo paints over. Its `focus:outline-none`
-	   lives in the utilities layer and `.flat-control`'s resting box-shadow in
-	   this one, so the base ring at the top of the file loses either way:
-	   outline none on the button, and the shadow hides Kumo's own ring on the
-	   field. Declaring the ring here — the last layer — wins over both without
-	   `!important`. `summary` is named because the base selector list never
-	   included it, which left the mobile menu toggle on the browser's 1px
-	   auto outline. Focus-only, so nothing resting changes. */
+	   lives in the utilities layer, so the base ring at the top of the file
+	   loses on the button; declaring the ring here — the last layer — wins
+	   without `!important`. `summary` is named because the base selector list
+	   never included it, which left the mobile menu toggle on the browser's
+	   1px auto outline. Focus-only, so nothing resting changes. */
 	.site-cta:focus-visible,
 	.flat-control:focus-visible,
 	.site-field:focus-visible,
@@ -490,78 +522,88 @@
 		color: var(--body);
 		border-bottom: 1px solid var(--line-strong);
 		padding-bottom: 2px;
-		transition: color 0.2s ease;
+		transition:
+			color 120ms ease,
+			border-color 120ms ease;
 	}
 	.link-quiet:hover {
 		color: var(--accent);
 		border-color: var(--accent);
 	}
 
+	/* The arrowed link a section head uses for "all of it". It keeps the
+	   accent because it is a link, and the underline at rest because the
+	   accent alone would make a paragraph of them a row of coloured words. */
 	.link-accent {
 		display: inline-flex;
-		align-items: center;
+		align-items: baseline;
 		gap: 0.35rem;
 		color: var(--accent);
-		font-size: 0.95rem;
-		font-weight: 600;
-		transition: color 0.2s ease;
+		font-size: 0.9375rem;
+		font-weight: 500;
+		text-decoration: underline;
+		text-decoration-color: var(--line-strong);
+		text-decoration-thickness: 1px;
+		text-underline-offset: 0.18em;
+		transition:
+			color 120ms ease,
+			text-decoration-color 120ms ease;
 	}
-	.link-accent:hover {
+	.link-accent:hover,
+	.link-accent:focus-visible {
 		color: var(--accent-hover);
-	}
-	.link-accent .arrow {
-		display: inline-block;
-		transition: transform 0.25s var(--ease-out-soft);
-	}
-	.link-accent:hover .arrow,
-	.link-accent:focus-visible .arrow {
-		transform: translateX(3px);
+		text-decoration-color: var(--accent-hover);
 	}
 
 	/* The archive's search field, which is Kumo's Input.
-	   Kumo draws the control with a 10%-black hairline and fills it white, so
-	   on a white panel the field had no perceptible boundary at all (1.25:1)
-	   and its placeholder resolved to #a1a1a1 (2.58:1). Both are set here:
-	   --dim is the quietest token that still clears 3:1, and the placeholder
-	   takes --muted, which is body-copy weight rather than decoration. */
+	   Kumo draws the control with a 10%-black hairline and fills it with its
+	   own base, so on a paper page the field had no perceptible boundary at
+	   all (1.25:1) and its placeholder resolved to grey lighter than --muted.
+	   Both are set here: --dim is the quietest token that still clears 3:1,
+	   and the placeholder takes --muted, which is body-copy weight rather
+	   than decoration. */
 	.site-field {
 		--text-color-kumo-placeholder: var(--muted);
+		background: transparent !important;
 		border: 1px solid var(--dim) !important;
+		/* Kumo's resting ring is a box-shadow; the field draws the same edge as
+		   a border, and both together would be a double line. */
+		box-shadow: none !important;
 	}
 
 	/* ═══════════════════════════════════════════════════════════
-	   Cards
+	   Entries
 	   ═══════════════════════════════════════════════════════════ */
 
+	/* An entry in a list of entries. It was a card — fill, outline, radius,
+	   lift on hover — which put a box around every post on the site and made
+	   six of them a grid of boxes. It is a row now: a hairline above, space
+	   below, and the title carries the hover. */
 	.card {
-		background: var(--panel);
-		border: 1px solid var(--line);
-		border-radius: var(--radius);
-		box-shadow: var(--shadow-sm);
-		transition:
-			border-color 0.2s ease,
-			box-shadow 0.2s ease,
-			transform 0.2s ease;
-	}
-	.card:hover {
-		border-color: var(--line-strong);
-		box-shadow: var(--shadow-md);
-		transform: translateY(-2px);
+		background: transparent;
+		border: 0;
+		border-top: 1px solid var(--line);
+		border-radius: 0;
 	}
 
 	/* Tag: language tags name the site's materials, so they take the warm
 	   accent; topic tags stay quiet. Interaction blue is reserved for what is
-	   clickable. */
+	   clickable. The pill is gone — a tag is a word in a line of small words,
+	   not a chip. */
 	.tag {
-		display: inline-flex;
-		align-items: center;
-		border-radius: 999px;
-		background: var(--surface-alt);
-		border: 1px solid var(--line);
-		padding: 0.15rem 0.6rem;
-		font-size: 0.78rem;
+		font-size: 0.8125rem;
 		font-weight: 500;
 		color: var(--muted);
+	}
+	a.tag {
+		transition: color 120ms ease;
+	}
+	a.tag:hover,
+	a.tag:focus-visible {
+		color: var(--text);
+		text-decoration: underline;
+		text-decoration-color: var(--line-strong);
+		text-underline-offset: 0.18em;
 	}
 	.tag-lang {
 		color: var(--accent-warm);
@@ -592,34 +634,83 @@
 	--tw-prose-pre-bg: var(--surface-alt);
 	--tw-prose-th-borders: var(--line-strong);
 	--tw-prose-td-borders: var(--line);
-	line-height: 1.75;
+	/* The reading size owns the measure: 1.0625rem is the body the site sets
+	   prose in, and the article column is sized to ~34em of it. The call sites
+	   used to carry their own `text-[1.0xrem]` utility, which meant four
+	   slightly different reading sizes across four templates. */
+	font-size: 1.0625rem;
+	line-height: 1.7;
 	text-wrap: pretty;
 }
 
 .prose :where(h1, h2, h3, h4, h5, h6) {
 	font-family: var(--font-sans);
-	font-weight: 700;
-	letter-spacing: -0.02em;
+	font-weight: 600;
+	letter-spacing: -0.01em;
 }
 
 .prose :where(a):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
 	text-decoration: underline;
 	text-decoration-color: var(--line-strong);
+	text-decoration-thickness: 0.06em;
 	text-underline-offset: 0.18em;
 	text-underline-position: from-font;
 	transition:
-		color 0.2s ease,
-		text-decoration-color 0.2s ease;
+		color 120ms ease,
+		text-decoration-color 120ms ease;
 }
 .prose :where(a):hover:not(:where([class~='not-prose'], [class~='not-prose'] *)),
 .prose :where(a):focus-visible:not(:where([class~='not-prose'], [class~='not-prose'] *)) {
-	text-decoration-color: var(--accent);
+	color: var(--accent-hover);
+	text-decoration-color: var(--accent-hover);
+}
+
+/* A quotation is the one place the reading column raises its voice, and the
+   warm rule in the margin is the mark. The words stay in the upright cut: a
+   long quotation has to be as readable as the prose around it, and the rule
+   already says what it is. */
+.prose :where(blockquote) {
+	border-inline-start: 2px solid var(--accent-warm);
+	font-style: normal;
+	color: var(--text);
+}
+.prose :where(blockquote p:first-of-type)::before,
+.prose :where(blockquote p:last-of-type)::after {
+	content: none;
+}
+
+/* Tables are hairlines between rows and nothing else: no box, no zebra. The
+   header is a small muted label over its column, the way a table in a book
+   is set. */
+.prose :where(table) {
+	width: 100%;
+	font-size: 0.95rem;
+}
+.prose :where(th) {
+	font-size: 0.8125rem;
+	font-weight: 500;
+	color: var(--muted);
+	text-align: start;
+}
+.prose :where(th, td) {
+	padding: 0.6rem 0.6rem 0.6rem 0;
+}
+.prose :where(tr + tr) > :where(td, th) {
+	border-top: 1px solid var(--line);
 }
 
 .prose :where(img) {
 	max-width: 100%;
 	height: auto;
 	border-radius: var(--radius);
+}
+
+/* A caption is metadata under a figure, not a second paragraph. */
+.prose :where(figcaption) {
+	margin-top: 0.6rem;
+	font-size: 0.8125rem;
+	line-height: 1.5;
+	color: var(--muted);
 }
 
 /* Section headings are wrapped in a link to themselves, so a reader can copy
@@ -654,11 +745,11 @@
 
 .prose :where(code):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
 	font-family: var(--font-mono);
-	font-size: 0.82em;
+	font-size: 0.85em;
 	font-weight: 400;
 	background: var(--surface-alt);
 	border: 1px solid var(--line);
-	border-radius: 5px;
+	border-radius: var(--radius-sm);
 	padding: 0.1em 0.35em;
 }
 .prose :where(code)::before,
@@ -666,12 +757,14 @@
 	content: none;
 }
 
+/* A block of code is an object on the page, and the tint alone is 1.11:1
+   against the page in the dark scheme, so its rule is the stronger hairline. */
 .prose :where(pre):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
 	font-family: var(--font-mono);
 	font-size: 0.85em;
 	line-height: 1.65;
-	border: 1px solid var(--line);
-	border-radius: var(--radius);
+	border: 1px solid var(--line-strong);
+	border-radius: var(--radius-sm);
 }
 .prose :where(pre code) {
 	background: transparent;
@@ -729,16 +822,7 @@
 .resume-doc .resume-head,
 .resume-doc .resume-section {
 	padding-bottom: 0.55rem;
-	background-image:
-		linear-gradient(var(--accent-warm), var(--accent-warm)),
-		linear-gradient(var(--line-strong), var(--line-strong));
-	background-repeat: no-repeat;
-	background-position:
-		0 100%,
-		0 calc(100% - 4px);
-	background-size:
-		100% 1.5px,
-		100% 1px;
+	border-bottom: 1px solid var(--accent-warm);
 }
 
 .resume-doc .resume-head {
@@ -752,17 +836,17 @@
 .resume-doc .resume-name {
 	font-family: var(--font-sans);
 	font-size: clamp(1.45rem, 4vw, 1.9rem);
-	font-weight: 700;
-	letter-spacing: 0.08em;
-	line-height: 1.1;
+	font-weight: 600;
+	letter-spacing: 0.01em;
+	line-height: 1.15;
 	color: var(--text);
 }
 
 .resume-doc .resume-subtitle {
 	margin-top: 0.3rem;
 	font-family: var(--font-sans);
-	font-size: 0.8rem;
-	letter-spacing: 0.1em;
+	font-size: 0.8125rem;
+	letter-spacing: 0.02em;
 	color: var(--accent-warm);
 }
 
@@ -875,12 +959,13 @@
 	text-decoration-color: var(--line-strong);
 	text-underline-offset: 0.18em;
 	transition:
-		color 0.2s ease,
-		text-decoration-color 0.2s ease;
+		color 120ms ease,
+		text-decoration-color 120ms ease;
 }
 .resume-doc a:hover,
 .resume-doc a:focus-visible {
-	text-decoration-color: var(--accent);
+	color: var(--accent-hover);
+	text-decoration-color: var(--accent-hover);
 }
 
 @media (width < 40rem) {
@@ -925,16 +1010,16 @@
 	font-weight: 600;
 	line-height: 1;
 	color: var(--muted);
-	background: var(--panel);
-	border: 1px solid var(--line);
+	background: var(--bg);
+	border: 1px solid var(--dim);
 	border-radius: var(--radius-sm);
 	padding: 0.3rem 0.6rem;
 	opacity: 0;
 	pointer-events: none;
 	transition:
-		opacity 0.15s ease,
-		color 0.15s ease,
-		border-color 0.15s ease;
+		opacity 120ms ease,
+		color 120ms ease,
+		border-color 120ms ease;
 }
 .code-block:hover .code-copy,
 .code-block:focus-within .code-copy {
@@ -971,13 +1056,13 @@
 	font-weight: 600;
 	line-height: 1;
 	color: var(--muted);
-	background: var(--panel);
-	border: 1px solid var(--line);
+	background: var(--bg);
+	border: 1px solid var(--dim);
 	border-radius: var(--radius-sm);
 	padding: 0.3rem 0.6rem;
 	transition:
-		color 0.15s ease,
-		border-color 0.15s ease;
+		color 120ms ease,
+		border-color 120ms ease;
 }
 .copy-address:hover {
 	color: var(--accent);
@@ -996,6 +1081,9 @@
    House rules for everything below: nothing moves more than a
    few pixels, nothing loops, nothing runs longer than ~0.6s,
    and nothing animates while the reader is trying to read it.
+   Interaction feedback is colour and underline only — 120ms —
+   with no transforms and no shadow fades; the only thing that
+   travels is the entrance ladder.
    ═══════════════════════════════════════════════════════════ */
 
 :root {
@@ -1005,7 +1093,7 @@
 @keyframes fadeInUp {
 	from {
 		opacity: 0;
-		transform: translateY(8px);
+		transform: translateY(6px);
 	}
 	to {
 		opacity: 1;
@@ -1022,7 +1110,7 @@
    never by markup, so content is visible when JS is not. */
 .reveal-pending {
 	opacity: 0;
-	transform: translateY(12px);
+	transform: translateY(8px);
 }
 .reveal-in {
 	animation: fadeInUp 0.6s var(--ease-out-soft) both;
@@ -1033,7 +1121,7 @@
 .read-progress {
 	position: fixed;
 	inset: 0 0 auto 0;
-	height: 3px;
+	height: 2px;
 	transform-origin: left;
 	transform: scaleX(0);
 	background: var(--accent);
@@ -1103,27 +1191,26 @@
    ═══════════════════════════════════════════════════════════ */
 @media print {
 	/* Print keeps deliberately darker values rather than reading the light
-	   tokens: a laser printer lays the screen's #64748b muted down as a light
-	   grey and washes #2563eb out on paper. This block is a documented
-	   palette surface (DESIGN.md §1), not drift; move it with the tokens. The
-	   ratios in DESIGN.md §3.6 are computed from the values here. */
+	   tokens: a laser printer lays the screen's #6f6e69 muted down as a light
+	   grey and washes #205ea6 out on paper. This block is a documented
+	   palette surface (DESIGN.md §1), not drift; move it with the tokens. */
 	:root {
 		color-scheme: light;
 
 		--bg: #ffffff;
 		--surface-alt: #ffffff;
 		--panel: #ffffff;
-		--line: #e2e8f0;
-		--line-strong: #cbd5e1;
+		--line: #cecdc3;
+		--line-strong: #b7b5ac;
 
-		--text: #0f172a;
-		--body: #334155;
-		--muted: #475569;
-		--dim: #64748b;
+		--text: #100f0f;
+		--body: #403e3c;
+		--muted: #575653;
+		--dim: #6f6e69;
 
-		--accent: #1d4ed8;
-		--accent-hover: #1e40af;
-		--accent-warm: #b45309;
+		--accent: #1a4f8c;
+		--accent-hover: #163b66;
+		--accent-warm: #9d4310;
 		--accent-on: #ffffff;
 		--accent-wash: transparent;
 	}
@@ -1152,13 +1239,13 @@
 
 	body {
 		background: #ffffff;
-		color: #0f172a;
+		color: #100f0f;
 		min-height: 0;
 	}
 	.panel,
 	.panel-alt {
 		background: #ffffff;
-		color: #0f172a;
+		color: #100f0f;
 	}
 
 	.shiki,
