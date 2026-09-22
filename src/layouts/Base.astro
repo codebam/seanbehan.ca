@@ -532,7 +532,9 @@ const navItems = nav.map((item) => ({
 		justify-content: center;
 		width: 2.5rem;
 		height: 2.5rem;
-		border: 1px solid var(--line-strong);
+		/* --dim, not --line-strong: a control's boundary is a mark a reader
+		   has to perceive to operate it, and the 1.85:1 hairline is not. */
+		border: 1px solid var(--dim);
 		border-radius: var(--radius-sm);
 		color: var(--text);
 		cursor: pointer;
