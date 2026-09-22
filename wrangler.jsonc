@@ -61,6 +61,50 @@
 		}
 	],
 
+	/*
+	 * Design previews (`npx wrangler preview`, .github/workflows/preview.yml).
+	 *
+	 * A Preview is a branch-scoped environment under the same Worker, and it
+	 * does not inherit production settings. The writing lives in D1, not in
+	 * this repo, so a preview bound to nothing is a blank page — these point
+	 * at the resources the deployed site already reads. Nothing here reaches
+	 * production: `wrangler deploy` reads the top level only.
+	 *
+	 * Two consequences to keep in mind, because the preview URL is public by
+	 * default and reaches the Worker without the zone:
+	 *   - DOWNLOADS is deliberately absent. A preview has no business serving
+	 *     paid product archives.
+	 *   - EMAIL/ORDER_EMAIL are absent too, so no preview can send mail as the
+	 *     site. EmDash auth flows will fail there, which is the point.
+	 * Protect previews with Cloudflare Access if the URL is ever shared.
+	 */
+	"previews": {
+		"d1_databases": [
+			{
+				"binding": "DB",
+				"database_name": "seanbehan-ca",
+				"database_id": "39e5ca60-d101-4b0e-856b-85fa5d986cb0"
+			}
+		],
+		"r2_buckets": [
+			{
+				"binding": "MEDIA",
+				"bucket_name": "seanbehan-ca-media"
+			},
+			{
+				"binding": "RESUME",
+				"bucket_name": "private"
+			}
+		],
+		"ai": { "binding": "AI" },
+		"images": { "binding": "IMAGES" },
+		"worker_loaders": [
+			{
+				"binding": "LOADER"
+			}
+		]
+	},
+
 	// Drives scheduled publishing, plugin cron, and maintenance (see src/worker.ts)
 	"triggers": {
 		"crons": ["* * * * *"]
