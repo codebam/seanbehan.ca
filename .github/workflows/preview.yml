@@ -48,6 +48,24 @@ jobs:
       - name: Build
         run: npm run build
 
+      # The adapter writes a session KV binding (SESSION) into the generated
+      # config with no namespace id. `wrangler deploy` provisions that namespace
+      # on first deploy, but the Preview deployment API refuses a binding
+      # without one (code 10021) — and previews read only the `previews` block,
+      # so there is nothing to inherit. A design preview does not need session
+      # storage: the auth flows that would use it are dead here anyway, since a
+      # preview gets no email bindings and no secrets. Drop the binding rather
+      # than pin every branch to a production namespace id.
+      - name: Drop the unprovisioned session binding
+        run: |
+          node -e '
+            const fs = require("node:fs");
+            const path = "dist/server/wrangler.json";
+            const config = JSON.parse(fs.readFileSync(path, "utf8"));
+            if (config.previews) delete config.previews.kv_namespaces;
+            fs.writeFileSync(path, JSON.stringify(config));
+          '
+
       # `wrangler preview` reads the config the adapter wrote into
       # dist/server/wrangler.json (via .wrangler/deploy/config.json), so the
       # build above has to run first. The name is the branch with its slash
