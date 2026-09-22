@@ -45,17 +45,13 @@ const seo = getSeoMeta(page, {
 	<link slot="head" rel="alternate" type="application/json" href={`${Astro.url.pathname}.json`} />
 	<article class="panel pt-14 pb-20 md:pt-16">
 		<div class="shell">
-			<header class="enter border-b border-[var(--line)] pb-10">
+			<header class="enter border-b border-[var(--line-strong)] pb-10">
 				<h1 class="display mt-5 max-w-[24ch] text-[2.4rem] md:text-[3.4rem]" {...page.edit.title}>
 					{page.data.title}
 				</h1>
 			</header>
 
-			<div
-				class="enter prose mt-12 max-w-[68ch] text-[1.05rem]"
-				style="--enter-delay:60ms"
-				data-prose
-			>
+			<div class="enter prose mt-12" style="--enter-delay:60ms" data-prose>
 				<PortableText value={blocks} components={{ block: Block, type: { code: Code } }} />
 			</div>
 		</div>

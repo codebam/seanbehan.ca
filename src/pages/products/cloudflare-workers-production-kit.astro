@@ -358,16 +358,16 @@ const schema = JSON.stringify({
 	/* The caption is what makes it a figure rather than decoration. */
 	.kit-figure figcaption {
 		margin-top: 0.75rem;
-		font-size: 0.78rem;
+		font-size: 0.8125rem;
 		line-height: 1.55;
 		color: var(--muted);
 	}
 	.masthead-terms {
-		max-width: 66ch;
+		max-width: 34.25rem;
 		margin-top: 1rem;
 	}
 	.purchase-terms {
-		font-size: 0.82rem;
+		font-size: 0.8125rem;
 		line-height: 1.6;
 		color: var(--muted);
 	}
@@ -392,15 +392,13 @@ const schema = JSON.stringify({
 		gap: 1.25rem;
 	}
 	.module-grid article {
-		padding: 1.5rem;
-		background: var(--panel);
-		border: 1px solid var(--line);
-		border-radius: var(--radius);
+		padding-block: 1.5rem;
+		border-top: 1px solid var(--line);
 	}
 	.module-grid h3,
 	.workflow-list h3,
 	.fit-grid h3 {
-		font-size: 1.15rem;
+		font-size: 1.125rem;
 		font-weight: 600;
 		letter-spacing: -0.015em;
 	}
@@ -408,26 +406,24 @@ const schema = JSON.stringify({
 	.workflow-list p,
 	.fit-grid p {
 		margin-top: 0.55rem;
-		font-size: 0.95rem;
-		line-height: 1.65;
+		font-size: 0.9375rem;
+		line-height: 1.6;
 		color: var(--body);
 	}
 	.workflow-list {
 		display: grid;
-		gap: 1.25rem;
+		gap: 0 2.5rem;
 		list-style: none;
 	}
 	.workflow-list li {
-		padding: 1.5rem;
-		background: var(--panel);
-		border: 1px solid var(--line);
-		border-radius: var(--radius);
+		padding-block: 1.5rem;
+		border-top: 1px solid var(--line);
 	}
 	.step-index {
 		display: block;
-		font-size: 0.8rem;
-		font-weight: 700;
-		color: var(--accent);
+		font-size: 0.8125rem;
+		font-weight: 600;
+		color: var(--accent-warm);
 	}
 	.workflow-list h3 {
 		margin-top: 0.5rem;
@@ -441,18 +437,17 @@ const schema = JSON.stringify({
 		max-width: 14ch;
 	}
 	.offer-copy {
-		max-width: 52ch;
+		max-width: 34.25rem;
 		margin-top: 1.25rem;
-		font-size: 1.05rem;
-		line-height: 1.7;
+		font-size: 1.0625rem;
+		line-height: 1.6;
 		color: var(--body);
 	}
+	/* The price panel is the page's one boxed thing left, and even it is a
+	   ruled row: the strong rule above it is the offer's own boundary. */
 	.price-card {
-		padding: 1.75rem;
-		background: var(--panel);
-		border: 1px solid var(--line);
-		border-radius: var(--radius-lg);
-		box-shadow: var(--shadow-sm);
+		padding-block: 1.75rem;
+		border-top: 1px solid var(--line-strong);
 	}
 	.price {
 		font-size: clamp(2.75rem, 5vw, 3.75rem);
@@ -473,26 +468,24 @@ const schema = JSON.stringify({
 		padding-top: 1.5rem;
 		border-top: 1px solid var(--line);
 		list-style: none;
-		font-size: 0.92rem;
+		font-size: 0.9375rem;
 		color: var(--body);
 	}
 	.price-card li::before {
 		content: '—';
 		margin-right: 0.65rem;
-		color: var(--accent);
+		color: var(--accent-warm);
 	}
 	.terms {
 		margin-top: 1.25rem;
 	}
 	.fit-grid {
 		display: grid;
-		gap: 1.25rem;
+		gap: 0 2.5rem;
 	}
 	.fit-grid > div {
-		padding: 1.5rem;
-		background: var(--panel);
-		border: 1px solid var(--line);
-		border-radius: var(--radius);
+		padding-block: 1.5rem;
+		border-top: 1px solid var(--line);
 	}
 	@media (width >= 48rem) {
 		.module-grid {
@@ -525,15 +518,14 @@ const schema = JSON.stringify({
 		padding: 1.25rem;
 		background: var(--surface-alt);
 		border: 1px solid var(--line);
-		border-radius: var(--radius);
 		font-family: var(--font-mono);
-		font-size: 0.78rem;
+		font-size: 0.8125rem;
 		line-height: 1.7;
 		color: var(--body);
 	}
 	.inside-note {
 		margin-top: 0.85rem;
-		font-size: 0.82rem;
+		font-size: 0.8125rem;
 		line-height: 1.6;
 		color: var(--muted);
 	}
@@ -545,33 +537,32 @@ const schema = JSON.stringify({
 		gap: 0.5rem;
 		margin-top: 1rem;
 		list-style: none;
-		font-size: 0.92rem;
+		font-size: 0.9375rem;
 		line-height: 1.6;
 		color: var(--body);
 	}
 	.changelog-list li::before {
 		content: '—';
 		margin-right: 0.65rem;
-		color: var(--accent);
+		color: var(--accent-warm);
 	}
 	.handbook-sample {
 		margin-top: 1.5rem;
 		padding: 1.25rem;
 		background: var(--surface-alt);
 		border: 1px solid var(--line);
-		border-radius: var(--radius);
 	}
 	.handbook-sample summary {
 		cursor: pointer;
-		font-size: 0.92rem;
+		font-size: 0.9375rem;
 		font-weight: 600;
 		color: var(--text);
 	}
 	.handbook-sample p,
 	.handbook-sample ul {
 		margin-top: 0.85rem;
-		font-size: 0.9rem;
-		line-height: 1.65;
+		font-size: 0.9375rem;
+		line-height: 1.6;
 		color: var(--body);
 	}
 	.handbook-sample ul {
@@ -582,11 +573,11 @@ const schema = JSON.stringify({
 	.handbook-sample li::before {
 		content: '—';
 		margin-right: 0.65rem;
-		color: var(--accent);
+		color: var(--accent-warm);
 	}
 	.refund-note {
 		margin-top: 0.75rem;
-		font-size: 0.82rem;
+		font-size: 0.8125rem;
 		line-height: 1.6;
 		color: var(--muted);
 	}

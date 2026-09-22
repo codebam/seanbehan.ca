@@ -56,15 +56,10 @@ const domainOf = (url: string) => {
 	}
 };
 
-// Same month-year the post lists use — "when" in a list is the season.
+// Same ISO month the post lists use — "when" in a list is a filing date, and
+// the ISO shape is the one a reader can sort at a glance.
 const added = (date: Date | null | undefined) =>
-	date
-		? new Date(date).toLocaleDateString('en-CA', {
-				month: 'short',
-				year: 'numeric',
-				timeZone: 'UTC'
-			})
-		: '';
+	date ? new Date(date).toISOString().slice(0, 7) : '';
 ---
 
 <Base
@@ -126,29 +121,24 @@ const added = (date: Date | null | undefined) =>
 <style>
 	.link-list {
 		display: grid;
-		gap: 1rem;
+		gap: 0;
 		list-style: none;
 	}
 	.link-entry {
 		display: block;
-		padding: 1.5rem;
-		background: var(--panel);
-		border: 1px solid var(--line);
-		border-radius: var(--radius);
-		transition:
-			border-color 0.2s ease,
-			box-shadow 0.2s ease;
+		padding-block: 1.25rem;
+		border-top: 1px solid var(--line);
+		transition: background 0.1s ease;
 	}
 	.link-entry:hover,
 	.link-entry:focus-visible {
-		border-color: var(--accent);
-		box-shadow: var(--shadow-sm);
+		background: var(--surface-alt);
 	}
 	.facts {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.4rem 1rem;
-		font-size: 0.8rem;
+		font-size: 0.8125rem;
 		font-weight: 500;
 		color: var(--muted);
 	}
@@ -163,29 +153,29 @@ const added = (date: Date | null | undefined) =>
 		margin-top: 0.5rem;
 	}
 	.link-entry h3 {
-		font-size: 1.2rem;
+		font-size: 1.125rem;
 		font-weight: 600;
 		letter-spacing: -0.015em;
-		line-height: 1.3;
+		line-height: 1.25;
 		color: var(--text);
-		transition: color 0.2s ease;
+		transition: color 0.1s ease;
 	}
 	.link-entry:hover h3,
 	.link-entry:focus-visible h3 {
-		color: var(--accent);
+		color: var(--accent-hover);
 	}
 	.external {
 		color: var(--accent);
-		transition: transform 0.2s ease;
+		transition: transform 0.1s ease;
 	}
 	.link-entry:hover .external,
 	.link-entry:focus-visible .external {
 		transform: translate(2px, -2px);
 	}
 	.note {
-		max-width: 70ch;
+		max-width: 34.25rem;
 		margin-top: 0.5rem;
-		font-size: 0.95rem;
+		font-size: 0.9375rem;
 		line-height: 1.6;
 		color: var(--body);
 	}

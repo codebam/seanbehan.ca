@@ -45,15 +45,19 @@ const hasFigure = Astro.slots.has('figure');
 
 <style>
 	.page-hero {
-		padding-block: clamp(2.75rem, 5vw, 4rem) clamp(2.5rem, 5vw, 4rem);
+		padding-block: var(--pad-masthead);
 		border-bottom: 1px solid var(--line);
 	}
-	/* .eyebrow carries the type; this is only the row it sits in. */
+	/* The metadata row is the page's first rule: statement kind on the left,
+	   count or place on the right, 1px of ink underneath, then the title. It
+	   is the section-start rule the whole design rests on. */
 	.page-hero-kicker {
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
 		gap: 1rem;
+		padding-bottom: 0.75rem;
+		border-bottom: 1px solid var(--line-strong);
 	}
 	/* The meta half is a count or a place — breaking it across two lines makes
    the folio line read as two facts instead of one line of them. */
@@ -68,11 +72,14 @@ const hasFigure = Astro.slots.has('figure');
 		font-style: italic;
 		color: var(--accent-warm);
 	}
+	/* The deck is set in the reading measure, not the display one: the title
+	   may run to eight or nine columns, the words a reader actually reads sit
+	   in six. */
 	.page-hero-copy {
-		max-width: 60ch;
+		max-width: 34.25rem;
 		margin-top: clamp(1.25rem, 3vw, 1.75rem);
-		font-size: clamp(1.05rem, 1.5vw, 1.2rem);
-		line-height: 1.65;
+		font-size: 1.0625rem;
+		line-height: 1.6;
 		color: var(--body);
 	}
 	/* Shared action rows inside the hero, so pages do not each restate them. */
@@ -84,10 +91,11 @@ const hasFigure = Astro.slots.has('figure');
 		margin-top: 1.75rem;
 	}
 	.page-hero-copy :global(.masthead-availability) {
+		max-width: 34.25rem;
 		margin-top: 1.5rem;
 	}
 	.page-hero-copy :global(.masthead-blurb) {
-		max-width: 60ch;
+		max-width: 34.25rem;
 	}
 	.page-hero-copy :global(.masthead-profile) {
 		display: grid;
@@ -98,8 +106,6 @@ const hasFigure = Astro.slots.has('figure');
 	.page-hero-copy :global(.masthead-profile img) {
 		width: 5rem;
 		aspect-ratio: 1;
-		border-radius: var(--radius);
-		border: 1px solid var(--line);
 		object-fit: cover;
 	}
 	/* The figure column. Its top margin matches the title's so the two start on
@@ -131,7 +137,7 @@ const hasFigure = Astro.slots.has('figure');
 		height: auto;
 	}
 	.page-hero-figure :global(figcaption) {
-		text-align: center;
+		text-align: left;
 	}
 	@media (width < 64rem) {
 		.page-hero-figure {

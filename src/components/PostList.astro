@@ -52,9 +52,9 @@ const rows = matchedSet
 		]
 	: posts;
 
-/** "Apr 2026" — the day is never what a reader is after in a list. */
-const monthYear = (date: string) =>
-	new Date(date).toLocaleDateString('en-CA', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+/** "2026-04" — the day is never what a reader is after in a list, and the ISO
+ *  shape sorts at a glance. */
+const monthYear = (date: string) => new Date(date).toISOString().slice(0, 7);
 ---
 
 <div class:list={['post-list', columns === 2 && 'post-list-paired']} data-post-list>
@@ -91,15 +91,16 @@ const monthYear = (date: string) =>
 <style>
 	.post-list {
 		display: grid;
-		gap: 1.25rem;
+		gap: 0;
 	}
 	@media (width >= 48rem) {
 		.post-list-paired {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
+			column-gap: 2.5rem;
 		}
 	}
 	.post-card {
-		padding: 1.5rem;
+		padding-block: 1.25rem;
 	}
 	.post-card-link {
 		display: block;
@@ -109,7 +110,7 @@ const monthYear = (date: string) =>
 		flex-wrap: wrap;
 		align-items: baseline;
 		gap: 0.4rem;
-		font-size: 0.8rem;
+		font-size: 0.8125rem;
 		font-weight: 500;
 		color: var(--muted);
 	}
@@ -118,27 +119,28 @@ const monthYear = (date: string) =>
 	.post-card-title {
 		margin-top: 0.5rem;
 		font-family: var(--font-sans);
-		font-size: 1.2rem;
+		font-size: 1.125rem;
 		font-weight: 600;
 		letter-spacing: -0.015em;
-		line-height: 1.3;
+		line-height: 1.25;
 		color: var(--text);
-		transition: color 0.2s ease;
+		transition: color 0.1s ease;
 	}
 	.post-card:hover .post-card-title,
 	.post-card:focus-within .post-card-title {
-		color: var(--accent);
+		color: var(--accent-hover);
 	}
 	.post-card-desc {
+		max-width: 34.25rem;
 		margin-top: 0.5rem;
-		font-size: 0.95rem;
+		font-size: 0.9375rem;
 		line-height: 1.6;
 		color: var(--body);
 	}
 	.post-card-tags {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.4rem;
-		margin-top: 1rem;
+		gap: 0.4rem 0.75rem;
+		margin-top: 0.75rem;
 	}
 </style>

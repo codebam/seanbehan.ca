@@ -30,39 +30,40 @@ const { availability } = Astro.props;
 )}
 
 <style>
+	/* A status line, not a badge: the ink rule above it is the section's own
+	   weight, the dot is the one green the palette spends, and the sentence
+	   sits on the page rather than in a box. */
 	.availability {
 		display: flex;
-		align-items: flex-start;
-		gap: 0.65rem;
-		padding: 0.8rem 1rem;
-		background: var(--surface-alt);
-		border: 1px solid var(--line);
-		border-radius: var(--radius);
+		align-items: baseline;
+		gap: 0.6rem;
+		padding-top: 0.7rem;
+		border-top: 1px solid var(--line-strong);
 	}
 	/* Green is the one signal a reader already knows for "available"; the warm
 	   accent stays for editorial emphasis. */
 	.availability-dot {
 		width: 0.5rem;
 		height: 0.5rem;
-		margin-top: 0.4rem;
 		flex-shrink: 0;
+		align-self: center;
 		border-radius: 50%;
 		background: var(--positive);
-		box-shadow: 0 0 0 3px color-mix(in srgb, var(--positive) 18%, transparent);
 	}
 	.availability-text {
 		display: flex;
-		flex-direction: column;
-		gap: 0.1rem;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.15rem 0.5rem;
 		min-width: 0;
 	}
 	.availability strong {
-		font-size: 0.9rem;
+		font-size: 0.875rem;
 		font-weight: 600;
 		color: var(--text);
 	}
 	.availability-detail {
-		font-size: 0.85rem;
+		font-size: 0.8125rem;
 		line-height: 1.5;
 		color: var(--muted);
 	}

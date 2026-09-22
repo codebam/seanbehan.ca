@@ -49,7 +49,8 @@ const sibling = isSiblingHref(href);
 		font-size: 0.85em;
 		color: var(--muted);
 	}
-	/* The media-link variant: a small quiet badge the anchor can position. */
+	/* The media-link variant: a small square chip the anchor can position —
+	   square because no corner on the site is rounded. */
 	.sibling-mark-overlay {
 		position: absolute;
 		right: 0.65rem;
@@ -63,9 +64,8 @@ const sibling = isSiblingHref(href);
 		font-size: 1rem;
 		line-height: 1;
 		color: var(--text);
-		border: 1px solid var(--line);
-		border-radius: 999px;
-		background: color-mix(in srgb, var(--panel) 88%, transparent);
+		border: 1px solid var(--line-strong);
+		background: var(--panel);
 		pointer-events: none;
 	}
 </style>

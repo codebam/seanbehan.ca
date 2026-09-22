@@ -83,7 +83,7 @@ const schema = JSON.stringify({
 				/>
 			</figure>
 
-			<div class="prose enter mt-14 max-w-[68ch] text-[1.08rem]" style="--enter-delay:180ms">
+			<div class="prose enter mt-14" style="--enter-delay:180ms">
 				<h2>The problem</h2>
 				<p>{project.challenge}</p>
 
@@ -134,39 +134,33 @@ const schema = JSON.stringify({
 
 <style>
 	.case-shell {
-		max-width: 900px;
+		max-width: 47rem;
 	}
 	.project-mockup {
 		margin-top: clamp(2.5rem, 6vw, 4rem);
-		overflow: hidden;
-		border: 1px solid var(--line);
-		border-radius: var(--radius);
 		background: var(--surface-alt);
-		box-shadow: var(--shadow-sm);
 	}
 	.project-mockup img {
 		display: block;
 		width: 100%;
 		height: auto;
 	}
+	/* A closing ask, not a card: the ink rule says the document has ended and
+	   this is the next step, without a panel to step into. */
 	.case-cta {
+		max-width: 34.25rem;
 		margin-top: clamp(3.5rem, 8vw, 5.5rem);
-		padding: clamp(1.75rem, 4vw, 2.75rem);
-		background: var(--panel);
-		border: 1px solid var(--line);
-		border-radius: var(--radius-lg);
-	}
-	.case-cta .eyebrow {
-		color: var(--accent);
+		padding-top: clamp(1.5rem, 3vw, 2rem);
+		border-top: 1px solid var(--line-strong);
 	}
 	.case-cta h2 {
 		margin-top: 0.6rem;
 	}
 	.case-cta-copy {
-		max-width: 52ch;
+		max-width: 34.25rem;
 		margin-top: 0.85rem;
 		font-size: 1rem;
-		line-height: 1.65;
+		line-height: 1.6;
 		color: var(--body);
 	}
 	.case-cta-actions {
