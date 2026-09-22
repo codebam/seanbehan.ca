@@ -18,7 +18,7 @@ bash tools/favicon/build-favicon.sh   # writes to tools/favicon/out
 
 Each size is rendered natively rather than downscaled from one master, so the
 small sizes get their own rasterization pass. 16 and 32 use a tuned variant —
-weight 600, tracking −2, corner radius 9 — because the display proportions turn
+weight 600, tracking −2, corner radius 0 — because the display proportions turn
 to mush at tab size.
 
 `favicon.ico` is written by hand in Node: header, directory, then the 16/32/48

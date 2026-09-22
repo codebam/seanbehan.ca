@@ -23,7 +23,7 @@ export const GET: APIRoute = async () => {
 		background_color: '#ffffff',
 		theme_colors: [
 			{ color: '#ffffff', media: '(prefers-color-scheme: light)' },
-			{ color: '#0b1220', media: '(prefers-color-scheme: dark)' }
+			{ color: '#0b0b0c', media: '(prefers-color-scheme: dark)' }
 		],
 		display: 'standalone',
 		scope: '/'

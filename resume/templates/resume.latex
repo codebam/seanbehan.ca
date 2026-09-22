@@ -17,10 +17,10 @@
 %%    monofont   [DejaVu Sans Mono]  typewriter face
 %%    fallbackfont / fallbacksans / fallbackfont
 %%               second choice when the first font is not installed
-%%    accentcolor [1F3A5F]   section titles + rules      (HTML hex, no #)
-%%    inkcolor    [1A1D21]   body text + entry titles
-%%    mutedcolor  [5C6672]   dates, contact line, footer
-%%    rulecolor   [AEB7C0]   hairlines
+%%    accentcolor [B45309]   section titles + rules      (HTML hex, no #)
+%%    inkcolor    [0A0A0A]   body text + entry titles
+%%    mutedcolor  [5F5F5B]   dates, contact line, footer
+%%    rulecolor   [111111]   hairlines
 %%    nameTracking     [8]   letter-spacing of the name (%)
 %%    namesize         [21]  name height in pt
 %%    titleTracking    [6]   letter-spacing of section titles (%)
@@ -54,11 +54,11 @@ $if(fontsize)$\usepackage[fontsize=$fontsize$pt]{fontsize}$else$\usepackage[font
 %%%%%  Colour
 %%%%% ------------------------------------------------------------------- %%%%%
 \usepackage[dvipsnames]{xcolor}
-\definecolor{resumeaccent}{HTML}{$if(accentcolor)$$accentcolor$$else$1F3A5F$endif$}
-\definecolor{resumeink}{HTML}{$if(inkcolor)$$inkcolor$$else$1A1D21$endif$}
-\definecolor{resumemuted}{HTML}{$if(mutedcolor)$$mutedcolor$$else$5C6672$endif$}
-\definecolor{resumerule}{HTML}{$if(rulecolor)$$rulecolor$$else$AEB7C0$endif$}
-\definecolor{resumelink}{HTML}{$if(linkcolor)$$linkcolor$$else$1F3A5F$endif$}
+\definecolor{resumeaccent}{HTML}{$if(accentcolor)$$accentcolor$$else$B45309$endif$}
+\definecolor{resumeink}{HTML}{$if(inkcolor)$$inkcolor$$else$0A0A0A$endif$}
+\definecolor{resumemuted}{HTML}{$if(mutedcolor)$$mutedcolor$$else$5F5F5B$endif$}
+\definecolor{resumerule}{HTML}{$if(rulecolor)$$rulecolor$$else$111111$endif$}
+\definecolor{resumelink}{HTML}{$if(linkcolor)$$linkcolor$$else$8A4308$endif$}
 
 %%%%% ------------------------------------------------------------------- %%%%%
 %%%%%  Fonts

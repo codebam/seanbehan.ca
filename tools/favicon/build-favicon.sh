@@ -6,11 +6,12 @@
 # Re-ink them here and in public/favicon.svg together, or the tab and the
 # manifest start disagreeing with the page.
 #
-# Each size is rendered natively by Chromium rather than downscaled from one
-# master, so the small sizes get their own hinting pass instead of inheriting
-# a blurry resample. 16 and 32 use a tuned variant: heavier weight, tighter
-# tracking and a smaller corner radius, because the default proportions turn
-# to mush at tab size.
+# The corner is square: the design has no rounded corner anywhere, so the icon
+# must not be the one exception. Every size is rendered natively by Chromium
+# rather than downscaled from one master, so the small sizes get their own
+# hinting pass instead of inheriting a blurry resample. 16 and 32 use a tuned
+# variant: heavier weight and tighter tracking, because the default
+# proportions turn to mush at tab size.
 set -euo pipefail
 
 DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -22,6 +23,8 @@ OUT="$DIR/out"
 mkdir -p "$OUT"
 
 # $1 = output html, $2 = font-size, $3 = weight, $4 = tracking, $5 = radius, $6 = baseline
+# (the radius is still a parameter because the variants may diverge again; both
+# pass 0 today, which is the design's corner radius)
 page() {
 	cat >"$1" <<EOF
 <!doctype html><html><head><meta charset=utf-8><style>
@@ -37,8 +40,8 @@ svg{display:block;width:100vw;height:100vw}
 EOF
 }
 
-page "$DIR/_icon-large.html" 34 500 -1.5 12 45.5
-page "$DIR/_icon-small.html" 38 600 -2 9 47
+page "$DIR/_icon-large.html" 34 500 -1.5 0 45.5
+page "$DIR/_icon-small.html" 38 600 -2 0 47
 
 shot() { # $1 = html, $2 = px, $3 = outfile
 	chromium --headless --disable-gpu --hide-scrollbars --default-background-color=00000000 \

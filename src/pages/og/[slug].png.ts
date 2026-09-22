@@ -45,13 +45,14 @@ const HEIGHT = 630;
 // The light palette from app.css, and the values to change when it does. The
 // cards are a fixed surface — a social preview has no reader theme to follow —
 // so the light values are the values. ACCENT is the warm editorial token
-// rather than the interactive blue: a card has nothing to click, and this is
-// the one mark it makes about itself.
+// rather than the interactive ink: a card has nothing to click, and this is
+// the one mark it makes about itself. LINE is the strong rule (--line-strong),
+// not the hairline: the card's footer rule is a section start.
 const BG = '#ffffff';
-const TEXT = '#0f172a';
-const MUTED = '#64748b';
+const TEXT = '#0a0a0a';
+const MUTED = '#5f5f5b';
 const ACCENT = '#b45309';
-const LINE = '#cbd5e1';
+const LINE = '#111111';
 
 /**
  * Long titles step down a size rather than wrapping into a fourth line, which

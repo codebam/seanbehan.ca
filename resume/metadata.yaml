@@ -23,13 +23,15 @@ subtitleTracking: 16
 # ---------- colour palette (HTML hex, no leading #) ----------
 # The site's light tokens, so the PDF and the /resume page it is built beside
 # describe the same document in the same colours: accentcolor is --accent-warm
-# (the editorial mark) and linkcolor is --accent (the interactive one).
+# (the editorial mark, and the section rules) and linkcolor is the darkened warm
+# the print stylesheet pins, because the site's interactive ink would be
+# indistinguishable from body text in a colour-links PDF.
 # src/styles/app.css is the source of truth; change both together.
 accentcolor: B45309     # warm accent: rules, section titles, company names
-inkcolor: 0F172A
-mutedcolor: 64748B      # dates, contact line
-rulecolor: CBD5E1
-linkcolor: 2563EB
+inkcolor: 0A0A0A
+mutedcolor: 5F5F5B      # dates, contact line
+rulecolor: 111111       # the strong hairline (--line-strong)
+linkcolor: 8A4308       # darkened warm: links stay legible on paper
 
 # ---------- behaviour ----------
 links: true             # clickable, colourised links

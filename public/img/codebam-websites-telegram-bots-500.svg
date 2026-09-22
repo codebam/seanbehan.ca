@@ -2,8 +2,8 @@
   seanbehan.ca — websites and Telegram bots, 500x500.
 
   Drawn in the dark scheme's token values from src/styles/app.css:
-  bg #0b1220, panel #111827, line #1e293b, text #f1f5f9,
-  body #cbd5e1, accent #60a5fa, accent-on #0b1220 and warm #fbbf24.
+  bg #0b0b0c, panel #17171a, line #2a2a2e, text #f4f4f2,
+  body #d9d9d5, accent #f4f4f2, accent-on #0b0b0c and warm #f0a868.
   The ring is the only place the warm accent appears; the call to action is
   the accent / accent-on pair.
 
@@ -16,48 +16,48 @@
   <desc id="desc">Circular advertisement offering custom websites and Telegram bots.</desc>
   <defs>
     <radialGradient id="field" cx="35%" cy="25%" r="80%">
-      <stop offset="0" stop-color="#1e293b"/>
-      <stop offset="0.58" stop-color="#111827"/>
-      <stop offset="1" stop-color="#0b1220"/>
+      <stop offset="0" stop-color="#2a2a2e"/>
+      <stop offset="0.58" stop-color="#17171a"/>
+      <stop offset="1" stop-color="#0b0b0c"/>
     </radialGradient>
     <linearGradient id="ring" x1="65" y1="65" x2="435" y2="435" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#60a5fa"/>
-      <stop offset="0.5" stop-color="#fbbf24"/>
-      <stop offset="1" stop-color="#60a5fa"/>
+      <stop stop-color="#f4f4f2"/>
+      <stop offset="0.5" stop-color="#f0a868"/>
+      <stop offset="1" stop-color="#f4f4f2"/>
     </linearGradient>
     <clipPath id="circle">
       <circle cx="250" cy="250" r="222"/>
     </clipPath>
   </defs>
 
-  <rect width="500" height="500" fill="#0b1220"/>
-  <g opacity="0.16" stroke="#60a5fa" stroke-width="1">
+  <rect width="500" height="500" fill="#0b0b0c"/>
+  <g opacity="0.16" stroke="#f4f4f2" stroke-width="1">
     <path d="M0 50h500M0 100h500M0 150h500M0 200h500M0 250h500M0 300h500M0 350h500M0 400h500M0 450h500"/>
     <path d="M50 0v500M100 0v500M150 0v500M200 0v500M250 0v500M300 0v500M350 0v500M400 0v500M450 0v500"/>
   </g>
 
-  <circle cx="250" cy="250" r="226" fill="#0b1220" stroke="url(#ring)" stroke-width="3"/>
+  <circle cx="250" cy="250" r="226" fill="#0b0b0c" stroke="url(#ring)" stroke-width="3"/>
   <g clip-path="url(#circle)">
     <circle cx="250" cy="250" r="222" fill="url(#field)"/>
-    <path d="M14 365 486 168" stroke="#60a5fa" stroke-opacity="0.12" stroke-width="78"/>
-    <circle cx="378" cy="120" r="82" fill="none" stroke="#fbbf24" stroke-opacity="0.18" stroke-width="1"/>
-    <circle cx="378" cy="120" r="57" fill="none" stroke="#fbbf24" stroke-opacity="0.18" stroke-width="1"/>
+    <path d="M14 365 486 168" stroke="#f4f4f2" stroke-opacity="0.12" stroke-width="78"/>
+    <circle cx="378" cy="120" r="82" fill="none" stroke="#f0a868" stroke-opacity="0.18" stroke-width="1"/>
+    <circle cx="378" cy="120" r="57" fill="none" stroke="#f0a868" stroke-opacity="0.18" stroke-width="1"/>
   </g>
 
-  <g fill="#f1f5f9" font-family="Inter, Arial, sans-serif" text-anchor="middle">
-    <text x="250" y="93" font-size="23" font-weight="700">codebam<tspan fill="#fbbf24">.</tspan></text>
-    <text x="250" y="134" fill="#60a5fa" font-family="monospace" font-size="10" letter-spacing="3">DESIGN  ·  BUILD  ·  SHIP</text>
+  <g fill="#f4f4f2" font-family="Inter, Arial, sans-serif" text-anchor="middle">
+    <text x="250" y="93" font-size="23" font-weight="700">codebam<tspan fill="#f0a868">.</tspan></text>
+    <text x="250" y="134" fill="#f4f4f2" font-family="monospace" font-size="10" letter-spacing="3">DESIGN  ·  BUILD  ·  SHIP</text>
 
     <text x="250" y="208" font-size="47" font-weight="750" letter-spacing="-2">Websites</text>
     <text x="250" y="260" font-size="25" font-weight="500">+</text>
     <text x="250" y="316" font-size="42" font-weight="750" letter-spacing="-2">Telegram Bots</text>
 
-    <text x="250" y="357" fill="#cbd5e1" font-size="14">Custom-built for your business.</text>
+    <text x="250" y="357" fill="#d9d9d5" font-size="14">Custom-built for your business.</text>
   </g>
 
   <g transform="translate(145 382)">
-    <rect width="210" height="43" rx="2" fill="#60a5fa"/>
-    <text x="105" y="27" fill="#0b1220" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" text-anchor="middle">seanbehan.ca/services</text>
+    <rect width="210" height="43" rx="0" fill="#f4f4f2"/>
+    <text x="105" y="27" fill="#0b0b0c" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" text-anchor="middle">seanbehan.ca/services</text>
   </g>
-  <circle cx="250" cy="451" r="3" fill="#fbbf24"/>
+  <circle cx="250" cy="451" r="3" fill="#f0a868"/>
 </svg>
