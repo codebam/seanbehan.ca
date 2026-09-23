@@ -57,12 +57,15 @@ let highlighterPromise: Promise<HighlighterCore> | null = null;
 
 function getHighlighter() {
 	highlighterPromise ??= createHighlighterCore({
-		// Gruvbox, not GitHub: the theme's ground (#282828 / #fbf1c7) is the
-		// warm ash and cream the palette is built from, and on this site's own
-		// code ground (--panel) its worst token is 4.81:1 in the dark scheme,
-		// where github-dark's was 3.35:1. Shiki only writes token colours here
-		// (defaultColor: false), so the block keeps --panel under both
-		// schemes.
+		// Gruvbox, not GitHub: its tokens are the warm half of the palette —
+		// orange keywords, yellow functions — and the site's ground is the
+		// blue, so code is the one place the two complements meet. On this
+		// site's own code ground (--panel) its worst token is 4.21:1 in the
+		// dark scheme (the comment grey), where github-dark's was 3.21:1, and
+		// 3.67:1 in the light scheme on white; syntax tokens are the one
+		// documented bend of the contrast invariant (DESIGN.md §2.8). Shiki
+		// only writes token colours here (defaultColor: false), so the block
+		// keeps --panel under both schemes.
 		themes: [
 			import('@shikijs/themes/gruvbox-light-medium'),
 			import('@shikijs/themes/gruvbox-dark-medium')

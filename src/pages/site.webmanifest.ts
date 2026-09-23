@@ -20,11 +20,11 @@ export const GET: APIRoute = async () => {
 		// The same pair as the theme-color metas in Base.astro; app.css owns the
 		// values, so this is the surface to change when the palette does. Dark
 		// is the default scheme, so the bare theme_color is the dark ground.
-		theme_color: '#131110',
-		background_color: '#131110',
+		theme_color: '#0B1A2E',
+		background_color: '#0B1A2E',
 		theme_colors: [
-			{ color: '#fbf9f4', media: '(prefers-color-scheme: light)' },
-			{ color: '#131110', media: '(prefers-color-scheme: dark)' }
+			{ color: '#f2f7fd', media: '(prefers-color-scheme: light)' },
+			{ color: '#0B1A2E', media: '(prefers-color-scheme: dark)' }
 		],
 		display: 'standalone',
 		scope: '/'

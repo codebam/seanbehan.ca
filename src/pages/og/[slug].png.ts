@@ -45,14 +45,14 @@ const HEIGHT = 630;
 // The dark palette from app.css, and the values to change when it does. The
 // cards are a fixed surface — a social preview has no reader theme to follow —
 // so one scheme is the scheme, and the direction is dark first: the card is
-// the near-black ash of the page with cream type. ACCENT is the warm editorial
-// token rather than the interactive blue: a card has nothing to click, and
-// this is the one mark it makes about itself.
-const BG = '#131110';
-const TEXT = '#f2ede4';
-const MUTED = '#9c9386';
-const ACCENT = '#e0a458';
-const LINE = '#47403b';
+// the deep blue of the page with pale type. ACCENT is the warm editorial
+// token rather than the brighter interactive orange: a card has nothing to
+// click, and this is the one mark it makes about itself.
+const BG = '#0B1A2E';
+const TEXT = '#eaf2fc';
+const MUTED = '#93a9c0';
+const ACCENT = '#f97316';
+const LINE = '#405c7d';
 
 /**
  * Long titles step down a size rather than wrapping into a fourth line, which

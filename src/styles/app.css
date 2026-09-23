@@ -77,12 +77,12 @@
 /* ═══════════════════════════════════════════════════════════
    Design tokens
 
-   Dark first: the journal's default ground is the near-black ash
-   of a terminal, with a warm amber for the editorial voice and a
-   pale blue for anything interactive. Light is the alternative —
-   cream paper and ink — and lives behind prefers-color-scheme, so
-   both schemes survive with no script. The same names carry both
-   themes; components never branch on the scheme.
+   Dark first: the journal's default ground is a deep blue, with an
+   orange for the editorial voice and a brighter orange for anything
+   interactive. Light is the alternative — blue-tinted paper and ink —
+   and lives behind prefers-color-scheme, so both schemes survive with
+   no script. The same names carry both themes; components never branch
+   on the scheme.
    ═══════════════════════════════════════════════════════════ */
 @theme {
 	/* The interface face. It carries the mono stack deliberately: the site
@@ -110,52 +110,54 @@
 		--kumo-button-emphasis-ring: var(--accent-hover);
 
 		/* Surfaces */
-		--bg: #131110;
+		--bg: #0b1a2e;
 		/* The recessed fill: code blocks, tags, the alt bands. In dark it sits
 		   above the page ground, in light below it — one name, the scheme
 		   decides the direction. */
-		--surface-alt: #242020;
-		--panel: #1b1817;
+		--surface-alt: #182f4b;
+		--panel: #12253d;
 		/* Hairline only (1.38:1 on the page). WCAG 1.4.11 wants 3:1 for a
 		   boundary a reader has to perceive to operate a control; --dim is
 		   the token for that and .site-field uses it. Do not reach for
 		   --line to outline a field, button or other control. */
-		--line: #322d2a;
-		/* Dashed rules and the scrollbar thumb. Still a hairline: 1.85:1. */
-		--line-strong: #47403b;
+		--line: #233b58;
+		/* Dashed rules and the scrollbar thumb. Still a hairline: 2.53:1. */
+		--line-strong: #405c7d;
 
 		/* Text */
-		--text: #f2ede4;
-		--body: #d6cec2;
-		--muted: #9c9386;
+		--text: #eaf2fc;
+		--body: #c4d4e6;
+		--muted: #93a9c0;
 		/* Not merely decorative: this is the quietest mark the site draws, and
 		   everything it draws — the search glyph, the scrollbar thumb, the
 		   search field's own boundary — is a UI mark that WCAG 1.4.11 wants at
-		   3:1. 3.97:1 on the dark ground, 3.72:1 on a panel; the light
-		   scheme's is 3.65:1. */
-		--dim: #7a7266;
+		   3:1. 3.95:1 on the dark ground, 3.49:1 on a panel; the light
+		   scheme's is 3.72:1. */
+		--dim: #647a92;
 
-		/* Accent — warm is the site's voice, blue is the user's reach. */
-		--accent: #7fb3e0;
-		--accent-hover: #a5cdec;
-		/* The label on an accent-filled control: 8.45:1 on --accent. */
-		--accent-on: #131110;
-		--accent-warm: #e0a458;
+		/* Accent — warm is the site's voice, a brighter orange is the user's
+		   reach. The ground is the blue; the two oranges are what carries
+		   against it, one for the editorial mark and one for the link. */
+		--accent: #fb923c;
+		--accent-hover: #fdba74;
+		/* The label on an accent-filled control: 7.72:1 on --accent. */
+		--accent-on: #0b1a2e;
+		--accent-warm: #f97316;
 		--positive: #8fbf7f;
 
 		/* Footer is dark in both themes, so it needs its own small set — the
 		   accents included. --accent is chosen against a page ground; the
-		   footer takes the blues and ambers the dark palette already picked
+		   footer takes the blues and oranges the dark palette already picked
 		   for a dark ground, which is what lets one inversion work under two
 		   schemes. --footer-accent and --footer-warm are scheme-independent
 		   and are set once here. */
-		--footer-bg: #0b0a09;
-		--footer-text: #f2ede4;
-		--footer-muted: #9c9386;
+		--footer-bg: #07121f;
+		--footer-text: #eaf2fc;
+		--footer-muted: #93a9c0;
 		/* Same intent as --line: a column rule, not a control boundary. */
-		--footer-line: #2c2724;
-		--footer-accent: #7fb3e0;
-		--footer-warm: #e0a458;
+		--footer-line: #1b2c42;
+		--footer-accent: #fb923c;
+		--footer-warm: #f97316;
 
 		/* Geometry */
 		/* .section (below) is the shared page-level rhythm. These are the
@@ -197,28 +199,28 @@
 	@media (prefers-color-scheme: light) {
 		:root {
 			color-scheme: light;
-			/* Cream paper, and the same accent split at paper weights. */
-			--bg: #fbf9f4;
-			--surface-alt: #f2eee6;
+			/* Blue-tinted paper, and the same accent split at paper weights. */
+			--bg: #f2f7fd;
+			--surface-alt: #e6eef9;
 			--panel: #ffffff;
-			--line: #e0d9cc;
-			--line-strong: #c3b9a6;
+			--line: #cddcec;
+			--line-strong: #a8c0d8;
 
-			--text: #1c1917;
-			--body: #3b352d;
-			--muted: #6b6355;
-			--dim: #8a8172;
+			--text: #0c1b2e;
+			--body: #283a52;
+			--muted: #546b84;
+			--dim: #6c8199;
 
-			--accent: #1f5fa8;
-			--accent-hover: #194d87;
+			--accent: #b23a0c;
+			--accent-hover: #8f2d08;
 			--accent-on: #ffffff;
-			--accent-warm: #8a5a12;
-			--positive: #3f6b35;
+			--accent-warm: #9a3412;
+			--positive: #15803d;
 
-			--footer-bg: #1c1917;
-			--footer-text: #f2ede4;
-			--footer-muted: #a39a8d;
-			--footer-line: #3a332f;
+			--footer-bg: #0c1b2e;
+			--footer-text: #eaf2fc;
+			--footer-muted: #93a9c0;
+			--footer-line: #1f3450;
 		}
 	}
 
@@ -479,10 +481,10 @@
 		--dim: var(--footer-muted);
 		/* Reassigned, not self-referenced: `--accent: var(--accent)` resolves to
 		   the guaranteed-invalid value and quietly inherits the light-ground
-		   blue, which put footer link hovers at 3.45:1. The warm is reassigned
-		   for the same reason — the footer's ground is dark under both
-		   schemes, so the light scheme's brown (#8a5a12, 3.0:1 there) is not
-		   the warm it needs. */
+		   accent, which put footer link hovers at 3.45:1. The warm is
+		   reassigned for the same reason — the footer's ground is dark under
+		   both schemes, so the light scheme's warm (#9a3412, 2.37:1 on that
+		   ground) is not the warm it needs. */
 		--accent: var(--footer-accent);
 		--accent-warm: var(--footer-warm);
 		--text-color-kumo-default: var(--text);
@@ -829,7 +831,7 @@
    The ground is --panel rather than --surface-alt: it is the
    raised surface of the page, and it is also what keeps the
    gruvbox tokens legible — the dark scheme's worst token is
-   4.81:1 on #1b1817 and only 4.39:1 on #242020.
+   4.81:1 on #12253d and only 4.39:1 on #182F4B.
 
    The padding is what keeps the code itself on the reading
    column's left edge: 50% resolves against the containing block
@@ -1304,31 +1306,31 @@
    ═══════════════════════════════════════════════════════════ */
 @media print {
 	/* Print keeps deliberately darker values rather than reading the light
-	   tokens: a laser printer lays the screen's #6b6355 muted down as a light
-	   grey and washes #1f5fa8 out on paper, and the dark scheme's pale amber
-	   (#e0a458) is a highlighter stroke on a white page. This block is a
+	   tokens: a laser printer lays the screen's #546b84 muted down as a light
+	   grey and washes #b23a0c out on paper, and the dark scheme's orange
+	   (#f97316) is a highlighter stroke on a white page. This block is a
 	   documented palette surface (DESIGN.md §1), not drift; move it with the
-	   tokens. Ratios on #ffffff: muted 8.00:1, dim 5.93:1, accent 8.27:1,
-	   warm 8.05:1. */
+	   tokens. Ratios on #ffffff: muted 7.29:1, dim 5.51:1, accent 7.31:1,
+	   warm 9.37:1. */
 	:root {
 		color-scheme: light;
 
 		--bg: #ffffff;
 		--surface-alt: #ffffff;
 		--panel: #ffffff;
-		--line: #e0d9cc;
-		--line-strong: #c3b9a6;
+		--line: #cddcec;
+		--line-strong: #a8c0d8;
 
-		--text: #1c1917;
-		--body: #3b352d;
-		--muted: #57503f;
-		--dim: #6b6355;
+		--text: #0c1b2e;
+		--body: #283a52;
+		--muted: #46586e;
+		--dim: #546b84;
 
-		--accent: #1d4e8f;
-		--accent-hover: #163c6f;
-		--accent-warm: #71470d;
+		--accent: #9a3412;
+		--accent-hover: #7c2d12;
+		--accent-warm: #7c2d12;
 		--accent-on: #ffffff;
-		--positive: #2f5a2a;
+		--positive: #15803d;
 	}
 
 	* {
@@ -1355,13 +1357,13 @@
 
 	body {
 		background: #ffffff;
-		color: #1c1917;
+		color: #0c1b2e;
 		min-height: 0;
 	}
 	.panel,
 	.panel-alt {
 		background: #ffffff;
-		color: #1c1917;
+		color: #0c1b2e;
 	}
 
 	.shiki,

@@ -30,8 +30,8 @@ TRACKING = -2.0
 BASELINE = 47.0
 RADIUS = 9
 TEXT = 'SB'
-ACCENT = '#e0a458'
-PAPER = '#131110'
+ACCENT = '#f97316'
+PAPER = '#0B1A2E'
 
 ttf = D / '_newsreader.ttf'
 if not ttf.exists():

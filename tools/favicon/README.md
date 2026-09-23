@@ -1,7 +1,7 @@
 # Favicon
 
-The mark is Newsreader `SB` in the dark ground (`#131110`) on the warm accent
-(`#e0a458`) — `--accent-warm` and `--bg` in `src/styles/app.css`, so the tab
+The mark is Newsreader `SB` in the dark ground (`#0B1A2E`) on the warm accent
+(`#f97316`) — `--accent-warm` and `--bg` in `src/styles/app.css`, so the tab
 reads as a prompt block rather than a white glyph. Re-ink both files below when
 the palette moves, or the tab stops matching the page.
 
