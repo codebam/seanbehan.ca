@@ -564,20 +564,36 @@
 	}
 
 	/* Kumo's emphasis button, re-inked to the house pair.
-	   Its variant sets --kumo-button-emphasis-bg, the gradient stops and
-	   `!text-white` as an inline style on the element, so no stylesheet
+	   The variant sets --kumo-button-emphasis-bg, the gradient stops and
+	   `!text-white` as inline styles on the element, so no stylesheet
 	   declaration of those custom properties can win — only the used
 	   properties will, and only with !important, because the utilities that
 	   paint the button live in the layer after this one. That is the deal
 	   .flat-control already makes for the geometry. Without it the label sits
 	   on a gradient mixed 30% toward white: 3.47:1 at the top, 2.68:1 where
-	   the hover layer shows, and white on the dark palette's accent is 2:1. */
+	   the hover layer shows, and white on this palette's accent is 2.2:1.
+
+	   Kumo also paints twice: an absolutely positioned child span carries
+	   the gradient, and another child holds the label, so the anchor's own
+	   background and colour never reach the pixels. Paint both spans — and
+	   declare the colour on the span, because Kumo's `!text-white` is an
+	   important utility in an earlier layer, and important declarations
+	   resolve in reverse layer order, so one here loses to it. */
 	.site-cta {
 		background-color: var(--accent) !important;
 		background-image: none !important;
+	}
+	.site-cta > span {
 		color: var(--accent-on) !important;
 	}
+	.site-cta > span[aria-hidden='true'] {
+		background-color: var(--accent) !important;
+		background-image: none !important;
+	}
 	.site-cta:hover {
+		background-color: var(--accent-hover) !important;
+	}
+	.site-cta:hover > span[aria-hidden='true'] {
 		background-color: var(--accent-hover) !important;
 	}
 
