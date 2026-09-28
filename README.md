@@ -27,7 +27,9 @@ npm install
 npm run dev
 ```
 
-`npm run dev` runs `emdash dev`: it applies any pending migrations, seeds an empty database from `seed/seed.json`, and starts Astro. The site is at `http://localhost:4321` and the admin panel at `http://localhost:4321/_emdash/admin` — on localhost the dev bypass signs you in without a passkey.
+`npm run dev` runs `astro dev` with `CLOUDFLARE_VITE_FORCE_LOCAL=true`. EmDash applies its pending core migrations and seeds an empty database from `seed/seed.json` on the first request, and the site is at `http://localhost:4321` with the admin panel at `http://localhost:4321/_emdash/admin` — on localhost the dev bypass signs you in without a passkey.
+
+That flag is not optional. Once EmDash 1.0 removed `emdash dev`, the dev server became the real Workers runtime reading `wrangler.jsonc`, and the `AI` binding has no local simulator — Vite's Cloudflare plugin answers that by opening a remote session, which refuses to start without a Cloudflare credential and, with one, would point local dev at the production binding. Forcing local keeps `npm run dev` offline; the cost is that `/mcp`'s `ask` tool, the binding's only consumer, answers nothing locally.
 
 Use `npm run dev:codebam` for the handle-portfolio variant. The commercial bindings and Stripe secrets live on the default build.
 
@@ -58,7 +60,6 @@ npm run deploy:codebam     # build codebam, deploy as codebam-ca (portfolio + 30
 ```
 
 Both Workers share the same D1 database and media bucket, so a post published from either admin panel reaches both origins. The paid-download bucket and order-email binding exist only on the default Worker.
-
 First deploy needs the bindings to exist:
 
 ```bash

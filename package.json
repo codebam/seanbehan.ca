@@ -8,7 +8,7 @@
 		"seed": "seed/seed.json"
 	},
 	"scripts": {
-		"dev": "npm run migrate:local && emdash dev",
+		"dev": "npm run migrate:local && CLOUDFLARE_VITE_FORCE_LOCAL=true astro dev",
 		"dev:codebam": "CLOUDFLARE_ENV=codebam PUBLIC_SITE=codebam npm run dev",
 		"build": "astro build",
 		"build:codebam": "CLOUDFLARE_ENV=codebam PUBLIC_SITE=codebam astro build",
@@ -35,41 +35,41 @@
 	},
 	"dependencies": {
 		"@astrojs/cloudflare": "^14.3.3",
-		"@astrojs/react": "^6.0.0",
+		"@astrojs/react": "^7.0.0",
 		"@cf-wasm/og": "^0.5.0",
 		"@cloudflare/kumo": "2.6.0",
-		"@emdash-cms/cloudflare": "^0.36.0",
-		"@emdash-cms/plugin-forms": "^0.2.6",
-		"@emdash-cms/plugin-webhook-notifier": "^0.2.0",
+		"@emdash-cms/cloudflare": "^1.0.1",
+		"@emdash-cms/plugin-forms": "^0.2.9",
+		"@emdash-cms/plugin-webhook-notifier": "^0.2.2",
 		"@phosphor-icons/react": "^2.1.10",
 		"@portabletext/to-html": "^6.0.0",
 		"@tailwindcss/forms": "^0.5.11",
 		"@tailwindcss/typography": "^0.5.20",
 		"@tailwindcss/vite": "^4.3.3",
-		"astro": "^7.2.9",
-		"emdash": "^0.37.0",
+		"astro": "^7.3.5",
+		"emdash": "^1.0.1",
 		"fuse.js": "^7.5.0",
 		"react": "19.3.0",
 		"react-dom": "19.3.0",
 		"shiki": "^4.4.3",
-		"stripe": "^22.6.0",
+		"stripe": "^22.6.2",
 		"tailwindcss": "^4.3.3"
 	},
 	"devDependencies": {
 		"@astrojs/check": "^0.9.7",
-		"@cloudflare/workers-types": "^5.20260925.1",
-		"lint-staged": "^17.5.1",
+		"@cloudflare/workers-types": "^5.20260928.1",
+		"lint-staged": "^17.6.0",
 		"prettier": "^3.9.9",
-		"prettier-plugin-astro": "^1.0.0",
+		"prettier-plugin-astro": "^1.1.0",
 		"prettier-plugin-tailwindcss": "^0.8.1",
 		"typescript": "^6.0.3",
-		"vitest": "^5.0.0",
-		"wrangler": "^4.131.0"
+		"vitest": "^5.0.2",
+		"wrangler": "^4.143.0"
 	},
 	"allowScripts": {
 		"esbuild@0.28.2": true,
 		"esbuild@0.28.1": true,
 		"workerd@1.20260910.1": true,
-		"better-sqlite3@12.11.1": true
+		"workerd@1.20260926.1": true
 	}
 }

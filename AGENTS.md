@@ -5,7 +5,7 @@ It used to be a SvelteKit site with the posts as markdown files. The design came
 ## Commands
 
 ```bash
-npm run dev          # emdash dev: migrate, seed, then serve on :4321
+npm run dev          # astro dev: site migrations, then serve on :4321
 npm run check        # astro check
 npm run test:run     # vitest over src/lib
 npm run smoke        # ask a running site for one of everything
