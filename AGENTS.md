@@ -47,6 +47,7 @@ The admin UI is at `http://localhost:4321/_emdash/admin`; localhost signs you in
 - A palette change is not only a token change. `src/pages/og/[slug].png.ts`, `src/pages/site.webmanifest.ts`, `public/favicon.svg` with `tools/favicon/`, `resume/metadata.yaml` and the ads in `public/img/` each hold a copy of the colours and move with them. DESIGN.md section 1 lists them.
 - Asset cache headers belong in `public/_headers`, not in the middleware: Workers Assets answers those paths before the Worker runs.
 - The résumé is the exception to "the words live in D1": `/resume` renders an HTML fragment CI built from `resume/resume.md` and uploaded to R2, styled from `src/styles/app.css` rather than a component. What it says is edited there, never in the admin.
+- Two migration sets reach the one shared D1 database, and `.github/workflows/deploy.yml` applies both before either Worker deploys: `emdash migrate` for EmDash's core set, `wrangler d1 migrations apply` for `migrations/site`. New schema changes go in `migrations/site/`, written against the EmDash version in the same commit; the core set belongs to EmDash. `emdash migrate` reaches remote D1 only, and its apply step is guarded by the `EMDASH_TARGET_FINGERPRINT` repository variable — a pinned value, so nothing in the repo should compute or default it.
 
 ## Writing style
 

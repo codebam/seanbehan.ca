@@ -60,6 +60,21 @@ npm run deploy:codebam     # build codebam, deploy as codebam-ca (portfolio + 30
 ```
 
 Both Workers share the same D1 database and media bucket, so a post published from either admin panel reaches both origins. The paid-download bucket and order-email binding exist only on the default Worker.
+
+A deploy migrates that database before either Worker receives traffic: the workflow builds, applies EmDash's core migrations, applies this repo's own (`migrations/site`), and only then deploys. A push therefore never leaves new code reading a schema that has not caught up, and the two sets are applied in that order because `migrations/site` is written against the EmDash version in the same commit.
+
+The core set needs one repository variable:
+
+```
+EMDASH_TARGET_FINGERPRINT   # npm run migrate:core:status prints it
+```
+
+That fingerprint pins the account and database UUID a migration may touch. It is stored rather than computed during the run on purpose: point `database_id` in `wrangler.jsonc` at another database and the run stops instead of migrating the wrong one. A noninteractive `emdash migrate` refuses to apply without a matching fingerprint, so an unset or stale value fails the job rather than dropping the guard. Read it from `npm run migrate:core:status` with `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` in the environment — the command prints the account, environment, database name, UUID and `Target fingerprint`, and names the migration lock if one is held. The value is the SHA-256 of `{"kind":"d1","identity":["<account-id>","<database-uuid>"]}`, so it can also be checked offline against the account and the `database_id` in `wrangler.jsonc`. Update the variable only when the target genuinely changes.
+
+`migrate:core:status` and `migrate:core:check` are read-only; the check exits non-zero on pending or unknown migrations and also runs after each deploy. All three reach the remote D1 only — `emdash migrate` has no local mode — so `npm run migrate:local` stays the command for this repo's own migrations against the local database.
+
+EmDash's runtime migration mode stays at its default, `auto`, which means the Worker still applies anything pending on its first request. That is the documented way to introduce a deployment job; once this one has run cleanly a few times, `migrations: { runtime: 'check', dev: 'auto' }` in the `emdash()` options of `astro.config.mjs` makes a pending migration answer 503 instead of being applied silently. Do not turn on `cancel-in-progress` for the deploy workflow in the meantime: a cancelled `emdash migrate` leaves the migration lock held in D1, and until it is released with `--release-lock` the site cannot apply migrations at all.
+
 First deploy needs the bindings to exist:
 
 ```bash

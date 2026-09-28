@@ -76,8 +76,23 @@ jobs:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
         run: bash tools/cloudflare/purge.sh ${{ matrix.zone }}
 
-  # Both Workers share one D1 database. Apply repository-owned migrations once,
-  # before either build can deploy code that expects the new schema.
+      # The rollout is finished only once the database the deployed Worker reads
+      # matches the migrations this build expects. A runtime that migrates on
+      # first request cannot report a mismatch after the fact; `--check` exits
+      # non-zero on pending or unknown migrations. It is read-only, so it runs
+      # per variant rather than being folded into the migrate job — and it runs
+      # after the purge, because a failed check is no reason to leave stale HTML
+      # at the edge.
+      - name: Check EmDash migrations ${{ matrix.variant }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+        run: npm run migrate:core:check
+
+  # Both Workers share one D1 database, and two migration sets reach it: this
+  # repo's own, which wrangler applies, and EmDash's core set, which
+  # `emdash migrate` applies. Both are applied once here, before either build
+  # can deploy code that expects the new schema.
   migrate:
     # Schema changes run against the shared production D1; only a reviewed
     # master ref may apply them.
@@ -93,6 +108,35 @@ jobs:
           cache: npm
 
       - run: npm ci
+
+      # `emdash migrate` reads .emdash/migrations.json, and only the build
+      # writes it: the manifest is a build artifact, not a committed file. The
+      # deploy jobs build this same commit separately and get the same
+      # migration set, because the set comes from the installed EmDash version.
+      - name: Build
+        run: npm run build
+
+      # Resolve and print the account, database and target fingerprint before
+      # anything is written. A database_id or binding that no longer points at
+      # the intended database fails here rather than mid-migration.
+      - name: Inspect the EmDash migration target
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+        run: npm run migrate:core:status
+
+      # EmDash's core migrations run before this repo's: migrations/site is
+      # written against the EmDash version in this commit. The fingerprint is a
+      # pinned repository variable rather than something computed here, so an
+      # edited database_id cannot silently retarget the run — and with it unset
+      # or stale the command refuses instead of applying, because a
+      # noninteractive apply will not proceed without a matching fingerprint.
+      - name: Apply EmDash core migrations
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          EMDASH_TARGET_FINGERPRINT: ${{ vars.EMDASH_TARGET_FINGERPRINT }}
+        run: npm run migrate:core:prod
 
       - name: Apply site migrations
         env:

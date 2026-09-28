@@ -31,7 +31,10 @@
 		"prepare": "git config core.hooksPath .githooks || true",
 		"backup": "node scripts/backup-d1.mjs",
 		"migrate:local": "wrangler d1 migrations apply DB --local",
-		"migrate:prod": "wrangler d1 migrations apply DB --remote"
+		"migrate:prod": "wrangler d1 migrations apply DB --remote",
+		"migrate:core:status": "emdash migrate --wrangler-config wrangler.jsonc --status",
+		"migrate:core:prod": "emdash migrate --wrangler-config wrangler.jsonc --expected-target-fingerprint \"$EMDASH_TARGET_FINGERPRINT\"",
+		"migrate:core:check": "emdash migrate --wrangler-config wrangler.jsonc --check"
 	},
 	"dependencies": {
 		"@astrojs/cloudflare": "^14.3.3",
