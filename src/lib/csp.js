@@ -46,6 +46,14 @@ export const CSP_DIRECTIVES = [
 	// <object> from the bucket's r2.dev domain, which needed this origin on the
 	// list; it is inline HTML now and the PDF is a download, so the plugin slot
 	// can be shut outright rather than opened to a hostname.
+	//
+	// EmDash 1.1's embeds are refused here too. An `iframe` block renders
+	// nothing. An isolated HTML block — the default for one made in the admin
+	// since 1.1 — is a `srcdoc` frame, which `frame-src` does not govern, but it
+	// inherits this policy, so its own <style> and <script> carry no hash and
+	// the block shows its HTML unstyled, unscripted and without its measured
+	// height. Inline is the mode that works under this policy; allowing embeds
+	// means naming origins in `frame-src`, which is a content decision.
 	"object-src 'none'",
 	"frame-src 'none'",
 	"frame-ancestors 'none'",
