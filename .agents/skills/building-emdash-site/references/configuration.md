@@ -230,7 +230,7 @@ For Cloudflare, replace `@astrojs/node` with `@astrojs/cloudflare` and add `@emd
 ## Dev Server
 
 ```bash
-npm run dev                 # Start the Astro dev server
+pnpm dev                    # Start the Astro dev server
 npx emdash types            # Refresh types from the running site
 ```
 

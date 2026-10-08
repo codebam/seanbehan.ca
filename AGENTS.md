@@ -57,4 +57,4 @@ Comments explain why, not what, and are written for someone who will read the co
 
 The EmDash docs are an MCP server at `https://docs.emdashcms.com/mcp`. Call `search_docs` against it rather than relying on recall — the API is young and moves. `.mcp.json` is committed so it is discovered automatically.
 
-Agent skills for EmDash itself are in `.agents/skills/`: **building-emdash-site** (querying, Portable Text, schema, seeds), **creating-plugins**, and **emdash-cli**.
+Agent skills for EmDash itself are in `.agents/skills/`: **building-emdash-site** (querying, Portable Text, schema, seeds), **creating-plugins**, **emdash-cli**, and **upgrading-emdash**. That directory is a hand-picked copy of the release tag's `skills/` root — the two WordPress ports and the writing and review skills are deliberately absent — so when `upgrade-emdash` installs the whole set, keep these four and drop the rest.

@@ -54,6 +54,12 @@ export const CSP_DIRECTIVES = [
 	// the block shows its HTML unstyled, unscripted and without its measured
 	// height. Inline is the mode that works under this policy; allowing embeds
 	// means naming origins in `frame-src`, which is a content decision.
+	//
+	// A 1.2 video block is not in that position: it paints a <video> whose file
+	// the Worker serves from /_emdash/api/media/file, so `default-src 'self'`
+	// already covers it. Only a block recorded against a media provider — a
+	// source on someone else's host — would need that host in `media-src`, and
+	// no provider is configured here.
 	"object-src 'none'",
 	"frame-src 'none'",
 	"frame-ancestors 'none'",

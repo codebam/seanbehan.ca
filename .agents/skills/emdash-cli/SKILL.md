@@ -68,7 +68,7 @@ For normal site startup, use the project's package script. The first request run
 
 ```bash
 # Start the site with its package script
-npm run dev
+pnpm dev
 
 # Export an existing database as a seed file
 # (the runtime auto-discovers .emdash/seed.json on first boot;
