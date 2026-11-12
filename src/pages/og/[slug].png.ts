@@ -211,8 +211,9 @@ export const GET: APIRoute = async ({ params, url }) => {
 	} else if (slug === 'site') {
 		payload = { title: site.ogTitle, tagLine: site.ogDescription, host };
 	} else {
-		// Drafts get a card too: a draft is still reachable by URL, and a shared
-		// link to one should look like the rest of the site.
+		// With a valid preview token, drafts get a card too: a shared preview
+		// link should look like the rest of the site. Without one EmDash
+		// returns no entry and this 404s.
 		const { entry, cacheHint } = await getEmDashEntry('posts', slug);
 		// The card is a rendering of the entry, so it belongs to the entry's
 		// tags: a purge for that post should take its card with it.

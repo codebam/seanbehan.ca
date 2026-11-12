@@ -68,10 +68,10 @@ describe('isSiblingHref', () => {
 });
 
 describe('yearsBuilding', () => {
-	it('counts whole years from January 2014', () => {
-		expect(yearsBuilding(Date.UTC(2014, 0, 1))).toBe(0);
-		expect(yearsBuilding(Date.UTC(2026, 0, 1))).toBe(12);
-		expect(yearsBuilding(Date.UTC(2025, 11, 31))).toBe(11);
+	it('counts whole years from May 2018', () => {
+		expect(yearsBuilding(Date.UTC(2018, 4, 1))).toBe(0);
+		expect(yearsBuilding(Date.UTC(2026, 5, 1))).toBe(8);
+		expect(yearsBuilding(Date.UTC(2025, 11, 31))).toBe(7);
 	});
 });
 

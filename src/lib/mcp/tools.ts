@@ -82,7 +82,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 		name: 'get_entry',
 		title: 'Read one post or page',
 		description:
-			'One published entry as markdown, with its canonical URL, dates, tags and body. Use the slug returned by search_content or list_posts. Drafts are reachable only when the caller already knows the slug.',
+			'One published entry as markdown, with its canonical URL, dates, tags and body. Use the slug returned by search_content or list_posts. Only published entries are served; drafts are never returned.',
 		inputSchema: {
 			type: 'object',
 			properties: {

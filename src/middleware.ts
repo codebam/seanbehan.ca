@@ -287,17 +287,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		}
 
 		if (redirect) {
-			if (COMMERCE_PRIVATE.test(pathname)) {
-				return new Response(null, {
-					status: 301,
-					headers: {
-						Location: target.toString(),
-						'Cache-Control': 'private, no-store',
-						'Referrer-Policy': 'no-referrer'
-					}
-				});
-			}
-			return Response.redirect(target, 301);
+			const headers = new Headers(SECURITY_HEADERS);
+			headers.set('Location', target.toString());
+			headers.set('Cache-Control', 'private, no-store');
+			headers.set('Referrer-Policy', 'no-referrer');
+			return new Response(null, { status: 301, headers });
 		}
 	}
 	// A reader that asked for markdown or JSON is served the suffixed variant
@@ -344,6 +338,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
 		response.headers.set(name, value);
 	}
+	// EmDash reports per-request db/plugin timings in Server-Timing. Useful
+	// locally, fingerprinting fodder in production: drop it there.
+	if (import.meta.env.PROD) {
+		response.headers.delete('Server-Timing');
+	}
 	// Cloudflare's edge cache is consulted before this Worker runs, so the bare
 	// URL needs to tell it that Accept changes the answer. The Cache Rule in
 	// docs/edge-caching.md turns this into a cache-key dimension; without that
@@ -370,7 +369,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		// written for a static-rendered blog it loaded as far as "Loading
 		// EmDash..." and stopped. Pinning it here would mean chasing the CMS's
 		// bundle from one release to the next; the panel is behind authentication
-		// and sends its own policy.
+		// and sends its own policy, so the site's hash list is deleted here and
+		// EmDash's is what the panel runs under. Stored post content is escaped
+		// before it reaches the admin (portable-text / shiki / sanitizeHref), so
+		// the weaker inline policy is why content must never bypass that
+		// escaping, rather than a reason to pin a bundle we cannot track.
 		//
 		// The rest of the headers stay: nothing about an admin panel wants MIME
 		// sniffing, a leaked referrer, or the option of being framed.

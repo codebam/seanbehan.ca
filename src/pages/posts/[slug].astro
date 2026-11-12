@@ -2,9 +2,10 @@
 /**
  * One post.
  *
- * Drafts render here — they are absent from every list, the feed and the
- * sitemap, but a draft URL can still be shared, and the layout marks it
- * noindex.
+ * Drafts render here only under a valid preview token or an editor
+ * session — EmDash serves them in no other case (an anonymous slug guess
+ * 404s). They are absent from every list, the feed and the sitemap, and
+ * the layout marks them noindex.
  */
 import { getContentSeo, getEmDashEntry, getEntryTerms, getSeoMeta } from 'emdash';
 import { PortableText } from 'emdash/ui';

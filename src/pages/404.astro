@@ -1,5 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
+import SiblingMark from '../components/SiblingMark.astro';
+import { writingHref } from '../lib/site';
 ---
 
 <Base title="404" description="That page is not here.">
@@ -14,8 +16,9 @@ import Base from '../layouts/Base.astro';
 				<a href="/" class="btn">
 					Back home
 				</a>
-				<a href="/posts" class="link-quiet">
+				<a href={writingHref('/posts')} class="link-quiet">
 					Read the writing
+					<SiblingMark href={writingHref('/posts')} />
 				</a>
 			</p>
 		</div>

@@ -94,7 +94,7 @@ export const featuredProjects: Array<FeaturedProject & { seoDescription: string 
 		since: '2022',
 		title: 'Telegram Bot for Cloudflare Workers',
 		description:
-			'A lightweight, type-safe Telegram bot framework for Cloudflare Workers: handlers chain off the incoming Request, middleware runs before them, and one URL registers the webhook. 214 forks and 120 releases on npm.',
+			'A lightweight, type-safe Telegram bot framework for Cloudflare Workers: handlers chain off the incoming Request, middleware runs before them, and one URL registers the webhook. 215 forks and 120 releases on npm.',
 		seoDescription:
 			'A type-safe Telegram bot framework for Cloudflare Workers with chained handlers and one-URL webhook setup.',
 		language: 'TypeScript',
@@ -112,7 +112,7 @@ export const featuredProjects: Array<FeaturedProject & { seoDescription: string 
 			'A visit to /<token>/setWebhook registers the Worker with Telegram, so there is no deploy-time CLI step to go live.'
 		],
 		highlights: [
-			'214 forks and 120 releases on npm, under Apache-2.0',
+			'215 forks and 120 releases on npm, under Apache-2.0',
 			'No runtime dependencies beyond the type definitions',
 			'Separate development and production Worker bindings, with a consumer template to start from'
 		]

@@ -20,7 +20,7 @@ import { LinkButton } from '@cloudflare/kumo/components/button';
 import { getPosts } from '../lib/posts';
 import { withLiveStats } from '../lib/github';
 import { featuredProjects } from '../lib/projects';
-import { site, linkHref, writingHref } from '../lib/site';
+import { site, linkHref, writingHref, yearsBuilding } from '../lib/site';
 import { PRODUCT } from '../lib/product';
 import SiblingMark from '../components/SiblingMark.astro';
 
@@ -30,25 +30,15 @@ const [{ posts, cacheHint }, projects] = await Promise.all([
 ]);
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
-/** The résumé's first dated professional role is May 2018; see H3. */
-const PROFESSIONAL_START = Date.UTC(2018, 4, 1);
-const MS_PER_YEAR = 365.2425 * 24 * 60 * 60 * 1000;
-const yearsBuilding = Math.floor((Date.now() - PROFESSIONAL_START) / MS_PER_YEAR);
-
 const intro = site.intro;
 
 /**
- * B10: the archive keeps newest-first order; the home page leads with the
- * newest posts that are actually worth the click. A note that reads in one
- * minute is not what a senior engineer should meet first, so the six cards
- * prefer posts of two minutes or more. When fewer than six qualify — a young
- * archive, or a run of notes — the newest-first list is the fallback rather
- * than a short section.
+ * The home page leads with the newest posts outright — a "Latest writing"
+ * section must not show older cards while newer posts exist, however short.
+ * Reading length never gates the six cards.
  */
-const MIN_READING_MINUTES = 2;
 const HOME_POSTS = 6;
-const substantive = posts.filter((post) => (post.readingMinutes ?? 1) >= MIN_READING_MINUTES);
-const latest = (substantive.length >= HOME_POSTS ? substantive : posts).slice(0, HOME_POSTS);
+const latest = posts.slice(0, HOME_POSTS);
 
 /** B1: the commercial blocks belong to the legal-name front door. */
 const commercial = site.id === 'seanbehan';
@@ -93,6 +83,7 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 						>
 							{primary.label}
 						</LinkButton>
+						<SiblingMark href={linkHref(primary)} />
 						{quietLinks.map((link) => (
 							<a
 								href={link.href}
@@ -179,13 +170,13 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 		{site.leadWith === 'work' ? (
 			<Work projects={projects} />
 		) : (
-			<Facts postCount={posts.length} projects={projects} yearsBuilding={yearsBuilding} />
+			<Facts postCount={posts.length} projects={projects} yearsBuilding={yearsBuilding()} />
 		)}
 
 		{site.experience && <Experience experience={site.experience} />}
 
 		{site.leadWith === 'work' ? (
-			<Facts postCount={posts.length} projects={projects} yearsBuilding={yearsBuilding} />
+			<Facts postCount={posts.length} projects={projects} yearsBuilding={yearsBuilding()} />
 		) : (
 			<Work projects={projects} />
 		)}

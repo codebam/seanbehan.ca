@@ -24,6 +24,12 @@ import { TOOL_DEFINITIONS, runTool, type McpEnv } from './tools';
 /** A question plus its context is small; anything larger is abuse, not input. */
 const MAX_BODY_BYTES = 64 * 1024;
 
+/**
+ * Any origin may call this server: MCP clients run on other origins, so
+ * same-origin CORS would break every remote agent. This is safe because the
+ * tools serve only published content (drafts are gated by EmDash, as on
+ * the site) and the one expensive tool is rate-limited per address.
+ */
 const CORS_HEADERS: Record<string, string> = {
 	'Access-Control-Allow-Origin': '*',
 	'Access-Control-Allow-Methods': 'POST, GET, DELETE, OPTIONS',

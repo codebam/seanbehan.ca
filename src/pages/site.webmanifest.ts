@@ -30,6 +30,9 @@ export const GET: APIRoute = async () => {
 	};
 
 	return new Response(JSON.stringify(manifest, null, '\t'), {
-		headers: { 'Content-Type': 'application/manifest+json' }
+		headers: {
+			'Content-Type': 'application/manifest+json',
+			'Cache-Control': 'public, max-age=3600'
+		}
 	});
 };

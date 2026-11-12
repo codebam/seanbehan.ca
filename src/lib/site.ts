@@ -130,8 +130,8 @@ export const LEGAL_NAME = 'Sean Behan';
 export const HANDLE = 'codebam';
 export const LINKEDIN_URL = 'https://www.linkedin.com/in/sean-behan';
 
-/** Started building software in January 2014. Whole elapsed years from that month. */
-const CAREER_START = Date.UTC(2014, 0, 1);
+/** Professional experience starts May 2018 (first dated role). Whole elapsed years from that month. */
+const CAREER_START = Date.UTC(2018, 4, 1);
 const MS_PER_YEAR = 365.2425 * 24 * 60 * 60 * 1000;
 export const yearsBuilding = (now = Date.now()) => Math.floor((now - CAREER_START) / MS_PER_YEAR);
 
