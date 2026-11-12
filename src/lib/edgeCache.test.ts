@@ -242,28 +242,29 @@ describe('security headers', () => {
 		const response = await runMiddleware(makeContext('/about'), respondWith());
 
 		expect(response.headers.get('Permissions-Policy')).toContain('publickey-credentials-get=()');
-		expect(response.headers.get('Cache-Control')).toBe('public, max-age=60, must-revalidate');
+		expect(response.headers.get('Cache-Control')).toBe('private, max-age=0, must-revalidate');
 	});
 });
 
 describe('edge cache policy', () => {
-	it('holds anonymous HTML for a minute in both caches', async () => {
+	it('revalidates HTML but never stores it in the Worker cache', async () => {
 		installFakeCache();
 		vi.stubEnv('DEV', false);
 		try {
 			const first = await runMiddleware(makeContext('/about'), respondWith());
 			const second = await runMiddleware(makeContext('/about'), respondWith());
 
-			// Anonymous HTML is identical for every reader, so both the zone
-			// edge and the Worker's own cache may hold it. The first request
-			// is a Worker MISS (stored), the second a HIT. Editor, preview and
-			// commerce renders stay no-store below and never land here. The
-			// smoke test's www check is still the end-to-end detector for the
-			// hostless-rule bug (apex copy answering www before the redirect).
-			expect(first.headers.get('Cache-Control')).toBe('public, max-age=60, must-revalidate');
-			expect(first.headers.get('X-Edge-Cache')).toBe('MISS');
-			expect(second.headers.get('Cache-Control')).toBe('public, max-age=60, must-revalidate');
-			expect(second.headers.get('X-Edge-Cache')).toBe('HIT');
+			// The Worker half is all this can see: `private` (either value) makes
+			// safeToStore refuse the put, so neither request is marked HIT. The
+			// value is chosen for the other half — the zone's host-scoped rule
+			// respects the origin TTLs, so the edge may hold a copy and must
+			// revalidate it each use. The smoke test's www check is still the
+			// end-to-end detector for the hostless-rule bug (apex copy answering
+			// www before the redirect).
+			for (const response of [first, second]) {
+				expect(response.headers.get('Cache-Control')).toBe('private, max-age=0, must-revalidate');
+				expect(response.headers.has('X-Edge-Cache')).toBe(false);
+			}
 		} finally {
 			vi.unstubAllEnvs();
 			delete (globalThis as { caches?: unknown }).caches;

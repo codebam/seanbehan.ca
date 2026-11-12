@@ -82,11 +82,10 @@ const LONG_LIVED = /^\/(fonts|og|img|optimized)\/|\.(webp|png|svg|ico)$/;
 const COMMERCE_PRIVATE = /^\/(checkout|api\/stripe)(?:\/|$)/;
 
 /**
- * HTML is public for 60s: anonymous renders are identical for every
- * reader, so both the zone edge (via the host-scoped Cache Rule) and the
- * Worker's own cache may hold them for a minute and then must revalidate.
- * Editor, preview and commerce renders use NO_STORE below instead, so a
- * personalised or token-bearing page never enters either shared cache.
+ * HTML is the revalidate-every-visit policy: the browser (and the zone
+ * Cache Rule, which respects the origin TTLs) may hold a copy but must
+ * revalidate it on every use, so an edit in the admin still reaches a
+ * reader within one navigation rather than a TTL window.
  *
  * The zone's HTML rule carries an `http.host` clause for the same reason:
  * its cache key does not separate hosts, so a hostless copy of the apex
@@ -97,18 +96,18 @@ const COMMERCE_PRIVATE = /^\/(checkout|api\/stripe)(?:\/|$)/;
  * and `/` is eligible. Editor and preview renders use NO_STORE below
  * instead, which is the value the zone Cache Rule will not override.
  *
- * Anonymous HTML is public, so `safeToStore` below does land it under
- * edgeCacheKey's `/__host/<host>` key for the edge window; editor, preview
- * and commerce renders are refused via NO_STORE and never land there.
- * What `private` could not do alone is stop a shared cache that had been
- * told to ignore it — that is what the host clause is for. Feeds, images,
- * the immutable routes and the social cards set public policies and are
+ * `private` is what HTML wants for the browser, and it was already enough to
+ * keep HTML out of the Worker's own `cache.put`: `safeToStore` below refuses
+ * either value, so no HTML lands under edgeCacheKey's `/__host/<host>` key.
+ * What `private` could not do alone is stop a shared cache that had been told
+ * to ignore it — that is what the host clause is for. Feeds, images, the
+ * immutable routes and the social cards set public policies and are
  * unaffected — they are still stored.
  */
 const EDGE_SECONDS = 600;
 const IMMUTABLE_SECONDS = 31536000;
 
-const HTML_CACHE = 'public, max-age=60, must-revalidate';
+const HTML_CACHE = 'private, max-age=0, must-revalidate';
 /**
  * The zone Cache Rule is `respect_origin` and follows CDN-Cache-Control
  * ahead of Cache-Control, so browsers keep the private revalidate policy
