@@ -242,27 +242,27 @@ describe('security headers', () => {
 		const response = await runMiddleware(makeContext('/about'), respondWith());
 
 		expect(response.headers.get('Permissions-Policy')).toContain('publickey-credentials-get=()');
-		expect(response.headers.get('Cache-Control')).toBe('private, no-store');
+		expect(response.headers.get('Cache-Control')).toBe('private, max-age=0, must-revalidate');
 	});
 });
 
 describe('edge cache policy', () => {
-	it('never stores HTML in the Worker cache, and refuses the zone cache too', async () => {
+	it('revalidates HTML but never stores it in the Worker cache', async () => {
 		installFakeCache();
 		vi.stubEnv('DEV', false);
 		try {
 			const first = await runMiddleware(makeContext('/about'), respondWith());
 			const second = await runMiddleware(makeContext('/about'), respondWith());
 
-			// The Worker half is all this can see: `no-store` makes safeToStore
-			// refuse the put, so neither request is marked HIT. The value is
-			// chosen for the other half — it is the one policy Cloudflare's zone
-			// cache will not override, and the zone's HTML rule was overriding
-			// `private` and answering a www request with the apex copy before
-			// this middleware's redirect could run. The smoke test's www check is
-			// the end-to-end detector for that.
+			// The Worker half is all this can see: `private` (either value) makes
+			// safeToStore refuse the put, so neither request is marked HIT. The
+			// value is chosen for the other half — the zone's host-scoped rule
+			// respects the origin TTLs, so the edge may hold a copy and must
+			// revalidate it each use. The smoke test's www check is still the
+			// end-to-end detector for the hostless-rule bug (apex copy answering
+			// www before the redirect).
 			for (const response of [first, second]) {
-				expect(response.headers.get('Cache-Control')).toBe('private, no-store');
+				expect(response.headers.get('Cache-Control')).toBe('private, max-age=0, must-revalidate');
 				expect(response.headers.has('X-Edge-Cache')).toBe(false);
 			}
 		} finally {
