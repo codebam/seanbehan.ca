@@ -200,8 +200,8 @@ const updated = post.meta.updated
 			{toc.length > 0 && (
 				/* Only on a post long enough to need it: a contents list above three
 					   sections is a second copy of what the reader can already see. On a
-					   phone it is folded until tapped (see scripts/toc.ts); the summary
-					   keeps the same eyebrow look the list label always had. */
+					   phone it starts folded via CSS (see the .toc rules below); the
+					   summary keeps the same eyebrow look the list label always had. */
 				<nav class="enter toc mt-12" style="--enter-delay:40ms" aria-label="On this page">
 					<details open data-toc>
 						<summary class="eyebrow">On this page</summary>
@@ -375,6 +375,18 @@ const updated = post.meta.updated
 	.toc a:hover,
 	.toc a:focus-visible {
 		color: var(--accent);
+	}
+	/* Folded on small screens from first paint (html.js is set in <head> before
+	   the body parses, so no post-JS layout shift). Without JS the list stays
+	   open as the server rendered it. Tapping the summary toggles .expanded
+	   (see scripts/toc.ts), which shows the list again. */
+	@media (max-width: 47.99rem) {
+		html.js details[data-toc] > ol {
+			display: none;
+		}
+		html.js details[data-toc].expanded > ol {
+			display: flex;
+		}
 	}
 
 	.sibling-grid {

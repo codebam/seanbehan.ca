@@ -696,6 +696,15 @@
 	background-color: var(--surface-alt) !important;
 }
 
+/* Filename above a fenced block (was Code.astro's scoped style; kept here
+   so the homepage does not pay a component CSS bundle for one rule). */
+.code-filename {
+	margin-bottom: -0.75rem;
+	font-family: var(--font-mono, monospace);
+	font-size: 0.8rem;
+	color: var(--muted);
+}
+
 /* ═══════════════════════════════════════════════════════════
    Résumé
 

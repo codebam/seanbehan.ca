@@ -88,6 +88,8 @@ const socialDescription = post
 const ogImage = image
 	? absolute(image)
 	: absolute(post ? (post.meta.image ?? `/og/${post.slug}.png`) : '/og/site.png');
+/** Generated cards are always 1200x630; a post or page's own image is not. */
+const isGeneratedOgCard = !image && !(post && post.meta.image);
 
 const pageCtx = createPublicPageContext({
 	Astro,
@@ -137,21 +139,33 @@ const navItems = nav.map((item) => ({
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en-CA">
 	<head>
+		<script is:inline>
+			document.documentElement.classList.add('js');
+		</script>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>{fullTitle}</title>
 
 		<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
 		{serif && (
-			<link
-				rel="preload"
-				href="/fonts/newsreader-latin.woff2"
-				as="font"
-				type="font/woff2"
-				crossorigin
-			/>
+			<>
+				<link
+					rel="preload"
+					href="/fonts/newsreader-latin.woff2"
+					as="font"
+					type="font/woff2"
+					crossorigin
+				/>
+				<link
+					rel="preload"
+					href="/fonts/newsreader-latin-italic.woff2"
+					as="font"
+					type="font/woff2"
+					crossorigin
+				/>
+			</>
 		)}
 
 		<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
@@ -165,8 +179,12 @@ const navItems = nav.map((item) => ({
 			property="og:image:alt"
 			content={post ? post.meta.title : image ? socialTitle : site.name}
 		/>
-		<meta property="og:image:width" content="1200" />
-		<meta property="og:image:height" content="630" />
+		{isGeneratedOgCard && (
+			<>
+				<meta property="og:image:width" content="1200" />
+				<meta property="og:image:height" content="630" />
+			</>
+		)}
 		{post?.meta.tags.map((tag) => (
 			<meta property="article:tag" content={tag} />
 		))}
