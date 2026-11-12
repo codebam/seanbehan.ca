@@ -155,14 +155,14 @@ Markdown conventions, the front matter, and every knob in `metadata.yaml`.
 ## Checks
 
 ```bash
-npm run check              # astro check (types across .astro and .ts)
+npm run check              # tsc + Astro content mapper (types across .astro and .ts)
 npm run test:run           # unit tests over src/lib
 npm run smoke              # ask a running site for one of everything
 ```
 
 `npm run smoke` takes a base URL and defaults to `http://localhost:4321`. It is the check that matters most here: pages assemble on a Worker out of a database, so a page, a feed, a social card and a 404 have to be fetched to know they work. It asks for `/resume` and `/resume.pdf` too, which are the two routes that answer out of R2 — so seed the local bucket first.
 
-GitHub Actions runs the formatter check, `astro check`, the tests and both builds on every push and pull request. `.githooks` is wired by `prepare` so commits run Prettier and the type check first.
+GitHub Actions runs the formatter check, the type check, the tests and both builds on every push and pull request. `.githooks` is wired by `prepare` so commits run Prettier and the type check first.
 
 ## Assets
 

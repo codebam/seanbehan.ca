@@ -41,7 +41,7 @@ npm run build:codebam
 
 ```bash
 npm run lint               # prettier --check
-npm run check              # astro check
+npm run check              # tsc + Astro content mapper (types across .astro and .ts)
 npm run test:run           # vitest
 npm run smoke              # against a running server
 ```
@@ -52,4 +52,4 @@ The smoke test is not in CI, because it needs a running site with a database beh
 
 ## Pre-commit Hooks
 
-`.githooks/` runs lint-staged (Prettier) and `astro check` before each commit. Installed by `prepare` during `npm install`. Bypass a single commit with `git commit --no-verify`.
+`.githooks/` runs lint-staged (Prettier) and the type check before each commit. Installed by `prepare` during `npm install`. Bypass a single commit with `git commit --no-verify`.

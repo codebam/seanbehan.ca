@@ -6,7 +6,7 @@ It used to be a SvelteKit site with the posts as markdown files. The design came
 
 ```bash
 npm run dev          # astro dev: site migrations, then serve on :4321
-npm run check        # astro check
+npm run check        # tsc + Astro content mapper (types across .astro and .ts)
 npm run test:run     # vitest over src/lib
 npm run smoke        # ask a running site for one of everything
 npm run build        # seanbehan.ca (writing + commerce); build:codebam for the handle portfolio

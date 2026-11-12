@@ -3,5 +3,11 @@
 	"compilerOptions": {
 		"types": ["node"]
 	},
+	"contentMappers": [
+		{
+			"package": "@astrojs/ts-content-mapper",
+			"extensions": [".astro"]
+		}
+	],
 	"include": ["src", ".astro/types.d.ts", "emdash-env.d.ts"]
 }

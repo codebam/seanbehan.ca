@@ -48,11 +48,13 @@
         devShell = pkgs.mkShell {
           # Vite's embedded workerd does not discover NixOS's system CA store.
           NODE_EXTRA_CA_CERTS = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
+          # No astro-language-server: @astrojs/ts-content-mapper lets the
+          # TypeScript language server (this project's TS 7) check .astro files
+          # directly, replacing the Volar-based @astrojs/check toolchain.
           buildInputs = with pkgs; [
             nodejs_26
             typescript-language-server
             prettier
-            astro-language-server
             tailwindcss-language-server
             vscode-langservers-extracted
           ];

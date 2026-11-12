@@ -1,4 +1,5 @@
 /// <reference types="astro/client" />
+/// <reference types="astro/env" />
 
 interface SiteD1PreparedStatement {
 	bind(...values: unknown[]): SiteD1PreparedStatement;
