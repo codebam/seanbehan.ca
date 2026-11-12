@@ -108,6 +108,16 @@ const EDGE_SECONDS = 600;
 const IMMUTABLE_SECONDS = 31536000;
 
 const HTML_CACHE = 'private, max-age=0, must-revalidate';
+/**
+ * The zone Cache Rule is `respect_origin` and follows CDN-Cache-Control
+ * ahead of Cache-Control, so browsers keep the private revalidate policy
+ * while the edge may hold a short copy. Bare `private` alone makes the
+ * matched rule land on BYPASS (see the uncached-responses troubleshooting):
+ * the rule must be able to see a public edge directive. 60s keeps edits
+ * visible within a minute without a purge, and must-revalidate forces a
+ * Worker check once it expires.
+ */
+const HTML_CDN_CACHE = 'public, max-age=60, must-revalidate';
 
 /**
  * The one value Cloudflare's Cache Rule cannot override, and the reason editor
@@ -400,6 +410,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 			response.headers.set('Cache-Control', 'public, max-age=2592000');
 		} else {
 			response.headers.set('Cache-Control', HTML_CACHE);
+			response.headers.set('CDN-Cache-Control', HTML_CDN_CACHE);
 		}
 	}
 
