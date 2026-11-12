@@ -40,9 +40,9 @@
 		"@astrojs/cloudflare": "^14.3.3",
 		"@astrojs/react": "^7.0.0",
 		"@cf-wasm/og": "^0.5.0",
-		"@cloudflare/kumo": "2.6.0",
-		"@emdash-cms/cloudflare": "^1.3.0",
-		"@emdash-cms/plugin-forms": "^0.2.10",
+		"@cloudflare/kumo": "2.15.0",
+		"@emdash-cms/cloudflare": "^1.5.0",
+		"@emdash-cms/plugin-forms": "^0.2.13",
 		"@emdash-cms/plugin-webhook-notifier": "^0.2.3",
 		"@phosphor-icons/react": "^2.1.10",
 		"@portabletext/to-html": "^6.0.0",
@@ -50,10 +50,10 @@
 		"@tailwindcss/typography": "^0.5.20",
 		"@tailwindcss/vite": "^4.3.3",
 		"astro": "^7.3.5",
-		"emdash": "^1.3.0",
+		"emdash": "^1.5.0",
 		"fuse.js": "^7.5.0",
 		"react": "19.3.1",
-		"react-dom": "19.3.0",
+		"react-dom": "19.3.1",
 		"shiki": "^4.5.0",
 		"stripe": "^23.0.0",
 		"tailwindcss": "^4.3.3"
@@ -72,8 +72,6 @@
 	"allowScripts": {
 		"esbuild@0.28.2": true,
 		"esbuild@0.28.1": true,
-		"workerd@1.20260910.1": true,
-		"workerd@1.20260926.1": true,
-		"workerd@1.20261006.1": true
+		"workerd@1.20261110.1": true
 	}
 }
