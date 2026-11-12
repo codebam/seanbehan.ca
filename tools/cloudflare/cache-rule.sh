@@ -105,12 +105,12 @@ html_rule = {
     'action': 'set_cache_settings',
     'action_parameters': {
         'cache': True,
-        # Edge ignores the origin: the Worker sends bare `private`, which
-        # blocks caching under respect_origin (see the uncached-responses
-        # troubleshooting). Browser still respects the origin's private
-        # revalidate policy; the edge holds 60s, matching the middleware's
-        # CDN-Cache-Control window, and purges on publish/deploy clear it.
-        'edge_ttl': {'mode': 'override_origin', 'default': 60},
+        # Both TTLs respect the origin, so the cache window lives in the
+        # route or middleware — in the repo, next to the comment
+        # explaining it — rather than as a number in a dashboard. No
+        # `default` alongside: the API rejects one in respect_origin mode
+        # ("default is useless in respect_origin mode").
+        'edge_ttl': {'mode': 'respect_origin'},
         'browser_ttl': {'mode': 'respect_origin'},
         # The Worker sends `Vary: Accept` on `/posts/<slug>`, `/pages/<slug>`
         # and `/resume`. Normalizing it keeps browser Accept strings together
@@ -139,11 +139,7 @@ cards_rule = {
     'action': 'set_cache_settings',
     'action_parameters': {
         'cache': True,
-        # Cards are public with a month-long origin policy; naming the same
-        # window here keeps the zone holding them even when the Worker
-        # response headers are evaluated first (Workers override Cache Rules
-        # on modern compatibility dates, so respect_origin can still bypass).
-        'edge_ttl': {'mode': 'override_origin', 'default': 2592000},
+        'edge_ttl': {'mode': 'respect_origin'},
         'browser_ttl': {'mode': 'respect_origin'}
     },
     'enabled': True
