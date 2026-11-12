@@ -247,24 +247,45 @@ describe('security headers', () => {
 });
 
 describe('edge cache policy', () => {
-	it('revalidates HTML but never stores it in the Worker cache', async () => {
+	it('stores anonymous HTML for the Worker window and restores the browser policy on a hit', async () => {
 		installFakeCache();
 		vi.stubEnv('DEV', false);
 		try {
 			const first = await runMiddleware(makeContext('/about'), respondWith());
+			// Stored for the 60s Worker window the CDN header advertises; the
+			// MISS still serves the reader the private revalidate policy.
+			expect(first.headers.get('X-Edge-Cache')).toBe('MISS');
+			expect(first.headers.get('Cache-Control')).toBe('private, max-age=0, must-revalidate');
+
+			const second = await runMiddleware(makeContext('/about'), respondWith());
+			// The stored copy's public window is never handed to the browser:
+			// the HIT restores `private, max-age=0, must-revalidate` and drops
+			// the internal marker, so a warm HIT cannot outlive the window
+			// under a day-long policy.
+			expect(second.headers.get('X-Edge-Cache')).toBe('HIT');
+			expect(second.headers.get('Cache-Control')).toBe('private, max-age=0, must-revalidate');
+			expect(second.headers.has('X-Edge-Browser-Cache-Control')).toBe(false);
+			expect(second.headers.get('CDN-Cache-Control')).toBe('public, max-age=60, must-revalidate');
+		} finally {
+			vi.unstubAllEnvs();
+			delete (globalThis as { caches?: unknown }).caches;
+		}
+	});
+
+	it('keeps anonymous HTML with a Set-Cookie out of the Worker cache', async () => {
+		installFakeCache();
+		vi.stubEnv('DEV', false);
+		try {
+			const first = await runMiddleware(
+				makeContext('/about'),
+				respondWith({ 'Set-Cookie': 'probe=1' })
+			);
 			const second = await runMiddleware(makeContext('/about'), respondWith());
 
-			// The Worker half is all this can see: `private` (either value) makes
-			// safeToStore refuse the put, so neither request is marked HIT. The
-			// value is chosen for the other half — the zone's host-scoped rule
-			// respects the origin TTLs, so the edge may hold a copy and must
-			// revalidate it each use. The smoke test's www check is still the
-			// end-to-end detector for the hostless-rule bug (apex copy answering
-			// www before the redirect).
-			for (const response of [first, second]) {
-				expect(response.headers.get('Cache-Control')).toBe('private, max-age=0, must-revalidate');
-				expect(response.headers.has('X-Edge-Cache')).toBe(false);
-			}
+			// A cookie on the render means the bytes are not the shared copy,
+			// so the put is refused; the clean follow-up stores normally.
+			expect(first.headers.has('X-Edge-Cache')).toBe(false);
+			expect(second.headers.get('X-Edge-Cache')).toBe('MISS');
 		} finally {
 			vi.unstubAllEnvs();
 			delete (globalThis as { caches?: unknown }).caches;

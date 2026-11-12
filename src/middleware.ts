@@ -82,40 +82,36 @@ const LONG_LIVED = /^\/(fonts|og|img|optimized)\/|\.(webp|png|svg|ico)$/;
 const COMMERCE_PRIVATE = /^\/(checkout|api\/stripe)(?:\/|$)/;
 
 /**
- * HTML is the revalidate-every-visit policy: the browser (and the zone
- * Cache Rule, which respects the origin TTLs) may hold a copy but must
- * revalidate it on every use, so an edit in the admin still reaches a
- * reader within one navigation rather than a TTL window.
+ * HTML is the revalidate-every-visit policy for the browser, and a 60s hold
+ * for the Worker's own cache: anonymous renders are stored under
+ * edgeCacheKey's `/__host/<host>` key for a minute, then re-rendered, so an
+ * edit in the admin still reaches a reader within a minute without a purge.
+ * Personalised renders never enter that cache, because their request is not
+ * cacheable at all (`isCacheable` below) or carries NO_STORE.
  *
- * The zone's HTML rule carries an `http.host` clause for the same reason:
+ * The zone Cache Rule carries an `http.host` clause for the same reason:
  * its cache key does not separate hosts, so a hostless copy of the apex
  * could answer www byte for byte before the www-to-apex 301 below could
  * run. With the rule host-scoped to the apex, www is never eligible and
- * the redirect still comes from the Worker. Verified live after applying
- * tools/cloudflare/cache-rule.sh on both zones: www 301s through the edge
- * and `/` is eligible. Editor and preview renders use NO_STORE below
+ * the redirect still comes from the Worker. Live, however, the zone
+ * answers `cf-cache-status: BYPASS` for Worker-rendered HTML, cards and
+ * feeds (checked 2026-11-12): the Worker overrides the rule on this
+ * compatibility date, so the zone hold the CDN header below advertises
+ * does not happen. The Worker hold below is therefore the mechanism, and
+ * the CDN header is kept for other CDNs and for a future zone pass, not
+ * relied on for Cloudflare. Editor and preview renders use NO_STORE
  * instead, which is the value the zone Cache Rule will not override.
  *
- * `private` is what HTML wants for the browser, and it was already enough to
- * keep HTML out of the Worker's own `cache.put`: `safeToStore` below refuses
- * either value, so no HTML lands under edgeCacheKey's `/__host/<host>` key.
- * What `private` could not do alone is stop a shared cache that had been told
- * to ignore it — that is what the host clause is for. Feeds, images, the
- * immutable routes and the social cards set public policies and are
- * unaffected — they are still stored.
+ * Feeds, images, the immutable routes and the social cards set public
+ * policies and are unaffected — they are still stored on their own TTLs.
  */
 const EDGE_SECONDS = 600;
 const IMMUTABLE_SECONDS = 31536000;
 
 const HTML_CACHE = 'private, max-age=0, must-revalidate';
 /**
- * The zone Cache Rule is `respect_origin` and follows CDN-Cache-Control
- * ahead of Cache-Control, so browsers keep the private revalidate policy
- * while the edge may hold a short copy. Bare `private` alone makes the
- * matched rule land on BYPASS (see the uncached-responses troubleshooting):
- * the rule must be able to see a public edge directive. 60s keeps edits
- * visible within a minute without a purge, and must-revalidate forces a
- * Worker check once it expires.
+ * The Worker's hold on anonymous HTML, matching the window the CDN header
+ * advertises: 60s keeps edits visible within a minute without a purge.
  */
 const HTML_CDN_CACHE = 'public, max-age=60, must-revalidate';
 
@@ -415,10 +411,17 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	}
 
 	const cacheControl = response.headers.get('Cache-Control')?.toLowerCase() ?? '';
+	// The one case `private` may be stored: anonymous HTML the middleware
+	// itself stamped with HTML_CACHE above (no route policy, not an asset
+	// path). It is stored for the Worker window only, and the HIT path
+	// restores the private browser policy from EDGE_BROWSER_POLICY, so the
+	// browser never sees the stored value. NO_STORE always wins, which is
+	// what keeps editor, preview and commerce renders out.
+	const isHtmlWindow = !routeCache && !IMMUTABLE.test(pathname) && !LONG_LIVED.test(pathname);
 	const safeToStore =
-		!cacheControl.includes('private') &&
 		!cacheControl.includes('no-store') &&
-		!response.headers.has('Set-Cookie');
+		!response.headers.has('Set-Cookie') &&
+		(isHtmlWindow ? true : !cacheControl.includes('private'));
 
 	if (key && response.status === 200 && safeToStore) {
 		// The stored copy is read by `cache.match` above and never by the browser
@@ -429,16 +432,19 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		const stored = new Response(response.clone().body, response);
 		stored.headers.set(EDGE_BROWSER_POLICY, response.headers.get('Cache-Control') ?? HTML_CACHE);
 		// Three answers, in this order. EmDash image URLs identify immutable
-		// source bytes and transform options, so a year. A route that set its own
+		// source bytes and transform options, so a year. Anonymous HTML the
+		// middleware stamped gets the 60s window. A route that set its own
 		// policy keeps it — this used to overwrite every one of them with
 		// EDGE_SECONDS, which quietly cut the social cards from a month to ten
 		// minutes and put satori and resvg back to work on every card, every ten
-		// minutes, forever. Everything else is HTML and gets the HTML window.
+		// minutes, forever.
 		stored.headers.set(
 			'Cache-Control',
 			pathname === '/_image'
 				? `public, max-age=${IMMUTABLE_SECONDS}, immutable`
-				: (routeCache ?? `public, max-age=${EDGE_SECONDS}`)
+				: isHtmlWindow
+					? HTML_CDN_CACHE
+					: (routeCache ?? `public, max-age=${EDGE_SECONDS}`)
 		);
 		stored.headers.delete('X-Edge-Cache');
 		// Awaited rather than handed to waitUntil: Astro 6 removed the runtime
