@@ -101,14 +101,22 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 				</div>
 
 				<aside class="hero-aside">
-					<img
-						class="hero-photo"
-						src="/profile.webp"
-						alt={`Portrait of ${site.name}`}
-						width="460"
-						height="460"
-						fetchpriority="high"
-					/>
+					{/* Two grounds, one crop: the portrait sits on --surface-alt in
+					    light and --panel in dark, the same light/dark figure mechanic
+					    the brand plates use. A black ground was palette-homeless —
+					    the heaviest object on the white page, invisible on the navy
+					    one. */}
+					<picture>
+						<source media="(prefers-color-scheme: dark)" srcset="/profile-dark.webp" />
+						<img
+							class="hero-photo"
+							src="/profile.webp"
+							alt={`Portrait of ${site.name}`}
+							width="460"
+							height="460"
+							fetchpriority="high"
+						/>
+					</picture>
 					<Availability availability={site.availability} />
 				</aside>
 			</div>

@@ -221,6 +221,13 @@
 		scrollbar-gutter: stable;
 	}
 
+	/* The portrait's <picture> swaps grounds by scheme; it must not become a
+	   layout box, or the hero aside and the masthead profile grid would size
+	   the wrapper instead of the img. Source selection is unaffected. */
+	picture {
+		display: contents;
+	}
+
 	body {
 		background: var(--bg);
 		color: var(--text);

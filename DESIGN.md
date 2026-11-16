@@ -73,7 +73,9 @@ pointed at the tokens; headings inside it are sans.
 change. These hold a copy of the values and have to be re-inked with them:
 `src/pages/og/[slug].png.ts` (the light values, hard-coded), `src/pages/site.webmanifest.ts`,
 `public/favicon.svg` and `tools/favicon/build-favicon.sh` (regenerate the
-raster set with it), `resume/metadata.yaml` (the PDF's LaTeX palette), the
+raster set with it), `public/profile.webp` and `public/profile-dark.webp` (the
+portrait's two grounds, snapped to `--surface-alt` and `--panel`; the crop is
+shared, only the ground moves, like the brand figures), `resume/metadata.yaml` (the PDF's LaTeX palette), the
 display ads in `public/img/`, the brand plates and their two figures in
 `public/img/brand/` (generated art, snapped to the token values by hand —
 there is no build step, so the dark figures are recolours of the light
