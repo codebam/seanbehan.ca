@@ -30,13 +30,19 @@ jobs:
               | jq -r --arg h "$host" '.result[] | select(.hostname==$h) | .id')
             if [ -n "$id" ]; then
               echo "deleting custom domain $host ($id)"
-              curl -sf -X DELETE -H "$AUTH" "$API/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/domains/$id" | jq -e '.success'
+              # DELETE answers 200 with an empty body, so judge the status,
+              # not a JSON success flag that is not there.
+              code=$(curl -s -o /dev/null -w '%{http_code}' -X DELETE -H "$AUTH" "$API/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/domains/$id")
+              echo "domain delete: $code"
+              test "$code" = "200"
             else
               echo "no custom domain record for $host"
             fi
           done
           echo "deleting worker script codebam-edge"
-          curl -sf -X DELETE -H "$AUTH" "$API/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/codebam-edge" | jq -e '.success'
+          code=$(curl -s -o /dev/null -w '%{http_code}' -X DELETE -H "$AUTH" "$API/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/codebam-edge")
+          echo "script delete: $code"
+          test "$code" = "200"
           code=$(curl -s -o /dev/null -w '%{http_code}' -H "$AUTH" "$API/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/codebam-edge")
           echo "script GET after delete: $code"
           test "$code" = "404"
