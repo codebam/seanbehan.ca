@@ -1,0 +1,42 @@
+# One-off takedown of the retired live-streaming service (worker codebam-edge,
+# custom domains stream.seanbehan.ca and live.codebam.ca). The service had no
+# paying customers; its repo is archived. This workflow exists only to run the
+# deletion with the account credential this repo's CI already holds, because
+# no interactive Cloudflare login is available elsewhere. DELETE THIS FILE in
+# the commit after the run succeeds.
+#
+# Scope: the Worker script and its two custom domains (which removes their DNS
+# records and stops the cron). The D1 database, Durable Object storage and
+# container image are deliberately left in place — taking the service down is
+# not destroying its data.
+name: Takedown codebam-edge
+
+on: workflow_dispatch
+
+jobs:
+  takedown:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete custom domains, then the Worker script
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          API="https://api.cloudflare.com/client/v4"
+          AUTH="Authorization: Bearer $CLOUDFLARE_API_TOKEN"
+          for host in stream.seanbehan.ca live.codebam.ca; do
+            id=$(curl -sf -H "$AUTH" "$API/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/domains" \
+              | jq -r --arg h "$host" '.result[] | select(.hostname==$h) | .id')
+            if [ -n "$id" ]; then
+              echo "deleting custom domain $host ($id)"
+              curl -sf -X DELETE -H "$AUTH" "$API/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/domains/$id" | jq -e '.success'
+            else
+              echo "no custom domain record for $host"
+            fi
+          done
+          echo "deleting worker script codebam-edge"
+          curl -sf -X DELETE -H "$AUTH" "$API/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/codebam-edge" | jq -e '.success'
+          code=$(curl -s -o /dev/null -w '%{http_code}' -H "$AUTH" "$API/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/codebam-edge")
+          echo "script GET after delete: $code"
+          test "$code" = "404"
