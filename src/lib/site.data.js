@@ -40,7 +40,7 @@ const seanbehan = {
 		after: ' and ships to the edge.'
 	},
 	intro:
-		'Professional web experience since 2018, from database to frontend. I daily-drive NixOS, write Rust and TypeScript, and ship most of what I build in the open — a Wayland compositor, bots on Cloudflare Workers, and a pastebin on R2. The paid Stream control plane is the exception.',
+		'Professional web experience since 2018, from database to frontend. I daily-drive NixOS, write Rust and TypeScript, and ship most of what I build in the open — a Wayland compositor, bots on Cloudflare Workers, and a pastebin on R2.',
 	writingLinkLabel: 'Read the writing',
 	email: 'sean@seanbehan.ca',
 	newsletter: {
@@ -88,7 +88,7 @@ const seanbehan = {
 			role: 'Independent Developer',
 			org: 'Open Source',
 			period: '2021 – Present',
-			note: 'Built and run a paid live-streaming control plane on Cloudflare; wrote the Telegram bot framework with 215 forks and 120 npm releases.'
+			note: 'Wrote the Telegram bot framework with 215 forks and 120 npm releases; ships Rust, NixOS and Cloudflare Workers tooling in the open.'
 		},
 		{
 			role: 'Frontend Web Developer',
@@ -142,7 +142,7 @@ const codebam = {
 		after: ' — compositors, workers, and the odd bot.'
 	},
 	intro:
-		'Building software since 2018, most of it in public. I daily-drive NixOS, write Rust and TypeScript, and put the results on GitHub — a Wayland compositor, bots on Cloudflare Workers, and a pastebin on R2. The paid Stream control plane stays private.',
+		'Building software since 2018, most of it in public. I daily-drive NixOS, write Rust and TypeScript, and put the results on GitHub — a Wayland compositor, bots on Cloudflare Workers, and a pastebin on R2.',
 	writingLinkLabel: 'Writing',
 	email: 'codebam@codebam.ca',
 	newsletter: {

@@ -4,9 +4,11 @@ import Base from '../../layouts/Base.astro';
 import { featuredProjects } from '../../lib/projects';
 import { SITES } from '../../lib/site.data.js';
 
-// The case study moved from the old product name to its descriptive title.
-// Keep the old URL working rather than turning an indexed link into a 404.
-if (Astro.params.slug === 'codebam-stream') return Astro.redirect('/projects/stream', 301);
+// The case study moved from the old product name to its descriptive title,
+// and the service itself was retired with no paying customers: both old URLs
+// now land on the portfolio rather than on a 404 or a dead dashboard.
+if (Astro.params.slug === 'codebam-stream' || Astro.params.slug === 'stream')
+	return Astro.redirect('/projects', 301);
 
 const project = featuredProjects.find((candidate) => candidate.slug === Astro.params.slug);
 if (!project) return Astro.rewrite('/404');

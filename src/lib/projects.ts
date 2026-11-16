@@ -1,4 +1,3 @@
-import streamMockup from '../assets/projects/project-stream.webp';
 import viewportMockup from '../assets/projects/project-viewport.webp';
 import telegramMockup from '../assets/projects/project-telegram-sdk.webp';
 import tuxMockup from '../assets/projects/project-tux.webp';
@@ -30,37 +29,6 @@ import type { FeaturedProject } from './types';
  * owns.
  */
 export const featuredProjects: Array<FeaturedProject & { seoDescription: string }> = [
-	{
-		slug: 'stream',
-		// The one row without a repository: the control plane takes Stripe money
-		// for a live service, so it stays private and the row links to the
-		// service instead of to source nobody is allowed to read.
-		since: '2026',
-		title: 'Stream',
-		description:
-			'Browser-first multistreaming in early access: OBS pushes one signal in over WHIP, your own watch page is the program output, and the same signal leaves again as RTMPS to YouTube, Twitch, X, Kick and Telegram. Cloudflare Workers, Durable Objects, D1 and LiveKit underneath, prepaid hours on top.',
-		seoDescription:
-			'Multistream to YouTube, Twitch, X, Kick and Telegram from one browser-first control room, billed by prepaid usage.',
-		language: 'TypeScript',
-		stars: 0,
-		homepage: 'https://stream.seanbehan.ca',
-		homepageLabel: 'Open the dashboard',
-		mockup: streamMockup,
-		mockupAlt: 'Stream control room with one program feed and five relay destinations',
-		tags: ['durable-objects', 'livekit', 'rtmps'],
-		challenge:
-			'Relay one live broadcast to five providers that each have their own stream key, rate limit and way of failing — while taking money for it in advance, and never letting a customer watch or push frames they have not paid for.',
-		architecture: [
-			'WHIP ingest from OBS lands in LiveKit, which serves the browser watch page.',
-			'Provider relays are auxiliary outputs, each held by a Durable Object that owns its lifecycle.',
-			'Two channels of prepaid credit — destination-hours and browser viewer-hours — are allocated FIFO in D1 and reconciled per customer as usage accrues.'
-		],
-		highlights: [
-			'Publisher epochs and relay generations fence every path, so a stale relay can never attach to a replacement broadcast',
-			'Resource-bound capabilities rather than ambient authority inside the Worker',
-			'Fail-closed relays and durable refund handling across 18k lines of tested TypeScript'
-		]
-	},
 	{
 		slug: 'viewport',
 		repo: 'viewport',
