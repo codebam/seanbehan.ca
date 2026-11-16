@@ -37,8 +37,8 @@
 		"migrate:core:check": "emdash migrate --wrangler-config wrangler.jsonc --check"
 	},
 	"dependencies": {
-		"@astrojs/cloudflare": "^14.3.3",
-		"@astrojs/react": "^7.0.0",
+		"@astrojs/cloudflare": "^14.4.8",
+		"@astrojs/react": "^7.1.9",
 		"@cf-wasm/og": "^0.5.0",
 		"@cloudflare/kumo": "2.15.0",
 		"@emdash-cms/cloudflare": "^1.5.0",
@@ -48,30 +48,33 @@
 		"@portabletext/to-html": "^6.0.0",
 		"@tailwindcss/forms": "^0.5.11",
 		"@tailwindcss/typography": "^0.5.20",
-		"@tailwindcss/vite": "^4.3.3",
-		"astro": "^7.3.5",
+		"@tailwindcss/vite": "^4.3.5",
+		"astro": "^7.4.12",
 		"emdash": "^1.5.0",
 		"fuse.js": "^7.5.0",
 		"react": "19.3.1",
 		"react-dom": "19.3.1",
-		"shiki": "^4.5.0",
-		"stripe": "^23.0.0",
+		"shiki": "^4.6.0",
+		"stripe": "^23.1.0",
 		"tailwindcss": "^4.3.3"
 	},
 	"devDependencies": {
 		"@astrojs/ts-content-mapper": "^0.2.0",
-		"@cloudflare/workers-types": "^5.20261002.1",
-		"lint-staged": "^17.6.0",
-		"prettier": "^3.9.9",
-		"prettier-plugin-astro": "^1.1.1",
+		"@cloudflare/workers-types": "^5.20261116.1",
+		"lint-staged": "^17.6.1",
+		"prettier": "^3.10.1",
+		"prettier-plugin-astro": "^1.1.2",
 		"prettier-plugin-tailwindcss": "^0.8.1",
 		"typescript": "7.1.0-beta",
-		"vitest": "^5.0.5",
-		"wrangler": "^4.156.1"
+		"vitest": "^5.1.0",
+		"wrangler": "^4.162.0"
+	},
+	"overrides": {
+		"postcss-selector-parser": "^6.1.6"
 	},
 	"allowScripts": {
 		"esbuild@0.28.2": true,
 		"esbuild@0.28.1": true,
-		"workerd@1.20261110.1": true
+		"workerd@1.20261113.1": true
 	}
 }
