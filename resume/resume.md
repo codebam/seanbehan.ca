@@ -14,8 +14,6 @@ abstract: "Senior full-stack and systems developer, open to full-time work — r
 ### Independent Developer · Open Source
 *2021 – Present*
 
-- Built and run a paid live-streaming service: OBS WHIP ingest, browser WHEP playback and RTMPS relay to five providers
-- Runs it on Cloudflare Workers, Durable Objects, D1 and LiveKit, with prepaid Stripe credit and per-customer reconciliation across 18k lines of tested TypeScript
 - Wrote @codebam/cf-workers-telegram-bot, a TypeScript bot framework for Cloudflare Workers (215 forks, 120 npm releases), then moved my own bots off it onto grammY
 - Write Rust for Linux userspace across eight public repositories, including a Wayland compositor whose desktop shell is a web page; 287 public repositories overall, on NixOS daily
 
@@ -40,13 +38,6 @@ abstract: "Senior full-stack and systems developer, open to full-time work — r
 - Diagnosed and repaired student and faculty machines at the library front desk across Windows and macOS
 
 # SELECTED WORK
-
-### Live Streaming Control Plane
-*[stream.seanbehan.ca](https://stream.seanbehan.ca)*
-
-- Cloudflare-native control plane for multistreaming, with a Durable Object per provider relay owning that relay's lifecycle
-- Two channels of prepaid credit — destination-hours and browser viewer-hours — allocated FIFO in D1 and reconciled per customer as usage accrues, with durable refund handling
-- Publisher epochs, relay generations and resource-bound capabilities fence every path, so a stale relay can never attach to a replacement broadcast
 
 ### Tux Robot · Telegram Bot on Cloudflare Workers
 *[github.com/codebam/tux-robot](https://github.com/codebam/tux-robot)*
@@ -91,7 +82,6 @@ abstract: "Senior full-stack and systems developer, open to full-time work — r
 - Svelte 5 & Astro
 - Hono
 - Web Extension API
-- WHIP, WHEP & RTMPS
 
 **Systems:**
 - Wayland & Smithay
@@ -103,7 +93,6 @@ abstract: "Senior full-stack and systems developer, open to full-time work — r
 - Cloudflare Workers & Pages
 - Durable Objects & D1
 - R2 & KV storage
-- LiveKit
 - Stripe billing
 
 # EDUCATION
