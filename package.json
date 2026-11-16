@@ -70,7 +70,9 @@
 		"wrangler": "^4.162.0"
 	},
 	"overrides": {
-		"postcss-selector-parser": "^6.1.6"
+		"postcss-selector-parser": "^6.1.6",
+		"satori": "^0.33.5",
+		"fflate": "^0.7.5"
 	},
 	"allowScripts": {
 		"esbuild@0.28.2": true,
