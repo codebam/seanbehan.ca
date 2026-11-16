@@ -153,13 +153,22 @@ const schema = JSON.stringify({
 			</div>
 
 			<dl class="quote-grid">
-				{facts.map((fact, i) => (
+				{facts.slice(0, 2).map((fact, i) => (
 					<div data-reveal data-reveal-delay={i * 45}>
 						<dt>{fact.label}</dt>
 						<dd>{fact.value}</dd>
 					</div>
 				))}
 			</dl>
+			{/* Availability and reply are one line of reassurance, not two cards:
+			    as cards they restated the folio and padded the grid to four boxes
+			    for two facts. The operator's own values still flow through. */}
+			<p class="quote-foot" data-reveal data-reveal-delay="90">
+				{facts
+					.slice(2)
+					.map((fact) => fact.value)
+					.join(' ')}
+			</p>
 		</div>
 	</section>
 
@@ -363,6 +372,12 @@ const schema = JSON.stringify({
 		background: var(--panel);
 		border: 1px solid var(--line);
 		border-radius: var(--radius);
+	}
+	.quote-foot {
+		margin-top: 1.25rem;
+		font-size: 0.95rem;
+		line-height: 1.6;
+		color: var(--muted);
 	}
 	.quote-grid dt {
 		font-size: 0.8rem;
