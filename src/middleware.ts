@@ -330,6 +330,20 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	// once per request.
 	const response = await next(variant ?? undefined);
 
+	// Astro's dev image endpoint mislabels its own output as text/html, and the
+	// nosniff below then makes Chromium refuse every astro:assets image in
+	// development: blank panels where production shows the mockups, which is a
+	// trap for anyone reviewing the design locally. Production never reaches
+	// this for those images — the build emits static hashed files that Workers
+	// Assets answers before the Worker runs — so the correction is DEV-only.
+	if (import.meta.env.DEV && pathname === '/_image') {
+		const format = context.url.searchParams.get('f') ?? 'webp';
+		const mime =
+			{ webp: 'image/webp', png: 'image/png', jpeg: 'image/jpeg', avif: 'image/avif' }[format] ??
+			'image/webp';
+		response.headers.set('Content-Type', mime);
+	}
+
 	for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
 		response.headers.set(name, value);
 	}
