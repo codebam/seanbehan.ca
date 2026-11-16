@@ -81,8 +81,10 @@ const { query = '', minQueryLength = 1 } = Astro.props;
 <p class="search-empty" role="status" aria-live="polite" id="post-search-empty" hidden></p>
 
 <style>
+	/* No cap: the field spans the same column as the rows below it, so the
+	   archive keeps one right edge instead of a 34rem notch above full-width
+	   rows. On a phone the shell is narrower than the old cap anyway. */
 	.search-frame {
-		max-width: 34rem;
 		margin-bottom: clamp(2rem, 4vw, 3rem);
 	}
 	.search-frame label {

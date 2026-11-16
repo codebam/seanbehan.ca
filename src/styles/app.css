@@ -1170,6 +1170,9 @@
 		transform: none !important;
 	}
 
+	/* The whole search form, not the field's div: hiding only the div left
+	   the "Search posts" label printing above nothing. The newsletter band is
+	   an ask, not content — its footer copy already goes with the footer. */
 	header,
 	footer,
 	.read-progress,
@@ -1177,7 +1180,8 @@
 	.code-copy,
 	.btn,
 	.site-cta,
-	div:has(> input[type='search']) {
+	form.search-frame,
+	.newsletter {
 		display: none !important;
 	}
 
@@ -1235,6 +1239,14 @@
 	pre,
 	img,
 	li {
+		break-inside: avoid;
+	}
+	/* A hairline row or a card split across a page break reads as two
+	   entries; the facts band is one statement and stays whole. `.card` is
+	   every card face — archive, home writing and projects, offers. */
+	.post-row,
+	.card,
+	.stats {
 		break-inside: avoid;
 	}
 }
