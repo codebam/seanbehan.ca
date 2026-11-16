@@ -217,7 +217,12 @@ const schema = JSON.stringify({
 			<div class="inside-grid">
 				<div data-reveal>
 					<h3>Sanitized file tree</h3>
-					<pre class="file-tree"><code>{fileTree}</code></pre>
+					<p class="tree-hint">
+						Scrolls sideways <span aria-hidden="true">&rarr;</span>
+					</p>
+					<div class="file-tree-frame">
+						<pre class="file-tree"><code>{fileTree}</code></pre>
+					</div>
 					<p class="inside-note">
 						44 files in 16 directories; {archiveSize} archive. Lockfiles elided above. SHA-256
 						<code>{release.sha256}</code>.
@@ -519,8 +524,32 @@ const schema = JSON.stringify({
 		font-weight: 600;
 		letter-spacing: -0.015em;
 	}
-	.file-tree {
+	/* The tree is wider than its column at every breakpoint, so it scrolls;
+	   the fade and the hint say so before a reader concludes the tree ends
+	   where the panel cuts it. The fade lives on the frame, not the pre, or it
+	   would scroll away with the content it is meant to announce. */
+	.tree-hint {
 		margin-top: 1rem;
+		font-size: 0.8rem;
+		color: var(--dim);
+		text-align: right;
+	}
+	.file-tree-frame {
+		position: relative;
+		margin-top: 0.4rem;
+	}
+	.file-tree-frame::after {
+		content: '';
+		position: absolute;
+		top: 1px;
+		bottom: 1px;
+		right: 1px;
+		width: 3rem;
+		border-radius: 0 var(--radius) var(--radius) 0;
+		background: linear-gradient(to right, transparent, var(--surface-alt));
+		pointer-events: none;
+	}
+	.file-tree {
 		overflow-x: auto;
 		padding: 1.25rem;
 		background: var(--surface-alt);
