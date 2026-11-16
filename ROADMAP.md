@@ -26,13 +26,17 @@ proposed, roughly ordered by value within each section.
       `src/pages/index.astro:20-23`, `src/pages/projects/index.astro:9`). The
       whole live-stats fetch now races a 600 ms budget and falls back to the
       committed numbers — stars are decoration, the page is the product.
-- [ ] Feed renders highlight every code block on every MISS
-      (`src/pages/rss.xml.ts`, `src/lib/renderBody.ts`). Hourly MISS × ~20 posts
-      of shiki is the heaviest per-request CPU left. Consider caching rendered
-      item HTML or lengthening feed edge time. The route no longer fetches the
-      archive twice: `getPosts({ includeContent: true })` keeps the Portable
-      Text the first query already carried, so a MISS is one collection query
-      plus the highlighting, not two queries.
+- [x] Feed re-highlighted every code block on every MISS. **Resolved Sept
+      2026 (`6cfa50c`):** the feed renderer dropped shiki entirely — code
+      blocks are plain `<pre><code>` with a language class, so the inline
+      styles and per-token spans no longer ride along to every subscriber
+      (measured 90% smaller on a 300-line block). `renderBodyHtml`
+      (`src/lib/renderBody.ts`) no longer imports the highlighter and does no
+      async work, and both feed routes share it. A MISS is now one collection
+      query (`getPosts({ includeContent: true })`) plus a synchronous string
+      render, held an hour in the Worker cache — so caching rendered item HTML
+      or lengthening the feed TTL would buy nothing measurable. Locked by
+      `rssFeed.test.ts` ("keeps code full text but drops shiki token markup").
 
 ## 2. Content / UX
 
