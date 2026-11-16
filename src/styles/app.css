@@ -300,10 +300,14 @@
 		line-height: 1.15;
 	}
 
-	/* Italic, in the warm accent: the one decorative move a headline gets. */
+	/* Italic, in the warm accent: the one decorative move a headline gets.
+	   The trailing margin is not decoration: at display sizes the italic's
+	   slant overhangs its advance and eats the space after </em>, so
+	   "…metal</em> and" read as one word. A hair of room gives the space back. */
 	.display em {
 		font-style: italic;
 		color: var(--accent-warm);
+		margin-right: 0.06em;
 	}
 
 	/* Section label: small, uppercase, tracked. Inter, not the serif. */
