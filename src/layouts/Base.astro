@@ -25,6 +25,7 @@ import {
 } from '../lib/site';
 import SiblingMark from '../components/SiblingMark.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
+import { JS_CLASS_SCRIPT } from '../lib/js-class';
 import type { PostSummary } from '../lib/types';
 import '../styles/app.css';
 
@@ -141,9 +142,9 @@ const navItems = nav.map((item) => ({
 <!doctype html>
 <html lang="en-CA">
 	<head>
-		<script is:inline>
-			document.documentElement.classList.add('js');
-		</script>
+		{/* The snippet is rendered from lib/js-class so its CSP hash, computed
+		    in astro.config, always matches these exact bytes. */}
+		<script is:inline set:html={JS_CLASS_SCRIPT}></script>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>{fullTitle}</title>

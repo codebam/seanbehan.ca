@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import cloudflare from '@astrojs/cloudflare';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
@@ -9,8 +10,18 @@ import emdash from 'emdash/astro';
 import { siteFor } from './src/lib/site.data.js';
 import { siteSeo } from './src/plugins/site-seo';
 import { CSP_DIRECTIVES } from './src/lib/csp.js';
+import { JS_CLASS_SCRIPT } from './src/lib/js-class.js';
 
 const buildSite = siteFor(process.env.PUBLIC_SITE);
+
+/**
+ * Astro hashes the inline scripts it emits itself; the head's js-class script
+ * is author-written `is:inline` and reaches the browser unhashed, so the
+ * policy blocked it and `html.js` was never set in production (the mobile
+ * contents fold died with it). The hash is computed from the same string
+ * Base.astro renders, so editing the snippet moves the hash with it.
+ */
+const jsClassHash = `sha256-${createHash('sha256').update(JS_CLASS_SCRIPT).digest('base64')}`;
 
 /**
  * The admin panel is React; the site itself is plain Astro templates.
@@ -49,7 +60,8 @@ export default defineConfig({
 			// zone. Allow the script origin here; csp.js allows the data endpoint in
 			// connect-src.
 			scriptDirective: {
-				resources: ["'self'", 'https://static.cloudflareinsights.com']
+				resources: ["'self'", 'https://static.cloudflareinsights.com'],
+				hashes: [jsClassHash]
 			}
 		}
 	},
