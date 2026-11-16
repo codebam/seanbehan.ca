@@ -159,7 +159,11 @@ quiet row beside it, with the portrait and the availability mark in the aside.
 The facts strip follows — four figures separated by hairlines on the page's own
 ground — then project cards (one wide feature, then a two-column grid) and the
 writing list (one lead card, then a grid). `leadWith` decides whether the work
-or the numbers come first, so the two variants differ by order, not layout. On the hiring variant a
+or the numbers come first, so the two variants differ by order, not layout.
+The lead block follows the hero outright — proof on the first screen — and the
+commercial offers follow it on the hiring variant; the first section after the
+hero opens on `--pad-after-hero` so a heading, not padding, ends the first
+screen. On the hiring variant a
 condensed work history sits between the numbers and the projects: five dated
 rows, the employer in the warm accent, one line each, because "has anyone paid
 him?" is the question a hiring reader asks before the project rows mean

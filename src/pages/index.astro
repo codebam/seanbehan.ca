@@ -122,6 +122,16 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 			</div>
 		</section>
 
+		{/* The lead block — numbers or work, per the variant — follows the hero
+		    outright, as DESIGN.md §3.3 describes: proof on the first screen, not
+		    a screen of padding. The commercial offers follow it on the hiring
+		    variant; the work history sits between the pair. */}
+		{site.leadWith === 'work' ? (
+			<Work projects={projects} />
+		) : (
+			<Facts postCount={posts.length} projects={projects} yearsBuilding={yearsBuilding()} />
+		)}
+
 		{commercial && (
 			<section class="section shell offers" aria-labelledby="offers-heading">
 				<div class="section-head" data-reveal>
@@ -169,16 +179,6 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 					</article>
 				</div>
 			</section>
-		)}
-
-		{/* The numbers and the project rows keep the variant's order; the work
-		    history sits between them on the hiring variant. The résumé is still
-		    the full telling — these rows are what a reader gets before deciding to
-		    open it. */}
-		{site.leadWith === 'work' ? (
-			<Work projects={projects} />
-		) : (
-			<Facts postCount={posts.length} projects={projects} yearsBuilding={yearsBuilding()} />
 		)}
 
 		{site.experience && <Experience experience={site.experience} />}
@@ -264,6 +264,9 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 		}
 		.hero-photo {
 			max-width: 14rem;
+			/* Capped so the portrait cannot push the mark past the fold; centred
+			   so the cap does not leave it floating in half a row. */
+			margin-inline: auto;
 		}
 	}
 
