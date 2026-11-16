@@ -6,7 +6,7 @@ email: "sean@seanbehan.ca"
 website: "https://seanbehan.ca"
 linkedin: "sean-behan"
 github: "codebam"
-abstract: "Senior full-stack and systems developer, open to full-time work — remote, or hybrid in the Greater Toronto Area. I ship serverless bots and web apps on Cloudflare Workers, write Rust for Wayland compositors, and keep my machines reproducible with Nix. Professional software and IT experience since 2018; open-source work since 2021."
+abstract: "Full-stack and systems developer shipping production software on Cloudflare Workers and in Rust: a Telegram bot framework with 330 GitHub stars and ~1,500 monthly npm downloads, and a Wayland compositor whose desktop shell is a web page. Open to full-time work — remote, or hybrid in the Greater Toronto Area."
 ---
 
 # EXPERIENCE
@@ -14,35 +14,40 @@ abstract: "Senior full-stack and systems developer, open to full-time work — r
 ### Independent Developer · Open Source
 *2021 – Present*
 
-- Wrote @codebam/cf-workers-telegram-bot, a TypeScript bot framework for Cloudflare Workers (215 forks, 120 npm releases), then moved my own bots off it onto grammY
-- Write Rust for Linux userspace across eight public repositories, including a Wayland compositor whose desktop shell is a web page; 287 public repositories overall, on NixOS daily
+- Created @codebam/cf-workers-telegram-bot, a TypeScript bot framework for Cloudflare Workers — 330 GitHub stars, 214 forks, ~1,500 npm downloads per month
+- Write Rust for Linux userspace across eight public repositories, including Viewport, a Wayland compositor whose entire desktop shell is a web page
+
+### Sysadmin and Moderator · mstdn.ca
+*Jan. 2024 – Present*
+
+- Run a Mastodon instance serving 36,000+ users: upgrades, federation troubleshooting and moderation across the Fediverse
 
 ### Frontend Web Developer · AssetDash
 *Apr. 2021 – Oct. 2021*
 
 - Rebuilt the company site on Next.js, TypeScript and React with a Firebase backend, cutting bounce rate 15% and raising user engagement 20%
 
+### Development Intern · AVROD
+*Sep. 2019 – Apr. 2020*
+
+- Built a web store with Django and MySQL
+
 ### Assistant Automation Coordinator · Elections Canada
 *Oct. 2019*
 
 - Kept polling-station computer systems online through the 2019 federal election alongside a team of 10+
 
-### Development Intern · AVROD
-*Sept. 2019 – Apr. 2020*
-
-- Built a web store with Django and MySQL, as a course placement at the company
-
-### IT Student Advisor · Trent University Information Technology
-*May 2018 – Apr. 2020*
-
-- Diagnosed and repaired student and faculty machines at the library front desk across Windows and macOS
-
 # SELECTED WORK
+
+### seanbehan.ca · Personal Site & Storefront
+*[seanbehan.ca](https://seanbehan.ca)*
+
+- Astro and EmDash CMS on a Cloudflare Worker with D1 and R2: server-rendered writing, a Stripe-backed storefront, and two site identities built from one codebase with CI-applied migrations
 
 ### Tux Robot · Telegram Bot on Cloudflare Workers
 *[github.com/codebam/tux-robot](https://github.com/codebam/tux-robot)*
 
-- AI chat bot built on grammY in TypeScript on a single Cloudflare Worker, with a Svelte 5 web app, Cloudflare AI, Tavily search and document retrieval; live at t.me/TuxRobot
+- AI chat bot on a single Cloudflare Worker: grammY in TypeScript, a Svelte 5 web app, Cloudflare AI with Tavily search and document retrieval; live at t.me/TuxRobot
 
 ### Viewport · Wayland Compositor
 *[github.com/codebam/viewport](https://github.com/codebam/viewport)*
@@ -54,8 +59,7 @@ abstract: "Senior full-stack and systems developer, open to full-time work — r
 ### Pastebin-R2 · Serverless Snippet Service
 *[github.com/codebam/pastebin-r2](https://github.com/codebam/pastebin-r2)*
 
-- Pastebin on Cloudflare Workers in TypeScript with Hono, storing objects in R2 behind a small REST API — create, update, list, info, delete — with syntax-highlighted and plain-text views
-- Pastes carry a TTL in R2 custom metadata, enforced on every read and swept by an hourly cron trigger; web UI, Nix flake for dev and build, live at paste.codebam.ca
+- Snippet service on Cloudflare Workers with Hono and R2: REST API, TTL expiry enforced on read and swept by an hourly cron, syntax-highlighted views; live at paste.codebam.ca
 
 # SKILLS
 
@@ -85,7 +89,7 @@ abstract: "Senior full-stack and systems developer, open to full-time work — r
 
 **Systems:**
 - Wayland & Smithay
-- Linux (12 years)
+- Linux
 - Nix & NixOS
 - Docker & Podman
 
@@ -102,39 +106,21 @@ abstract: "Senior full-stack and systems developer, open to full-time work — r
 
 - Coursework toward an Honours B.Sc. in Computer Science
 
-# AWARDS AND CERTIFICATES
+# AWARDS
 
 - Overleaf Most Interesting Talk, Trent Mathematics and Statistics Conference 2019
 - Project Management Award, Electric City Hacks Hackathon 2016
-- Ontario Worker Health and Safety Awareness Certificate
-- AWS Educate Application Developer Certification
 
-# EXTRA CURRICULAR
+# LEADERSHIP
 
-### Sysadmin and Moderator · mstdn.ca
-*Jan. 2024 – Present*
+### Student Leadership · Trent University
+*2016 – 2020*
 
-- Run a Mastodon instance: upgrades, federation troubleshooting and moderation across the Fediverse
-
-### President · Trent Computer Science Society
-*Sept. 2019 – May 2020*
-
-- Led the society's speaker series and socials for the CS cohort
-
-### Founder and President · Trent Innovate
-*Nov. 2018 – Nov. 2019*
-
-- Founded a campus innovation group and ran its executive team
-
-### Director · Electric City Hacks
-*Nov. 2016 – Nov. 2019*
-
-- Went from participant to volunteer to organizer to director of the hackathon over four years
+- President, Computer Science Society; Founder, Trent Innovate; Director, Electric City Hacks
 
 # INTERESTS
 
 - Serverless and edge runtimes
 - Compositors and windowing
 - Declarative builds with Nix
-- Linux kernel development
 - Applied AI

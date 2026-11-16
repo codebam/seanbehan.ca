@@ -18,7 +18,7 @@ monofont: DejaVu Sans Mono
 # fallbackmono: Liberation Mono
 nameTracking: 8                 # % letter-spacing, name
 titleTracking: 6                # % letter-spacing, section titles
-subtitleTracking: 16
+subtitleTracking: 8               # 16 wrapped "Rust" onto a second line in the 0.44-width header minipage
 
 # ---------- colour palette (HTML hex, no leading #) ----------
 # The site's light tokens, so the PDF and the /resume page it is built beside
