@@ -25,6 +25,13 @@ interface Props {
 	matched?: string[] | null;
 	/** 2 for the archive's paired grid, 1 for a single column */
 	columns?: 1 | 2;
+	/**
+	 * Cards showcase; rows scan. The archive is a list a reader searches and
+	 * walks, so it sets rows: hairline-separated, date in its own column, no
+	 * orphaned half-grid when the count is odd. Tag pages and the home keep
+	 * cards, where each entry is a destination being pitched.
+	 */
+	variant?: 'cards' | 'rows';
 	/** Topic tags are noise next to six posts, useful across twenty-four */
 	showTags?: boolean;
 	/**
@@ -37,7 +44,14 @@ interface Props {
 	headingLevel?: 2 | 3;
 }
 
-const { posts, matched = null, columns = 1, showTags = false, headingLevel = 3 } = Astro.props;
+const {
+	posts,
+	matched = null,
+	columns = 1,
+	variant = 'cards',
+	showTags = false,
+	headingLevel = 3
+} = Astro.props;
 const Heading = `h${headingLevel}` as 'h2' | 'h3';
 
 const matchedSet = matched ? new Set(matched) : null;
@@ -57,24 +71,20 @@ const monthYear = (date: string) =>
 	new Date(date).toLocaleDateString('en-CA', { month: 'short', year: 'numeric', timeZone: 'UTC' });
 ---
 
-<div class:list={['post-list', columns === 2 && 'post-list-paired']} data-post-list>
-	{rows.map((post) => (
-		<article
-			class="post-card card"
-			data-post
-			data-slug={post.slug}
-			hidden={matchedSet ? !matchedSet.has(post.slug) : undefined}
-		>
-			<a class="post-card-link" href={writingHref(post.path)}>
-				<p class="post-card-meta">
-					<time datetime={post.meta.date}>{monthYear(post.meta.date)}</time>
-					{post.readingMinutes && <span>· {post.readingMinutes} min read</span>}
-				</p>
-				<Heading class="post-card-title">{post.meta.title}</Heading>
-				{post.meta.description && <p class="post-card-desc">{post.meta.description}</p>}
-			</a>
-			{showTags && post.meta.tags.length > 0 && (
-				<ul class="post-card-tags" role="list">
+<div
+	class:list={[
+		'post-list',
+		columns === 2 && 'post-list-paired',
+		variant === 'rows' && 'post-list-rows'
+	]}
+	data-post-list
+>
+	{rows.map((post) => {
+		/* Tags sit outside the entry link in both variants: a link inside a link
+		   is not a thing, and the chips are their own destinations. */
+		const tagList = (cls: string) =>
+			showTags && post.meta.tags.length > 0 ? (
+				<ul class={cls} role="list">
 					{post.meta.tags.map((tag) => (
 						<li>
 							<a class="tag" href={writingHref(`/posts/tag/${slugifyTag(tag)}`)}>
@@ -83,9 +93,36 @@ const monthYear = (date: string) =>
 						</li>
 					))}
 				</ul>
-			)}
-		</article>
-	))}
+			) : null;
+		const hidden = matchedSet ? !matchedSet.has(post.slug) : undefined;
+		return variant === 'rows' ? (
+			<article class="post-row" data-post data-slug={post.slug} hidden={hidden}>
+				<a class="post-row-link" href={writingHref(post.path)}>
+					<p class="post-row-meta">
+						<time datetime={post.meta.date}>{monthYear(post.meta.date)}</time>
+						{post.readingMinutes && <span>{post.readingMinutes} min read</span>}
+					</p>
+					<div class="post-row-body">
+						<Heading class="post-row-title">{post.meta.title}</Heading>
+						{post.meta.description && <p class="post-row-desc">{post.meta.description}</p>}
+					</div>
+				</a>
+				{tagList('post-row-tags')}
+			</article>
+		) : (
+			<article class="post-card card" data-post data-slug={post.slug} hidden={hidden}>
+				<a class="post-card-link" href={writingHref(post.path)}>
+					<p class="post-card-meta">
+						<time datetime={post.meta.date}>{monthYear(post.meta.date)}</time>
+						{post.readingMinutes && <span>· {post.readingMinutes} min read</span>}
+					</p>
+					<Heading class="post-card-title">{post.meta.title}</Heading>
+					{post.meta.description && <p class="post-card-desc">{post.meta.description}</p>}
+				</a>
+				{tagList('post-card-tags')}
+			</article>
+		);
+	})}
 </div>
 
 <style>
@@ -96,6 +133,90 @@ const monthYear = (date: string) =>
 	@media (width >= 48rem) {
 		.post-list-paired {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+	/* Rows: one column of hairline-separated entries, date in its own gutter.
+	   An odd count leaves a short last row, never a half-empty grid. */
+	.post-list-rows {
+		display: block;
+	}
+	.post-row {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		gap: 0 1.5rem;
+		padding-block: 1.4rem;
+	}
+	.post-row + .post-row {
+		border-top: 1px solid var(--line);
+	}
+	.post-row:first-child {
+		padding-top: 0;
+	}
+	/* The grid display above would override the UA's [hidden] rule; the search
+	   script hides non-matches with that attribute, so it must win here. */
+	.post-row[hidden] {
+		display: none;
+	}
+	.post-row-link {
+		display: grid;
+		grid-template-columns: 6.5rem minmax(0, 1fr);
+		gap: 0 1.5rem;
+		min-width: 0;
+	}
+	/* Stacked, not inline: the gutter is 6.5rem and "Aug 2026 · 1 min read"
+	   wraps mid-phrase on one line. Two quiet lines never break a word. */
+	.post-row-meta {
+		display: flex;
+		flex-direction: column;
+		gap: 0.15rem;
+		padding-top: 0.2rem;
+		font-size: 0.8rem;
+		font-weight: 500;
+		color: var(--muted);
+	}
+	.post-row-meta time {
+		white-space: nowrap;
+	}
+	.post-row-title {
+		font-family: var(--font-sans);
+		font-size: 1.15rem;
+		font-weight: 600;
+		letter-spacing: -0.015em;
+		line-height: 1.3;
+		color: var(--text);
+		transition: color 0.2s ease;
+	}
+	.post-row:hover .post-row-title,
+	.post-row:focus-within .post-row-title {
+		color: var(--accent);
+	}
+	.post-row-desc {
+		margin-top: 0.35rem;
+		font-size: 0.95rem;
+		line-height: 1.6;
+		color: var(--body);
+	}
+	.post-row-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		justify-content: flex-end;
+		align-self: start;
+		max-width: 14rem;
+		padding-top: 0.15rem;
+	}
+	@media (width < 48rem) {
+		.post-row {
+			grid-template-columns: 1fr;
+		}
+		.post-row-link {
+			grid-template-columns: 1fr;
+			gap: 0.3rem;
+		}
+		.post-row-tags {
+			justify-content: flex-start;
+			max-width: none;
+			margin-top: 0.6rem;
 		}
 	}
 	.post-card {
