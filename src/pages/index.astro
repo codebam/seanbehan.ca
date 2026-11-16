@@ -54,7 +54,7 @@ const primaryIsWriting = primary.via === 'writing' && primary.href === '/posts';
 const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 	...(primaryIsWriting
 		? []
-		: [{ label: 'Read the writing', href: writingHref('/posts'), newTab: false }]),
+		: [{ label: site.writingLinkLabel, href: writingHref('/posts'), newTab: false }]),
 	{ label: 'GitHub', href: 'https://github.com/codebam', newTab: true },
 	{ label: site.email, href: `mailto:${site.email}`, newTab: false }
 ];

@@ -41,6 +41,7 @@ const seanbehan = {
 	},
 	intro:
 		'Professional web experience since 2018, from database to frontend. I daily-drive NixOS, write Rust and TypeScript, and ship most of what I build in the open — a Wayland compositor, bots on Cloudflare Workers, and a pastebin on R2. The paid Stream control plane is the exception.',
+	writingLinkLabel: 'Read the writing',
 	email: 'sean@seanbehan.ca',
 	newsletter: {
 		...NEWSLETTER,
@@ -142,6 +143,7 @@ const codebam = {
 	},
 	intro:
 		'Building software since 2018, most of it in public. I daily-drive NixOS, write Rust and TypeScript, and put the results on GitHub — a Wayland compositor, bots on Cloudflare Workers, and a pastebin on R2. The paid Stream control plane stays private.',
+	writingLinkLabel: 'Writing',
 	email: 'codebam@codebam.ca',
 	newsletter: {
 		...NEWSLETTER,

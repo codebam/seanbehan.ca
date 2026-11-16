@@ -27,6 +27,12 @@ export interface SiteConfig {
 	headline: { before: string; emphasis: string; after: string };
 	/** Home page opening paragraph. `{years}` is replaced with the year count. */
 	intro: string;
+	/**
+	 * The quiet row's link to the archive. The handle's front door keeps it
+	 * terse so the whole row — action, links, email — fits one line beside the
+	 * hero instead of wrapping the email onto a second by accident of length.
+	 */
+	writingLinkLabel: string;
 	email: string;
 	/**
 	 * The email list, and the words each front door uses to ask for it.
