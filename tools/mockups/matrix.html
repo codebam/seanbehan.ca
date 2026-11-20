@@ -1,0 +1,183 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Matrix Workers</title>
+		<link rel="stylesheet" href="frame.css" />
+		<style>
+			.head {
+				display: flex;
+				align-items: baseline;
+				justify-content: space-between;
+			}
+
+			.head h1 {
+				margin: 0;
+				font-size: 36px;
+				font-weight: 600;
+				color: #eef2f8;
+			}
+
+			.head .cursor {
+				display: inline-block;
+				width: 14px;
+				height: 30px;
+				margin-left: 8px;
+				background: var(--green);
+				vertical-align: -3px;
+			}
+
+			.report-panel {
+				border: 1px solid var(--line);
+				border-radius: 4px;
+				background: rgba(13, 20, 34, 0.75);
+			}
+
+			.report-panel > header {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				padding: 12px 18px;
+				border-bottom: 1px solid rgba(140, 170, 220, 0.14);
+				color: #cdd7e6;
+			}
+
+			.pulse {
+				width: 10px;
+				height: 10px;
+				border-radius: 50%;
+				background: var(--green);
+			}
+
+			.right {
+				margin-left: auto;
+				color: var(--muted);
+			}
+
+			.report {
+				padding: 6px 18px;
+			}
+
+			.check {
+				display: grid;
+				grid-template-columns: 220px 1fr;
+				gap: 0 22px;
+				padding: 9px 0;
+				border-bottom: 1px dashed rgba(140, 170, 220, 0.12);
+			}
+
+			.check:last-child {
+				border-bottom: 0;
+			}
+
+			.check .ok {
+				color: var(--green);
+			}
+
+			.check .detail {
+				color: #cdd7e6;
+			}
+
+			.cli {
+				padding: 18px;
+				border-top: 1px solid rgba(140, 170, 220, 0.14);
+			}
+
+			.cli h2 {
+				margin: 0 0 14px;
+				font-size: 19px;
+				font-weight: 400;
+				color: #93a1b8;
+			}
+
+			.cli p {
+				margin: 6px 0;
+				font-size: 18px;
+				color: #cdd7e6;
+			}
+
+			.cli .ok {
+				color: var(--green);
+			}
+
+			.foot {
+				margin: 30px 0 0;
+				font-size: 18px;
+			}
+
+			.foot u {
+				color: #a8b6cc;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="label">02 / Matrix Workers</div>
+		<div class="stack">TypeScript · Hono · Cloudflare Workers</div>
+
+		<div class="card">
+			<div class="chrome">
+				<i class="dot"></i><i class="dot"></i><i class="dot"></i>
+				<span>federationtester.matrix.org</span>
+			</div>
+
+			<div class="view">
+				<div class="head">
+					<h1><span class="accent">$</span> fed check codebam.ca<span class="cursor"></span></h1>
+					<span class="muted">s2s · edge</span>
+				</div>
+				<div class="rule"></div>
+
+				<section class="report-panel">
+					<header>
+						<i class="pulse"></i>
+						codebam.ca — federation report
+						<span class="right">matrix-worker 0.1.0</span>
+					</header>
+					<div class="report">
+						<div class="check">
+							<span class="ok">✓ well-known</span>
+							<span class="detail">{"m.server":"codebam.ca:443"}</span>
+						</div>
+						<div class="check">
+							<span class="ok">✓ server key</span>
+							<span class="detail">ed25519:89b0c6da · valid signature</span>
+						</div>
+						<div class="check">
+							<span class="ok">✓ matrix.org</span>
+							<span class="detail">invites · joins · messages · media, both ways</span>
+						</div>
+						<div class="check">
+							<span class="ok">✓ e2ee</span>
+							<span class="detail">device keys + megolm, exchanged over federation</span>
+						</div>
+						<div class="check">
+							<span class="ok">✓ room versions</span>
+							<span class="detail">1–12, each event signed under its own redaction rules</span>
+						</div>
+						<div class="check">
+							<span class="ok">✓ peers on :8448</span>
+							<span class="detail">tcp sockets · hand-rolled http/1.1</span>
+						</div>
+						<div class="check">
+							<span class="ok">✓ suite</span>
+							<span class="detail">45,000 vitest tests, green through every change</span>
+						</div>
+					</div>
+					<div class="cli">
+						<h2>verdict</h2>
+						<p>
+							<span class="accent">$</span> curl -s
+							"federationtester.matrix.org/api/report?server_name=codebam.ca"
+						</p>
+						<p class="ok">{"FederationOK": true, "ConnectionErrors": {}}</p>
+					</div>
+				</section>
+
+				<p class="foot muted">
+					hono · cloudflare workers · d1 · durable objects ·
+					<u>github.com/codebam/matrix-workers</u>
+				</p>
+			</div>
+		</div>
+	</body>
+</html>

@@ -56,6 +56,13 @@ abstract: "Full-stack and systems developer shipping production software on Clou
 - Zero-copy path from engine to screen: DMA-BUF frames, drm_syncobj fences and real vblank pacing, so no pixel is copied through the CPU
 - Tiling is a tree of CSS flexboxes, so the browser computes every window rectangle and the shell only measures the result; packaged in a Nix flake that builds WPE WebKit from source
 
+### Matrix Workers · Federated Matrix Homeserver
+*[github.com/codebam/matrix-workers](https://github.com/codebam/matrix-workers)*
+
+- A Matrix homeserver running entirely on Cloudflare Workers — Hono, D1, R2 and Durable Objects — taken from a proof of concept that failed the Matrix Federation Tester to verified two-way federation with matrix.org: invites, joins, messages, E2EE key exchange and media, across room versions 1–12
+- Made federation itself correct: events signed and reference-hashed under each room version's redaction rules, the federation v4 wire format, room v12 ID derivation (MSC4291, MSC4289), and an HTTP/1.1 client over TCP sockets for peers on port 8448, which the runtime's fetch() cannot reach
+- Fixed security gaps along the way — a login flow that issued access tokens without credentials, an unauthenticated federation v2 join path, registration moved behind single-use hashed invite tokens — and kept the inherited 45,000-test suite green; live at codebam.ca
+
 ### Pastebin-R2 · Serverless Snippet Service
 *[github.com/codebam/pastebin-r2](https://github.com/codebam/pastebin-r2)*
 

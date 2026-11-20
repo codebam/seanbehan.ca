@@ -28,8 +28,8 @@ const out = resolve(here, '../../src/assets/projects');
 
 /** Page file → image name in src/assets/projects, in the order the rows appear. */
 const pages = [
-	['stream.html', 'project-stream.webp'],
 	['viewport.html', 'project-viewport.webp'],
+	['matrix.html', 'project-matrix.webp'],
 	['telegram-sdk.html', 'project-telegram-sdk.webp'],
 	['tux.html', 'project-tux.webp'],
 	['pastebin.html', 'project-pastebin.webp']

@@ -1,4 +1,5 @@
 import viewportMockup from '../assets/projects/project-viewport.webp';
+import matrixMockup from '../assets/projects/project-matrix.webp';
 import telegramMockup from '../assets/projects/project-telegram-sdk.webp';
 import tuxMockup from '../assets/projects/project-tux.webp';
 import pastebinMockup from '../assets/projects/project-pastebin.webp';
@@ -54,6 +55,38 @@ export const featuredProjects: Array<FeaturedProject & { seoDescription: string 
 			'Five interchangeable engine backends behind one shell page — WPE, WebKitGTK, Chromium, CEF and Servo',
 			'Zero-copy from engine to screen: DMA-BUF frames, drm_syncobj fences and real vblank pacing',
 			'A Nix flake that builds WPE WebKit from source'
+		]
+	},
+	{
+		slug: 'matrix-workers',
+		repo: 'matrix-workers',
+		since: '2026',
+		title: 'Matrix Workers',
+		description:
+			'A Matrix homeserver running entirely on Cloudflare Workers — Hono, D1, R2 and Durable Objects — taken from a proof of concept that failed the Matrix Federation Tester to verified two-way federation with matrix.org: invites, joins, messages, E2EE key exchange and media, across room versions 1–12. Live at codebam.ca.',
+		seoDescription:
+			'A Matrix homeserver on Cloudflare Workers with verified two-way federation with matrix.org, E2EE and a 45,000-test suite.',
+		language: 'TypeScript',
+		stars: 0,
+		homepage: 'https://matrix.to/#/@codebam:codebam.ca',
+		homepageLabel: 'Message @codebam',
+		mockup: matrixMockup,
+		mockupAlt:
+			'A federation report for codebam.ca — signed server key, room versions 1–12, E2EE exchanged over federation',
+		tags: ['cloudflare', 'matrix', 'federation'],
+		challenge:
+			'Meet the Matrix server-to-server specification well enough that the network’s largest homeserver accepts this one as a peer — signed events, room-version-specific redaction rules, E2EE key exchange — on a runtime with no TCP sockets and no persistent process.',
+		architecture: [
+			'Hono routes the client and federation APIs inside one Cloudflare Worker; D1 is the event store, R2 holds media, and Durable Objects own per-room ordering and long-poll /sync.',
+			'Every event is signed and reference-hashed under its own room version’s redaction rules, then sent in the federation v4 wire format — no event ID on the wire, the receiver derives it.',
+			'Peers that only listen on port 8448 — the runtime’s fetch() ignores non-standard ports — are reached by an HTTP/1.1 client hand-rolled over cloudflare:sockets with TLS.'
+		],
+		highlights: [
+			'Verified two-way federation with matrix.org: invites, joins, messages, E2EE key exchange and media, across room versions 1–12',
+			'Passes the Matrix Federation Tester, and the inherited 45,000-test vitest suite stayed green through every change',
+			'Security work: removed a login flow that issued access tokens without credentials, closed an unauthenticated federation v2 join path, and moved registration behind single-use hashed invite tokens',
+			'Stock Element clients get working E2EE against it — OIDC discovery metadata, recovery-key rotation and cross-server device keys included',
+			'Live at codebam.ca, answering for @codebam:codebam.ca'
 		]
 	},
 	{
