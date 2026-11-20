@@ -233,6 +233,15 @@
 		display: contents;
 	}
 
+	/* display: contents promotes the picture's children into the parent
+	   layout, and Chromium computes <source> as inline rather than none —
+	   harmless inside the wrapper, but as a grid item it claims a cell and
+	   knocks the profile paragraph into the 5rem portrait column. Media
+	   selection does not read display, so hiding it is safe. */
+	source {
+		display: none;
+	}
+
 	body {
 		background: var(--bg);
 		color: var(--text);
