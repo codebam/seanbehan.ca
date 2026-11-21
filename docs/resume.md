@@ -1,5 +1,14 @@
 # The résumé
 
+## On this page
+
+- [The pieces](#the-pieces)
+- [Building it](#building-it)
+- [Publishing](#publishing)
+- [Serving](#serving)
+- [Editing the words](#editing-the-words)
+- [Required credentials](#required-credentials)
+
 One Markdown file, published by CI in the four forms a reader asks for: the
 **PDF** to download, the **HTML fragment** to render, the **plain text** an
 application form or an ATS reads, and the **source itself** for a bot at
