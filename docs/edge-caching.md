@@ -1,5 +1,18 @@
 # Edge caching
 
+## On this page
+
+- [Production traffic arrives on the custom domains](#production-traffic-arrives-on-the-custom-domains)
+- [The failure the current rules address](#the-failure-the-current-rules-address)
+- [Why the Worker caches public routes at all](#why-the-worker-caches-public-routes-at-all)
+- [The rules](#the-rules)
+- [The social-card route](#the-social-card-route)
+- [Purge on deploy](#purge-on-deploy)
+- [Content changes are not deploys](#content-changes-are-not-deploys)
+- [Static assets are not this file's business](#static-assets-are-not-this-files-business)
+- [Browser Cache TTL: the day-long warm HIT (operator action)](#browser-cache-ttl-the-day-long-warm-hit-operator-action)
+- [Required tokens](#required-tokens)
+
 There are two caches in front of a reader, and the mistake this file exists to
 prevent is believing a header set for one of them controls the other.
 
