@@ -1,5 +1,14 @@
 # ROADMAP
 
+## On this page
+
+- [1. Per-request cost (in progress)](#1-per-request-cost-in-progress)
+- [2. Content / UX](#2-content--ux)
+- [3. SEO / feeds](#3-seo--feeds)
+- [4. Accessibility / performance hygiene](#4-accessibility--performance-hygiene)
+- [5. Follow-up audit (September 2026) — fixed](#5-follow-up-audit-september-2026--fixed)
+- [6. Outside review (fixed)](#6-outside-review-fixed)
+
 Improvement candidates from the September 2026 audit. Each item names the
 files involved and the expected gain. Checked items are done; the rest are
 proposed, roughly ordered by value within each section.
