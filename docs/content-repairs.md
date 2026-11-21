@@ -1,5 +1,14 @@
 # Content repairs for D1
 
+## On this page
+
+- [C1 - repair the imported paragraphs](#c1---repair-the-imported-paragraphs)
+- [C2 - the DDoS post's inline base64 image](#c2---the-ddos-posts-inline-base64-image)
+- [C3 - dimensions and variants for the other body images](#c3---dimensions-and-variants-for-the-other-body-images)
+- [C4 - the two newest posts (operator copy)](#c4---the-two-newest-posts-operator-copy)
+- [C5 - the two small content defects (operator edit)](#c5---the-two-small-content-defects-operator-edit)
+- [Safety notes](#safety-notes)
+
 The audit found five content defects that live in D1, not in this repo: most
 imported posts break every hard-wrapped source line into its own paragraph, the
 newest post's only image is an inline base64 with empty alt text, the remaining
