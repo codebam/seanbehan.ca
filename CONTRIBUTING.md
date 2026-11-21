@@ -1,5 +1,14 @@
 # Contributing to Sean Behan's Website
 
+## On this page
+
+- [Prerequisites](#prerequisites)
+- [Getting Started](#getting-started)
+- [Build Variants](#build-variants)
+- [Branching](#branching)
+- [Code Quality](#code-quality)
+- [Pre-commit Hooks](#pre-commit-hooks)
+
 ## Prerequisites
 
 - Node.js 26 (see `.node-version`)
