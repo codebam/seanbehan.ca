@@ -1,5 +1,12 @@
 # DESIGN.md
 
+## On this page
+
+- [1. The machinery](#1-the-machinery)
+- [2. Invariants — every future change must keep these](#2-invariants--every-future-change-must-keep-these)
+- [3. The design, as shipped](#3-the-design-as-shipped)
+- [4. Roads not taken](#4-roads-not-taken)
+
 A working document, not a museum. Section 1 is the machinery that makes the
 design cheap to change. Section 2 is the list of things no change is allowed
 to break — it is the standing gate for whatever comes next. Section 3 is the
