@@ -1,5 +1,16 @@
 # Stripe Checkout
 
+## On this page
+
+- [1. Stripe account](#1-stripe-account)
+- [2. Product and Price](#2-product-and-price)
+- [3. Private artifact](#3-private-artifact)
+- [4. Fulfillment email](#4-fulfillment-email)
+- [5. Database migration](#5-database-migration)
+- [6. Local secrets and webhook test](#6-local-secrets-and-webhook-test)
+- [7. Production secrets](#7-production-secrets)
+- [8. Launch](#8-launch)
+
 The Cloudflare Workers Production Kit uses a server-created Stripe Checkout Session. Stripe
 Managed Payments is enabled on every Session so Stripe acts as merchant of record where the
 program covers the sale. A paid Session unlocks an immutable archive in private R2; the success
