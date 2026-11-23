@@ -31,8 +31,11 @@ const TOC_MIN_SECTIONS = 4;
 
 const slug = Astro.params.slug!;
 const { entry, cacheHint } = await getEmDashEntry('posts', slug);
-if (!entry) return Astro.rewrite('/404');
+// Set before the miss rewrites: a cache hint is not only for a render. A
+// missing entry now carries its collection's tag, and publishing it purges
+// the 404 that was cached while it did not exist.
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+if (!entry) return Astro.rewrite('/404');
 
 const tags = (await getEntryTerms('posts', entry.data.id, 'tag')).map(
 	(term) => term.label || term.slug

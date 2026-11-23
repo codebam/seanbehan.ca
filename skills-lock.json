@@ -5,19 +5,19 @@
 			"source": "emdash-cms/skills",
 			"sourceType": "github",
 			"skillPath": "skills/building-emdash-site/SKILL.md",
-			"computedHash": "0f0880469514ce807d90534b7d4e6e903b43264f71ee07e4fbd7c3d79eb2662b"
+			"computedHash": "49f92c7fc3be95d78d4271eddd3356f51a6659d59cc9d94ede6228b8777e10a6"
 		},
 		"creating-plugins": {
 			"source": "emdash-cms/skills",
 			"sourceType": "github",
 			"skillPath": "skills/creating-plugins/SKILL.md",
-			"computedHash": "5981ac747ee2246deeae2aa80c05035d717bc9c1e1e28b7e76ddcb85eaa52945"
+			"computedHash": "68dd0366f443445d5992211ef87164627269331388f0bbe1b8aec7e6af31d696"
 		},
 		"emdash-cli": {
 			"source": "emdash-cms/skills",
 			"sourceType": "github",
 			"skillPath": "skills/emdash-cli/SKILL.md",
-			"computedHash": "7845cea18e9dc9ebca05d7ae0b57cfed87c17b34e70451ec47a399ab254fced9"
+			"computedHash": "6b99a168816b696ef750b9bd2067c03c6f439a83bb95e425e8ab732f82722f0d"
 		},
 		"upgrading-emdash": {
 			"source": "emdash-cms/skills",
