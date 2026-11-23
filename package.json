@@ -71,7 +71,6 @@
 	},
 	"overrides": {
 		"postcss-selector-parser": "^6.1.6",
-		"satori": "^0.33.5",
 		"fflate": "^0.7.5"
 	},
 	"allowScripts": {

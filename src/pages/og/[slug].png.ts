@@ -28,6 +28,16 @@
  *    scraper's immediate retry can render twice. tools/cloudflare/cache-rule.sh
  *    writes a host-scoped rule for `/og/<slug>.png` as well now; that takes
  *    effect when the zone rule is applied, not at deploy time.
+ *
+ * The renderer is satori 0.32, the version `@cf-wasm/satori` declares, and on a
+ * Worker it has to stay there. From 0.33.0 satori shapes text with harfbuzzjs,
+ * whose Emscripten glue reads `self.location.href` the moment it is imported
+ * and compiles its wasm at runtime; a Worker has neither a location nor
+ * runtime wasm compilation, so every card 500s before it draws (vercel/satori
+ * #878, fix still unmerged in #931). That is why the satori override that
+ * closed CVE-2026-94545 is gone: the advisory is about attacker-controlled
+ * style values reaching the generated SVG, while this route passes only
+ * CMS-authored titles and tags as text and returns a PNG.
  */
 
 import type { APIRoute } from 'astro';
