@@ -37,7 +37,7 @@
 		"migrate:core:check": "emdash migrate --wrangler-config wrangler.jsonc --check"
 	},
 	"dependencies": {
-		"@astrojs/cloudflare": "^14.4.8",
+		"@astrojs/cloudflare": "^14.4.9",
 		"@astrojs/react": "^7.1.9",
 		"@cf-wasm/og": "^0.5.0",
 		"@cloudflare/kumo": "2.15.0",
