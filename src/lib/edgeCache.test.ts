@@ -296,6 +296,39 @@ describe('canonical redirects', () => {
 	});
 });
 
+describe('development image responses', () => {
+	beforeEach(() => {
+		installFakeCache();
+		vi.stubEnv('DEV', false);
+	});
+
+	afterEach(() => {
+		vi.unstubAllEnvs();
+		delete (globalThis as { caches?: unknown }).caches;
+	});
+
+	it.each(['localhost', '127.0.0.1', '[::1]'])(
+		'corrects the Astro image MIME type on loopback when bundled DEV is false: %s',
+		async (hostname) => {
+			const response = await runMiddleware(
+				makeContext('/_image?f=png', {}, `http://${hostname}:4321`),
+				respondWith({ 'Content-Type': 'text/html' })
+			);
+
+			expect(response.headers.get('Content-Type')).toBe('image/png');
+		}
+	);
+
+	it('leaves production image responses unchanged', async () => {
+		const response = await runMiddleware(
+			makeContext('/_image?f=png'),
+			respondWith({ 'Content-Type': 'text/html' })
+		);
+
+		expect(response.headers.get('Content-Type')).toBe('text/html');
+	});
+});
+
 describe('edge cache policy', () => {
 	it.each(['localhost', '127.0.0.1', '[::1]'])(
 		'does not cache loopback dev renders when bundled DEV is false: %s',
