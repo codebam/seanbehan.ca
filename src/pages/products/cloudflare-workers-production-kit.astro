@@ -161,21 +161,13 @@ const schema = JSON.stringify({
 		     mark, drawn in the line colour because the headline already spends the
 		     page's warm accent. Both schemes get a plate of their own ground. -->
 		<figure slot="figure" class="kit-figure">
-			<picture>
-				<source
-					media="(prefers-color-scheme: dark)"
-					srcset="/img/brand/figure-product-dark.webp"
-					width="320"
-					height="320"
-				/>
-				<img
-					src="/img/brand/figure-product-light.webp"
-					alt=""
-					width="320"
-					height="320"
-					decoding="async"
-				/>
-			</picture>
+			<img
+				src="/img/brand/figure-product-dark.webp"
+				alt=""
+				width="320"
+				height="320"
+				decoding="async"
+			/>
 			<figcaption>Fig. 1 — One archive, {modules.length} modules, one deploy path.</figcaption>
 		</figure>
 	</Masthead>

@@ -32,17 +32,15 @@
 
 /* ═══════════════════════════════════════════════════════════
    Fonts
-   Inter carries the interface: navigation, headings, labels,
-   buttons, metadata. Newsreader is kept for reading — the body
-   of a long article, and the résumé, which is a document — because
-   a serif column is still the most comfortable way to read prose.
+   Quiet Mode uses the platform sans for body and reading copy, and
+   the local mono stack for display type, navigation, labels and
+   controls. The older variable faces remain declared for a gradual
+   template migration, but the production skin does not select them.
 
-   Code is local-first, not a third webfont: Fira Code is named
-   first in --font-mono, but no file ships for it, so a reader who
-   has Fira Code (or JetBrains Mono, Cascadia Code) gets it and
-   everyone else falls through to the platform monospace. The two
-   variable files above are the whole font payload; there is no
-   missing Fira Code @font-face to add.
+   Code is local-first, not another webfont: Fira Code is named first
+   in --font-mono, but no file ships for it, so a reader who has Fira
+   Code (or JetBrains Mono, Cascadia Code) gets it and everyone else
+   falls through to the platform monospace.
    ═══════════════════════════════════════════════════════════ */
 @font-face {
 	font-family: 'Inter Variable';
@@ -87,19 +85,14 @@
 /* ═══════════════════════════════════════════════════════════
    Design tokens
 
-   A neutral, high-contrast palette: white paper, slate ink, a
-   single blue for anything interactive and a warm amber reserved
-   for editorial emphasis (the wordmark dot, an italic phrase).
-   The same names carry both themes; components never branch on
-   the scheme.
+   Quiet Mode is a dark-green command surface: the page and its panels
+   stay close in value, hairlines carry the structure, and one green
+   accent marks prompts, links and focus. Body copy uses the platform
+   sans; display and interface type use the local mono stack.
    ═══════════════════════════════════════════════════════════ */
 @theme {
-	--font-sans:
-		'Inter Variable', 'Inter Variable Fallback', Inter, ui-sans-serif, system-ui, -apple-system,
-		'Segoe UI', sans-serif;
-	--font-serif:
-		'Newsreader Variable', 'Newsreader Variable Fallback', Newsreader, Georgia, 'Times New Roman',
-		serif;
+	--font-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
+	--font-serif: system-ui, -apple-system, 'Segoe UI', sans-serif;
 	/* Local-first; no file ships for the named faces. See the Fonts note. */
 	--font-mono:
 		'Fira Code', 'JetBrains Mono', 'Cascadia Code', ui-monospace, SFMono-Regular, Menlo, Monaco,
@@ -108,51 +101,43 @@
 
 @layer base {
 	:root {
-		color-scheme: light dark;
+		color-scheme: dark;
 		--kumo-button-emphasis-bg: var(--accent);
 		--kumo-button-emphasis-ring: var(--accent-hover);
+		--font-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
+		--font-reading: system-ui, -apple-system, 'Segoe UI', sans-serif;
+		--font-ui: var(--font-mono);
+		--font-display: var(--font-mono);
 
 		/* Surfaces */
-		--bg: #ffffff;
-		--surface-alt: #f8fafc;
-		--panel: #ffffff;
-		/* Hairline only (1.23:1 on white). WCAG 1.4.11 wants 3:1 for a
-		   boundary a reader has to perceive to operate a control; --dim is
-		   the token for that and .site-field uses it. Do not reach for
-		   --line to outline a field, button or other control. */
-		--line: #e2e8f0;
-		--line-strong: #cbd5e1;
+		--bg: #0d1512;
+		--surface-alt: #14231d;
+		--panel: #14231d;
+		/* Hairlines carry the command surface. Control boundaries use --dim,
+		   which clears 3:1 against both the page and panel grounds. */
+		--line: color-mix(in srgb, #e4f1e8 15%, #0d1512);
+		--line-strong: color-mix(in srgb, #e4f1e8 30%, #0d1512);
 
 		/* Text */
-		--text: #0f172a;
-		--body: #334155;
-		--muted: #64748b;
-		/* Not merely decorative: this is the quietest mark the site draws, and
-		   everything it draws — the search glyph, the scrollbar thumb, the
-		   search field's own boundary — is a UI mark that WCAG 1.4.11 wants at
-		   3:1. #94a3b8 was 2.56:1 on white. */
-		--dim: #828d9d;
+		--text: #e4f1e8;
+		--body: color-mix(in srgb, #e4f1e8 86%, #8fa99a);
+		--muted: #8fa99a;
+		--dim: #8fa99a;
 
 		/* Accent */
-		--accent: #2563eb;
-		--accent-hover: #1d4ed8;
-		--accent-on: #ffffff;
-		--accent-warm: #b45309;
-		--accent-wash: color-mix(in srgb, var(--accent) 8%, transparent);
-		--positive: #16a34a;
+		--accent: #a7ff83;
+		--accent-hover: #c1ffa9;
+		--accent-on: #111111;
+		--accent-warm: #a7ff83;
+		--accent-wash: color-mix(in srgb, var(--accent) 12%, transparent);
+		--positive: #4ade80;
 
-		/* Footer is dark in both themes, so it needs its own small set — the
-		   accent included. --accent is chosen against a light ground and reads
-		   at 3.45:1 on the footer's; the footer takes the blue the dark palette
-		   already picked for a dark ground, which is 7:1 on either footer. */
-		--footer-bg: #0f172a;
-		--footer-text: #e2e8f0;
-		--footer-muted: #94a3b8;
-		/* Same intent as --line: a column rule, not a control boundary. It
-		   is 1.22:1 against --footer-bg, so a required edge here would need
-		   --footer-muted instead. */
-		--footer-line: #1e293b;
-		--footer-accent: #60a5fa;
+		/* Footer remains a dark command panel rather than an inversion. */
+		--footer-bg: #14231d;
+		--footer-text: #e4f1e8;
+		--footer-muted: #8fa99a;
+		--footer-line: color-mix(in srgb, #e4f1e8 15%, #14231d);
+		--footer-accent: #a7ff83;
 
 		/* Geometry */
 		/* .section (below) is the shared page-level rhythm. These are the
@@ -184,40 +169,19 @@
 		   statement should be followed by evidence, not by a screen of padding.
 		   Only the hero's immediate successor pays this; the rest keep .section. */
 		--pad-after-hero: clamp(2.5rem, 5vw, 3.5rem);
-		--radius-sm: 6px;
-		--radius: 10px;
-		--radius-lg: 16px;
-		--shadow-sm: 0 1px 2px rgb(15 23 42 / 0.06), 0 1px 3px rgb(15 23 42 / 0.08);
-		--shadow-md: 0 4px 12px rgb(15 23 42 / 0.08), 0 2px 4px rgb(15 23 42 / 0.05);
+		--radius-sm: 3px;
+		--radius: 5px;
+		--radius-lg: 8px;
+		--shadow-sm: 0 1px 2px rgb(0 0 0 / 0.18);
+		--shadow-md: 0 8px 24px rgb(0 0 0 / 0.28);
 	}
 
 	@media (prefers-color-scheme: dark) {
 		:root {
-			--bg: #0b1220;
-			--surface-alt: #0f172a;
-			--panel: #111827;
-			--line: #1e293b;
-			--line-strong: #334155;
-
-			--text: #f1f5f9;
-			--body: #cbd5e1;
-			--muted: #94a3b8;
-			--dim: #64748b;
-
-			--accent: #60a5fa;
-			--accent-hover: #93c5fd;
-			--accent-on: #0b1220;
-			--accent-warm: #fbbf24;
-			--accent-wash: color-mix(in srgb, var(--accent) 16%, transparent);
-			--positive: #4ade80;
-
-			--footer-bg: #020617;
-			--footer-text: #e2e8f0;
-			--footer-muted: #94a3b8;
-			--footer-line: #1e293b;
-
-			--shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
-			--shadow-md: 0 6px 16px rgb(0 0 0 / 0.45);
+			/* Quiet Mode is intentionally dark-first; the light preference does
+			   not replace the approved command palette. Print pins its own light
+			   tokens in the print block below. */
+			color-scheme: dark;
 		}
 	}
 
@@ -245,7 +209,7 @@
 	body {
 		background: var(--bg);
 		color: var(--text);
-		font-family: var(--font-sans);
+		font-family: var(--font-body);
 		font-size: 1rem;
 		line-height: 1.6;
 		min-height: 100vh;
@@ -299,7 +263,7 @@
 	   ═══════════════════════════════════════════════════════════ */
 
 	.display {
-		font-family: var(--font-sans);
+		font-family: var(--font-display);
 		font-weight: 700;
 		letter-spacing: -0.02em;
 		line-height: 1.12;
@@ -326,7 +290,7 @@
 
 	/* Section label: small, uppercase, tracked. Inter, not the serif. */
 	.eyebrow {
-		font-family: var(--font-sans);
+		font-family: var(--font-ui);
 		font-size: 0.78rem;
 		font-weight: 600;
 		letter-spacing: 0.08em;
@@ -606,7 +570,7 @@
    reading column is the serif; the headings around it stay sans.
    ═══════════════════════════════════════════════════════════ */
 .prose {
-	font-family: var(--font-serif);
+	font-family: var(--font-reading);
 	--tw-prose-body: var(--body);
 	--tw-prose-headings: var(--text);
 	--tw-prose-lead: var(--body);
@@ -628,7 +592,7 @@
 }
 
 .prose :where(h1, h2, h3, h4, h5, h6) {
-	font-family: var(--font-sans);
+	font-family: var(--font-display);
 	font-weight: 700;
 	letter-spacing: -0.02em;
 }
@@ -762,7 +726,7 @@
 	max-width: 46rem;
 	margin-inline: auto;
 	margin-block-start: clamp(2.5rem, 5vw, 4rem);
-	font-family: var(--font-serif);
+	font-family: var(--font-reading);
 	color: var(--body);
 }
 
@@ -1030,6 +994,624 @@
 	cursor: default;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   Quiet Mode production skin
+
+   The markup is migrating toward command labels and list/log containers.
+   These rules deliberately style both those additions and the current card
+   and row classes, so the branch remains usable before every template lands.
+   ═══════════════════════════════════════════════════════════════ */
+.quiet-mode {
+	--header-bg: #0d1512;
+	--code-bg: #0d1512;
+	--code-ink: #e4f1e8;
+	--code-muted: #8fa99a;
+}
+
+.quiet-mode body {
+	background: var(--bg);
+	color: var(--text);
+	font-family: var(--font-body);
+}
+
+.quiet-mode ::selection {
+	background: var(--accent);
+	color: var(--accent-on);
+}
+
+.quiet-mode .shell {
+	max-width: 76rem;
+}
+
+.quiet-mode :where(h1, h2, h3, h4, h5, h6) {
+	font-family: var(--font-display);
+}
+
+.quiet-mode .display,
+.quiet-mode body .hero-title,
+.quiet-mode body .page-hero-title {
+	font-family: var(--font-display);
+	font-weight: 600;
+	letter-spacing: -0.045em;
+	line-height: 1.02;
+	text-wrap: balance;
+}
+
+.quiet-mode .display-xl,
+.quiet-mode body .hero-title,
+.quiet-mode body .page-hero-title {
+	font-size: clamp(2.4rem, 5.7vw, 5.8rem);
+}
+
+.quiet-mode .display-lg {
+	font-size: clamp(1.65rem, 3.4vw, 3.4rem);
+}
+
+.quiet-mode .display em,
+.quiet-mode .hero-title em,
+.quiet-mode .page-hero-title em {
+	color: var(--accent);
+	font-style: italic;
+	margin-right: 0.08em;
+}
+
+.quiet-mode body .hero-title,
+.quiet-mode body .page-hero-title {
+	max-width: 18ch;
+}
+
+.quiet-mode .hero-lead {
+	max-width: 62ch;
+	color: var(--body);
+	font-family: var(--font-reading);
+	font-size: clamp(1rem, 1.4vw, 1.12rem);
+	line-height: 1.7;
+}
+
+.quiet-mode .eyebrow,
+.quiet-mode .terminal-label,
+.quiet-mode .section-number,
+.quiet-mode .project-meta,
+.quiet-mode .entry-meta,
+.quiet-mode .post-row-meta,
+.quiet-mode .post-card-meta,
+.quiet-mode .footer-label {
+	font-family: var(--font-ui);
+	font-size: 0.7rem;
+	font-weight: 500;
+	letter-spacing: 0.08em;
+	line-height: 1.4;
+	text-transform: uppercase;
+	color: var(--muted);
+}
+
+.quiet-mode .terminal-label {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.45rem;
+}
+
+.quiet-mode .terminal-label::before {
+	color: var(--accent);
+	content: '>';
+}
+
+.quiet-mode .section-head,
+.quiet-mode .section-heading,
+.quiet-mode .archive-heading {
+	border-bottom-color: var(--line-strong);
+}
+
+.quiet-mode .section-sub {
+	color: var(--muted);
+	font-family: var(--font-reading);
+}
+
+/* Header: a compact command bar rather than a marketing navigation. */
+.quiet-mode body .site-header {
+	background: color-mix(in srgb, var(--header-bg) 94%, transparent);
+	border-bottom-color: var(--line-strong);
+	backdrop-filter: blur(12px);
+}
+
+.quiet-mode body .header-inner {
+	min-height: 3.5rem;
+	gap: 0.75rem;
+}
+
+.quiet-mode body .brand,
+.quiet-mode body .footer-wordmark {
+	font-family: var(--font-ui);
+	font-size: 0.82rem;
+	font-weight: 500;
+	letter-spacing: -0.02em;
+}
+
+.quiet-mode body .brand-dot,
+.quiet-mode .command-dot {
+	display: inline-block;
+	width: 0.62ch;
+	height: 1.05em;
+	margin-left: 0.12ch;
+	background: var(--accent);
+	color: transparent;
+	vertical-align: -0.08em;
+	animation: quiet-cursor 1.2s steps(1) infinite;
+}
+
+@keyframes quiet-cursor {
+	50% {
+		opacity: 0;
+	}
+}
+
+.quiet-mode body .nav-link {
+	min-height: 2.75rem;
+	padding-inline: 0.6rem;
+	font-family: var(--font-ui);
+	font-size: 0.72rem;
+	font-weight: 500;
+	letter-spacing: 0.01em;
+	color: var(--muted);
+}
+
+.quiet-mode body .nav-link:hover,
+.quiet-mode body .nav-link[aria-current='page'],
+.quiet-mode body .nav-link[aria-current='true'] {
+	background: var(--accent-wash);
+	color: var(--accent);
+}
+
+.quiet-mode body .nav-toggle,
+.quiet-mode body .nav-menu-panel {
+	border-color: var(--line-strong);
+	border-radius: var(--radius-sm);
+	background: var(--panel);
+}
+
+.quiet-mode body .nav-menu[open] .nav-toggle {
+	border-color: var(--accent);
+	color: var(--accent);
+}
+
+.quiet-mode body .nav-menu .nav-link {
+	font-size: 0.82rem;
+}
+
+/* Kumo controls keep their existing overrides; Quiet Mode only changes type,
+   geometry and the field ground. */
+.quiet-mode .btn,
+.quiet-mode .site-cta,
+.quiet-mode .flat-control,
+.quiet-mode .site-field,
+.quiet-mode .link-accent,
+.quiet-mode .link-quiet,
+.quiet-mode .code-copy,
+.quiet-mode .copy-address {
+	font-family: var(--font-ui);
+}
+
+.quiet-mode .btn,
+.quiet-mode .site-cta,
+.quiet-mode .flat-control {
+	border-radius: var(--radius-sm) !important;
+	box-shadow: none;
+	font-size: 0.78rem;
+	font-weight: 600;
+	letter-spacing: 0.01em;
+}
+
+.quiet-mode .site-cta:focus-visible,
+.quiet-mode .flat-control:focus-visible,
+.quiet-mode .site-field:focus-visible,
+.quiet-mode summary:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 2px;
+}
+
+.quiet-mode .site-field {
+	background-color: var(--panel) !important;
+	color: var(--text) !important;
+	font-size: 0.82rem;
+}
+
+.quiet-mode .link-accent,
+.quiet-mode .link-quiet {
+	font-size: 0.78rem;
+}
+
+.quiet-mode .link-quiet {
+	border-bottom-color: var(--line-strong);
+}
+
+.quiet-mode .hero-code {
+	max-width: 100%;
+	margin: 0;
+	padding: 1rem 1.1rem;
+	overflow: auto;
+	border: 1px solid var(--line-strong);
+	border-radius: var(--radius-sm);
+	background: var(--code-bg);
+	color: var(--code-ink);
+	font-family: var(--font-mono);
+	font-size: 0.78rem;
+	line-height: 1.75;
+	white-space: pre;
+}
+
+.quiet-mode .hero-code code {
+	font: inherit;
+}
+
+.quiet-mode .hero-code .comment,
+.quiet-mode .hero-code .code-comment {
+	color: var(--code-muted);
+}
+
+.quiet-mode .hero-code .accent,
+.quiet-mode .hero-code .code-accent {
+	color: var(--accent);
+}
+
+/* Current cards become quiet terminal panels. The list/log containers below
+   remove the card face entirely when the migrated markup supplies rows. */
+.quiet-mode .card {
+	border-color: var(--line);
+	border-radius: var(--radius-sm);
+	background: var(--panel);
+	box-shadow: none;
+}
+
+.quiet-mode .card:hover {
+	border-color: var(--line-strong);
+	box-shadow: none;
+	transform: none;
+}
+
+.quiet-mode .tag {
+	border-color: var(--line);
+	border-radius: var(--radius-sm);
+	background: transparent;
+	font-family: var(--font-ui);
+	font-size: 0.66rem;
+	font-weight: 500;
+	letter-spacing: 0.02em;
+	color: var(--muted);
+}
+
+.quiet-mode .tag-lang {
+	color: var(--accent);
+}
+
+.quiet-mode .project-title,
+.quiet-mode .post-row-title,
+.quiet-mode .post-card-title,
+.quiet-mode .writing-lead-title,
+.quiet-mode .writing-card-title {
+	font-family: var(--font-display);
+	letter-spacing: -0.03em;
+}
+
+.quiet-mode .project-copy,
+.quiet-mode .post-row-desc,
+.quiet-mode .post-card-desc,
+.quiet-mode .writing-lead-desc,
+.quiet-mode .writing-card-desc {
+	font-family: var(--font-reading);
+}
+
+.quiet-mode .project-list,
+.quiet-mode .writing-log {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	border-top: 1px solid var(--line-strong);
+}
+
+/* The home components own their directory/log grid geometry. The shared skin
+   only removes the card face and picture so those rows keep one source of
+   truth for column placement. */
+.quiet-mode .project-list .project-media {
+	display: none;
+}
+
+.quiet-mode .project-list .project-body {
+	display: contents;
+}
+
+/* The archive's existing rows keep their semantics and search behavior. */
+.quiet-mode body .post-row {
+	display: grid;
+	padding-block: 1.1rem;
+	grid-template-columns: minmax(0, 1fr) auto;
+	border: 0;
+	border-bottom: 1px solid var(--line-strong);
+	background: transparent;
+}
+
+.quiet-mode .post-row:first-child {
+	padding-top: 0;
+}
+
+.quiet-mode .post-row:hover,
+.quiet-mode .post-row:focus-within {
+	background: color-mix(in srgb, var(--accent) 5%, transparent);
+}
+
+.quiet-mode body .post-row-link {
+	grid-template-columns: 6.5rem minmax(0, 1fr);
+}
+
+.quiet-mode body .post-row-meta,
+.quiet-mode body .post-card-meta,
+.quiet-mode body .entry-meta {
+	font-family: var(--font-ui);
+	color: var(--muted);
+}
+
+.quiet-mode body .post-row-title,
+.quiet-mode body .post-card-title {
+	color: var(--text);
+}
+
+.quiet-mode body .post-row:hover .post-row-title,
+.quiet-mode body .post-row:focus-within .post-row-title,
+.quiet-mode body .post-card:hover .post-card-title,
+.quiet-mode body .post-card:focus-within .post-card-title {
+	color: var(--accent);
+}
+
+.quiet-mode .post-card {
+	border-left: 2px solid transparent;
+}
+
+.quiet-mode .post-card:hover,
+.quiet-mode .post-card:focus-within {
+	border-left-color: var(--accent);
+}
+
+.quiet-mode .post-card-link {
+	text-decoration: none;
+}
+
+.quiet-mode .writing-log .post-row {
+	grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+}
+
+.quiet-mode .writing-log .post-card {
+	border-left: 0;
+}
+
+/* Reading stays system sans; headings and code keep the command voice. */
+.quiet-mode .prose {
+	font-family: var(--font-reading);
+	line-height: 1.75;
+	--tw-prose-body: var(--body);
+	--tw-prose-headings: var(--text);
+	--tw-prose-lead: var(--body);
+	--tw-prose-links: var(--accent);
+	--tw-prose-bold: var(--text);
+	--tw-prose-counters: var(--muted);
+	--tw-prose-bullets: var(--line-strong);
+	--tw-prose-hr: var(--line);
+	--tw-prose-quotes: var(--text);
+	--tw-prose-quote-borders: var(--accent);
+	--tw-prose-captions: var(--muted);
+	--tw-prose-code: var(--accent);
+	--tw-prose-pre-code: var(--code-ink);
+	--tw-prose-pre-bg: var(--code-bg);
+	--tw-prose-th-borders: var(--line-strong);
+	--tw-prose-td-borders: var(--line);
+}
+
+.quiet-mode .prose :where(h1, h2, h3, h4, h5, h6) {
+	font-family: var(--font-display);
+	font-weight: 600;
+	letter-spacing: -0.035em;
+}
+
+.quiet-mode .prose :where(a):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+	color: var(--accent);
+	text-decoration-color: var(--line-strong);
+}
+
+.quiet-mode .prose :where(a):hover:not(:where([class~='not-prose'], [class~='not-prose'] *)),
+.quiet-mode
+	.prose
+	:where(a):focus-visible:not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+	color: var(--accent-hover);
+	text-decoration-color: var(--accent);
+}
+
+.quiet-mode .prose :where(code):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+	border-color: var(--line);
+	background: var(--code-bg);
+	color: var(--accent);
+}
+
+.quiet-mode .prose :where(pre):not(:where([class~='not-prose'], [class~='not-prose'] *)),
+.quiet-mode .prose :where(pre.shiki) {
+	border-color: var(--line-strong);
+	background-color: var(--code-bg) !important;
+	color: var(--code-ink);
+}
+
+.quiet-mode .shiki,
+.quiet-mode .shiki span {
+	color: var(--shiki-dark);
+}
+
+.quiet-mode .code-filename {
+	font-family: var(--font-ui);
+	color: var(--code-muted);
+}
+
+/* Résumé: system reading copy, mono metadata and section labels. */
+.quiet-mode .resume-doc {
+	font-family: var(--font-reading);
+	color: var(--body);
+}
+
+.quiet-mode
+	.resume-doc
+	:where(
+		.resume-name,
+		.resume-subtitle,
+		.resume-contacts,
+		.resume-section,
+		.resume-subsection,
+		.resume-entry,
+		.resume-meta,
+		.resume-key
+	) {
+	font-family: var(--font-ui);
+}
+
+.quiet-mode .resume-doc .resume-head,
+.quiet-mode .resume-doc .resume-section {
+	background-image:
+		linear-gradient(var(--accent), var(--accent)),
+		linear-gradient(var(--line-strong), var(--line-strong));
+}
+
+.quiet-mode .resume-doc .resume-name {
+	letter-spacing: -0.02em;
+}
+
+.quiet-mode .resume-doc .resume-subtitle,
+.quiet-mode .resume-doc .resume-section,
+.quiet-mode .resume-doc .resume-subsection,
+.quiet-mode .resume-doc .resume-org,
+.quiet-mode .resume-doc .resume-sep {
+	color: var(--accent);
+}
+
+.quiet-mode .resume-doc .resume-entry {
+	padding-left: 0.8rem;
+	border-left: 2px solid var(--line-strong);
+}
+
+.quiet-mode .resume-doc .resume-meta {
+	color: var(--muted);
+	overflow-wrap: anywhere;
+}
+
+.quiet-mode .resume-doc li::marker {
+	color: var(--accent);
+}
+
+/* Footer: the same command surface, one step lighter than the page. */
+.quiet-mode .site-footer {
+	border-top-color: var(--footer-line);
+	background: var(--footer-bg);
+	color: var(--footer-text);
+}
+
+.quiet-mode .footer-grid {
+	border-bottom: 1px solid var(--footer-line);
+}
+
+.quiet-mode .footer-wordmark,
+.quiet-mode .footer-label,
+.quiet-mode .footer-link,
+.quiet-mode .footer-base {
+	font-family: var(--font-ui);
+}
+
+.quiet-mode .footer-label {
+	color: var(--accent);
+}
+
+.quiet-mode .footer-link {
+	color: var(--footer-text);
+	text-decoration: none;
+}
+
+.quiet-mode .footer-link:hover,
+.quiet-mode .footer-link:focus-visible {
+	color: var(--accent);
+}
+
+.quiet-mode .footer-base {
+	color: var(--footer-muted);
+}
+
+@media (width < 48rem) {
+	.quiet-mode .shell {
+		padding-inline: 1rem;
+	}
+
+	.quiet-mode body .brand {
+		max-width: calc(100vw - 5rem);
+		overflow: hidden;
+		font-size: 0.72rem;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.quiet-mode .display-xl,
+	.quiet-mode .hero-title,
+	.quiet-mode .page-hero-title {
+		font-size: clamp(2.25rem, 11vw, 4rem);
+	}
+
+	.quiet-mode .hero-code {
+		padding: 0.85rem;
+		font-size: 0.72rem;
+	}
+
+	.quiet-mode .project-list > :where(li, article, .project-card, .project-feature),
+	.quiet-mode .writing-log > :where(li, article, .post-card, .post-row) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.quiet-mode .project-list .project-number,
+	.quiet-mode .project-list .project-meta,
+	.quiet-mode .project-list .project-title,
+	.quiet-mode .project-list .project-copy,
+	.quiet-mode .project-list .project-tags,
+	.quiet-mode .project-list .project-links,
+	.quiet-mode .writing-log .post-row-meta,
+	.quiet-mode .writing-log .post-card-meta,
+	.quiet-mode .writing-log .post-row-title,
+	.quiet-mode .writing-log .post-card-title,
+	.quiet-mode .writing-log .post-row-desc,
+	.quiet-mode .writing-log .post-card-desc,
+	.quiet-mode .writing-log .post-row-tags,
+	.quiet-mode .writing-log .post-card-tags {
+		grid-column: 1;
+		grid-row: auto;
+		justify-self: start;
+	}
+
+	.quiet-mode body .post-row,
+	.quiet-mode body .post-row-link,
+	.quiet-mode .writing-log .post-row {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.quiet-mode .post-row-tags {
+		justify-content: flex-start;
+		max-width: none;
+	}
+
+	.quiet-mode .resume-doc .resume-entry {
+		display: block;
+	}
+
+	.quiet-mode .resume-doc .resume-meta {
+		margin-left: 0;
+		padding-left: 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.quiet-mode .brand-dot,
+	.quiet-mode .command-dot {
+		animation: none;
+	}
+}
+
 /* ═══════════════════════════════════════════════════════════
    Motion
 
@@ -1257,5 +1839,38 @@
 	.card,
 	.stats {
 		break-inside: avoid;
+	}
+
+	/* Quiet Mode's command surfaces print as ink on paper, not dark panels. */
+	.quiet-mode .terminal-label::before,
+	.quiet-mode .command-dot {
+		display: none !important;
+	}
+	.quiet-mode .hero-code,
+	.quiet-mode .prose :where(pre):not(:where([class~='not-prose'], [class~='not-prose'] *)),
+	.quiet-mode .prose :where(pre.shiki) {
+		background: #ffffff !important;
+		color: #0f172a !important;
+		border-color: var(--line) !important;
+	}
+	.quiet-mode .prose code {
+		background: transparent !important;
+		color: var(--text) !important;
+		border: 0 !important;
+	}
+	.quiet-mode .project-list,
+	.quiet-mode .writing-log,
+	.quiet-mode .project-list > :where(li, article, .project-card, .project-feature),
+	.quiet-mode .writing-log > :where(li, article, .post-card, .post-row) {
+		background: transparent !important;
+		box-shadow: none !important;
+	}
+	.quiet-mode .prose,
+	.quiet-mode .resume-doc {
+		font-family:
+			system-ui,
+			-apple-system,
+			'Segoe UI',
+			sans-serif;
 	}
 }

@@ -17,13 +17,13 @@ export const GET: APIRoute = async () => {
 			{ src: '/android-chrome-512x512.png', sizes: '512x512', type: 'image/png' },
 			{ src: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }
 		],
-		// The same pair as the theme-color metas in Base.astro; app.css owns the
-		// values, so this is the surface to change when the palette does.
-		theme_color: '#ffffff',
-		background_color: '#ffffff',
+		// Quiet Mode keeps one dark identity in both schemes: the surface is the
+		// lighter installed-app chrome, while the page ground stays --bg.
+		theme_color: '#0d1512',
+		background_color: '#0d1512',
 		theme_colors: [
-			{ color: '#ffffff', media: '(prefers-color-scheme: light)' },
-			{ color: '#0b1220', media: '(prefers-color-scheme: dark)' }
+			{ color: '#14231d', media: '(prefers-color-scheme: light)' },
+			{ color: '#0d1512', media: '(prefers-color-scheme: dark)' }
 		],
 		display: 'standalone',
 		scope: '/'

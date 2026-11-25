@@ -77,6 +77,7 @@ const seanbehan = {
 		{ label: 'Work', href: '/#work' },
 		{ label: 'Résumé', href: '/resume' },
 		{ label: 'Writing', href: '/posts', via: 'writing' },
+		{ label: 'About', href: '/about' },
 		{ label: 'Services', href: '/services' }
 	],
 	// The home page's work history, condensed from resume/resume.md — that
@@ -167,6 +168,7 @@ const codebam = {
 		{ label: 'Work', href: '/#work' },
 		{ label: 'Projects', href: '/projects' },
 		{ label: 'Writing', href: '/posts', via: 'writing' },
+		{ label: 'About', href: '/about' },
 		{ label: 'Services', href: '/services', via: 'commerce' }
 	],
 	// No résumé on this origin, so there is no history to shorten into a

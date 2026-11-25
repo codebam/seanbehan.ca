@@ -137,11 +137,11 @@ describe('the hiring variant', () => {
 	});
 
 	it('keeps both headers short enough to stay on one row', () => {
-		// Contact is rendered by the frame and is always last, so the header
-		// carries one more item than this list. Six wrapped to two rows on a
-		// phone and put Résumé on the second of them.
-		expect(SITES.seanbehan.nav.length).toBeLessThanOrEqual(4);
-		expect(SITES.codebam.nav.length).toBeLessThanOrEqual(4);
+		// Contact is rendered by the frame and is always last. Quiet Mode adds
+		// About to both origins; five links plus the CTA still fit the first
+		// desktop breakpoint, while phones use the existing details menu.
+		expect(SITES.seanbehan.nav.length).toBeLessThanOrEqual(5);
+		expect(SITES.codebam.nav.length).toBeLessThanOrEqual(5);
 	});
 
 	it('sends the codebam hero to the commercial origin, not a local offer', () => {

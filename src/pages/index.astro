@@ -3,8 +3,8 @@
  * Home: a clear front door.
  *
  * A two-column hero states who this is, what they build and how to reach them,
- * with the availability and one primary action beside it. Below it the numbers
- * and the project rows follow — or the work before the numbers on the variant
+ * with a current-focus command block and availability beside it. Below it the
+ * numbers and the project directory follow — or the work before the numbers on the variant
  * that leads with the code — with the condensed work history in between on the
  * hiring variant, because it is the question a résumé answers and the one an
  * employer asks before the projects mean anything.
@@ -65,7 +65,12 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 		<section class="hero">
 			<div class="shell hero-inner">
 				<div>
-					<p class="eyebrow hero-eyebrow">{site.eyebrow}</p>
+					<p class="eyebrow hero-eyebrow">
+						<span class="terminal-prompt" aria-hidden="true">
+							$
+						</span>{' '}
+						{site.eyebrow}
+					</p>
 					<p class="hero-byline">{site.byline}</p>
 					<h1 class="display display-xl hero-title">
 						{site.headline.before}
@@ -101,36 +106,36 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 				</div>
 
 				<aside class="hero-aside">
-					{/* Two grounds, one crop: the portrait sits on --surface-alt in
-					    light and --panel in dark, the same light/dark figure mechanic
-					    the brand plates use. A black ground was palette-homeless —
-					    the heaviest object on the white page, invisible on the navy
-					    one. */}
-					<picture>
-						<source media="(prefers-color-scheme: dark)" srcset="/profile-dark.webp" />
-						<img
-							class="hero-photo"
-							src="/profile.webp"
-							alt={`Portrait of ${site.name}`}
-							width="460"
-							height="460"
-							fetchpriority="high"
-						/>
-					</picture>
+					<pre
+						class="hero-code"
+						aria-label="Current focus"
+					><code><span class="code-comment"># current focus</span>
+<span class="code-accent">systems</span> = rust + typescript
+<span class="code-accent">platform</span> = nixos + cloudflare
+<span class="code-accent">method</span> = small, explicit, reproducible
+
+<span class="code-comment"># always</span>
+ship_in_the_open = true</code></pre>
 					<Availability availability={site.availability} />
 				</aside>
 			</div>
 		</section>
 
-		{/* The lead block — numbers or work, per the variant — follows the hero
-		    outright, as DESIGN.md §3.3 describes: proof on the first screen, not
-		    a screen of padding. The commercial offers follow it on the hiring
-		    variant; the work history sits between the pair. */}
+		{/* Quiet Mode reads like a directory: proof, work, then writing. The
+		    commercial and career detail follows once the work has made the case. */}
 		{site.leadWith === 'work' ? (
 			<Work projects={projects} />
 		) : (
 			<Facts postCount={posts.length} projects={projects} yearsBuilding={yearsBuilding()} />
 		)}
+
+		{site.leadWith === 'work' ? (
+			<Facts postCount={posts.length} projects={projects} yearsBuilding={yearsBuilding()} />
+		) : (
+			<Work projects={projects} />
+		)}
+
+		<Writing posts={latest} total={posts.length} />
 
 		{commercial && (
 			<section class="section shell offers" aria-labelledby="offers-heading">
@@ -183,14 +188,6 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 
 		{site.experience && <Experience experience={site.experience} />}
 
-		{site.leadWith === 'work' ? (
-			<Facts postCount={posts.length} projects={projects} yearsBuilding={yearsBuilding()} />
-		) : (
-			<Work projects={projects} />
-		)}
-
-		<Writing posts={latest} total={posts.length} />
-
 		{/* The home page's one ask, after the writing has shown what arriving in
 		    the inbox would look like. The footer form is for every other page. */}
 		<Newsletter />
@@ -203,7 +200,24 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 	}
 
 	.hero {
-		padding-block: clamp(3rem, 7vw, 5.5rem);
+		position: relative;
+		isolation: isolate;
+		overflow: hidden;
+		padding-block: clamp(3.5rem, 8vw, 6.5rem);
+	}
+	.hero::before {
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		background-image:
+			repeating-linear-gradient(90deg, transparent 0 5rem, var(--line) 5.05rem 5.1rem),
+			radial-gradient(var(--line-strong) 1px, transparent 1px);
+		background-size:
+			5rem 5rem,
+			18px 18px;
+		mask-image: linear-gradient(180deg, #000 0%, transparent 92%);
+		content: '';
+		pointer-events: none;
 	}
 	.hero-inner {
 		display: grid;
@@ -211,8 +225,8 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 	}
 	@media (width >= 60rem) {
 		.hero-inner {
-			grid-template-columns: minmax(0, 1.5fr) minmax(17rem, 1fr);
-			align-items: start;
+			grid-template-columns: minmax(0, 1.35fr) minmax(20rem, 0.75fr);
+			align-items: center;
 		}
 	}
 
@@ -220,8 +234,14 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 		color: var(--accent);
 	}
 	.hero-title {
-		max-width: 22ch;
+		max-width: 15ch;
 		margin-top: 1rem;
+		font-size: clamp(2.9rem, 5.7vw, 5.8rem);
+		line-height: 0.96;
+	}
+	.terminal-prompt {
+		margin-right: 0.45rem;
+		color: var(--accent);
 	}
 	.hero-lead {
 		max-width: 60ch;
@@ -243,14 +263,23 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 		flex-direction: column;
 		gap: 1rem;
 	}
-	.hero-photo {
-		width: 100%;
-		max-width: 20rem;
-		aspect-ratio: 1;
-		object-fit: cover;
-		border-radius: var(--radius-lg);
-		border: 1px solid var(--line);
-		box-shadow: var(--shadow-md);
+	.hero-code {
+		margin: 0;
+		padding: 1.25rem;
+		overflow: auto;
+		border: 1px solid var(--line-strong);
+		border-radius: var(--radius);
+		background: var(--surface-alt);
+		color: var(--text);
+		font-family: var(--font-mono);
+		font-size: 0.78rem;
+		line-height: 1.8;
+	}
+	.code-comment {
+		color: var(--muted);
+	}
+	.code-accent {
+		color: var(--accent);
 	}
 	/* On a phone the aside stacks under the hero text, and the portrait alone
 	   is tall enough to push the availability mark past the fold — measured on
@@ -260,13 +289,8 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 	   portrait leads, as designed. */
 	@media (width < 60rem) {
 		.hero-aside {
-			flex-direction: column-reverse;
-		}
-		.hero-photo {
-			max-width: 14rem;
-			/* Capped so the portrait cannot push the mark past the fold; centred
-			   so the cap does not leave it floating in half a row. */
-			margin-inline: auto;
+			width: 100%;
+			max-width: 34rem;
 		}
 	}
 
@@ -337,8 +361,9 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 		.hero-aside {
 			gap: 0.75rem;
 		}
-		.hero-photo {
-			max-width: 11rem;
+		.hero-code {
+			padding: 1rem;
+			font-size: 0.72rem;
 		}
 	}
 

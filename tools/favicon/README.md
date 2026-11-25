@@ -1,9 +1,9 @@
 # Favicon
 
-The mark is Newsreader `SB` in white (`#ffffff`) on the warm accent (`#b45309`)
-— `--accent-warm` and `--accent-on`'s light value in `src/styles/app.css`.
-Re-ink both files below when the palette moves, or the tab stops matching the
-page.
+The mark is Newsreader `SB` in near-black (`#111111`) on the green accent
+(`#a7ff83`) — `--on-accent` and `--accent` in Quiet Mode's
+`src/styles/app.css`. Re-ink both files below when the palette moves, or the tab
+stops matching the page.
 
 Two scripts regenerate the set. Neither runs in CI — run them by hand when the
 mark or the palette changes.

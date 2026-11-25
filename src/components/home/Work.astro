@@ -2,14 +2,14 @@
 /**
  * SELECTED WORK
  *
- * The first project gets a wide feature card — plate and story side by side.
- * The rest run as a two-column card grid, each with its mockup, so the section
- * can be scanned by picture rather than read line by line.
+ * Projects are directory rows: path and metadata in the left gutter, title,
+ * description, tags and links in the main column. The case-study pages keep
+ * the pictures; the home page spends its space on what each project does.
  *
- * On the hiring variant every case study lives on codebam.ca. Both links in a
- * card — the image and the title — carry the sibling mark the header uses, so
- * the origin change is never silent; on codebam's own build the hrefs stay
- * relative and SiblingMark renders nothing.
+ * On the hiring variant every case study lives on codebam.ca. Both the row and
+ * its title carry the sibling mark the header uses, so the origin change is
+ * never silent; on codebam's own build the hrefs stay relative and
+ * SiblingMark renders nothing.
  */
 import { Image } from 'astro:assets';
 import { projectHref } from '../../lib/site';
@@ -30,10 +30,15 @@ const metaLine = (project: FeaturedProject) =>
 	[project.since, project.stars > 0 ? `★ ${project.stars}` : null].filter(Boolean).join(' · ');
 ---
 
-<section id="work" class="section work shell">
+<section id="work" class="section work shell project-list">
 	<header class="section-head" data-reveal>
 		<div>
-			<h2 class="display display-lg">Selected work</h2>
+			<h2 class="display display-lg">
+				<span class="terminal-prompt" aria-hidden="true">
+					$
+				</span>{' '}
+				ls ~/projects
+			</h2>
 			<p class="section-sub">Open-source projects and shipped services.</p>
 		</div>
 		<a
@@ -61,7 +66,12 @@ const metaLine = (project: FeaturedProject) =>
 				<SiblingMark href={projectHref(`/projects/${lead.slug}`)} overlay />
 			</a>
 			<div class="project-body">
-				<p class="project-meta">{metaLine(lead)}</p>
+				<p class="project-meta">
+					<span class="terminal-prompt" aria-hidden="true">
+						$
+					</span>{' '}
+					{metaLine(lead)} <span class="project-path">~/projects/{lead.slug}</span>
+				</p>
 				<h3 class="project-title">
 					<a href={projectHref(`/projects/${lead.slug}`)}>
 						{lead.title}
@@ -113,7 +123,12 @@ const metaLine = (project: FeaturedProject) =>
 					<SiblingMark href={projectHref(`/projects/${project.slug}`)} overlay />
 				</a>
 				<div class="project-body">
-					<p class="project-meta">{metaLine(project)}</p>
+					<p class="project-meta">
+						<span class="terminal-prompt" aria-hidden="true">
+							$
+						</span>{' '}
+						{metaLine(project)} <span class="project-path">~/projects/{project.slug}</span>
+					</p>
 					<h3 class="project-title">
 						<a href={projectHref(`/projects/${project.slug}`)}>
 							{project.title}
@@ -167,62 +182,68 @@ const metaLine = (project: FeaturedProject) =>
 		color: var(--muted);
 	}
 
-	.project-feature {
-		display: grid;
-		overflow: hidden;
-	}
-	@media (width >= 48rem) {
-		.project-feature {
-			grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-		}
-	}
-	.project-feature .project-body {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		padding: clamp(1.5rem, 3vw, 2.5rem);
-	}
-	.project-feature .project-title {
-		font-size: clamp(1.5rem, 2.5vw, 2rem);
-	}
-
-	.project-media {
-		/* The overlay sibling mark anchors to the image. */
-		position: relative;
-		display: block;
-		height: 100%;
-		overflow: hidden;
-		background: var(--surface-alt);
-	}
-	.project-media img {
-		display: block;
-		width: 100%;
-		height: 100%;
-		aspect-ratio: 16 / 10;
-		object-fit: cover;
-		transition: transform 0.35s var(--ease-out-soft);
-	}
-	.card:hover .project-media img {
-		transform: scale(1.02);
-	}
-
+	.project-feature,
 	.project-card {
-		display: flex;
-		flex-direction: column;
-		overflow: hidden;
+		display: grid;
+		grid-template-columns: minmax(12rem, 0.55fr) minmax(0, 1.45fr);
+		align-items: start;
+		gap: 1.5rem;
+		padding-block: 1.4rem;
+		overflow: visible;
+		border: 0;
+		border-bottom: 1px solid var(--line-strong);
+		border-radius: 0;
+		background: transparent;
+		box-shadow: none;
 	}
+	.project-feature + .project-grid {
+		margin-top: 0;
+	}
+	.project-feature .project-body,
 	.project-card .project-body {
-		padding: 1.5rem;
+		display: contents;
 	}
-
+	.project-media {
+		display: none;
+	}
 	.project-meta {
-		font-size: 0.8rem;
-		font-weight: 500;
+		grid-column: 1;
+		grid-row: 1;
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+	}
+	.project-path {
+		display: block;
+		margin-top: 0.2rem;
 		color: var(--muted);
+		overflow-wrap: anywhere;
 	}
 	.project-title {
-		margin-top: 0.4rem;
-		font-size: 1.3rem;
+		grid-column: 2;
+		grid-row: 1;
+		margin: 0;
+		font-size: 1.15rem;
+	}
+	.project-copy {
+		grid-column: 2;
+		grid-row: 2;
+		margin: 0.45rem 0 0;
+	}
+	.project-tags {
+		grid-column: 2;
+		grid-row: 3;
+		margin-top: 0.75rem;
+	}
+	.project-links {
+		grid-column: 2;
+		grid-row: 4;
+		margin-top: 0.85rem;
+	}
+	.terminal-prompt {
+		margin-right: 0.4rem;
+		color: var(--accent);
+	}
+	.project-title {
 		font-weight: 600;
 		letter-spacing: -0.02em;
 		line-height: 1.25;
@@ -237,7 +258,7 @@ const metaLine = (project: FeaturedProject) =>
 		color: var(--accent);
 	}
 	.project-copy {
-		margin-top: 0.6rem;
+		margin-top: 0.45rem;
 		font-size: 0.95rem;
 		line-height: 1.6;
 		color: var(--body);
@@ -246,24 +267,33 @@ const metaLine = (project: FeaturedProject) =>
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.4rem;
-		margin-top: 1rem;
+		margin-top: 0.75rem;
 	}
 	.project-links {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 1.25rem;
-		margin-top: 1.25rem;
+		margin-top: 0.85rem;
 	}
 
 	.project-grid {
-		display: grid;
-		gap: 1.5rem;
-		margin-top: 1.5rem;
+		display: block;
+		margin-top: 0;
 	}
-	@media (width >= 48rem) {
-		.project-grid {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
+	@media (width < 48rem) {
+		.project-feature,
+		.project-card {
+			grid-template-columns: 1fr;
+			gap: 0.55rem;
+		}
+		.project-meta,
+		.project-title,
+		.project-copy,
+		.project-tags,
+		.project-links {
+			grid-column: 1;
+			grid-row: auto;
 		}
 	}
 </style>

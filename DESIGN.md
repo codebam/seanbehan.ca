@@ -8,247 +8,188 @@
 - [4. Roads not taken](#4-roads-not-taken)
 
 A working document, not a museum. Section 1 is the machinery that makes the
-design cheap to change. Section 2 is the list of things no change is allowed
-to break — it is the standing gate for whatever comes next. Section 3 is the
-design itself: what it is, what it changed, and why, with the values as
-currently shipped. Section 4 keeps the roads not taken, in one line each, so
-the next person knows what was ruled out and on what grounds.
+design cheap to change. Section 2 is the standing gate for whatever comes next.
+Section 3 describes the shipped Quiet Mode design and why it replaced the
+light editorial theme. Section 4 records the roads not taken.
 
-Nothing here touches the constraints in `AGENTS.md`: server-rendered
-content, the site must work with JS off, one set of CSS tokens feeding both
-palettes, `src/styles/app.css` as the single design surface, and the
-two-variant mechanic (`PUBLIC_SITE`, `src/lib/site.data.js`). A change that
-needs a client framework, a component library swap, or a third copy of the
-copy tables is not a change for this site.
+Nothing here touches the constraints in `AGENTS.md`: server-rendered content,
+the site must work with JS off, `src/styles/app.css` as the shared design
+surface, and the two-variant mechanic (`PUBLIC_SITE`, `src/lib/site.data.js`). A
+change that needs a client framework, a component library swap, or a third copy
+of the copy tables is not a change for this site.
 
 ---
 
 ## 1. The machinery
 
-**The voice.** Inter does the interface — navigation, headings, labels,
-buttons, metadata, and the display type. Newsreader does the reading: the
-article body, and the résumé, which is a document. Code is a local-first
-mono stack — Fira Code if the reader has it, then JetBrains Mono, Cascadia
-Code and the platform's monospace; no mono webfont ships, so the face is
-opportunistic rather than guaranteed. Headlines get exactly one decorative
-move: an italic word set in the warm accent, which is also the colour of the
-wordmark's dot.
-Everything that moves is under 0.6 s and a few pixels. The comments in
-`app.css` are the best summary of intent — the site is deliberately a page,
-not a dashboard.
+**The voice.** Quiet Mode uses the grammar of a calm shell session without
+turning the site into a terminal pastiche. A local monospace stack carries
+display type, navigation, labels, metadata, commands and code. System UI type
+carries explanations, article prose and the résumé. The prompt is identity and
+orientation; prose remains prose.
 
-**The palette.** White paper in light (`--bg #ffffff`, panels `#ffffff`, alt
-fills `#f8fafc`) with slate ink (`#0f172a` / `#334155` / `#64748b`); dark is a
-deep navy-ink (`#0b1220`, panels `#111827`) with near-white type
-(`#f1f5f9` / `#cbd5e1`). One set of names carries both schemes — there is no
-parallel `--palette-light-*` / `--palette-dark-*` pair to keep in step. The
-footer is the one band that still carries the opposite palette
-(`panel-invert`); mid-page bands are fills, not inversions.
+The display face is local-first: Fira Code, JetBrains Mono and Cascadia Code are
+used when installed, then the platform's monospace. No mono webfont ships. The
+old Inter and Newsreader files remain available to the social-card renderer,
+but the public page no longer preloads them.
 
-**The composition.** A shared 1120 px inner column (`.shell`) and one vertical
-rhythm (`.section`: `padding-block: clamp(3.5rem, 7vw, 5.5rem)`) that
-page-level sections share. The home hero, the masthead and post masthead, the
-article body, the footer grid and the facts strip are the genuine exceptions;
-each has a named `--pad-*` token in `app.css` with the reason it differs, so
-the next change picks a name instead of restating a clamp. The call sites in
-`.astro` files still carry the clamps and are being routed through those names.
-The home page is: hero (eyebrow, statement, one action) → a facts strip →
-project cards → latest writing, with `leadWith` swapping the middle two on the
-handle-first variant. Every other
-page opens with the same `Masthead` — a folio line (uppercase label left, meta
-right, hairline under) above a display-xl headline and a deck capped at 60 ch.
-Long-form is one serif column (820 px, 1.75 leading) with Tailwind typography
-pointed at the tokens; headings inside it are sans.
+**The palette.** Quiet Mode is deliberately dark on every device. The ground is
+`#0d1512`, the raised surface is `#14231d`, ink is `#e4f1e8`, muted text is
+`#8fa99a`, and the single interactive accent is `#a7ff83`. The accent is bright
+enough for links and focus rings on the dark ground; button labels switch to
+`#111111`. There is no light/dark toggle and no `prefers-color-scheme` branch.
+Print pins a separate ink-on-paper palette.
+
+**The composition.** The shared `.shell` remains the inner column. The home
+page is a two-column hero — statement and action on the left, a current-focus
+command block and availability on the right — followed by the facts strip,
+project directory, writing log, offers, experience and newsletter. The
+handle-first variant still changes order through `leadWith`, not CSS.
+
+Projects are rows, not a card gallery: path and metadata in the left gutter,
+title, description, tags and links in the main column. Writing is a log: date
+in the gutter, title and summary in the main column. The same directory/log
+language carries into the archive and related-reading rows.
+
+Every other page opens with `Masthead`: a command label and meta row above a
+mono display headline and a deck capped at 60 ch. Long-form is one system-sans
+column, 46rem wide, with 1.75 leading. This is a conscious departure from the
+old serif-reading invariant: the chosen direction treats technical prose as
+part of the same readable system, while code and interface type share the
+local mono stack.
 
 **The machinery that makes it cheap to restyle.**
 
-- Every colour is a token; components never name a hex.
-- Shiki tokens, prose, buttons, inputs, scrollbars, selection — all
-  token-derived.
-- The dark mode is one `prefers-color-scheme` block plus the footer's
-  inversion override. Print pins the light palette and deliberately darkens
-  its quiet marks for paper (documented in the surfaces list below).
-- The fonts are two variable files plus metric-matched fallbacks
-  (no swap reflow); the build script is `tools/fonts/build-fonts.sh`.
-- Variant differences are copy and ordering (`leadWith: 'facts' | 'work'`),
-  not CSS.
-- Kumo supplies the two controls the site earns (the input, the button) and
-  `.flat-control` / `.site-cta` in `app.css` re-ink them; nothing else is
-  borrowed.
+- Every colour is a token; components do not name hex values.
+- Shiki tokens, prose, buttons, inputs, scrollbars, selection, résumé and print
+  styles are token-derived.
+- The prompt cursor is the only looping motion. It disappears under
+  `prefers-reduced-motion`; the entrance ladder and reading progress retain
+  their existing reduced-motion guards.
+- Variant differences remain copy and ordering in `site.data.js`.
+- Kumo still supplies the input and button. `.flat-control`, `.site-cta` and
+  `.site-field` re-ink those controls to the Quiet Mode palette.
 
 **The surfaces the tokens cannot reach.** A palette change is not only a token
-change. These hold a copy of the values and have to be re-inked with them:
-`src/pages/og/[slug].png.ts` (the light values, hard-coded), `src/pages/site.webmanifest.ts`,
-`public/favicon.svg` and `tools/favicon/build-favicon.sh` (regenerate the
-raster set with it), `public/profile.webp` and `public/profile-dark.webp` (the
-portrait's two grounds, snapped to `--surface-alt` and `--panel`; the crop is
-shared, only the ground moves, like the brand figures), `resume/metadata.yaml` (the PDF's LaTeX palette), the
-display ads in `public/img/`, the brand plates and their two figures in
-`public/img/brand/` (generated art, snapped to the token values by hand —
-there is no build step, so the dark figures are recolours of the light
-crops, and both move together when the palette does), and the `@media print`
-block in
-`src/styles/app.css` (it keeps deliberately ink-optimised values — `--muted
-#475569`, `--dim #64748b`, `--accent #1d4ed8` — rather than reading the light
-tokens, because the screen values wash out on paper; that is a decision, not
-drift). `Base.astro`'s two `theme-color` metas take the same pair the manifest
-does. This list exists because the redesign of Sept 2026 updated `app.css` and
-`Base.astro` and nothing else, and the social cards, the manifest, the
-favicon, the résumé PDF and the ads spent a commit showing the previous
-design.
+change. These hold copied values and must move with it:
+
+- `src/pages/og/[slug].png.ts` — the fixed social-card palette
+- `src/pages/site.webmanifest.ts` — installed theme and background colours
+- `public/favicon.svg`, `tools/favicon/build-favicon.sh` and the generated
+  raster icons in `public/`
+- `public/profile-dark.webp` — the portrait ground used by the dark-only pages
+- `resume/metadata.yaml` — the PDF palette
+- display ads in `public/img/` and `tools/ads/build-ads.mjs`
+- the dark brand figures in `public/img/brand/`
+- the `@media print` block in `src/styles/app.css`
+- the single `theme-color` meta in `Base.astro`
+
+This list exists because the September 2026 redesign changed `app.css` and
+`Base.astro` without moving every copied surface. Quiet Mode updates the set
+together so the tab, share card, installed app, résumé and ads do not keep
+speaking the previous palette.
 
 ---
 
 ## 2. Invariants — every future change must keep these
 
-1. **Token architecture.** One set of names, two schemes as values. A change
-   that hard-codes colours into components is rejected at review, not
-   debated — including the five surfaces listed in section 1, which are the
-   documented exceptions and must be updated in the same change.
-2. **`prefers-color-scheme`, plus the footer's `panel-invert`.** Both
-   palettes must survive without JS.
-3. **Print.** A long article printed in dark mode still has to be legible
-   on paper. Whatever the next palette is, the print block gets a matching
-   rewrite.
-4. **A serif reading column.** The posts are the product, and the column a
-   reader sits in is the serif. Headings, navigation and the display type are
-   the interface face; demoting the _reading_ column to the UI face is
-   re-arguing the site's reason for existing. (Re-worded in Sept 2026: the
-   invariant used to say "serif-first", which the shipped design does not
-   keep — see 3.2 — while the thing it was protecting, the column, still
-   holds.)
-5. **JS-off parity.** Search filtering, the contents list, the copy
-   buttons, and the topline work without a script. Motion is enhancement
-   only and dies under `prefers-reduced-motion`.
-6. **No new runtime.** Everything stays plain Astro, Kumo for the two or so
-   controls it earns, `src/scripts` for behaviour.
+1. **Token architecture.** One dark screen palette, one print palette. A change
+   that hard-codes colours into components is rejected at review, including the
+   copied surfaces listed above.
+2. **Dark by design.** Quiet Mode does not follow the operating system's light
+   preference. The document declares `color-scheme: dark`; there is no toggle
+   that can lie when JavaScript is unavailable.
+3. **Print.** A long article printed from the dark site still has to be legible
+   on paper. The print block owns its ink-optimised values and moves with the
+   screen palette.
+4. **A readable long-form column.** Posts are the product. The reading column
+   keeps a 46rem measure, 1.75 leading and system-sans prose; code remains
+   visibly monospace. Headings inside a post are still re-based by
+   `prepareBody`, never in a template.
+5. **JS-off parity.** Search filtering, the contents list, the copy buttons and
+   the topline work without a script. Motion is enhancement only and dies under
+   `prefers-reduced-motion`.
+6. **No new runtime.** Everything stays plain Astro, Kumo for the two controls
+   it earns, and `src/scripts` for behaviour.
 7. **Two variants, one design.** Any difference between seanbehan.ca and
-   codebam.ca must be expressible as data in `site.data.js`, not a branch in
-   the CSS.
-8. **Contrast discipline.** Text clears 4.5:1 against what it sits on, and
-   anything a reader has to perceive to use the page — a control's boundary,
-   an icon, a focus ring — clears 3:1. `--dim` is the quietest mark the site
-   draws and is set to just clear that bar (`#828d9d`, 3.36:1 on white); it is
-   not a licence to go quieter. New palettes ship their checks with them.
-9. **Perf envelope.** The two-variable-fonts-plus-metric-fallbacks trick,
-   the short entrance ladder, and the scroll-driven reading bar stay. New
-   assets must not cost more than the ones they replace.
+   codebam.ca is data in `site.data.js`, not a branch in CSS.
+8. **Contrast discipline.** Text clears 4.5:1; control boundaries, icons and
+   focus rings clear 3:1. The accent is not used for small text unless it clears
+   the same 4.5:1 bar against its actual ground.
+9. **Perf envelope.** The public page no longer preloads two variable webfonts.
+   New assets must not cost more than the ones they replace. The cursor blink,
+   entrance ladder and scroll-driven reading bar remain the only motion.
+10. **Keyboard and touch targets.** Navigation links keep a 44px minimum target,
+    focus remains visible, and horizontal code/file-tree regions are named,
+    focusable and scrollable.
 
 ---
 
 ## 3. The design, as shipped
 
-**1. The accent split.** Warm is the site's voice, blue is the user's reach.
-The warm accent (`--accent-warm`, `#b45309` light / `#fbbf24` dark) carries the
-editorial work — the italic word in a headline, the wordmark's dot, language
-tags, the résumé's rules and section titles. Blue (`#2563eb` / `#60a5fa`) keeps
-the interactive work — links, focus, buttons, the one call to action. Two
-accents doing distinct jobs is the whole mechanism; the failure mode it avoids
-is one colour doing both, where the voice has to shout to be heard.
+**1. The prompt is the wordmark.** The header brand is a shell prompt —
+`sean@seanbehan:~$` or `codebam@codebam:~$` — with a blinking accent cursor. It
+replaces the legal-name wordmark without hiding the name: the prompt contains
+the origin, and the page metadata still carries Sean Behan. The mobile menu
+uses the same navigation and current-page semantics as the desktop row.
 
-**2. The Sept 2026 redesign — the interface left the serif.** The previous
-design was a broadsheet: a centred nameplate signed every page, the body
-serif carried the headings as well as the prose, tracked uppercase labels
-everywhere, and sections were separated by full-bleed bands. It asked a reader
-to decode a newspaper before they could read a résumé. The shipped design puts
-Inter in charge of the interface — headings included — and keeps Newsreader
-for the reading column and the résumé, which is the invariant 4 above, stated
-as it actually is. The header became a compact sticky bar (name left, four
-links and one action right, a `<details>` menu under 56 rem) so the first
-screen of every page belongs to the page. This is the change that re-worded
-invariant 4 and cost the section-1 list its five stale surfaces; the argument
-is here so the next person finds it by reading rather than by rediscovery.
+**2. The hero is a current-focus summary.** The left side carries the role, one
+mono statement, the introduction and the variant's primary action. The right
+side is a small command block:
 
-**3. The home page.** A two-column hero states who this is, what they build and
-how to reach them: eyebrow, one display-xl statement with a single italic word,
-a lead paragraph, one primary action (the variant's `primaryAction`) and a
-quiet row beside it, with the portrait and the availability mark in the aside.
-The facts strip follows — four figures separated by hairlines on the page's own
-ground — then project cards (one wide feature, then a two-column grid) and the
-writing list (one lead card, then a grid). `leadWith` decides whether the work
-or the numbers come first, so the two variants differ by order, not layout.
-The lead block follows the hero outright — proof on the first screen — and the
-commercial offers follow it on the hiring variant; the first section after the
-hero opens on `--pad-after-hero` so a heading, not padding, ends the first
-screen. On the hiring variant a
-condensed work history sits between the numbers and the projects: five dated
-rows, the employer in the warm accent, one line each, because "has anyone paid
-him?" is the question a hiring reader asks before the project rows mean
-anything. It is `site.experience` in `site.data.js`, `null` on the code-first
-variant, and it follows `resume/resume.md` the way `projects.ts` does — the
-résumé gets the detail.
+```text
+systems = rust + typescript
+platform = nixos + cloudflare
+method = small, explicit, reproducible
+ship_in_the_open = true
+```
 
-**4. The availability mark.** `Availability.astro` puts a dot and a sentence in
-the home hero's identity block, on the résumé's masthead, and on About: who,
-where, and is he reachable, answered in one place instead of three. On a phone
-the home aside reverses, so the mark sits above the portrait rather than below
-it — measured on the live page, the portrait had pushed the one line a hiring
-reader needs to y=852 on a 390×844 screen, eight pixels past the fold. The dot
-is `--positive` green because that is the signal a reader already reads as
-"available" without being taught it; it does not pulse. A blinking indicator is
-a dashboard's grammar, and the site is a page — the status is a fact, not a
-feed. The copy is `site.availability` in `site.data.js`, `null` on the variant
-that pitches the code, so the component renders nothing there rather than
-branching.
+Availability follows the block. The portrait leaves the home hero; it remains
+on About and Contact, where a hiring reader wants a face beside the biography.
 
-**5. The footer is the one inversion.** The page ends, and the signature's page
-is different. It carries its own small token set (`--footer-*`) including
-`--footer-accent` (`#60a5fa`, the blue the dark palette already picked for a
-dark ground), because the light scheme's `#2563eb` reads at 3.45:1 on
-`#0f172a` — which is what a self-referential
-`--accent: var(--accent)` silently produced. Its three link groups are real
-lists, for the item counts.
+**3. Work is a directory.** `Selected work` is headed by `ls ~/projects`. Each
+row shows its repository path, year/language metadata, title, description,
+tags and links. Images remain available on case-study pages, but the home page
+does not spend its first screen on a gallery of product shots. This makes the
+work scannable and gives the descriptions more room.
 
-**6. Contrast, as shipped.** Body copy is 10.4:1 on the light ground and 12.6:1
-on the dark one; `--muted` is 4.76:1 / 7.30:1; `--accent` is 5.17:1 / 7.36:1;
-`--accent-warm` is 5.02:1 / 11.22:1. The print block re-states the light
-palette at `--muted #475569` (7.58:1) so a dark-mode print is still a legible
-page. The two places this had drifted — the primary button, whose Kumo gradient
-put a white label at 3.47:1, and the search field, whose boundary was 1.25:1 —
-are now pinned by `.site-cta` and `.site-field` in `app.css`.
+**4. Writing is a log.** `Latest writing` is headed by `tail -n 6 ~/writing`.
+Dates sit in a monospace gutter; titles and summaries sit in the reading
+column. The archive keeps its server-rendered rows and JS-off search behavior,
+styled with the same hairline rhythm.
 
-**7. Type scale.** `display-xl` is `clamp(2.25rem, 5vw, 3.5rem)`, `display-lg`
-`clamp(1.5rem, 2.6vw, 2rem)`, the article title the same as `display-xl`. The
-reading column is 820 px and the prose sets at 1.75; the section deck caps at
-60 ch. Headings inside a post are re-based by `prepareBody` so the shallowest
-is an `h2`, which is what keeps a body written entirely in `###` from skipping
-a level under the page's `h1`.
+**5. The facts strip is telemetry, not a dashboard.** Four values use mono type
+and the accent; labels stay quiet. The strip proves experience, output and
+stack before the project directory asks for a deeper read.
 
-**8. The two figures.** Imagery is rationed here, and these are the only two
-places it is spent: the product hero, where a $59 download has no object to
-show and an abstract mark gives the purchase a body, and the 404, where the
-page has nothing to do and an orbit that does not close is the whole joke.
-Both are the same drawing — the light plate is the source and the dark
-figure is that crop recoloured, so the mark never changes shape with the
-scheme, only ink. The product figure folds the warm accent into its line
-colour because the headline already spends the page's one warm note; the
-404 keeps the arc, because that page has none. Nothing else gets an image:
-the home hero's allowance is the portrait, and a plate beside the services
-CTA competes with the one thing that page is for.
+**6. The footer is a status line.** It keeps the real link lists and newsletter
+form, but the wordmark becomes the same prompt and the palette stays in the
+dark green family rather than inverting to an unrelated navy.
 
-**9. Motion.** One entrance ladder (`fadeInUp`, 0.4–0.6 s, ≤12 px, staggered by
-`--enter-delay` / `--reveal-delay`), a scroll-driven reading bar with no
-listener, and cross-page view transitions. All of it is off under
-`prefers-reduced-motion`, and the reveal's hidden state is applied by script so
-nothing is ever stuck invisible without JS.
+**7. Contrast.** The Quiet Mode palette was checked against its actual grounds:
+ink and muted text clear 4.5:1, the accent clears 4.5:1 for text-sized marks,
+and the dark button label clears 4.5:1 on the green accent. Print uses dark ink
+on white with a darkened accent so a dark-mode page does not print as a grey
+block.
+
+**8. Motion.** The prompt cursor blinks at 1.2s. Links and rows change color or
+background over 120–220ms. The existing entrance ladder, reading progress and
+view transitions remain under 0.6s. All looping and transition motion is off
+under `prefers-reduced-motion`.
 
 ---
 
 ## 4. Roads not taken
 
-- **"The Console" — the technical journal, dark-first, mono-voiced.** Dark
-  as the default, a monospace display face, a prompt-line masthead, code
-  blocks full-bleed. The most truthful for _this_ audience — and the one
-  that inverts invariant 4 by demoting the reading column, and the one that
-  collides with the two-variant rule, since its best reading is codebam
-  only. Turned down on those two grounds, and recorded so the collision is
-  found by argument next time, not by rediscovery.
-- **The broadsheet, kept.** A newspaper front page is a real design, and the
-  site ran it for a season (commit `fcda5e8` and its neighbours). It lost to
-  the reading it imposed on the one page a hiring reader actually came for:
-  a centred nameplate, 11 px tracked labels, and a serif interface between
-  them and a résumé. Recorded as a road not re-taken, with the argument, so
-  the next person does not rediscover it as an improvement.
-- **A manual dark toggle.** `prefers-color-scheme` only. Invariant 2 still
-  requires the no-JS path, and a toggle that cannot be honoured without a
-  script is a control that lies to a reader who has none.
+- **The Marginalia Column.** A warm editorial publication with chapter
+  navigation and annotated spreads. Beautiful for long-form writing, but less
+  specific to Sean's Linux, Rust and systems work than Quiet Mode.
+- **The broadsheet.** The site ran a newspaper front page in an earlier season.
+  It imposed a decoding step before the work and résumé; Quiet Mode keeps the
+  directness without the nameplate ceremony.
+- **A literal terminal.** Full-screen ASCII art, fake command input and console
+  chrome would make the site harder to read and maintain. Quiet Mode borrows
+  the grammar — prompt, path, metadata, log — not the limitations.
+- **A manual theme toggle.** The dark palette is the chosen identity, not a
+  preference layer. A toggle would add state and a second palette to maintain
+  without improving the design.

@@ -21,7 +21,12 @@ const hasFigure = Astro.slots.has('figure');
 <section class="page-hero panel">
 	<div class="shell">
 		<p class="eyebrow page-hero-kicker">
-			<span>{label}</span>
+			<span>
+				<span class="terminal-prompt" aria-hidden="true">
+					$
+				</span>{' '}
+				{label}
+			</span>
 			<span class="page-hero-meta">{meta}</span>
 		</p>
 
@@ -49,6 +54,10 @@ const hasFigure = Astro.slots.has('figure');
 		border-bottom: 1px solid var(--line);
 	}
 	/* .eyebrow carries the type; this is only the row it sits in. */
+	.terminal-prompt {
+		margin-right: 0.4rem;
+		color: var(--accent);
+	}
 	.page-hero-kicker {
 		display: flex;
 		align-items: baseline;
@@ -61,12 +70,14 @@ const hasFigure = Astro.slots.has('figure');
 		white-space: nowrap;
 	}
 	.page-hero-title {
-		max-width: 20ch;
+		max-width: 18ch;
 		margin-top: clamp(1.5rem, 3.5vw, 2.25rem);
+		font-size: clamp(2.6rem, 5.5vw, 5.2rem);
+		line-height: 0.98;
 	}
 	.page-hero-title :global(em) {
 		font-style: italic;
-		color: var(--accent-warm);
+		color: var(--accent);
 	}
 	.page-hero-copy {
 		max-width: 60ch;

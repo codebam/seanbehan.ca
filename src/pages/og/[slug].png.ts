@@ -52,16 +52,15 @@ import { displayTag } from '../../lib/tags';
 const WIDTH = 1200;
 const HEIGHT = 630;
 
-// The light palette from app.css, and the values to change when it does. The
-// cards are a fixed surface — a social preview has no reader theme to follow —
-// so the light values are the values. ACCENT is the warm editorial token
-// rather than the interactive blue: a card has nothing to click, and this is
-// the one mark it makes about itself.
-const BG = '#ffffff';
-const TEXT = '#0f172a';
-const MUTED = '#64748b';
-const ACCENT = '#b45309';
-const LINE = '#cbd5e1';
+// Quiet Mode is a fixed dark surface — a social preview has no reader theme to
+// follow. The card has nothing to click, so the green accent is its one brand
+// mark; the surface token supplies the quiet footer rule.
+const BG = '#0d1512';
+const SURFACE = '#14231d';
+const TEXT = '#e4f1e8';
+const MUTED = '#8fa99a';
+const ACCENT = '#a7ff83';
+const LINE = SURFACE;
 
 /**
  * Long titles step down a size rather than wrapping into a fourth line, which
@@ -166,16 +165,14 @@ function staticCardPayload(slug: string, host: string): Card | undefined {
 }
 
 /**
- * Newsreader for the title, Inter for everything else — the site's own
- * pairing, but the static @fontsource cuts rather than the variable files the
- * site serves: satori reads the `fvar` table of a variable font wrong and
- * throws, and a card needs one weight of each face anyway. `.woff` rather than
- * `.woff2` because satori reads ttf, otf and woff.
+ * Newsreader for the title, Inter for everything else, using the static
+ * @fontsource cuts rather than the variable files the site serves: satori
+ * reads the `fvar` table of a variable font wrong and throws, and a card needs
+ * one weight of each face anyway. `.woff` rather than `.woff2` because satori
+ * reads ttf, otf and woff.
  *
- * The title stays in the serif even though the site's headings are Inter now:
- * a card is a headline to be read, which is the job the serif still does on
- * the article body and the résumé, and there is no bold cut of Inter here to
- * set it in.
+ * The title stays in the serif because a card is a headline to be read, and
+ * there is no bold cut of Inter here to set it in.
  */
 async function fonts(origin: string) {
 	/*
