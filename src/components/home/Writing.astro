@@ -22,7 +22,7 @@ const monthYear = (date: string) =>
 	new Date(date).toLocaleDateString('en-CA', { month: 'short', year: 'numeric', timeZone: 'UTC' });
 ---
 
-<section class="writing shell writing-log">
+<section class="writing shell">
 	<header class="section-head" data-reveal>
 		<div>
 			<h2 class="display display-lg">
@@ -38,36 +38,40 @@ const monthYear = (date: string) =>
 		</a>
 	</header>
 
-	{lead && (
-		<article class="writing-lead log-entry" data-reveal>
-			<p class="entry-meta">
-				<time datetime={lead.meta.date}>{monthYear(lead.meta.date)}</time>
-				{lead.readingMinutes && <span>· {lead.readingMinutes} min read</span>}
-			</p>
-			<h3 class="writing-lead-title">
-				<a href={writingHref(lead.path)}>{lead.meta.title}</a>
-			</h3>
-			{lead.meta.description && <p class="writing-lead-desc">{lead.meta.description}</p>}
-			<p class="writing-lead-more">
-				<a href={writingHref(lead.path)} class="link-accent">
-					Read the post <span class="arrow">&rarr;</span>
-				</a>
-			</p>
-		</article>
-	)}
-
-	<div class="writing-grid">
-		{rest.map((post, i) => (
-			<article class="writing-card log-entry" data-reveal data-reveal-delay={Math.min(i, 3) * 60}>
+	{/* Keep the log skin inside .shell so the section retains its centered,
+	    padded reading measure. */}
+	<div class="writing-layout writing-log">
+		{lead && (
+			<article class="writing-lead log-entry" data-reveal>
 				<p class="entry-meta">
-					<time datetime={post.meta.date}>{monthYear(post.meta.date)}</time>
+					<time datetime={lead.meta.date}>{monthYear(lead.meta.date)}</time>
+					{lead.readingMinutes && <span>· {lead.readingMinutes} min read</span>}
 				</p>
-				<h3 class="writing-card-title">
-					<a href={writingHref(post.path)}>{post.meta.title}</a>
+				<h3 class="writing-lead-title">
+					<a href={writingHref(lead.path)}>{lead.meta.title}</a>
 				</h3>
-				{post.meta.description && <p class="writing-card-desc">{post.meta.description}</p>}
+				{lead.meta.description && <p class="writing-lead-desc">{lead.meta.description}</p>}
+				<p class="writing-lead-more">
+					<a href={writingHref(lead.path)} class="link-accent">
+						Read the post <span class="arrow">&rarr;</span>
+					</a>
+				</p>
 			</article>
-		))}
+		)}
+
+		<div class="writing-grid">
+			{rest.map((post, i) => (
+				<article class="writing-card log-entry" data-reveal data-reveal-delay={Math.min(i, 3) * 60}>
+					<p class="entry-meta">
+						<time datetime={post.meta.date}>{monthYear(post.meta.date)}</time>
+					</p>
+					<h3 class="writing-card-title">
+						<a href={writingHref(post.path)}>{post.meta.title}</a>
+					</h3>
+					{post.meta.description && <p class="writing-card-desc">{post.meta.description}</p>}
+				</article>
+			))}
+		</div>
 	</div>
 </section>
 

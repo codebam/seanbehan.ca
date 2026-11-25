@@ -30,7 +30,7 @@ const metaLine = (project: FeaturedProject) =>
 	[project.since, project.stars > 0 ? `★ ${project.stars}` : null].filter(Boolean).join(' · ');
 ---
 
-<section id="work" class="section work shell project-list">
+<section id="work" class="section work shell">
 	<header class="section-head" data-reveal>
 		<div>
 			<h2 class="display display-lg">
@@ -52,123 +52,127 @@ const metaLine = (project: FeaturedProject) =>
 		</a>
 	</header>
 
-	{lead && (
-		<article class="project-feature card" data-reveal>
-			<a class="project-media" href={projectHref(`/projects/${lead.slug}`)}>
-				<Image
-					src={lead.mockup}
-					alt={lead.mockupAlt}
-					widths={[400, 640, 960, 1280]}
-					sizes="(min-width: 72rem) 560px, (min-width: 48rem) 52vw, calc(100vw - 2.5rem)"
-					loading="lazy"
-					decoding="async"
-				/>
-				<SiblingMark href={projectHref(`/projects/${lead.slug}`)} overlay />
-			</a>
-			<div class="project-body">
-				<p class="project-meta">
-					<span class="terminal-prompt" aria-hidden="true">
-						$
-					</span>{' '}
-					{metaLine(lead)} <span class="project-path">~/projects/{lead.slug}</span>
-				</p>
-				<h3 class="project-title">
-					<a href={projectHref(`/projects/${lead.slug}`)}>
-						{lead.title}
-						<SiblingMark href={projectHref(`/projects/${lead.slug}`)} />
-					</a>
-				</h3>
-				<p class="project-copy">{lead.description}</p>
-				<p class="project-tags">
-					<span class="tag tag-lang">{lead.language}</span>
-					{lead.tags.map((tag) => (
-						<span class="tag">{tag}</span>
-					))}
-				</p>
-				<p class="project-links">
-					{lead.homepage && (
-						<a class="link-accent" href={lead.homepage} target="_blank" rel="noopener noreferrer">
-							{lead.homepageLabel} <span class="arrow">&rarr;</span>
-							<SiblingMark href={lead.homepage} newTab />
-						</a>
-					)}
-					{lead.repo && (
-						<a
-							class="link-quiet"
-							href={`https://github.com/codebam/${lead.repo}`}
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							Source
-							<SiblingMark href={`https://github.com/codebam/${lead.repo}`} newTab />
-						</a>
-					)}
-				</p>
-			</div>
-		</article>
-	)}
-
-	<div class="project-grid">
-		{rest.map((project, i) => (
-			<article class="project-card card" data-reveal data-reveal-delay={Math.min(i, 3) * 60}>
-				<a class="project-media" href={projectHref(`/projects/${project.slug}`)}>
+	{/* The list class belongs inside .shell; on the section it would erase the
+	    shared centering and horizontal padding. */}
+	<div class="work-layout project-list">
+		{lead && (
+			<article class="project-feature card" data-reveal>
+				<a class="project-media" href={projectHref(`/projects/${lead.slug}`)}>
 					<Image
-						src={project.mockup}
-						alt={project.mockupAlt}
-						widths={[400, 520, 760, 1040]}
-						sizes="(min-width: 72rem) 520px, (min-width: 48rem) 50vw, calc(100vw - 2.5rem)"
+						src={lead.mockup}
+						alt={lead.mockupAlt}
+						widths={[400, 640, 960, 1280]}
+						sizes="(min-width: 72rem) 560px, (min-width: 48rem) 52vw, calc(100vw - 2.5rem)"
 						loading="lazy"
 						decoding="async"
 					/>
-					<SiblingMark href={projectHref(`/projects/${project.slug}`)} overlay />
+					<SiblingMark href={projectHref(`/projects/${lead.slug}`)} overlay />
 				</a>
 				<div class="project-body">
 					<p class="project-meta">
 						<span class="terminal-prompt" aria-hidden="true">
 							$
 						</span>{' '}
-						{metaLine(project)} <span class="project-path">~/projects/{project.slug}</span>
+						{metaLine(lead)} <span class="project-path">~/projects/{lead.slug}</span>
 					</p>
 					<h3 class="project-title">
-						<a href={projectHref(`/projects/${project.slug}`)}>
-							{project.title}
-							<SiblingMark href={projectHref(`/projects/${project.slug}`)} />
+						<a href={projectHref(`/projects/${lead.slug}`)}>
+							{lead.title}
+							<SiblingMark href={projectHref(`/projects/${lead.slug}`)} />
 						</a>
 					</h3>
-					<p class="project-copy">{project.description}</p>
+					<p class="project-copy">{lead.description}</p>
 					<p class="project-tags">
-						<span class="tag tag-lang">{project.language}</span>
-						{project.tags.map((tag) => (
+						<span class="tag tag-lang">{lead.language}</span>
+						{lead.tags.map((tag) => (
 							<span class="tag">{tag}</span>
 						))}
 					</p>
 					<p class="project-links">
-						{project.homepage && (
-							<a
-								class="link-accent"
-								href={project.homepage}
-								target="_blank"
-								rel="noopener noreferrer"
-							>
-								{project.homepageLabel} <span class="arrow">&rarr;</span>
-								<SiblingMark href={project.homepage} newTab />
+						{lead.homepage && (
+							<a class="link-accent" href={lead.homepage} target="_blank" rel="noopener noreferrer">
+								{lead.homepageLabel} <span class="arrow">&rarr;</span>
+								<SiblingMark href={lead.homepage} newTab />
 							</a>
 						)}
-						{project.repo && (
+						{lead.repo && (
 							<a
 								class="link-quiet"
-								href={`https://github.com/codebam/${project.repo}`}
+								href={`https://github.com/codebam/${lead.repo}`}
 								target="_blank"
 								rel="noopener noreferrer"
 							>
 								Source
-								<SiblingMark href={`https://github.com/codebam/${project.repo}`} newTab />
+								<SiblingMark href={`https://github.com/codebam/${lead.repo}`} newTab />
 							</a>
 						)}
 					</p>
 				</div>
 			</article>
-		))}
+		)}
+
+		<div class="project-grid">
+			{rest.map((project, i) => (
+				<article class="project-card card" data-reveal data-reveal-delay={Math.min(i, 3) * 60}>
+					<a class="project-media" href={projectHref(`/projects/${project.slug}`)}>
+						<Image
+							src={project.mockup}
+							alt={project.mockupAlt}
+							widths={[400, 520, 760, 1040]}
+							sizes="(min-width: 72rem) 520px, (min-width: 48rem) 50vw, calc(100vw - 2.5rem)"
+							loading="lazy"
+							decoding="async"
+						/>
+						<SiblingMark href={projectHref(`/projects/${project.slug}`)} overlay />
+					</a>
+					<div class="project-body">
+						<p class="project-meta">
+							<span class="terminal-prompt" aria-hidden="true">
+								$
+							</span>{' '}
+							{metaLine(project)} <span class="project-path">~/projects/{project.slug}</span>
+						</p>
+						<h3 class="project-title">
+							<a href={projectHref(`/projects/${project.slug}`)}>
+								{project.title}
+								<SiblingMark href={projectHref(`/projects/${project.slug}`)} />
+							</a>
+						</h3>
+						<p class="project-copy">{project.description}</p>
+						<p class="project-tags">
+							<span class="tag tag-lang">{project.language}</span>
+							{project.tags.map((tag) => (
+								<span class="tag">{tag}</span>
+							))}
+						</p>
+						<p class="project-links">
+							{project.homepage && (
+								<a
+									class="link-accent"
+									href={project.homepage}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{project.homepageLabel} <span class="arrow">&rarr;</span>
+									<SiblingMark href={project.homepage} newTab />
+								</a>
+							)}
+							{project.repo && (
+								<a
+									class="link-quiet"
+									href={`https://github.com/codebam/${project.repo}`}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									Source
+									<SiblingMark href={`https://github.com/codebam/${project.repo}`} newTab />
+								</a>
+							)}
+						</p>
+					</div>
+				</article>
+			))}
+		</div>
 	</div>
 </section>
 
