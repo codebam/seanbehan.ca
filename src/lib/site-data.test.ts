@@ -43,6 +43,13 @@ describe('siteFor', () => {
 		expect(siteFor('')).toBe(SITES.seanbehan);
 		expect(siteFor(undefined)).toBe(SITES.seanbehan);
 	});
+
+	it.each(['constructor', 'toString', '__proto__'])(
+		'falls back for inherited object key %j',
+		(id) => {
+			expect(siteFor(id)).toBe(SITES.seanbehan);
+		}
+	);
 });
 
 describe('site data tables', () => {

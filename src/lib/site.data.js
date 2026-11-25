@@ -221,4 +221,8 @@ export const COMMERCE = {
  * Falling back rather than throwing is deliberate: an unset or mistyped
  * PUBLIC_SITE should produce the original site, not a failed deploy.
  */
-export const siteFor = (/** @type {string | undefined} */ id) => SITES[id ?? ''] ?? seanbehan;
+export const siteFor = (/** @type {string | undefined} */ id) => {
+	const key = id ?? '';
+	// PUBLIC_SITE is operator input; inherited object keys are not variants.
+	return Object.hasOwn(SITES, key) ? SITES[key] : seanbehan;
+};
