@@ -16,6 +16,7 @@
 import { defineMiddleware } from 'astro:middleware';
 import { isNegotiablePath, negotiatedPath } from './lib/accept';
 import { edgeCacheKey } from './lib/edgeCache';
+import { SUBSCRIBED_PARAM, SUBSCRIBE_ERROR_PARAM } from './lib/newsletter';
 import { SITES, site } from './lib/site';
 import { EDITOR_CSP } from './lib/csp.js';
 
@@ -182,11 +183,16 @@ async function hasLiveSession(request: Request, session: MaybeSession): Promise<
 	return user !== undefined && user !== null;
 }
 
+/** URL state that renders a per-reader result rather than the shared page. */
+const PERSONALIZED_QUERY_PARAMS = ['_preview', SUBSCRIBED_PARAM, SUBSCRIBE_ERROR_PARAM];
+const hasPersonalizedQuery = (url: URL) =>
+	PERSONALIZED_QUERY_PARAMS.some((param) => url.searchParams.has(param));
+
 /**
- * Two request shapes carry per-person content that no session can explain
- * away: previews (`?_preview=<token>`) and Bearer credentials. Both stay out
- * of the cache. Everything else that is a plain GET of a public path is
- * cacheable unless a live session is attached to it.
+ * Request shapes carrying per-person content that no session can explain
+ * away: personalized query state and Bearer credentials. Both stay out of the
+ * cache. Everything else that is a plain GET of a public path is cacheable
+ * unless a live session is attached to it.
  */
 const isCacheable = async (context: {
 	request: Request;
@@ -200,7 +206,7 @@ const isCacheable = async (context: {
 	if (import.meta.env.DEV || LOOPBACK_HOSTS.includes(url.hostname)) return false;
 	if (request.method !== 'GET' || url.pathname.startsWith('/_emdash')) return false;
 	if (COMMERCE_PRIVATE.test(url.pathname)) return false;
-	if (url.searchParams.has('_preview')) return false;
+	if (hasPersonalizedQuery(url)) return false;
 	if (request.headers.get('Authorization')?.toLowerCase().startsWith('bearer ')) return false;
 	return !(await hasLiveSession(request, context.session));
 };
@@ -370,11 +376,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	if (variant || isNegotiablePath(pathname)) {
 		addVary(response.headers, 'Accept');
 	}
-	// A preview's token is in the URL and can be revoked or expire. The Worker
-	// refuses it in isCacheable, but the zone cache sits upstream of this
-	// middleware: without no-store Cloudflare holds the preview under its
-	// token-bearing key, and a HIT never runs verifyPreviewToken again.
-	if (context.url.searchParams.has('_preview')) {
+	// A preview's token can be revoked or expire, and a newsletter result banner
+	// belongs only to the reader returning from the list service. The Worker
+	// refuses both in isCacheable, but the zone cache sits upstream of this
+	// middleware: without no-store Cloudflare can still hold either response.
+	if (hasPersonalizedQuery(context.url)) {
 		response.headers.set('Cache-Control', NO_STORE);
 	}
 	if (COMMERCE_PRIVATE.test(pathname)) {

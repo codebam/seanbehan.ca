@@ -356,6 +356,29 @@ describe('edge cache policy', () => {
 		}
 	);
 
+	it.each(['subscribed=done', 'subscribe_error=rate'])(
+		'keeps newsletter result %s out of both caches',
+		async (query) => {
+			installFakeCache();
+			vi.stubEnv('DEV', false);
+			try {
+				const bannerNext = vi.fn(async () => new Response('newsletter banner'));
+				const cleanNext = vi.fn(async () => new Response('clean page'));
+				const banner = await runMiddleware(makeContext(`/about?${query}`), bannerNext);
+				const clean = await runMiddleware(makeContext('/about'), cleanNext);
+
+				expect(banner.headers.get('Cache-Control')).toBe('private, no-store');
+				expect(banner.headers.has('X-Edge-Cache')).toBe(false);
+				expect(await clean.text()).toBe('clean page');
+				expect(cleanNext).toHaveBeenCalledOnce();
+				expect(clean.headers.get('X-Edge-Cache')).toBe('MISS');
+			} finally {
+				vi.unstubAllEnvs();
+				delete (globalThis as { caches?: unknown }).caches;
+			}
+		}
+	);
+
 	it('stores anonymous HTML for the Worker window and restores the browser policy on a hit', async () => {
 		installFakeCache();
 		vi.stubEnv('DEV', false);
