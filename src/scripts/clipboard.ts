@@ -20,8 +20,7 @@ function copyFallback(text: string): boolean {
 	area.select();
 	let copied = false;
 	try {
-		document.execCommand('copy');
-		copied = true;
+		copied = document.execCommand('copy');
 	} catch {
 		// An execCommand that cannot copy simply did not.
 	}
