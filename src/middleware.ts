@@ -246,10 +246,16 @@ export function owningSite(pathname: string, id: string): 'seanbehan' | 'codebam
 	return null;
 }
 
+/** Hosts served by local Astro or Wrangler development, never the public zone. */
+const LOOPBACK_HOSTS = ['localhost', '127.0.0.1', '[::1]'];
+
 export const onRequest = defineMiddleware(async (context, next) => {
 	const { pathname } = context.url;
 
-	if (!import.meta.env.DEV) {
+	// The Cloudflare adapter bundles this middleware with DEV false even under
+	// `astro dev`, so loopback needs its own guard: there is no local TLS listener
+	// for the production HTTPS and cross-origin redirects to reach.
+	if (!import.meta.env.DEV && !LOOPBACK_HOSTS.includes(context.url.hostname)) {
 		const target = new URL(context.url);
 		let redirect = false;
 

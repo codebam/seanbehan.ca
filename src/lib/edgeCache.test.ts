@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { edgeCacheKey } from './edgeCache';
 import { MAX_QUERY_LENGTH } from './search';
 
@@ -170,10 +170,14 @@ describe('owningSite', () => {
  * `astro dev`; the tests flip it off to exercise the cache path, and the
  * Cache API is not in Node, so a Map stands in for `caches.default`.
  */
-const makeContext = (pathname: string, locals: Record<string, unknown> = {}) =>
+const makeContext = (
+	pathname: string,
+	locals: Record<string, unknown> = {},
+	origin = 'https://seanbehan.ca'
+) =>
 	({
-		url: new URL(`https://seanbehan.ca${pathname}`),
-		request: new Request(`https://seanbehan.ca${pathname}`, {
+		url: new URL(`${origin}${pathname}`),
+		request: new Request(`${origin}${pathname}`, {
 			headers: { Accept: 'text/html' }
 		}),
 		locals
@@ -243,6 +247,52 @@ describe('security headers', () => {
 
 		expect(response.headers.get('Permissions-Policy')).toContain('publickey-credentials-get=()');
 		expect(response.headers.get('Cache-Control')).toBe('private, max-age=0, must-revalidate');
+	});
+});
+
+describe('canonical redirects', () => {
+	beforeEach(() => {
+		installFakeCache();
+		vi.stubEnv('DEV', false);
+	});
+
+	afterEach(() => {
+		vi.unstubAllEnvs();
+		delete (globalThis as { caches?: unknown }).caches;
+	});
+
+	it.each(['localhost', '127.0.0.1', '[::1]'])(
+		'serves HTTP %s without redirecting to HTTPS',
+		async (hostname) => {
+			const next = vi.fn(async () => new Response('ok'));
+			const response = await runMiddleware(
+				makeContext('/about', {}, `http://${hostname}:4321`),
+				next
+			);
+
+			expect(response.status).toBe(200);
+			expect(next).toHaveBeenCalledOnce();
+		}
+	);
+
+	it('keeps cross-origin canonical routes on loopback', async () => {
+		const next = vi.fn(async () => new Response('ok'));
+		const response = await runMiddleware(
+			makeContext('/projects/viewport', {}, 'http://localhost:4321'),
+			next
+		);
+
+		expect(response.status).toBe(200);
+		expect(next).toHaveBeenCalledOnce();
+	});
+
+	it('still redirects public HTTP requests to HTTPS', async () => {
+		const next = vi.fn(async () => new Response('ok'));
+		const response = await runMiddleware(makeContext('/about', {}, 'http://seanbehan.ca'), next);
+
+		expect(response.status).toBe(301);
+		expect(response.headers.get('Location')).toBe('https://seanbehan.ca/about');
+		expect(next).not.toHaveBeenCalled();
 	});
 });
 
