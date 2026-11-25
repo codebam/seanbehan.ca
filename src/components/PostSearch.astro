@@ -140,7 +140,12 @@ const { query = '', minQueryLength = 1 } = Astro.props;
 
 		/** The unsearched list: everything visible, in the order the server drew it. */
 		function showAll() {
-			for (const row of rows) row.el.hidden = false;
+			// A previous result set moved matches to the front. Restore the
+			// server's order before showing every row again.
+			for (const row of rows) {
+				row.el.hidden = false;
+				list!.append(row.el);
+			}
 			empty!.hidden = true;
 			status!.textContent = '';
 			if (count) count.textContent = `${rows.length} entries, newest first`;
