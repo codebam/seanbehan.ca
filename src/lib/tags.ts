@@ -10,7 +10,8 @@ export const slugifyTag = (tag: string): string => tag.trim().toLowerCase().repl
  * Display form of a tag. D1 stores a lowercased slug beside the term's label,
  * and the label is the normal name; this map rescues proper nouns like "nixos"
  * for terms whose label was never filled in, and leaves everything else as it
- * arrived.
+ * arrived. The own-property check keeps tags such as "constructor" from reading
+ * a value inherited from Object.prototype.
  */
 const TAG_LABELS: Record<string, string> = {
 	nixos: 'NixOS',
@@ -37,4 +38,7 @@ const TAG_LABELS: Record<string, string> = {
 	quadlet: 'Quadlet'
 };
 
-export const displayTag = (tag: string): string => TAG_LABELS[slugifyTag(tag)] ?? tag;
+export const displayTag = (tag: string): string => {
+	const slug = slugifyTag(tag);
+	return Object.hasOwn(TAG_LABELS, slug) ? TAG_LABELS[slug]! : tag;
+};

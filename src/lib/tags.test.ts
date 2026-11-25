@@ -39,4 +39,11 @@ describe('displayTag', () => {
 		expect(displayTag('some-unknown-tag')).toBe('some-unknown-tag');
 		expect(displayTag('Some Weird Tag')).toBe('Some Weird Tag');
 	});
+
+	it.each(['constructor', 'toString', '__proto__'])(
+		'does not read inherited object keys for %j',
+		(tag) => {
+			expect(displayTag(tag)).toBe(tag);
+		}
+	);
 });
