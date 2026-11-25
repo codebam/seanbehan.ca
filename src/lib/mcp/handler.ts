@@ -24,6 +24,26 @@ import { TOOL_DEFINITIONS, runTool, type McpEnv } from './tools';
 /** A question plus its context is small; anything larger is abuse, not input. */
 const MAX_BODY_BYTES = 64 * 1024;
 
+/** Read only up to the cap so a chunked request cannot buffer an unbounded body. */
+async function readBody(request: Request): Promise<string | null> {
+	if (!request.body) return '';
+	const reader = request.body.getReader();
+	const decoder = new TextDecoder();
+	let body = '';
+	let bytes = 0;
+	while (true) {
+		const { done, value } = await reader.read();
+		if (done) break;
+		bytes += value.byteLength;
+		if (bytes > MAX_BODY_BYTES) {
+			await reader.cancel();
+			return null;
+		}
+		body += decoder.decode(value, { stream: true });
+	}
+	return body + decoder.decode();
+}
+
 /**
  * Any origin may call this server: MCP clients run on other origins, so
  * same-origin CORS would break every remote agent. This is safe because the
@@ -155,8 +175,8 @@ export async function handleMcp(request: Request, env: McpEnv): Promise<Response
 		);
 	}
 
-	const body = await request.text();
-	if (body.length > MAX_BODY_BYTES) {
+	const body = await readBody(request);
+	if (body === null) {
 		return rpcResponse(
 			failure(null, RPC_ERRORS.invalidRequest, 'Request body too large.'),
 			encoding,

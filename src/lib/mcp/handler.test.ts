@@ -104,6 +104,42 @@ describe('handleMcp — error formatting', () => {
 		expect((await envelope(res)).error?.code).toBe(-32600);
 	});
 
+	it('counts UTF-8 bytes rather than UTF-16 code units', async () => {
+		const res = await handleMcp(post('é'.repeat(40 * 1024)), env);
+		expect(res.status).toBe(413);
+		expect((await envelope(res)).error?.code).toBe(-32600);
+	});
+
+	it('cancels an oversized chunked body without reading the rest', async () => {
+		let pulls = 0;
+		let cancelled = false;
+		const body = new ReadableStream<Uint8Array>({
+			pull(controller) {
+				pulls += 1;
+				if (pulls === 1) controller.enqueue(new Uint8Array(64 * 1024 + 1));
+				else {
+					controller.enqueue(new Uint8Array([120]));
+					controller.close();
+				}
+			},
+			cancel() {
+				cancelled = true;
+			}
+		});
+		const request = new Request(ENDPOINT, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body,
+			duplex: 'half'
+		} as RequestInit);
+
+		const res = await handleMcp(request, env);
+
+		expect(res.status).toBe(413);
+		expect(cancelled).toBe(true);
+		expect(pulls).toBe(1);
+	});
+
 	it('400s malformed JSON as a parse error', async () => {
 		const res = await handleMcp(post('{nope'), env);
 		expect(res.status).toBe(400);
