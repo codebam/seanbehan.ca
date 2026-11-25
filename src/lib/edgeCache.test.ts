@@ -297,6 +297,32 @@ describe('canonical redirects', () => {
 });
 
 describe('edge cache policy', () => {
+	it.each(['localhost', '127.0.0.1', '[::1]'])(
+		'does not cache loopback dev renders when bundled DEV is false: %s',
+		async (hostname) => {
+			installFakeCache();
+			vi.stubEnv('DEV', false);
+			try {
+				const next = vi
+					.fn()
+					.mockResolvedValueOnce(new Response('first render'))
+					.mockResolvedValueOnce(new Response('second render'));
+				const context = makeContext('/about', {}, `http://${hostname}:4321`);
+				const first = await runMiddleware(context, next);
+				const second = await runMiddleware(context, next);
+
+				expect(await first.text()).toBe('first render');
+				expect(await second.text()).toBe('second render');
+				expect(next).toHaveBeenCalledTimes(2);
+				expect(first.headers.has('X-Edge-Cache')).toBe(false);
+				expect(second.headers.has('X-Edge-Cache')).toBe(false);
+			} finally {
+				vi.unstubAllEnvs();
+				delete (globalThis as { caches?: unknown }).caches;
+			}
+		}
+	);
+
 	it('stores anonymous HTML for the Worker window and restores the browser policy on a hit', async () => {
 		installFakeCache();
 		vi.stubEnv('DEV', false);

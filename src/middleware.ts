@@ -170,6 +170,9 @@ const EDGE_BROWSER_POLICY = 'X-Edge-Browser-Cache-Control';
  */
 type MaybeSession = { get(key: string): Promise<unknown> } | undefined;
 
+/** Hosts served by local Astro or Wrangler development, never the public zone. */
+const LOOPBACK_HOSTS = ['localhost', '127.0.0.1', '[::1]'];
+
 async function hasLiveSession(request: Request, session: MaybeSession): Promise<boolean> {
 	const cookie = request.headers.get('Cookie') ?? '';
 	if (!/(^|;\s*)astro-session=/.test(cookie) || !session) return false;
@@ -191,10 +194,10 @@ const isCacheable = async (context: {
 	session?: MaybeSession;
 }): Promise<boolean> => {
 	const { request, url } = context;
-	// Miniflare persists Cache API entries across restarts. Using the production
-	// edge policy in development made template edits look unchanged for ten
-	// minutes, which defeats Astro's file watcher and HMR.
-	if (import.meta.env.DEV) return false;
+	// Miniflare persists Cache API entries across restarts. The Cloudflare
+	// adapter also bundles DEV false under `astro dev`, so loopback needs its
+	// own guard or template edits keep appearing stale until the cache expires.
+	if (import.meta.env.DEV || LOOPBACK_HOSTS.includes(url.hostname)) return false;
 	if (request.method !== 'GET' || url.pathname.startsWith('/_emdash')) return false;
 	if (COMMERCE_PRIVATE.test(url.pathname)) return false;
 	if (url.searchParams.has('_preview')) return false;
@@ -245,9 +248,6 @@ export function owningSite(pathname: string, id: string): 'seanbehan' | 'codebam
 	}
 	return null;
 }
-
-/** Hosts served by local Astro or Wrangler development, never the public zone. */
-const LOOPBACK_HOSTS = ['localhost', '127.0.0.1', '[::1]'];
 
 export const onRequest = defineMiddleware(async (context, next) => {
 	const { pathname } = context.url;
