@@ -261,7 +261,11 @@ const navItems = nav.map((item) => ({
 								</a>
 							))}
 						</nav>
-						<a href="/contact" class="btn nav-menu-cta">
+						<a
+							href="/contact"
+							class="btn nav-menu-cta"
+							aria-current={isCurrent('/contact') ? 'page' : undefined}
+						>
 							Get in touch
 						</a>
 					</div>
