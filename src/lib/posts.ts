@@ -96,6 +96,7 @@ export function prepareBody(value: unknown) {
 	if (!Array.isArray(value)) return { blocks: [] as PTBlock[], headings: [] as Heading[] };
 
 	const seen = new Map<string, number>();
+	const used = new Set<string>();
 	const collected: { id: string; text: string; level: number; index: number }[] = [];
 
 	const blocks = (value as PTBlock[]).map((block, index) => {
@@ -109,11 +110,16 @@ export function prepareBody(value: unknown) {
 		if (!text) return block;
 
 		const base = slugifyHeading(text);
-		// Two sections called "Conclusion" would otherwise share a fragment and
-		// the second would be unreachable.
-		const count = seen.get(base) ?? 0;
-		seen.set(base, count + 1);
-		const id = count === 0 ? base : `${base}-${count}`;
+		// Track every emitted id, not just each base: a later "Conclusion-1"
+		// would otherwise reuse the suffix generated for a second "Conclusion".
+		let count = seen.get(base) ?? 0;
+		let id = count === 0 ? base : `${base}-${count}`;
+		while (used.has(id)) {
+			count += 1;
+			id = `${base}-${count}`;
+		}
+		seen.set(base, count);
+		used.add(id);
 
 		collected.push({ id, text, level, index });
 		return block;

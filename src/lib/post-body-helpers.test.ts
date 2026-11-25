@@ -112,6 +112,19 @@ describe('prepareBody', () => {
 		]);
 	});
 
+	it('avoids a natural slug that collides with a generated duplicate', () => {
+		const { headings } = prepareBody([
+			block('h2', 'Overview'),
+			block('h2', 'Overview'),
+			block('h2', 'Overview-1')
+		]);
+		expect(headings.map((heading) => heading.id)).toEqual([
+			'overview',
+			'overview-1',
+			'overview-1-1'
+		]);
+	});
+
 	it('re-bases an all-h6 body to h2 like any other shallowest level', () => {
 		const { blocks, headings } = prepareBody([block('h6', 'One'), block('h6', 'Two')]);
 		expect(headings.map((heading) => heading.level)).toEqual([2, 2]);
