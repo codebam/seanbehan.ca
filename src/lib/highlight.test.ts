@@ -67,14 +67,17 @@ describe('highlight', () => {
 		expect(html).not.toContain('aria-label="Code block: yaml"');
 	});
 
-	it('falls back to plaintext for an unknown label without throwing', async () => {
-		const html = await highlight('const x = 1;', 'not-a-language');
+	it.each(['not-a-language', 'constructor', '__proto__'])(
+		'falls back to plaintext for unknown label %j without throwing',
+		async (label) => {
+			const html = await highlight('const x = 1;', label);
 
-		expect(html).toContain('<pre');
-		expect(html).toContain('aria-label="Code block: not-a-language"');
-		expect(tokens(html)).not.toContain('--shiki-light:');
-		expect(tokens(html)).toContain('<span>const x = 1;</span>');
-	});
+			expect(html).toContain('<pre');
+			expect(html).toContain(`aria-label="Code block: ${label}"`);
+			expect(tokens(html)).not.toContain('--shiki-light:');
+			expect(tokens(html)).toContain('<span>const x = 1;</span>');
+		}
+	);
 
 	it('uses a bare label when no language is given', async () => {
 		const html = await highlight('const x = 1;');

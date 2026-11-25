@@ -71,7 +71,13 @@ function getHighlighter() {
  */
 export async function highlight(code: string, lang?: string): Promise<string> {
 	const label = lang?.toLowerCase() ?? '';
-	const resolved = label in LANGS ? label : (ALIASES[label] ?? null);
+	// Fence labels are editable content; inherited names such as "constructor"
+	// are unknown languages, not entries in either lookup table.
+	const resolved = Object.hasOwn(LANGS, label)
+		? label
+		: Object.hasOwn(ALIASES, label)
+			? ALIASES[label]
+			: null;
 
 	const highlighter = await getHighlighter();
 	return highlighter.codeToHtml(code, {
