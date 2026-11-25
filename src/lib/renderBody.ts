@@ -66,7 +66,8 @@ export async function renderBodyHtml(value: unknown): Promise<string> {
 			image: ({ value: node }) => {
 				const block = node as ImageNode;
 				const stored = block?.asset?.url;
-				const src = typeof stored === 'string' && stored ? stored : block?.src;
+				const legacy = typeof block?.src === 'string' ? block.src : '';
+				const src = typeof stored === 'string' && stored ? stored : legacy;
 				if (!src) return '';
 				const alt = typeof block?.alt === 'string' ? block.alt : '';
 				const width = positiveInteger(block?.width);

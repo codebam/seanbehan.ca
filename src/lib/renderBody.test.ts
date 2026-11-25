@@ -63,6 +63,13 @@ describe('renderBodyHtml image attributes', () => {
 		expect(html).toBe('<img src="/img/old.webp" alt="" />');
 	});
 
+	it.each([42, true, { url: '/img/object.webp' }, ['/img/array.webp']])(
+		'drops an image whose legacy src is not a string: %j',
+		async (src) => {
+			expect(await renderBodyHtml([{ _type: 'image', _key: 'i', src }])).toBe('');
+		}
+	);
+
 	it('prefers asset.url over a legacy src field', async () => {
 		const html = await renderBodyHtml([
 			{ _type: 'image', _key: 'i', src: '/img/old.webp', asset: { url: '/img/new.webp' } }
