@@ -33,11 +33,13 @@ made, without the severity of a mono interface. Headlines keep one italic
 accent phrase. Body copy stays in system type so long technical writing remains
 comfortable and the page does not depend on a downloaded font.
 
-**The palette.** Open Studio Index is light on every device. The ground is
-`#e7e1d8`, the paper surface is `#fbf8f3`, ink is `#24211d`, muted text is
-`#625b53`, and the single interactive accent is `#315dc5`. Button labels switch
-to white. Positive status uses `#15803d`. There is no light/dark toggle and no
-`prefers-color-scheme` branch; the warm light ground is the identity.
+**The palette.** Open Studio Index follows the system preference. Light uses a
+putty ground (`#e7e1d8`), paper surface (`#fbf8f3`), warm black ink (`#24211d`),
+muted text (`#625b53`) and blue accent (`#315dc5`). Dark uses roasted umber
+(`#171512`), a warm charcoal surface (`#24201b`), ivory ink (`#f3ede4`), muted
+sand (`#b8ada0`) and a lighter blue accent (`#9cbcff`). Button labels switch to
+white in light and near-black in dark. There is no manual toggle: the no-JS
+`prefers-color-scheme` branch is the control.
 
 **The composition.** The shared `.shell` remains the inner column, widened to
 70rem for the studio layout while long-form keeps a 48rem reading measure. The
@@ -47,14 +49,14 @@ strip, selected work, latest writing, commercial offers, experience and the
 newsletter. `leadWith` still swaps facts and work for the handle-first variant.
 
 Projects return to stacked cards: the lead pairs its plate and story, and the
-remaining projects form a two-column card grid. Writing uses a lead card and a
-responsive grid. The archive keeps its server-rendered rows, styled with the
-same hairline and surface language.
+remaining projects stack as full-width image-and-paper cards. Writing uses a
+lead card and a responsive grid. The archive keeps its server-rendered rows,
+styled with the same hairline and surface language.
 
 Every other page opens with `Masthead`: a small label/meta row above a display
 headline and a deck capped at 60 ch. About uses the portrait and working-notes
-cards as a compact manifesto. The footer is a light paper band, not an inverted
-dark panel.
+cards as a compact manifesto. The footer is a paper band in light and a warm
+umber band in dark, not an unrelated inversion.
 
 **The machinery that makes it cheap to restyle.**
 
@@ -74,12 +76,13 @@ change. These hold copied values and must move with it:
 - `src/pages/site.webmanifest.ts` — installed theme and background colours
 - `public/favicon.svg`, `tools/favicon/build-favicon.sh` and the generated
   raster icons in `public/`
-- `public/profile.webp` — the portrait ground used by the light-only pages
+- `public/profile.webp` and `public/profile-dark.webp` — the portrait grounds
+  selected by the system preference
 - `resume/metadata.yaml` — the PDF palette
 - display ads in `public/img/` and `tools/ads/build-ads.mjs`
-- the light brand figures in `public/img/brand/`
+- the light and dark brand figures in `public/img/brand/`
 - the `@media print` block in `src/styles/app.css`
-- the single `theme-color` meta in `Base.astro`
+- the light/dark `theme-color` metas in `Base.astro`
 
 This list exists because the September 2026 redesign changed `app.css` and
 `Base.astro` without moving every copied surface. Open Studio Index updates the
@@ -90,12 +93,12 @@ speaking the previous palette.
 
 ## 2. Invariants — every future change must keep these
 
-1. **Token architecture.** One light screen palette, one print palette. A change
-   that hard-codes colours into components is rejected at review, including the
-   copied surfaces listed above.
-2. **Light by design.** Open Studio Index does not follow the operating system's
-   dark preference. The document declares `color-scheme: light`; there is no
-   toggle that can lie when JavaScript is unavailable.
+1. **Token architecture.** One light screen palette, one dark screen palette and
+   one print palette. A change that hard-codes colours into components is
+   rejected at review, including the copied surfaces listed above.
+2. **System theme.** Open Studio Index follows `prefers-color-scheme` without
+   JavaScript. There is no manual toggle that can lie when JavaScript is
+   unavailable; print always pins the light document palette.
 3. **Print.** The screen already uses paper-like values, but the print block
    still pins white paper and darker quiet marks so a résumé or article prints
    cleanly.
@@ -160,9 +163,10 @@ and stack before the work asks for a deeper read.
 working-notes cards share the page's warm paper surface. The page states how the
 work is done, not just where it has been.
 
-**7. The footer is a paper band.** It keeps the real link lists and newsletter
-form, but uses the light surface rather than an inverted dark footer. The legal,
-site and elsewhere lists remain explicit and accessible.
+**7. The footer is a paper/umber band.** It keeps the real link lists and
+newsletter form, using the light paper surface or the dark warm umber surface
+rather than an unrelated inversion. The legal, site and elsewhere lists remain
+explicit and accessible.
 
 **8. Motion.** Cards lift three pixels over 180ms. Text links draw a one-pixel
 underline over 180ms. The existing entrance ladder, reading progress and view
@@ -186,6 +190,6 @@ transitions remain under 0.6s. All looping and transition motion is off under
 - **A literal terminal.** Full-screen ASCII art, fake command input and console
   chrome make the site harder to read and maintain. Quiet Mode proved that the
   grammar can still overwhelm the person even without the literal interface.
-- **A manual theme toggle.** The light palette is the chosen identity, not a
-  preference layer. A toggle would add state and a second palette to maintain
+- **A manual theme toggle.** The system preference already supplies the choice.
+  A manual toggle would add state, persistence and another control to maintain
   without improving the design.

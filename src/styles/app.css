@@ -87,9 +87,9 @@
 /* ═══════════════════════════════════════════════════════════
    Design tokens
 
-   Open Studio Index is a warm, light studio directory: putty ground,
-   paper surfaces, warm black ink and one blue accent. The palette is
-   intentionally scheme-independent; print owns its paper values.
+   Open Studio Index is a warm studio directory: putty and paper in light,
+   roasted umber and warm black in dark, with one blue accent in both. The
+   system preference selects the screen palette; print owns its paper values.
    ═══════════════════════════════════════════════════════════ */
 @theme {
 	--font-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -146,7 +146,7 @@
 		     and --pad-post-masthead / --pad-post-body frame an article
 		     ([slug].astro) — a compact opener, then the reading body, whose
 		     bottom is larger to separate the post from what follows.
-		   - --pad-footer-grid is the light footer band's own rhythm
+		   - --pad-footer-grid is the theme-aware footer band's own rhythm
 		     (Base.astro): top clearance from the page, a fixed 2.5rem to
 		     the footer bar.
 		   - --pad-stats-grid is an inset strip (Facts.astro), not a
@@ -171,6 +171,41 @@
 		--radius-lg: 22px;
 		--shadow-sm: 0 1px 2px rgb(36 33 29 / 0.05), 0 2px 5px rgb(36 33 29 / 0.06);
 		--shadow-md: 0 12px 30px rgb(36 33 29 / 0.1), 0 3px 8px rgb(36 33 29 / 0.05);
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:root {
+			color-scheme: dark;
+
+			/* Warm dark surfaces keep the studio character without the terminal
+			   green-black contrast of the rejected Quiet Mode direction. */
+			--bg: #171512;
+			--surface-alt: #24201b;
+			--panel: #24201b;
+			--line: #3a342d;
+			--line-strong: #554c42;
+
+			--text: #f3ede4;
+			--body: color-mix(in srgb, #f3ede4 88%, #b8ada0);
+			--muted: #b8ada0;
+			--dim: #b8ada0;
+
+			--accent: #9cbcff;
+			--accent-hover: #bed4ff;
+			--accent-on: #111111;
+			--accent-warm: #9cbcff;
+			--accent-wash: color-mix(in srgb, var(--accent) 14%, transparent);
+			--positive: #6ee7a8;
+
+			--footer-bg: #201c17;
+			--footer-text: #f3ede4;
+			--footer-muted: #b8ada0;
+			--footer-line: #3a342d;
+			--footer-accent: #9cbcff;
+
+			--shadow-sm: 0 1px 2px rgb(0 0 0 / 0.28), 0 2px 5px rgb(0 0 0 / 0.24);
+			--shadow-md: 0 12px 30px rgb(0 0 0 / 0.38), 0 3px 8px rgb(0 0 0 / 0.28);
+		}
 	}
 
 	html {
@@ -668,6 +703,12 @@
 .shiki span {
 	color: var(--shiki-light);
 }
+@media (prefers-color-scheme: dark) {
+	.shiki,
+	.shiki span {
+		color: var(--shiki-dark);
+	}
+}
 .prose :where(pre.shiki) {
 	background-color: var(--surface-alt) !important;
 }
@@ -1028,6 +1069,14 @@
 	--studio-sand: #eadcc6;
 	--studio-blue: #d9e1f2;
 	--studio-clay: #e5cfc3;
+}
+@media (prefers-color-scheme: dark) {
+	:root {
+		--studio-sage: #263126;
+		--studio-sand: #352d24;
+		--studio-blue: #26314a;
+		--studio-clay: #3a2c27;
+	}
 }
 
 .studio-mode .shell {

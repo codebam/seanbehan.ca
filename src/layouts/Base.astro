@@ -139,7 +139,7 @@ const navItems = nav.map((item) => ({
 ---
 
 <!doctype html>
-<html lang="en-CA" class="studio-mode" data-theme="light">
+<html lang="en-CA" class="studio-mode">
 	<head>
 		{/* The snippet is rendered from lib/js-class so its CSP hash, computed
 		    in astro.config, always matches these exact bytes. */}
@@ -148,7 +148,8 @@ const navItems = nav.map((item) => ({
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>{fullTitle}</title>
 
-		<meta name="theme-color" content="#e7e1d8" />
+		<meta name="theme-color" media="(prefers-color-scheme: light)" content="#e7e1d8" />
+		<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#171512" />
 
 		<meta property="og:locale" content="en_CA" />
 		{/* Describe the card that is actually shared: a post names its own, a

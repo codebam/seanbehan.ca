@@ -26,13 +26,21 @@ import { writingHref } from '../lib/site';
      close. Decorative, so no alt text and no caption — and it is only
      shown once the copy no longer needs the whole column. -->
 		<figure class="not-found-figure" aria-hidden="true">
-			<img
-				src="/img/brand/figure-404-light.webp"
-				alt=""
-				width="410"
-				height="300"
-				decoding="async"
-			/>
+			<picture>
+				<source
+					media="(prefers-color-scheme: dark)"
+					srcset="/img/brand/figure-404-dark.webp"
+					width="410"
+					height="300"
+				/>
+				<img
+					src="/img/brand/figure-404-light.webp"
+					alt=""
+					width="410"
+					height="300"
+					decoding="async"
+				/>
+			</picture>
 		</figure>
 	</section>
 </Base>
