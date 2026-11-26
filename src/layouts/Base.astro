@@ -7,9 +7,10 @@
  * EmDash pieces — EmDashHead, EmDashBodyStart, EmDashBodyEnd — carry the admin
  * bar, visual editing and whatever the installed plugins contribute.
  *
- * The header is a compact sticky command bar: the origin prompt on the left,
- * section links and one call to action on the right. The prompt replaces the
- * oversized centred nameplate without pushing the first screen below the fold.
+ * The header is a compact sticky bar: the name on the left, the section links
+ * and one call to action on the right. It replaces the oversized centred
+ * nameplate the site used to carry, which pushed the first screen of every
+ * page below the fold and left the nav as the smallest type on the page.
  */
 import { EmDashHead, EmDashBodyStart, EmDashBodyEnd } from 'emdash/ui';
 import { createPublicPageContext } from 'emdash/page';
@@ -38,7 +39,7 @@ interface Props {
 	/** Set on a post page; drives the article metadata and the canonical rule. */
 	post?: PostSummary;
 	image?: string;
-	/** Retained for callers that describe long-form pages; Quiet Mode uses system reading type. */
+	/** Retained for callers that describe long-form pages; Open Studio uses system reading type. */
 	serif?: boolean;
 	robots?: string;
 	canonical?: string;
@@ -61,7 +62,6 @@ const {
 const path = Astro.url.pathname;
 const currentYear = new Date().getFullYear();
 const isHome = path === '/';
-const shellPrompt = site.id === 'codebam' ? 'codebam@codebam:~$' : 'sean@seanbehan:~$';
 /** On codebam this resolves to the sibling origin; the footer only uses it there. */
 const resumeHref = writingHref('/resume');
 
@@ -139,7 +139,7 @@ const navItems = nav.map((item) => ({
 ---
 
 <!doctype html>
-<html lang="en-CA" class="quiet-mode" data-theme="dark">
+<html lang="en-CA" class="studio-mode" data-theme="light">
 	<head>
 		{/* The snippet is rendered from lib/js-class so its CSP hash, computed
 		    in astro.config, always matches these exact bytes. */}
@@ -148,7 +148,7 @@ const navItems = nav.map((item) => ({
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>{fullTitle}</title>
 
-		<meta name="theme-color" content="#0d1512" />
+		<meta name="theme-color" content="#e7e1d8" />
 
 		<meta property="og:locale" content="en_CA" />
 		{/* Describe the card that is actually shared: a post names its own, a
@@ -194,9 +194,9 @@ const navItems = nav.map((item) => ({
 		<header class="site-header">
 			<div class="shell header-inner">
 				<a href="/" class="brand" aria-current={isHome ? 'page' : undefined}>
-					{shellPrompt}
+					{site.name}
 					<span class="brand-dot" aria-hidden="true">
-						_
+						.
 					</span>
 				</a>
 
@@ -255,12 +255,12 @@ const navItems = nav.map((item) => ({
 			<slot />
 		</main>
 
-		<footer class="panel-invert site-footer">
+		<footer class="panel-alt site-footer">
 			<div class="shell footer-grid">
 				<div class="footer-brand">
 					<p class="footer-wordmark">
-						{shellPrompt}
-						<span aria-hidden="true">_</span>
+						{site.name}
+						<span aria-hidden="true">.</span>
 					</p>
 					<p class="footer-copy">{site.ogDescription}</p>
 					{site.id === 'codebam' && (
@@ -442,7 +442,7 @@ const navItems = nav.map((item) => ({
 		position: sticky;
 		top: 0;
 		z-index: 50;
-		background: color-mix(in srgb, var(--bg) 92%, transparent);
+		background: color-mix(in srgb, var(--bg) 88%, transparent);
 		backdrop-filter: blur(12px);
 		border-bottom: 1px solid var(--line);
 	}
@@ -456,10 +456,10 @@ const navItems = nav.map((item) => ({
 		display: inline-flex;
 		align-items: baseline;
 		margin-right: auto;
-		font-family: var(--font-mono);
-		font-size: 0.95rem;
-		font-weight: 500;
-		letter-spacing: -0.035em;
+		font-family: var(--font-display);
+		font-size: 1.15rem;
+		font-weight: 700;
+		letter-spacing: -0.04em;
 		color: var(--text);
 		transition: color 0.2s ease;
 	}
@@ -467,13 +467,7 @@ const navItems = nav.map((item) => ({
 		color: var(--accent);
 	}
 	.brand-dot {
-		color: var(--accent);
-		animation: cursor 1.2s steps(1) infinite;
-	}
-	@keyframes cursor {
-		50% {
-			opacity: 0;
-		}
+		color: var(--accent-warm);
 	}
 
 	.site-nav {
@@ -483,16 +477,13 @@ const navItems = nav.map((item) => ({
 	}
 	.nav-link {
 		display: inline-flex;
-		min-height: 2.75rem;
-		padding-block: 0.45rem;
 		align-items: center;
 		gap: 0.2rem;
-		padding-inline: 0.75rem;
+		padding: 0.5rem 0.75rem;
 		border-radius: var(--radius-sm);
-		font-family: var(--font-mono);
-		font-size: 0.78rem;
+		font-size: 0.9rem;
 		font-weight: 500;
-		color: var(--muted);
+		color: var(--body);
 		transition:
 			background 0.2s ease,
 			color 0.2s ease;
@@ -600,13 +591,13 @@ const navItems = nav.map((item) => ({
 		}
 	}
 	.footer-wordmark {
-		font-family: var(--font-mono);
-		font-size: 0.95rem;
-		font-weight: 500;
-		letter-spacing: -0.035em;
+		font-family: var(--font-display);
+		font-size: 1.2rem;
+		font-weight: 700;
+		letter-spacing: -0.04em;
 	}
 	.footer-wordmark span {
-		color: var(--accent);
+		color: var(--accent-warm);
 	}
 	.footer-copy {
 		max-width: 34ch;

@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# Renders the favicon (dark serif SB on the green accent) at every size we ship.
+# Renders the favicon (white serif SB on the blue accent) at every size we ship.
 #
-# The two colours are Quiet Mode's own: #a7ff83 is --accent and #111111 is
-# --on-accent. Re-ink them here and in public/favicon.svg together, or the tab
-# and the manifest start disagreeing with the page.
+# The two colours are the site's own: #315dc5 is --accent and #ffffff is
+# --accent-on, the same pair the primary controls draw from.
+# Re-ink them here and in public/favicon.svg together, or the tab and the
+# manifest start disagreeing with the page.
 #
 # Each size is rendered natively by Chromium rather than downscaled from one
 # master, so the small sizes get their own hinting pass instead of inheriting
@@ -29,9 +30,9 @@ html,body{margin:0;padding:0;background:transparent}
 svg{display:block;width:100vw;height:100vw}
 </style></head><body>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="$5" fill="#a7ff83"/>
+  <rect width="64" height="64" rx="$5" fill="#315dc5"/>
   <text x="32" y="$6" text-anchor="middle" font-family="Newsreader" font-weight="$3"
-    font-size="$2" fill="#111111" letter-spacing="$4">SB</text>
+    font-size="$2" fill="#ffffff" letter-spacing="$4">SB</text>
 </svg></body></html>
 EOF
 }

@@ -3,11 +3,9 @@
  * Home: a clear front door.
  *
  * A two-column hero states who this is, what they build and how to reach them,
- * with a current-focus command block and availability beside it. Below it the
- * numbers and the project directory follow — or the work before the numbers on the variant
- * that leads with the code — with the condensed work history in between on the
- * hiring variant, because it is the question a résumé answers and the one an
- * employer asks before the projects mean anything.
+ * with a material-study grid and availability beside it. The numbers, project
+ * cards and writing follow — or the work before the numbers on the handle-first
+ * variant — before the commercial and career detail.
  */
 import Base from '../layouts/Base.astro';
 import Facts from '../components/home/Facts.astro';
@@ -62,15 +60,10 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 
 <Base>
 	<article class="front-page">
-		<section class="hero">
+		<section class="hero studio-hero">
 			<div class="shell hero-inner">
 				<div>
-					<p class="eyebrow hero-eyebrow">
-						<span class="terminal-prompt" aria-hidden="true">
-							$
-						</span>{' '}
-						{site.eyebrow}
-					</p>
+					<p class="eyebrow hero-eyebrow">{site.eyebrow}</p>
 					<p class="hero-byline">{site.byline}</p>
 					<h1 class="display display-xl hero-title">
 						{site.headline.before}
@@ -106,23 +99,37 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 				</div>
 
 				<aside class="hero-aside">
-					<pre
-						class="hero-code"
-						aria-label="Current focus"
-					><code><span class="code-comment"># current focus</span>
-<span class="code-accent">systems</span> = rust + typescript
-<span class="code-accent">platform</span> = nixos + cloudflare
-<span class="code-accent">method</span> = small, explicit, reproducible
-
-<span class="code-comment"># always</span>
-ship_in_the_open = true</code></pre>
+					<div class="material-grid" aria-label="Materials and systems I work with">
+						<article>
+							<span>01</span>
+							<strong>Rust</strong>
+							<small>Linux userspace</small>
+						</article>
+						<article>
+							<span>02</span>
+							<strong>TypeScript</strong>
+							<small>Edge applications</small>
+						</article>
+						<article>
+							<span>03</span>
+							<strong>NixOS</strong>
+							<small>Reproducible systems</small>
+						</article>
+						<article>
+							<span>04</span>
+							<strong>Workers</strong>
+							<small>Distributed services</small>
+						</article>
+					</div>
 					<Availability availability={site.availability} />
 				</aside>
 			</div>
 		</section>
 
-		{/* Quiet Mode reads like a directory: proof, work, then writing. The
-		    commercial and career detail follows once the work has made the case. */}
+		{/* The lead block — numbers or work, per the variant — follows the hero
+		    outright, as DESIGN.md §3.3 describes: proof on the first screen, not
+		    a screen of padding. The commercial offers follow it on the hiring
+		    variant; the work history sits between the pair. */}
 		{site.leadWith === 'work' ? (
 			<Work projects={projects} />
 		) : (
@@ -203,18 +210,20 @@ ship_in_the_open = true</code></pre>
 		position: relative;
 		isolation: isolate;
 		overflow: hidden;
-		padding-block: clamp(3.5rem, 8vw, 6.5rem);
+		padding-block: clamp(4rem, 8vw, 7rem);
 	}
-	.hero::before {
+	.studio-hero::before {
 		position: absolute;
 		inset: 0;
 		z-index: -1;
-		background-image:
-			repeating-linear-gradient(90deg, transparent 0 5rem, var(--line) 5.05rem 5.1rem),
-			radial-gradient(var(--line-strong) 1px, transparent 1px);
-		background-size:
-			5rem 5rem,
-			18px 18px;
+		background-image: conic-gradient(
+			from 45deg at 82% 18%,
+			var(--line) 0 25%,
+			transparent 0 50%,
+			var(--accent) 0 51%,
+			transparent 0 75%,
+			var(--line) 0
+		);
 		mask-image: linear-gradient(180deg, #000 0%, transparent 92%);
 		content: '';
 		pointer-events: none;
@@ -225,8 +234,8 @@ ship_in_the_open = true</code></pre>
 	}
 	@media (width >= 60rem) {
 		.hero-inner {
-			grid-template-columns: minmax(0, 1.35fr) minmax(20rem, 0.75fr);
-			align-items: center;
+			grid-template-columns: minmax(0, 1.5fr) minmax(17rem, 1fr);
+			align-items: start;
 		}
 	}
 
@@ -234,14 +243,8 @@ ship_in_the_open = true</code></pre>
 		color: var(--accent);
 	}
 	.hero-title {
-		max-width: 15ch;
+		max-width: 22ch;
 		margin-top: 1rem;
-		font-size: clamp(2.9rem, 5.7vw, 5.8rem);
-		line-height: 0.96;
-	}
-	.terminal-prompt {
-		margin-right: 0.45rem;
-		color: var(--accent);
 	}
 	.hero-lead {
 		max-width: 60ch;
@@ -263,23 +266,38 @@ ship_in_the_open = true</code></pre>
 		flex-direction: column;
 		gap: 1rem;
 	}
-	.hero-code {
-		margin: 0;
-		padding: 1.25rem;
-		overflow: auto;
+	.material-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 0.75rem;
+	}
+	.material-grid article {
+		display: flex;
+		min-height: 7.5rem;
+		flex-direction: column;
+		justify-content: space-between;
+		padding: 1rem;
 		border: 1px solid var(--line-strong);
 		border-radius: var(--radius);
-		background: var(--surface-alt);
-		color: var(--text);
-		font-family: var(--font-mono);
-		font-size: 0.78rem;
-		line-height: 1.8;
+		background: var(--panel);
+		box-shadow: 0 0.8rem 2.4rem color-mix(in srgb, var(--text) 6%, transparent);
+		transition:
+			transform 180ms ease,
+			box-shadow 180ms ease;
 	}
-	.code-comment {
+	.material-grid article:hover {
+		transform: translateY(-3px);
+		box-shadow: 0 0.7rem 1.8rem color-mix(in srgb, var(--text) 10%, transparent);
+	}
+	.material-grid span,
+	.material-grid small {
+		font-size: 0.72rem;
 		color: var(--muted);
 	}
-	.code-accent {
-		color: var(--accent);
+	.material-grid strong {
+		font-family: var(--font-display);
+		font-size: 1.15rem;
+		letter-spacing: -0.03em;
 	}
 	/* On a phone the aside stacks under the hero text, and the portrait alone
 	   is tall enough to push the availability mark past the fold — measured on
@@ -361,9 +379,9 @@ ship_in_the_open = true</code></pre>
 		.hero-aside {
 			gap: 0.75rem;
 		}
-		.hero-code {
-			padding: 1rem;
-			font-size: 0.72rem;
+		.material-grid article {
+			min-height: 6.5rem;
+			padding: 0.8rem;
 		}
 	}
 

@@ -34,7 +34,7 @@ const ads = [
 	{
 		svg: 'seanbehan-ad-800x360.svg',
 		name: 'seanbehan-ad',
-		bg: '#14231d',
+		bg: '#e7e1d8',
 		sizes: [
 			[800, 360, 1],
 			[800, 360, 2]
@@ -43,7 +43,7 @@ const ads = [
 	{
 		svg: 'seanbehan-ad-dark-800x360.svg',
 		name: 'seanbehan-ad-dark',
-		bg: '#0d1512',
+		bg: '#24211d',
 		sizes: [
 			[800, 360, 1],
 			[800, 360, 2]
@@ -55,7 +55,7 @@ const ads = [
 	{
 		svg: 'seanbehan-billboard-dark-2400x800.svg',
 		name: 'seanbehan-billboard-dark',
-		bg: '#0d1512',
+		bg: '#24211d',
 		sizes: [
 			[2400, 800, 1],
 			[2400, 800, 2],
@@ -65,25 +65,23 @@ const ads = [
 	{
 		svg: 'seanbehan-billboard-dark-800x360.svg',
 		name: 'seanbehan-billboard-dark',
-		bg: '#0d1512',
+		bg: '#24211d',
 		sizes: [[800, 360, 1]]
 	},
 
 	// codebam.ca is the commercial origin, so its ads sell the work rather
-	// than the person. They are dark-ground creatives and take the dark
-	// scheme's token values — the same names as the seanbehan pair, resolved
-	// against `prefers-color-scheme` in the page and against the dark values
-	// here because the ground never changes.
+	// than the person. They stay on the ink-coloured dark ground; the blue
+	// accent is reserved for the ring and call to action, with white labels.
 	{
 		svg: 'codebam-services-ad-500x250.svg',
 		name: 'codebam-services-ad',
-		bg: '#0d1512',
+		bg: '#24211d',
 		sizes: [[500, 250, 1]]
 	},
 	{
 		svg: 'codebam-websites-telegram-bots-500.svg',
 		name: 'codebam-websites-telegram-bots',
-		bg: '#0d1512',
+		bg: '#24211d',
 		sizes: [[500, 500, 1, 'codebam-websites-telegram-bots-500.png']]
 	}
 

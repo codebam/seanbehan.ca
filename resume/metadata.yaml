@@ -21,14 +21,15 @@ titleTracking: 6                # % letter-spacing, section titles
 subtitleTracking: 8               # 16 wrapped "Rust" onto a second line in the 0.44-width header minipage
 
 # ---------- colour palette (HTML hex, no leading #) ----------
-# The screen is dark, but the PDF is a document: keep white paper and dark ink
-# so a recruiter can print it without spending a cartridge on the site's ground.
-# The green accent is darkened for print contrast; app.css owns the screen pair.
-accentcolor: 2F6B3A     # print-green accent: rules, section titles, company names
-inkcolor: 0D1512
-mutedcolor: 475569      # dates, contact line
-rulecolor: CBD5E1
-linkcolor: 2F6B3A
+# Open Studio Index keeps the PDF on white paper so it remains inexpensive to
+# print. The blue accent is already dark enough for small text at 6.00:1 on
+# white; ink and muted values are the screen palette's paper counterparts.
+# src/styles/app.css is the source of truth; change both together.
+accentcolor: 315DC5     # blue accent: rules, section titles, company names
+inkcolor: 24211D
+mutedcolor: 625B53      # dates, contact line
+rulecolor: CFC7BB
+linkcolor: 315DC5
 
 # ---------- behaviour ----------
 links: true             # clickable, colourised links

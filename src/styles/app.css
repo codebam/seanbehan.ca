@@ -32,15 +32,17 @@
 
 /* ═══════════════════════════════════════════════════════════
    Fonts
-   Quiet Mode uses the platform sans for body and reading copy, and
-   the local mono stack for display type, navigation, labels and
-   controls. The older variable faces remain declared for a gradual
-   template migration, but the production skin does not select them.
+   Open Studio Index uses Trebuchet/Verdana for display, system UI
+   for body and reading copy, and a local mono stack for code only.
+   The older variable faces remain for the social-card renderer;
+   the public skin does not select or preload them.
 
-   Code is local-first, not another webfont: Fira Code is named first
-   in --font-mono, but no file ships for it, so a reader who has Fira
-   Code (or JetBrains Mono, Cascadia Code) gets it and everyone else
-   falls through to the platform monospace.
+   Code is local-first, not a third webfont: Fira Code is named
+   first in --font-mono, but no file ships for it, so a reader who
+   has Fira Code (or JetBrains Mono, Cascadia Code) gets it and
+   everyone else falls through to the platform monospace. The two
+   variable files above are the whole font payload; there is no
+   missing Fira Code @font-face to add.
    ═══════════════════════════════════════════════════════════ */
 @font-face {
 	font-family: 'Inter Variable';
@@ -85,14 +87,15 @@
 /* ═══════════════════════════════════════════════════════════
    Design tokens
 
-   Quiet Mode is a dark-green command surface: the page and its panels
-   stay close in value, hairlines carry the structure, and one green
-   accent marks prompts, links and focus. Body copy uses the platform
-   sans; display and interface type use the local mono stack.
+   Open Studio Index is a warm, light studio directory: putty ground,
+   paper surfaces, warm black ink and one blue accent. The palette is
+   intentionally scheme-independent; print owns its paper values.
    ═══════════════════════════════════════════════════════════ */
 @theme {
 	--font-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
 	--font-serif: system-ui, -apple-system, 'Segoe UI', sans-serif;
+	--font-display: 'Trebuchet MS', Verdana, sans-serif;
+	--font-ui: system-ui, -apple-system, 'Segoe UI', sans-serif;
 	/* Local-first; no file ships for the named faces. See the Fonts note. */
 	--font-mono:
 		'Fira Code', 'JetBrains Mono', 'Cascadia Code', ui-monospace, SFMono-Regular, Menlo, Monaco,
@@ -101,43 +104,37 @@
 
 @layer base {
 	:root {
-		color-scheme: dark;
+		color-scheme: light;
 		--kumo-button-emphasis-bg: var(--accent);
 		--kumo-button-emphasis-ring: var(--accent-hover);
-		--font-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
-		--font-reading: system-ui, -apple-system, 'Segoe UI', sans-serif;
-		--font-ui: var(--font-mono);
-		--font-display: var(--font-mono);
 
 		/* Surfaces */
-		--bg: #0d1512;
-		--surface-alt: #14231d;
-		--panel: #14231d;
-		/* Hairlines carry the command surface. Control boundaries use --dim,
-		   which clears 3:1 against both the page and panel grounds. */
-		--line: color-mix(in srgb, #e4f1e8 15%, #0d1512);
-		--line-strong: color-mix(in srgb, #e4f1e8 30%, #0d1512);
+		--bg: #e7e1d8;
+		--surface-alt: #fbf8f3;
+		--panel: #fbf8f3;
+		--line: #d8d0c4;
+		--line-strong: #b8ad9e;
 
 		/* Text */
-		--text: #e4f1e8;
-		--body: color-mix(in srgb, #e4f1e8 86%, #8fa99a);
-		--muted: #8fa99a;
-		--dim: #8fa99a;
+		--text: #24211d;
+		--body: color-mix(in srgb, #24211d 88%, #625b53);
+		--muted: #625b53;
+		--dim: #625b53;
 
 		/* Accent */
-		--accent: #a7ff83;
-		--accent-hover: #c1ffa9;
-		--accent-on: #111111;
-		--accent-warm: #a7ff83;
-		--accent-wash: color-mix(in srgb, var(--accent) 12%, transparent);
-		--positive: #4ade80;
+		--accent: #315dc5;
+		--accent-hover: #254aa8;
+		--accent-on: #ffffff;
+		--accent-warm: #315dc5;
+		--accent-wash: color-mix(in srgb, var(--accent) 9%, transparent);
+		--positive: #2f7d4a;
 
-		/* Footer remains a dark command panel rather than an inversion. */
-		--footer-bg: #14231d;
-		--footer-text: #e4f1e8;
-		--footer-muted: #8fa99a;
-		--footer-line: color-mix(in srgb, #e4f1e8 15%, #14231d);
-		--footer-accent: #a7ff83;
+		/* The footer is a light paper band, not an inversion. */
+		--footer-bg: #fbf8f3;
+		--footer-text: #24211d;
+		--footer-muted: #625b53;
+		--footer-line: #d8d0c4;
+		--footer-accent: #315dc5;
 
 		/* Geometry */
 		/* .section (below) is the shared page-level rhythm. These are the
@@ -149,7 +146,7 @@
 		     and --pad-post-masthead / --pad-post-body frame an article
 		     ([slug].astro) — a compact opener, then the reading body, whose
 		     bottom is larger to separate the post from what follows.
-		   - --pad-footer-grid is the inverted band's own rhythm
+		   - --pad-footer-grid is the light footer band's own rhythm
 		     (Base.astro): top clearance from the page, a fixed 2.5rem to
 		     the footer bar.
 		   - --pad-stats-grid is an inset strip (Facts.astro), not a
@@ -169,20 +166,11 @@
 		   statement should be followed by evidence, not by a screen of padding.
 		   Only the hero's immediate successor pays this; the rest keep .section. */
 		--pad-after-hero: clamp(2.5rem, 5vw, 3.5rem);
-		--radius-sm: 3px;
-		--radius: 5px;
-		--radius-lg: 8px;
-		--shadow-sm: 0 1px 2px rgb(0 0 0 / 0.18);
-		--shadow-md: 0 8px 24px rgb(0 0 0 / 0.28);
-	}
-
-	@media (prefers-color-scheme: dark) {
-		:root {
-			/* Quiet Mode is intentionally dark-first; the light preference does
-			   not replace the approved command palette. Print pins its own light
-			   tokens in the print block below. */
-			color-scheme: dark;
-		}
+		--radius-sm: 7px;
+		--radius: 14px;
+		--radius-lg: 22px;
+		--shadow-sm: 0 1px 2px rgb(36 33 29 / 0.05), 0 2px 5px rgb(36 33 29 / 0.06);
+		--shadow-md: 0 12px 30px rgb(36 33 29 / 0.1), 0 3px 8px rgb(36 33 29 / 0.05);
 	}
 
 	html {
@@ -190,9 +178,9 @@
 		scrollbar-gutter: stable;
 	}
 
-	/* The portrait's <picture> swaps grounds by scheme; it must not become a
-	   layout box, or the hero aside and the masthead profile grid would size
-	   the wrapper instead of the img. Source selection is unaffected. */
+	/* A portrait <picture> must not become a layout box, or the hero aside and
+	   the masthead profile grid would size the wrapper instead of the img.
+	   Source selection is unaffected. */
 	picture {
 		display: contents;
 	}
@@ -209,7 +197,7 @@
 	body {
 		background: var(--bg);
 		color: var(--text);
-		font-family: var(--font-body);
+		font-family: var(--font-sans);
 		font-size: 1rem;
 		line-height: 1.6;
 		min-height: 100vh;
@@ -265,20 +253,20 @@
 	.display {
 		font-family: var(--font-display);
 		font-weight: 700;
-		letter-spacing: -0.02em;
-		line-height: 1.12;
+		letter-spacing: -0.035em;
+		line-height: 1.04;
 		text-wrap: balance;
 	}
 	.display-xl {
-		font-size: clamp(2.25rem, 5vw, 3.5rem);
-		line-height: 1.08;
+		font-size: clamp(2.8rem, 6vw, 5.8rem);
+		line-height: 0.98;
 	}
 	.display-lg {
-		font-size: clamp(1.5rem, 2.6vw, 2rem);
-		line-height: 1.15;
+		font-size: clamp(2rem, 4vw, 3.8rem);
+		line-height: 1.02;
 	}
 
-	/* Italic, in the warm accent: the one decorative move a headline gets.
+	/* Italic, in the studio blue: the one decorative move a headline gets.
 	   The trailing margin is not decoration: at display sizes the italic's
 	   slant overhangs its advance and eats the space after </em>, so
 	   "…metal</em> and" read as one word. A hair of room gives the space back. */
@@ -288,7 +276,7 @@
 		margin-right: 0.06em;
 	}
 
-	/* Section label: small, uppercase, tracked. Inter, not the serif. */
+	/* Section label: small, uppercase, tracked system type. */
 	.eyebrow {
 		font-family: var(--font-ui);
 		font-size: 0.78rem;
@@ -446,7 +434,7 @@
 	   paint the button live in the layer after this one. That is the deal
 	   .flat-control already makes for the geometry. Without it the label sits
 	   on a gradient mixed 30% toward white: 3.47:1 at the top, 2.68:1 where
-	   the hover layer shows, and white on the dark palette's #60a5fa is 2:1. */
+	   the hover layer shows, and white needs the full-strength studio blue. */
 	.site-cta {
 		background-color: var(--accent) !important;
 		background-image: none !important;
@@ -544,9 +532,8 @@
 		transform: translateY(-2px);
 	}
 
-	/* Tag: language tags name the site's materials, so they take the warm
-	   accent; topic tags stay quiet. Interaction blue is reserved for what is
-	   clickable. */
+	/* Language tags name the site's materials, so they take the studio blue;
+	   topic tags stay quiet. The same blue remains the interactive accent. */
 	.tag {
 		display: inline-flex;
 		align-items: center;
@@ -566,11 +553,11 @@
 /* ═══════════════════════════════════════════════════════════
    Long-form content
    Tailwind's typography plugin, pointed at our tokens so a single
-   `.prose` works in both themes with no `prose-invert` swap. The
-   reading column is the serif; the headings around it stay sans.
+   `.prose` works without a `prose-invert` swap. The reading column is
+   system UI; display headings use the studio face.
    ═══════════════════════════════════════════════════════════ */
 .prose {
-	font-family: var(--font-reading);
+	font-family: var(--font-serif);
 	--tw-prose-body: var(--body);
 	--tw-prose-headings: var(--text);
 	--tw-prose-lead: var(--body);
@@ -681,12 +668,6 @@
 .shiki span {
 	color: var(--shiki-light);
 }
-@media (prefers-color-scheme: dark) {
-	.shiki,
-	.shiki span {
-		color: var(--shiki-dark);
-	}
-}
 .prose :where(pre.shiki) {
 	background-color: var(--surface-alt) !important;
 }
@@ -726,7 +707,7 @@
 	max-width: 46rem;
 	margin-inline: auto;
 	margin-block-start: clamp(2.5rem, 5vw, 4rem);
-	font-family: var(--font-reading);
+	font-family: var(--font-serif);
 	color: var(--body);
 }
 
@@ -754,7 +735,7 @@
 }
 
 .resume-doc .resume-name {
-	font-family: var(--font-sans);
+	font-family: var(--font-display);
 	font-size: clamp(1.45rem, 4vw, 1.9rem);
 	font-weight: 700;
 	letter-spacing: 0.08em;
@@ -796,7 +777,7 @@
 
 .resume-doc .resume-section {
 	margin-top: 2.6rem;
-	font-family: var(--font-sans);
+	font-family: var(--font-display);
 	font-size: 0.95rem;
 	font-weight: 700;
 	letter-spacing: 0.05em;
@@ -805,7 +786,7 @@
 
 .resume-doc .resume-subsection {
 	margin-top: 1.3rem;
-	font-family: var(--font-sans);
+	font-family: var(--font-display);
 	font-size: 0.78rem;
 	font-weight: 700;
 	letter-spacing: 0.08em;
@@ -817,7 +798,7 @@
 	flex-wrap: wrap;
 	align-items: baseline;
 	margin-top: 1.35rem;
-	font-family: var(--font-sans);
+	font-family: var(--font-display);
 	font-size: 0.98rem;
 	font-weight: 600;
 	color: var(--text);
@@ -843,7 +824,7 @@
 }
 
 .resume-doc .resume-key {
-	font-family: var(--font-sans);
+	font-family: var(--font-display);
 	font-weight: 700;
 	color: var(--text);
 }
@@ -994,624 +975,6 @@
 	cursor: default;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   Quiet Mode production skin
-
-   The markup is migrating toward command labels and list/log containers.
-   These rules deliberately style both those additions and the current card
-   and row classes, so the branch remains usable before every template lands.
-   ═══════════════════════════════════════════════════════════════ */
-.quiet-mode {
-	--header-bg: #0d1512;
-	--code-bg: #0d1512;
-	--code-ink: #e4f1e8;
-	--code-muted: #8fa99a;
-}
-
-.quiet-mode body {
-	background: var(--bg);
-	color: var(--text);
-	font-family: var(--font-body);
-}
-
-.quiet-mode ::selection {
-	background: var(--accent);
-	color: var(--accent-on);
-}
-
-.quiet-mode .shell {
-	max-width: 76rem;
-}
-
-.quiet-mode :where(h1, h2, h3, h4, h5, h6) {
-	font-family: var(--font-display);
-}
-
-.quiet-mode .display,
-.quiet-mode body .hero-title,
-.quiet-mode body .page-hero-title {
-	font-family: var(--font-display);
-	font-weight: 600;
-	letter-spacing: -0.045em;
-	line-height: 1.02;
-	text-wrap: balance;
-}
-
-.quiet-mode .display-xl,
-.quiet-mode body .hero-title,
-.quiet-mode body .page-hero-title {
-	font-size: clamp(2.4rem, 5.7vw, 5.8rem);
-}
-
-.quiet-mode .display-lg {
-	font-size: clamp(1.65rem, 3.4vw, 3.4rem);
-}
-
-.quiet-mode .display em,
-.quiet-mode .hero-title em,
-.quiet-mode .page-hero-title em {
-	color: var(--accent);
-	font-style: italic;
-	margin-right: 0.08em;
-}
-
-.quiet-mode body .hero-title,
-.quiet-mode body .page-hero-title {
-	max-width: 18ch;
-}
-
-.quiet-mode .hero-lead {
-	max-width: 62ch;
-	color: var(--body);
-	font-family: var(--font-reading);
-	font-size: clamp(1rem, 1.4vw, 1.12rem);
-	line-height: 1.7;
-}
-
-.quiet-mode .eyebrow,
-.quiet-mode .terminal-label,
-.quiet-mode .section-number,
-.quiet-mode .project-meta,
-.quiet-mode .entry-meta,
-.quiet-mode .post-row-meta,
-.quiet-mode .post-card-meta,
-.quiet-mode .footer-label {
-	font-family: var(--font-ui);
-	font-size: 0.7rem;
-	font-weight: 500;
-	letter-spacing: 0.08em;
-	line-height: 1.4;
-	text-transform: uppercase;
-	color: var(--muted);
-}
-
-.quiet-mode .terminal-label {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.45rem;
-}
-
-.quiet-mode .terminal-label::before {
-	color: var(--accent);
-	content: '>';
-}
-
-.quiet-mode .section-head,
-.quiet-mode .section-heading,
-.quiet-mode .archive-heading {
-	border-bottom-color: var(--line-strong);
-}
-
-.quiet-mode .section-sub {
-	color: var(--muted);
-	font-family: var(--font-reading);
-}
-
-/* Header: a compact command bar rather than a marketing navigation. */
-.quiet-mode body .site-header {
-	background: color-mix(in srgb, var(--header-bg) 94%, transparent);
-	border-bottom-color: var(--line-strong);
-	backdrop-filter: blur(12px);
-}
-
-.quiet-mode body .header-inner {
-	min-height: 3.5rem;
-	gap: 0.75rem;
-}
-
-.quiet-mode body .brand,
-.quiet-mode body .footer-wordmark {
-	font-family: var(--font-ui);
-	font-size: 0.82rem;
-	font-weight: 500;
-	letter-spacing: -0.02em;
-}
-
-.quiet-mode body .brand-dot,
-.quiet-mode .command-dot {
-	display: inline-block;
-	width: 0.62ch;
-	height: 1.05em;
-	margin-left: 0.12ch;
-	background: var(--accent);
-	color: transparent;
-	vertical-align: -0.08em;
-	animation: quiet-cursor 1.2s steps(1) infinite;
-}
-
-@keyframes quiet-cursor {
-	50% {
-		opacity: 0;
-	}
-}
-
-.quiet-mode body .nav-link {
-	min-height: 2.75rem;
-	padding-inline: 0.6rem;
-	font-family: var(--font-ui);
-	font-size: 0.72rem;
-	font-weight: 500;
-	letter-spacing: 0.01em;
-	color: var(--muted);
-}
-
-.quiet-mode body .nav-link:hover,
-.quiet-mode body .nav-link[aria-current='page'],
-.quiet-mode body .nav-link[aria-current='true'] {
-	background: var(--accent-wash);
-	color: var(--accent);
-}
-
-.quiet-mode body .nav-toggle,
-.quiet-mode body .nav-menu-panel {
-	border-color: var(--line-strong);
-	border-radius: var(--radius-sm);
-	background: var(--panel);
-}
-
-.quiet-mode body .nav-menu[open] .nav-toggle {
-	border-color: var(--accent);
-	color: var(--accent);
-}
-
-.quiet-mode body .nav-menu .nav-link {
-	font-size: 0.82rem;
-}
-
-/* Kumo controls keep their existing overrides; Quiet Mode only changes type,
-   geometry and the field ground. */
-.quiet-mode .btn,
-.quiet-mode .site-cta,
-.quiet-mode .flat-control,
-.quiet-mode .site-field,
-.quiet-mode .link-accent,
-.quiet-mode .link-quiet,
-.quiet-mode .code-copy,
-.quiet-mode .copy-address {
-	font-family: var(--font-ui);
-}
-
-.quiet-mode .btn,
-.quiet-mode .site-cta,
-.quiet-mode .flat-control {
-	border-radius: var(--radius-sm) !important;
-	box-shadow: none;
-	font-size: 0.78rem;
-	font-weight: 600;
-	letter-spacing: 0.01em;
-}
-
-.quiet-mode .site-cta:focus-visible,
-.quiet-mode .flat-control:focus-visible,
-.quiet-mode .site-field:focus-visible,
-.quiet-mode summary:focus-visible {
-	outline: 2px solid var(--accent);
-	outline-offset: 2px;
-}
-
-.quiet-mode .site-field {
-	background-color: var(--panel) !important;
-	color: var(--text) !important;
-	font-size: 0.82rem;
-}
-
-.quiet-mode .link-accent,
-.quiet-mode .link-quiet {
-	font-size: 0.78rem;
-}
-
-.quiet-mode .link-quiet {
-	border-bottom-color: var(--line-strong);
-}
-
-.quiet-mode .hero-code {
-	max-width: 100%;
-	margin: 0;
-	padding: 1rem 1.1rem;
-	overflow: auto;
-	border: 1px solid var(--line-strong);
-	border-radius: var(--radius-sm);
-	background: var(--code-bg);
-	color: var(--code-ink);
-	font-family: var(--font-mono);
-	font-size: 0.78rem;
-	line-height: 1.75;
-	white-space: pre;
-}
-
-.quiet-mode .hero-code code {
-	font: inherit;
-}
-
-.quiet-mode .hero-code .comment,
-.quiet-mode .hero-code .code-comment {
-	color: var(--code-muted);
-}
-
-.quiet-mode .hero-code .accent,
-.quiet-mode .hero-code .code-accent {
-	color: var(--accent);
-}
-
-/* Current cards become quiet terminal panels. The list/log containers below
-   remove the card face entirely when the migrated markup supplies rows. */
-.quiet-mode .card {
-	border-color: var(--line);
-	border-radius: var(--radius-sm);
-	background: var(--panel);
-	box-shadow: none;
-}
-
-.quiet-mode .card:hover {
-	border-color: var(--line-strong);
-	box-shadow: none;
-	transform: none;
-}
-
-.quiet-mode .tag {
-	border-color: var(--line);
-	border-radius: var(--radius-sm);
-	background: transparent;
-	font-family: var(--font-ui);
-	font-size: 0.66rem;
-	font-weight: 500;
-	letter-spacing: 0.02em;
-	color: var(--muted);
-}
-
-.quiet-mode .tag-lang {
-	color: var(--accent);
-}
-
-.quiet-mode .project-title,
-.quiet-mode .post-row-title,
-.quiet-mode .post-card-title,
-.quiet-mode .writing-lead-title,
-.quiet-mode .writing-card-title {
-	font-family: var(--font-display);
-	letter-spacing: -0.03em;
-}
-
-.quiet-mode .project-copy,
-.quiet-mode .post-row-desc,
-.quiet-mode .post-card-desc,
-.quiet-mode .writing-lead-desc,
-.quiet-mode .writing-card-desc {
-	font-family: var(--font-reading);
-}
-
-.quiet-mode .project-list,
-.quiet-mode .writing-log {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-	border-top: 1px solid var(--line-strong);
-}
-
-/* The home components own their directory/log grid geometry. The shared skin
-   only removes the card face and picture so those rows keep one source of
-   truth for column placement. */
-.quiet-mode .project-list .project-media {
-	display: none;
-}
-
-.quiet-mode .project-list .project-body {
-	display: contents;
-}
-
-/* The archive's existing rows keep their semantics and search behavior. */
-.quiet-mode body .post-row {
-	display: grid;
-	padding-block: 1.1rem;
-	grid-template-columns: minmax(0, 1fr) auto;
-	border: 0;
-	border-bottom: 1px solid var(--line-strong);
-	background: transparent;
-}
-
-.quiet-mode .post-row:first-child {
-	padding-top: 0;
-}
-
-.quiet-mode .post-row:hover,
-.quiet-mode .post-row:focus-within {
-	background: color-mix(in srgb, var(--accent) 5%, transparent);
-}
-
-.quiet-mode body .post-row-link {
-	grid-template-columns: 6.5rem minmax(0, 1fr);
-}
-
-.quiet-mode body .post-row-meta,
-.quiet-mode body .post-card-meta,
-.quiet-mode body .entry-meta {
-	font-family: var(--font-ui);
-	color: var(--muted);
-}
-
-.quiet-mode body .post-row-title,
-.quiet-mode body .post-card-title {
-	color: var(--text);
-}
-
-.quiet-mode body .post-row:hover .post-row-title,
-.quiet-mode body .post-row:focus-within .post-row-title,
-.quiet-mode body .post-card:hover .post-card-title,
-.quiet-mode body .post-card:focus-within .post-card-title {
-	color: var(--accent);
-}
-
-.quiet-mode .post-card {
-	border-left: 2px solid transparent;
-}
-
-.quiet-mode .post-card:hover,
-.quiet-mode .post-card:focus-within {
-	border-left-color: var(--accent);
-}
-
-.quiet-mode .post-card-link {
-	text-decoration: none;
-}
-
-.quiet-mode .writing-log .post-row {
-	grid-template-columns: 2.5rem minmax(0, 1fr) auto;
-}
-
-.quiet-mode .writing-log .post-card {
-	border-left: 0;
-}
-
-/* Reading stays system sans; headings and code keep the command voice. */
-.quiet-mode .prose {
-	font-family: var(--font-reading);
-	line-height: 1.75;
-	--tw-prose-body: var(--body);
-	--tw-prose-headings: var(--text);
-	--tw-prose-lead: var(--body);
-	--tw-prose-links: var(--accent);
-	--tw-prose-bold: var(--text);
-	--tw-prose-counters: var(--muted);
-	--tw-prose-bullets: var(--line-strong);
-	--tw-prose-hr: var(--line);
-	--tw-prose-quotes: var(--text);
-	--tw-prose-quote-borders: var(--accent);
-	--tw-prose-captions: var(--muted);
-	--tw-prose-code: var(--accent);
-	--tw-prose-pre-code: var(--code-ink);
-	--tw-prose-pre-bg: var(--code-bg);
-	--tw-prose-th-borders: var(--line-strong);
-	--tw-prose-td-borders: var(--line);
-}
-
-.quiet-mode .prose :where(h1, h2, h3, h4, h5, h6) {
-	font-family: var(--font-display);
-	font-weight: 600;
-	letter-spacing: -0.035em;
-}
-
-.quiet-mode .prose :where(a):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
-	color: var(--accent);
-	text-decoration-color: var(--line-strong);
-}
-
-.quiet-mode .prose :where(a):hover:not(:where([class~='not-prose'], [class~='not-prose'] *)),
-.quiet-mode
-	.prose
-	:where(a):focus-visible:not(:where([class~='not-prose'], [class~='not-prose'] *)) {
-	color: var(--accent-hover);
-	text-decoration-color: var(--accent);
-}
-
-.quiet-mode .prose :where(code):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
-	border-color: var(--line);
-	background: var(--code-bg);
-	color: var(--accent);
-}
-
-.quiet-mode .prose :where(pre):not(:where([class~='not-prose'], [class~='not-prose'] *)),
-.quiet-mode .prose :where(pre.shiki) {
-	border-color: var(--line-strong);
-	background-color: var(--code-bg) !important;
-	color: var(--code-ink);
-}
-
-.quiet-mode .shiki,
-.quiet-mode .shiki span {
-	color: var(--shiki-dark);
-}
-
-.quiet-mode .code-filename {
-	font-family: var(--font-ui);
-	color: var(--code-muted);
-}
-
-/* Résumé: system reading copy, mono metadata and section labels. */
-.quiet-mode .resume-doc {
-	font-family: var(--font-reading);
-	color: var(--body);
-}
-
-.quiet-mode
-	.resume-doc
-	:where(
-		.resume-name,
-		.resume-subtitle,
-		.resume-contacts,
-		.resume-section,
-		.resume-subsection,
-		.resume-entry,
-		.resume-meta,
-		.resume-key
-	) {
-	font-family: var(--font-ui);
-}
-
-.quiet-mode .resume-doc .resume-head,
-.quiet-mode .resume-doc .resume-section {
-	background-image:
-		linear-gradient(var(--accent), var(--accent)),
-		linear-gradient(var(--line-strong), var(--line-strong));
-}
-
-.quiet-mode .resume-doc .resume-name {
-	letter-spacing: -0.02em;
-}
-
-.quiet-mode .resume-doc .resume-subtitle,
-.quiet-mode .resume-doc .resume-section,
-.quiet-mode .resume-doc .resume-subsection,
-.quiet-mode .resume-doc .resume-org,
-.quiet-mode .resume-doc .resume-sep {
-	color: var(--accent);
-}
-
-.quiet-mode .resume-doc .resume-entry {
-	padding-left: 0.8rem;
-	border-left: 2px solid var(--line-strong);
-}
-
-.quiet-mode .resume-doc .resume-meta {
-	color: var(--muted);
-	overflow-wrap: anywhere;
-}
-
-.quiet-mode .resume-doc li::marker {
-	color: var(--accent);
-}
-
-/* Footer: the same command surface, one step lighter than the page. */
-.quiet-mode .site-footer {
-	border-top-color: var(--footer-line);
-	background: var(--footer-bg);
-	color: var(--footer-text);
-}
-
-.quiet-mode .footer-grid {
-	border-bottom: 1px solid var(--footer-line);
-}
-
-.quiet-mode .footer-wordmark,
-.quiet-mode .footer-label,
-.quiet-mode .footer-link,
-.quiet-mode .footer-base {
-	font-family: var(--font-ui);
-}
-
-.quiet-mode .footer-label {
-	color: var(--accent);
-}
-
-.quiet-mode .footer-link {
-	color: var(--footer-text);
-	text-decoration: none;
-}
-
-.quiet-mode .footer-link:hover,
-.quiet-mode .footer-link:focus-visible {
-	color: var(--accent);
-}
-
-.quiet-mode .footer-base {
-	color: var(--footer-muted);
-}
-
-@media (width < 48rem) {
-	.quiet-mode .shell {
-		padding-inline: 1rem;
-	}
-
-	.quiet-mode body .brand {
-		max-width: calc(100vw - 5rem);
-		overflow: hidden;
-		font-size: 0.72rem;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-
-	.quiet-mode .display-xl,
-	.quiet-mode .hero-title,
-	.quiet-mode .page-hero-title {
-		font-size: clamp(2.25rem, 11vw, 4rem);
-	}
-
-	.quiet-mode .hero-code {
-		padding: 0.85rem;
-		font-size: 0.72rem;
-	}
-
-	.quiet-mode .project-list > :where(li, article, .project-card, .project-feature),
-	.quiet-mode .writing-log > :where(li, article, .post-card, .post-row) {
-		grid-template-columns: minmax(0, 1fr);
-	}
-
-	.quiet-mode .project-list .project-number,
-	.quiet-mode .project-list .project-meta,
-	.quiet-mode .project-list .project-title,
-	.quiet-mode .project-list .project-copy,
-	.quiet-mode .project-list .project-tags,
-	.quiet-mode .project-list .project-links,
-	.quiet-mode .writing-log .post-row-meta,
-	.quiet-mode .writing-log .post-card-meta,
-	.quiet-mode .writing-log .post-row-title,
-	.quiet-mode .writing-log .post-card-title,
-	.quiet-mode .writing-log .post-row-desc,
-	.quiet-mode .writing-log .post-card-desc,
-	.quiet-mode .writing-log .post-row-tags,
-	.quiet-mode .writing-log .post-card-tags {
-		grid-column: 1;
-		grid-row: auto;
-		justify-self: start;
-	}
-
-	.quiet-mode body .post-row,
-	.quiet-mode body .post-row-link,
-	.quiet-mode .writing-log .post-row {
-		grid-template-columns: minmax(0, 1fr);
-	}
-
-	.quiet-mode .post-row-tags {
-		justify-content: flex-start;
-		max-width: none;
-	}
-
-	.quiet-mode .resume-doc .resume-entry {
-		display: block;
-	}
-
-	.quiet-mode .resume-doc .resume-meta {
-		margin-left: 0;
-		padding-left: 0;
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.quiet-mode .brand-dot,
-	.quiet-mode .command-dot {
-		animation: none;
-	}
-}
-
 /* ═══════════════════════════════════════════════════════════
    Motion
 
@@ -1649,6 +1012,402 @@
 .reveal-in {
 	animation: fadeInUp 0.6s var(--ease-out-soft) both;
 	animation-delay: var(--reveal-delay, 0ms);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Open Studio Index
+
+   The home page reads as a studio directory rather than a terminal:
+   material studies establish the palette, projects are stacked paper
+   objects, writing is a set of cards, and the about/manifesto band gives
+   the work a human frame. These rules intentionally outrank the older
+   component-scoped card geometry without changing any markup contract.
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+	--studio-sage: #dbe1d2;
+	--studio-sand: #eadcc6;
+	--studio-blue: #d9e1f2;
+	--studio-clay: #e5cfc3;
+}
+
+.studio-mode .shell {
+	max-width: 70rem;
+}
+.studio-mode .prose {
+	max-width: 48rem;
+}
+html body .studio-projects .project-grid {
+	display: block;
+	margin-top: 1.5rem;
+}
+
+html body .hero-title,
+html body .page-hero-title {
+	font-family: var(--font-display);
+	letter-spacing: -0.045em;
+	line-height: 0.98;
+}
+html body .hero-title {
+	max-width: 14ch;
+	font-size: clamp(3rem, 6vw, 6rem);
+}
+html body .page-hero-title {
+	max-width: 18ch;
+	font-size: clamp(2.8rem, 5.5vw, 5.4rem);
+}
+html body .hero-lead {
+	font-family: var(--font-serif);
+	font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+	line-height: 1.7;
+}
+
+.material-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.75rem;
+}
+.material-grid > * {
+	position: relative;
+	min-height: 8.5rem;
+	padding: 1.15rem;
+	overflow: hidden;
+	border: 1px solid var(--line-strong);
+	border-radius: var(--radius);
+	background: var(--panel);
+}
+.material-grid > *::after {
+	position: absolute;
+	right: -1.25rem;
+	bottom: -1.75rem;
+	width: 6rem;
+	height: 6rem;
+	border-radius: 50%;
+	background: color-mix(in srgb, var(--accent) 12%, transparent);
+	content: '';
+}
+.material-grid > :nth-child(1) {
+	background: var(--studio-sage);
+}
+.material-grid > :nth-child(2) {
+	background: var(--studio-sand);
+}
+.material-grid > :nth-child(3) {
+	background: var(--studio-blue);
+}
+.material-grid > :nth-child(4) {
+	background: var(--studio-clay);
+}
+.material-grid :where(span, small) {
+	position: relative;
+	z-index: 1;
+	display: block;
+	font-family: var(--font-ui);
+	font-size: 0.72rem;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--muted);
+}
+.material-grid :where(strong, h2, h3) {
+	position: relative;
+	z-index: 1;
+	display: block;
+	margin-top: 0.65rem;
+	font-family: var(--font-display);
+	font-size: clamp(1.35rem, 2vw, 1.8rem);
+	line-height: 1.05;
+	letter-spacing: -0.025em;
+	color: var(--text);
+}
+.material-grid :where(p) {
+	position: relative;
+	z-index: 1;
+	max-width: 24ch;
+	margin-top: 0.45rem;
+	font-family: var(--font-serif);
+	font-size: 0.92rem;
+	line-height: 1.55;
+	color: var(--body);
+}
+
+/* Projects are objects on a workbench: a full-width image plate beside a
+   paper panel, stacked with enough air to read each one as a discrete study. */
+html body .studio-project.studio-project {
+	display: grid;
+	grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+	min-height: 28rem;
+	overflow: hidden;
+	border: 1px solid var(--line-strong);
+	border-radius: var(--radius-lg);
+	background: var(--panel);
+	box-shadow: var(--shadow-sm);
+	transition:
+		transform 0.2s var(--ease-out-soft),
+		box-shadow 0.2s ease,
+		border-color 0.2s ease;
+}
+html body .studio-project + .studio-project {
+	margin-top: 1.5rem;
+}
+html body .studio-project .project-media {
+	position: relative;
+	display: block;
+	min-height: 100%;
+	overflow: hidden;
+	background: var(--bg);
+}
+html body .studio-project .project-media img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	min-height: 28rem;
+	object-fit: cover;
+	transition: transform 0.35s var(--ease-out-soft);
+}
+html body .studio-project .project-body {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
+	padding: clamp(1.5rem, 4vw, 3.5rem);
+}
+html body .studio-project .project-meta {
+	font-family: var(--font-ui);
+	font-size: 0.74rem;
+	font-weight: 650;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--accent);
+}
+html body .studio-project .project-title {
+	margin-top: 0.8rem;
+	font-family: var(--font-display);
+	font-size: clamp(1.9rem, 3.2vw, 3.2rem);
+	font-weight: 700;
+	letter-spacing: -0.04em;
+	line-height: 1;
+	color: var(--text);
+}
+html body .studio-project .project-copy {
+	max-width: 42ch;
+	margin-top: 1rem;
+	font-family: var(--font-serif);
+	font-size: 1.02rem;
+	line-height: 1.7;
+	color: var(--body);
+}
+html body .studio-project .project-tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.45rem;
+	margin-top: 1.25rem;
+}
+html body .studio-project .tag {
+	font-family: var(--font-ui);
+	font-size: 0.72rem;
+	background: transparent;
+}
+html body .studio-project .project-links {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 1.25rem;
+	margin-top: 1.5rem;
+}
+@media (hover: hover) {
+	html body .studio-project:hover {
+		transform: translateY(-3px);
+		border-color: var(--line-strong);
+		box-shadow: var(--shadow-md);
+	}
+	html body .studio-project:hover .project-media img {
+		transform: scale(1.025);
+	}
+}
+
+/* Writing is a shelf of cards. The lead keeps its extra copy but loses the
+   terminal-row treatment; every entry has the same paper face and rhythm. */
+html body .writing-grid.writing-grid {
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+	gap: 1.25rem;
+}
+html body .studio-writing.studio-writing {
+	display: flex;
+	flex-direction: column;
+	min-height: 18rem;
+	padding: clamp(1.35rem, 3vw, 1.8rem);
+	border: 1px solid var(--line-strong);
+	border-radius: var(--radius-lg);
+	background: var(--panel);
+	box-shadow: var(--shadow-sm);
+	transition:
+		transform 0.2s var(--ease-out-soft),
+		box-shadow 0.2s ease,
+		border-color 0.2s ease;
+}
+html body .studio-writing .entry-meta {
+	font-family: var(--font-ui);
+	font-size: 0.74rem;
+	font-weight: 650;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--accent);
+}
+html body .studio-writing :where(.writing-lead-title, .writing-card-title) {
+	margin-top: 0.8rem;
+	font-family: var(--font-display);
+	font-size: clamp(1.45rem, 2.2vw, 1.9rem);
+	font-weight: 700;
+	letter-spacing: -0.03em;
+	line-height: 1.08;
+}
+html body .studio-writing :where(.writing-lead-desc, .writing-card-desc) {
+	margin-top: 0.8rem;
+	font-family: var(--font-serif);
+	font-size: 0.98rem;
+	line-height: 1.65;
+	color: var(--body);
+}
+html body .studio-writing .writing-lead-more {
+	margin-top: auto;
+	padding-top: 1.25rem;
+}
+@media (hover: hover) {
+	html body .studio-writing:hover {
+		transform: translateY(-3px);
+		box-shadow: var(--shadow-md);
+	}
+}
+
+/* The manifesto and working notes give the directory a point of view. */
+.studio-manifesto,
+.about-band {
+	border-block: 1px solid var(--line-strong);
+	background: var(--panel);
+}
+.studio-manifesto {
+	padding-block: clamp(3.5rem, 7vw, 6rem);
+}
+.studio-manifesto blockquote {
+	max-width: 24ch;
+	margin: 0;
+	font-family: var(--font-display);
+	font-size: clamp(2rem, 4.5vw, 4.2rem);
+	font-weight: 700;
+	letter-spacing: -0.04em;
+	line-height: 1.02;
+	color: var(--text);
+}
+.studio-manifesto p {
+	max-width: 58ch;
+	margin-top: 1.5rem;
+	font-family: var(--font-serif);
+	font-size: 1.08rem;
+	line-height: 1.75;
+	color: var(--body);
+}
+.about-band-inner {
+	display: grid;
+	grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+	gap: clamp(2rem, 5vw, 5rem);
+	padding-block: clamp(3rem, 6vw, 5rem);
+	align-items: start;
+}
+.about-band-title {
+	font-family: var(--font-display);
+	font-size: clamp(2.2rem, 4.5vw, 4.5rem);
+	font-weight: 700;
+	letter-spacing: -0.045em;
+	line-height: 0.98;
+}
+.about-band :where(p, li) {
+	font-family: var(--font-serif);
+	font-size: 1.05rem;
+	line-height: 1.75;
+	color: var(--body);
+}
+.notes {
+	display: grid;
+	gap: 0;
+}
+.note {
+	padding-block: 1.4rem;
+	border-top: 1px solid var(--line-strong);
+	transition: transform 0.2s var(--ease-out-soft);
+}
+.note:last-child {
+	border-bottom: 1px solid var(--line-strong);
+}
+.note h3 {
+	font-family: var(--font-display);
+	font-size: 1.45rem;
+	letter-spacing: -0.025em;
+}
+.note p {
+	max-width: 62ch;
+	margin-top: 0.45rem;
+	font-family: var(--font-serif);
+	color: var(--body);
+}
+@media (hover: hover) {
+	.note:hover {
+		transform: translateX(3px);
+	}
+}
+
+/* A drawn underline, rather than a color-only hover, gives links a small
+   material gesture without introducing another accent or looping motion. */
+.link-accent {
+	background-image: linear-gradient(currentColor, currentColor);
+	background-repeat: no-repeat;
+	background-position: 0 100%;
+	background-size: 0 1px;
+	padding-bottom: 0.18em;
+	transition:
+		color 0.2s ease,
+		background-size 0.2s ease;
+}
+.link-accent:hover,
+.link-accent:focus-visible {
+	background-size: 100% 1px;
+}
+
+.site-footer {
+	border-top: 1px solid var(--footer-line);
+	background: var(--footer-bg);
+}
+
+@media (width < 64rem) {
+	html body .studio-project.studio-project {
+		grid-template-columns: 1fr;
+	}
+	html body .studio-project .project-media img {
+		min-height: 18rem;
+		aspect-ratio: 16 / 10;
+	}
+	.about-band-inner {
+		grid-template-columns: 1fr;
+	}
+}
+@media (width < 48rem) {
+	.material-grid {
+		gap: 0.6rem;
+	}
+	.material-grid > * {
+		min-height: 7.5rem;
+		padding: 0.9rem;
+	}
+	html body .studio-writing.studio-writing {
+		min-height: 0;
+	}
+}
+@media (width < 30rem) {
+	.material-grid {
+		grid-template-columns: 1fr;
+	}
+	.material-grid > * {
+		min-height: 6.5rem;
+	}
 }
 
 /* ── Reading progress ── */
@@ -1724,30 +1483,34 @@
    Print
    ═══════════════════════════════════════════════════════════ */
 @media print {
-	/* Print keeps deliberately darker values rather than reading the light
-	   tokens: a laser printer lays the screen's #64748b muted down as a light
-	   grey and washes #2563eb out on paper. This block is a documented
-	   palette surface (DESIGN.md §1), not drift; move it with the tokens. The
-	   ratios in DESIGN.md §3.6 are computed from the values here. */
+	/* Print keeps white paper and darkens the quiet marks: a laser printer
+	   lays the screen's warm muted down too lightly and the bright blue loses
+	   separation on paper. This is a documented palette surface, not drift. */
 	:root {
 		color-scheme: light;
 
 		--bg: #ffffff;
 		--surface-alt: #ffffff;
 		--panel: #ffffff;
-		--line: #e2e8f0;
-		--line-strong: #cbd5e1;
+		--line: #d8d0c4;
+		--line-strong: #b8ad9e;
 
-		--text: #0f172a;
-		--body: #334155;
-		--muted: #475569;
-		--dim: #64748b;
+		--text: #24211d;
+		--body: #3f3932;
+		--muted: #514a42;
+		--dim: #625b53;
 
-		--accent: #1d4ed8;
-		--accent-hover: #1e40af;
-		--accent-warm: #b45309;
+		--accent: #254aa8;
+		--accent-hover: #1e3d8a;
+		--accent-warm: #254aa8;
 		--accent-on: #ffffff;
 		--accent-wash: transparent;
+
+		--footer-bg: #ffffff;
+		--footer-text: #24211d;
+		--footer-muted: #514a42;
+		--footer-line: #d8d0c4;
+		--footer-accent: #254aa8;
 	}
 
 	* {
@@ -1778,13 +1541,18 @@
 
 	body {
 		background: #ffffff;
-		color: #0f172a;
+		color: #24211d;
 		min-height: 0;
 	}
 	.panel,
-	.panel-alt {
+	.panel-alt,
+	.studio-project,
+	.studio-writing,
+	.studio-manifesto,
+	.about-band {
 		background: #ffffff;
-		color: #0f172a;
+		color: #24211d;
+		box-shadow: none;
 	}
 
 	.shiki,
@@ -1837,40 +1605,11 @@
 	   every card face — archive, home writing and projects, offers. */
 	.post-row,
 	.card,
-	.stats {
+	.stats,
+	.studio-project,
+	.studio-writing,
+	.material-grid > *,
+	.note {
 		break-inside: avoid;
-	}
-
-	/* Quiet Mode's command surfaces print as ink on paper, not dark panels. */
-	.quiet-mode .terminal-label::before,
-	.quiet-mode .command-dot {
-		display: none !important;
-	}
-	.quiet-mode .hero-code,
-	.quiet-mode .prose :where(pre):not(:where([class~='not-prose'], [class~='not-prose'] *)),
-	.quiet-mode .prose :where(pre.shiki) {
-		background: #ffffff !important;
-		color: #0f172a !important;
-		border-color: var(--line) !important;
-	}
-	.quiet-mode .prose code {
-		background: transparent !important;
-		color: var(--text) !important;
-		border: 0 !important;
-	}
-	.quiet-mode .project-list,
-	.quiet-mode .writing-log,
-	.quiet-mode .project-list > :where(li, article, .project-card, .project-feature),
-	.quiet-mode .writing-log > :where(li, article, .post-card, .post-row) {
-		background: transparent !important;
-		box-shadow: none !important;
-	}
-	.quiet-mode .prose,
-	.quiet-mode .resume-doc {
-		font-family:
-			system-ui,
-			-apple-system,
-			'Segoe UI',
-			sans-serif;
 	}
 }

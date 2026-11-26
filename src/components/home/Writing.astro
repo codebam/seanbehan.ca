@@ -2,8 +2,8 @@
 /**
  * LATEST WRITING
  *
- * Posts are log entries: date in the left gutter, title and summary in the
- * main column. The archive still uses PostList with the same hairline rhythm.
+ * The newest post is the lead card; the rest run as a grid of smaller cards.
+ * The archive still uses PostList; this is the front page's own arrangement.
  */
 import { writingHref } from '../../lib/site';
 import type { PostSummary } from '../../lib/types';
@@ -25,12 +25,7 @@ const monthYear = (date: string) =>
 <section class="writing shell">
 	<header class="section-head" data-reveal>
 		<div>
-			<h2 class="display display-lg">
-				<span class="terminal-prompt" aria-hidden="true">
-					$
-				</span>{' '}
-				tail -n 6 ~/writing
-			</h2>
+			<h2 class="display display-lg">Latest writing</h2>
 			<p class="section-sub">Notes from whatever I am taking apart.</p>
 		</div>
 		<a href={writingHref('/posts')} class="link-accent">
@@ -38,40 +33,40 @@ const monthYear = (date: string) =>
 		</a>
 	</header>
 
-	{/* Keep the log skin inside .shell so the section retains its centered,
-	    padded reading measure. */}
-	<div class="writing-layout writing-log">
-		{lead && (
-			<article class="writing-lead log-entry" data-reveal>
-				<p class="entry-meta">
-					<time datetime={lead.meta.date}>{monthYear(lead.meta.date)}</time>
-					{lead.readingMinutes && <span>· {lead.readingMinutes} min read</span>}
-				</p>
-				<h3 class="writing-lead-title">
-					<a href={writingHref(lead.path)}>{lead.meta.title}</a>
-				</h3>
-				{lead.meta.description && <p class="writing-lead-desc">{lead.meta.description}</p>}
-				<p class="writing-lead-more">
-					<a href={writingHref(lead.path)} class="link-accent">
-						Read the post <span class="arrow">&rarr;</span>
-					</a>
-				</p>
-			</article>
-		)}
+	{lead && (
+		<article class="writing-lead card studio-writing" data-reveal>
+			<p class="entry-meta">
+				<time datetime={lead.meta.date}>{monthYear(lead.meta.date)}</time>
+				{lead.readingMinutes && <span>· {lead.readingMinutes} min read</span>}
+			</p>
+			<h3 class="writing-lead-title">
+				<a href={writingHref(lead.path)}>{lead.meta.title}</a>
+			</h3>
+			{lead.meta.description && <p class="writing-lead-desc">{lead.meta.description}</p>}
+			<p class="writing-lead-more">
+				<a href={writingHref(lead.path)} class="link-accent">
+					Read the post <span class="arrow">&rarr;</span>
+				</a>
+			</p>
+		</article>
+	)}
 
-		<div class="writing-grid">
-			{rest.map((post, i) => (
-				<article class="writing-card log-entry" data-reveal data-reveal-delay={Math.min(i, 3) * 60}>
-					<p class="entry-meta">
-						<time datetime={post.meta.date}>{monthYear(post.meta.date)}</time>
-					</p>
-					<h3 class="writing-card-title">
-						<a href={writingHref(post.path)}>{post.meta.title}</a>
-					</h3>
-					{post.meta.description && <p class="writing-card-desc">{post.meta.description}</p>}
-				</article>
-			))}
-		</div>
+	<div class="writing-grid">
+		{rest.map((post, i) => (
+			<article
+				class="writing-card card studio-writing"
+				data-reveal
+				data-reveal-delay={Math.min(i, 3) * 60}
+			>
+				<p class="entry-meta">
+					<time datetime={post.meta.date}>{monthYear(post.meta.date)}</time>
+				</p>
+				<h3 class="writing-card-title">
+					<a href={writingHref(post.path)}>{post.meta.title}</a>
+				</h3>
+				{post.meta.description && <p class="writing-card-desc">{post.meta.description}</p>}
+			</article>
+		))}
 	</div>
 </section>
 
@@ -90,50 +85,18 @@ const monthYear = (date: string) =>
 		flex-wrap: wrap;
 		align-items: baseline;
 		gap: 0.4rem;
-		font-family: var(--font-mono);
-		font-size: 0.72rem;
+		font-size: 0.8rem;
 		font-weight: 500;
 		color: var(--muted);
 	}
-	.terminal-prompt {
-		margin-right: 0.4rem;
-		color: var(--accent);
-	}
-	.log-entry {
-		display: grid;
-		grid-template-columns: 10rem minmax(0, 1fr);
-		gap: 0.35rem 1.5rem;
-		padding-block: 1.15rem;
-		border: 0;
-		border-bottom: 1px solid var(--line-strong);
-		border-radius: 0;
-		background: transparent;
-		box-shadow: none;
-	}
-	.log-entry .entry-meta {
-		grid-column: 1;
-		grid-row: 1;
-	}
-	.log-entry .writing-lead-title,
-	.log-entry .writing-card-title {
-		grid-column: 2;
-		grid-row: 1;
-		margin: 0;
-	}
-	.log-entry .writing-lead-desc,
-	.log-entry .writing-card-desc {
-		grid-column: 2;
-		grid-row: 2;
-		margin: 0;
-	}
-	.log-entry .writing-lead-more {
-		grid-column: 2;
-		grid-row: 3;
-		margin-top: 0.65rem;
+
+	.writing-lead {
+		padding: clamp(1.5rem, 3vw, 2.5rem);
 	}
 	.writing-lead-title {
 		max-width: 30ch;
-		font-size: clamp(1.35rem, 2.4vw, 1.8rem);
+		margin-top: 0.6rem;
+		font-size: clamp(1.5rem, 2.8vw, 2rem);
 		font-weight: 600;
 		letter-spacing: -0.02em;
 		line-height: 1.2;
@@ -152,39 +115,33 @@ const monthYear = (date: string) =>
 	}
 	.writing-lead-desc {
 		max-width: 62ch;
-		font-size: 1rem;
+		margin-top: 0.75rem;
+		font-size: 1.02rem;
 		line-height: 1.65;
 		color: var(--body);
 	}
+	.writing-lead-more {
+		margin-top: 1.25rem;
+	}
 
 	.writing-grid {
-		display: block;
-		margin-top: 0;
+		display: grid;
+		gap: 1.25rem;
+		margin-top: 1.25rem;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
 	}
-	@media (width < 48rem) {
-		.log-entry {
-			grid-template-columns: 1fr;
-			gap: 0.3rem;
-		}
-		.log-entry .entry-meta,
-		.log-entry .writing-lead-title,
-		.log-entry .writing-card-title,
-		.log-entry .writing-lead-desc,
-		.log-entry .writing-card-desc,
-		.log-entry .writing-lead-more {
-			grid-column: 1;
-			grid-row: auto;
-		}
+	.writing-card {
+		padding: 1.5rem;
 	}
 	.writing-card-title {
-		margin-top: 0;
+		margin-top: 0.5rem;
 		font-size: 1.15rem;
 		font-weight: 600;
 		letter-spacing: -0.015em;
 		line-height: 1.3;
 	}
 	.writing-card-desc {
-		margin-top: 0;
+		margin-top: 0.5rem;
 		font-size: 0.95rem;
 		line-height: 1.6;
 		color: var(--body);

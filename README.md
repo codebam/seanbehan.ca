@@ -166,8 +166,8 @@ GitHub Actions runs the formatter check, the type check, the tests and both buil
 
 ## Assets
 
-- Profile image is WebP, with the dark-ground crop used by the dark-only About and Contact pages
-- Quiet Mode uses local monospace and system UI fonts on public pages; the older variable fonts remain for the social-card renderer. Rebuild them with `tools/fonts/build-fonts.sh` after upgrading either Fontsource package — see `tools/fonts/README.md`
+- Profile image is WebP, with the light-ground crop used by About and Contact
+- Open Studio uses local display faces and system UI type on public pages; the older variable fonts remain for the social-card renderer. Rebuild them with `tools/fonts/build-fonts.sh` after upgrading either Fontsource package — see `tools/fonts/README.md`
 - `public/fonts/og-*.woff` are the static cuts the social-card renderer needs: satori misreads the variable fonts' `fvar` table, and a card needs one weight of each face
 - Social cards are drawn per request at `/og/<slug>.png` from the title in the database
 

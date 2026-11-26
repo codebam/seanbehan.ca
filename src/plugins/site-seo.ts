@@ -41,7 +41,7 @@ export function createPlugin(options: SiteSeoOptions) {
 					name: options.authorName,
 					alternateName: options.authorHandle,
 					url: options.authorUrl,
-					image: `${options.authorUrl}/profile-dark.webp`,
+					image: `${options.authorUrl}/profile.webp`,
 					jobTitle: options.jobTitle,
 					homeLocation: options.homeLocation,
 					knowsAbout: options.knowsAbout,

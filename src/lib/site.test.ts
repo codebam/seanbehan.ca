@@ -137,9 +137,9 @@ describe('the hiring variant', () => {
 	});
 
 	it('keeps both headers short enough to stay on one row', () => {
-		// Contact is rendered by the frame and is always last. Quiet Mode adds
-		// About to both origins; five links plus the CTA still fit the first
-		// desktop breakpoint, while phones use the existing details menu.
+		// Contact is rendered by the frame and is always last. Open Studio adds
+		// About to both origins; five links plus the CTA fit the first desktop
+		// breakpoint, while phones use the existing details menu.
 		expect(SITES.seanbehan.nav.length).toBeLessThanOrEqual(5);
 		expect(SITES.codebam.nav.length).toBeLessThanOrEqual(5);
 	});

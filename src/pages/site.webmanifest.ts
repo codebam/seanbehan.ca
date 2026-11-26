@@ -17,13 +17,13 @@ export const GET: APIRoute = async () => {
 			{ src: '/android-chrome-512x512.png', sizes: '512x512', type: 'image/png' },
 			{ src: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }
 		],
-		// Quiet Mode keeps one dark identity in both schemes: the surface is the
-		// lighter installed-app chrome, while the page ground stays --bg.
-		theme_color: '#0d1512',
-		background_color: '#0d1512',
+		// Open Studio Index keeps warm paper in light mode and ink-coloured
+		// installed chrome in dark mode. app.css remains the source of truth.
+		theme_color: '#e7e1d8',
+		background_color: '#e7e1d8',
 		theme_colors: [
-			{ color: '#14231d', media: '(prefers-color-scheme: light)' },
-			{ color: '#0d1512', media: '(prefers-color-scheme: dark)' }
+			{ color: '#e7e1d8', media: '(prefers-color-scheme: light)' },
+			{ color: '#24211d', media: '(prefers-color-scheme: dark)' }
 		],
 		display: 'standalone',
 		scope: '/'
