@@ -42,7 +42,8 @@ export const featuredProjects: Array<FeaturedProject & { seoDescription: string 
 		language: 'Rust',
 		stars: 4,
 		mockup: viewportMockup,
-		mockupAlt: 'Viewport desktop shell showing its keyboard controls',
+		mockupBackground: '#0b0e14',
+		mockupAlt: 'Viewport running nested at 1600×1000 with btop and its web shell',
 		tags: ['wayland', 'smithay', 'wpe-webkit'],
 		challenge:
 			'Build a native Wayland compositor while letting ordinary web technology own the desktop shell and window layout, without copying rendered frames through the CPU.',
@@ -71,6 +72,7 @@ export const featuredProjects: Array<FeaturedProject & { seoDescription: string 
 		homepage: 'https://matrix.to/#/@codebam:codebam.ca',
 		homepageLabel: 'Message @codebam',
 		mockup: matrixMockup,
+		mockupBackground: '#eeeaf7',
 		mockupAlt:
 			'A federation report for codebam.ca — signed server key, room versions 1–12, E2EE exchanged over federation',
 		tags: ['cloudflare', 'matrix', 'federation'],
@@ -103,6 +105,7 @@ export const featuredProjects: Array<FeaturedProject & { seoDescription: string 
 		homepage: 'https://cf-workers-telegram-bot.codebam.ca',
 		homepageLabel: 'Read the docs',
 		mockup: telegramMockup,
+		mockupBackground: '#f3e7d8',
 		mockupAlt: 'The package page and a Worker that hands its fetch handler to the bot',
 		tags: ['cloudflare', 'telegram', 'npm'],
 		challenge:
@@ -132,6 +135,7 @@ export const featuredProjects: Array<FeaturedProject & { seoDescription: string 
 		homepage: 'https://t.me/TuxRobot',
 		homepageLabel: 'Message the bot',
 		mockup: tuxMockup,
+		mockupBackground: '#c9e4f5',
 		mockupAlt: 'Tux Robot holding a conversation in Telegram',
 		tags: ['cloudflare', 'telegram', 'grammy'],
 		challenge:
@@ -161,6 +165,7 @@ export const featuredProjects: Array<FeaturedProject & { seoDescription: string 
 		homepage: 'https://paste.codebam.ca',
 		homepageLabel: 'Open pastebin',
 		mockup: pastebinMockup,
+		mockupBackground: '#e5ede2',
 		mockupAlt: 'Pastebin R2 editor and command-line usage',
 		tags: ['cloudflare', 'r2', 'hono'],
 		challenge:

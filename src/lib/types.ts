@@ -30,6 +30,8 @@ export interface FeaturedProject {
 	homepageLabel?: string;
 	/** Presentation image used on the home page and project case study. */
 	mockup: ImageMetadata;
+	/** Plate colour behind the fully contained image, including any letterboxing. */
+	mockupBackground: string;
 	mockupAlt: string;
 	tags: string[];
 	challenge: string;

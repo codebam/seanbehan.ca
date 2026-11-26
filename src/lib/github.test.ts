@@ -16,6 +16,7 @@ const project = (overrides: Partial<FeaturedProject> = {}): FeaturedProject => (
 	language: 'Rust',
 	stars: 4,
 	mockup: {} as FeaturedProject['mockup'],
+	mockupBackground: '#211722',
 	mockupAlt: 'Screenshot of the compositor',
 	tags: ['wayland'],
 	challenge: 'Compose a shell in the browser',

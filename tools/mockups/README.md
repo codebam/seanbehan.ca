@@ -2,45 +2,51 @@
 
 The five pictures in Selected work, and on each project's case-study page.
 
-They are drawn as HTML rather than screenshotted from the live products. A
-running service changes without asking, and a photograph of it would be a
-picture of what it used to be; these say what the row claims.
+Viewport is a real 1600×1000 capture of the compositor running nested with its
+built-in default config and btop open. The other four are drawn as HTML rather
+than screenshotted from live products: a running service changes without asking,
+and a photograph of it would be a picture of what it used to be. Those four say
+what the row claims.
 
-## Rendering
+## Rendering the HTML illustrations
 
 ```sh
 npm run mockups        # or: node tools/mockups/build.mjs
 ```
 
-The screenshots land in `src/assets/projects/`, where `src/lib/projects.ts`
-imports them. `Work.astro` and `projects/[slug].astro` render them through
-`astro:assets`, so Astro generates the responsive `srcset` and the browser
-downloads a card-sized variant instead of the 1600×1000 original. Chromium
-writes WebP when the screenshot file ends in `.webp`, so the only requirement
-is a `chromium` on `PATH`. Nothing runs this in CI — redraw by hand when a row
-changes.
+The four generated screenshots land in `src/assets/projects/`, where
+`src/lib/projects.ts` imports them. `Work.astro` and `projects/[slug].astro`
+render them through `astro:assets`, so Astro generates the responsive `srcset`
+and the browser downloads a card-sized variant instead of the 1600×1000 original.
+Chromium writes WebP when the screenshot file ends in `.webp`, so the only
+requirement is a `chromium` on `PATH`. Nothing runs this in CI — redraw by hand
+when a row changes.
 
-## Layout
+`project-viewport.webp` is deliberately not in the generator. Replacing it with
+an illustration would make `npm run mockups` silently undo the real capture.
 
-`frame.css` is the surround every page shares: the navy grid, the orange
-ordinal at the left, the stack at the right, and one bordered surface. A page
-styles only what goes inside that surface, so the set stays a set.
+## Recapturing Viewport
 
-The surface is 1444x787 and the page is fixed at 1600x1000. That is the
-source box; Astro's image pipeline generates the widths the templates'
-`sizes` attributes ask for. Content that does not fit is clipped by the card
-rather than scrolling, so check that it fits:
+Run `viewport` nested with an isolated `HOME` (so it uses the built-in defaults),
+no `--config` flag and a writable, short `XDG_RUNTIME_DIR`; the host's
+`WAYLAND_DISPLAY` must be an absolute socket path so winit does not connect back
+to the nested server. Set
+`VIEWPORT_DUMP_OUTPUT=/path/nested.ppm`, open a client inside the nested display,
+and resize the host window to 1600×1000 with the host compositor's `view.layout`
+message. The dump is a binary PPM; convert it to WebP and replace
+`src/assets/projects/project-viewport.webp`.
 
-```sh
-# prints OVERFLOW:<px> for each page; 0 means the picture is complete
-for f in tools/mockups/*.html; do
-  cp "$f" /tmp/check.html
-  printf '<script>window.addEventListener("load",()=>{const c=document.querySelector(".card");document.title="OVERFLOW:"+(c.scrollHeight-c.clientHeight)});</script>' >> /tmp/check.html
-  chromium --headless --disable-gpu --window-size=1600,1000 --virtual-time-budget=2000 \
-    --dump-dom file:///tmp/check.html 2>/dev/null | grep -om1 "OVERFLOW:[-0-9]*"
-done
-```
+## Art direction
 
-The ordinals in the pages are the row order in `src/lib/projects.ts`. Adding a
-project means redrawing the numbers on the rows below it — the cost of baking
-them into the picture instead of a caption that could disagree with its row.
+`frame.css` is only a reset for the HTML illustrations: page dimensions,
+typography defaults and a monospace helper. Each page owns its palette and
+composition. There is deliberately no shared ordinal, technology-stack header,
+grid or footer; the project name and stack already live in the card beside the
+picture, and repeating them inside every image made different projects look
+interchangeable at thumbnail size.
+
+The four HTML source pages are fixed at 1600×1000. Content must fit that source
+box: the site contains the complete image rather than cropping it, so anything
+clipped here would stay clipped in the generated asset. Open the HTML directly
+at 1600×1000 when changing a layout, then regenerate and inspect the WebP at the
+size the project cards actually display.

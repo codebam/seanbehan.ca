@@ -2,220 +2,402 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<title>Tux Robot</title>
+		<title>Tux Robot — Telegram conversation</title>
 		<link rel="stylesheet" href="frame.css" />
 		<style>
+			:root {
+				--blue: #3390ec;
+				--blue-dark: #2477cc;
+				--ink: #202b36;
+				--muted: #7d8a97;
+				--line: #e5e9ee;
+				--chat: #dfeef8;
+			}
+
 			body {
-				/* The chat is the one mockup drawn in the product's own face: a
-				   Telegram conversation has no business being monospaced. */
-				font-family: 'Liberation Sans', 'DejaVu Sans', sans-serif;
+				color: var(--ink);
+				background:
+					radial-gradient(circle at 12% 10%, rgba(255, 255, 255, 0.9), transparent 27%),
+					radial-gradient(circle at 92% 90%, rgba(51, 144, 236, 0.22), transparent 30%), #c9e4f5;
 			}
 
-			.card {
-				background: #0d0f14;
+			body::before,
+			body::after {
+				content: '';
+				position: absolute;
+				border: 1px solid rgba(255, 255, 255, 0.52);
+				border-radius: 50%;
 			}
 
-			.chat {
-				width: 660px;
+			body::before {
+				top: -310px;
+				left: -190px;
+				width: 720px;
+				height: 720px;
+			}
+
+			body::after {
+				right: -180px;
+				bottom: -350px;
+				width: 780px;
+				height: 780px;
+			}
+
+			.app {
+				position: absolute;
+				inset: 38px 46px;
+				display: grid;
+				grid-template-columns: 350px 1fr;
+				overflow: hidden;
+				background: #fff;
+				border: 1px solid rgba(50, 101, 135, 0.17);
+				border-radius: 20px;
+				box-shadow: 0 32px 90px rgba(40, 91, 124, 0.2);
+			}
+
+			.sidebar {
+				background: #fff;
+				border-right: 1px solid var(--line);
+			}
+
+			.sidebar-head {
+				display: flex;
+				align-items: center;
+				height: 70px;
+				padding: 0 22px;
+				border-bottom: 1px solid var(--line);
+			}
+
+			.menu {
+				color: #6e7c89;
+				font-size: 23px;
+			}
+
+			.search {
+				height: 36px;
 				margin: 0 auto;
-				padding-bottom: 4px;
+				padding: 0 14px;
+				color: #97a3ae;
+				background: #f1f4f7;
+				border-radius: 18px;
+				font-size: 13px;
+				line-height: 36px;
+			}
+
+			.chat-list {
+				padding: 10px 0;
+			}
+
+			.chat-item {
+				display: grid;
+				grid-template-columns: 48px 1fr auto;
+				gap: 12px;
+				align-items: center;
+				padding: 13px 20px;
+			}
+
+			.chat-item.selected {
+				background: var(--blue);
+			}
+
+			.avatar {
+				position: relative;
+				display: grid;
+				place-items: center;
+				width: 46px;
+				height: 46px;
+				overflow: hidden;
+				background: #26313a;
+				border-radius: 50%;
+				font-size: 25px;
+			}
+
+			.avatar.blue {
+				color: #fff;
+				background: linear-gradient(145deg, #62b5ff, #2d86dc);
+				font-size: 19px;
+				font-weight: 700;
+			}
+
+			.avatar.green {
+				color: #fff;
+				background: #62b58a;
+				font-size: 18px;
+			}
+
+			.avatar.orange {
+				background: #f3b56b;
+				font-size: 21px;
+			}
+
+			.chat-item b {
+				display: block;
+				font-size: 14px;
+				font-weight: 600;
+			}
+
+			.chat-item small {
+				display: block;
+				margin-top: 4px;
+				color: var(--muted);
+				font-size: 12px;
+			}
+
+			.chat-item .time {
+				color: var(--muted);
+				font-size: 10px;
+			}
+
+			.chat-item.selected b,
+			.chat-item.selected small,
+			.chat-item.selected .time {
+				color: #fff;
+			}
+
+			.chat-item.selected small,
+			.chat-item.selected .time {
+				opacity: 0.8;
+			}
+
+			.main {
+				display: flex;
+				flex-direction: column;
+				min-width: 0;
+				background: var(--chat);
 			}
 
 			.chat-head {
 				display: flex;
 				align-items: center;
-				gap: 12px;
-				margin: 10px 0 14px;
-				padding: 8px 16px;
-				background: #1c232c;
-				border-radius: 22px;
-				color: #e7ecf3;
+				height: 70px;
+				padding: 0 24px;
+				background: #fff;
+				border-bottom: 1px solid var(--line);
 			}
 
-			.chat-head .back {
-				color: #8b98a9;
-				font-size: 20px;
-			}
-
-			.avatar {
-				display: grid;
-				place-items: center;
-				width: 34px;
-				height: 34px;
-				font-size: 17px;
-				color: #fff;
-				background: #2ea8e6;
-				border-radius: 50%;
+			.chat-head .avatar {
+				width: 42px;
+				height: 42px;
+				font-size: 23px;
 			}
 
 			.chat-head b {
 				display: block;
-				font-size: 16px;
-				font-weight: 600;
+				margin-left: 13px;
+				font-size: 15px;
 			}
 
 			.chat-head small {
 				display: block;
-				font-size: 13px;
-				color: #8b98a9;
+				margin: 3px 0 0 13px;
+				color: var(--blue);
+				font-size: 12px;
 			}
 
-			.chat-head .icons {
+			.head-actions {
+				display: flex;
+				gap: 20px;
 				margin-left: auto;
-				font-size: 19px;
-				color: #8b98a9;
+				color: #7d8a97;
+				font-size: 20px;
 			}
 
-			.bubble {
-				max-width: 600px;
-				margin-bottom: 8px;
-				padding: 8px 14px;
-				font-size: 14px;
-				line-height: 1.38;
-				border-radius: 12px;
-			}
-
-			.mine {
-				margin-left: auto;
-				max-width: 360px;
-				color: #fff;
-				text-align: center;
-				background: #7a6ff0;
-				border-bottom-right-radius: 4px;
-			}
-
-			.mine .stamp {
-				font-size: 11px;
-				opacity: 0.8;
-			}
-
-			.theirs {
+			.messages {
 				position: relative;
-				color: #e7ecf3;
-				text-align: left;
-				background: #17202c;
-				border-left: 3px solid #2ea8e6;
-			}
-
-			.theirs .from {
-				margin-bottom: 4px;
-				font-size: 13px;
-				font-weight: 600;
-				color: #4fb3f0;
-			}
-
-			.theirs blockquote {
-				margin: 0 0 8px;
-				padding-left: 10px;
-				font-size: 13px;
-				color: #9fb0c4;
-				border-left: 2px solid #2ea8e6;
-			}
-
-			.theirs ul {
-				margin: 6px 0;
-				padding-left: 20px;
-			}
-
-			.theirs li {
-				margin: 2px 0;
-			}
-
-			.theirs p {
-				margin: 5px 0;
-			}
-
-			.theirs .stamp {
-				display: block;
-				margin-top: 6px;
-				font-size: 11px;
-				color: #6f7f94;
-				text-align: right;
+				flex: 1;
+				min-height: 0;
+				padding: 20px 42px 12px;
+				overflow: hidden;
+				background-color: var(--chat);
+				background-image:
+					radial-gradient(circle at 20px 20px, rgba(255, 255, 255, 0.55) 2px, transparent 3px),
+					radial-gradient(circle at 60px 60px, rgba(77, 148, 193, 0.12) 3px, transparent 4px);
+				background-size: 80px 80px;
 			}
 
 			.day {
-				width: 70px;
-				margin: 0 auto 10px;
-				font-size: 12px;
-				color: #cfd8e3;
-				text-align: center;
-				background: #2b333d;
-				border-radius: 12px;
+				width: max-content;
+				margin: 0 auto 16px;
+				padding: 5px 12px;
+				color: #fff;
+				background: rgba(89, 139, 172, 0.65);
+				border-radius: 13px;
+				font-size: 11px;
+				font-weight: 600;
 			}
 
-			.intro {
-				max-width: 400px;
-				margin: 0 0 10px auto;
-				background: #2b333d;
+			.message {
+				position: relative;
+				max-width: 620px;
+				margin-bottom: 9px;
+				padding: 9px 12px 7px;
+				background: #fff;
+				border-radius: 12px 12px 12px 3px;
+				box-shadow: 0 1px 2px rgba(47, 91, 118, 0.14);
+				font-size: 13px;
+				line-height: 1.48;
+			}
+
+			.message.mine {
+				margin-left: auto;
+				background: #e4f7d5;
+				border-radius: 12px 12px 3px 12px;
+			}
+
+			.message .from {
+				margin-bottom: 3px;
+				color: var(--blue-dark);
+				font-size: 12px;
+				font-weight: 700;
+			}
+
+			.message p + p {
+				margin-top: 7px;
+			}
+
+			.message ul {
+				margin: 6px 0 3px;
+				padding-left: 18px;
+			}
+
+			.message .stamp {
+				display: block;
+				margin-top: 4px;
+				color: #91a1ad;
+				font-size: 9px;
+				text-align: right;
+			}
+
+			.message.intro {
+				max-width: 470px;
+				margin-left: auto;
+				background: rgba(255, 255, 255, 0.82);
+			}
+
+			.composer {
+				display: flex;
+				align-items: center;
+				gap: 16px;
+				height: 64px;
+				padding: 0 24px;
+				background: #fff;
+				border-top: 1px solid var(--line);
+			}
+
+			.composer .clip {
+				color: #83919d;
+				font-size: 24px;
+				transform: rotate(35deg);
+			}
+
+			.composer .field {
+				flex: 1;
+				padding: 11px 16px;
+				color: #9aa6af;
+				background: #f1f4f7;
+				border-radius: 20px;
+				font-size: 13px;
+			}
+
+			.composer .send {
+				display: grid;
+				place-items: center;
+				width: 38px;
+				height: 38px;
+				color: #fff;
+				background: var(--blue);
+				border-radius: 50%;
+				font-size: 18px;
 			}
 		</style>
 	</head>
 	<body>
-		<div class="label">04 / Tux Robot</div>
-		<div class="stack">TypeScript · Telegram · grammY</div>
-
-		<div class="card">
-			<div class="chrome">
-				<i class="dot"></i><i class="dot"></i><i class="dot"></i>
-				<span>web.telegram.org</span>
-			</div>
-
-			<div class="chat">
-				<div class="chat-head">
-					<span class="back">←</span>
-					<span class="avatar">🐧</span>
-					<span>
-						<b>hey lets hav…</b>
-						<small>4 messages</small>
-					</span>
-					<span class="icons">⌕ </span>
+		<div class="app">
+			<aside class="sidebar">
+				<div class="sidebar-head">
+					<span class="menu">☰</span>
+					<div class="search">Search</div>
 				</div>
-
-				<div class="bubble intro">
-					What can this bot do?<br />
-					AI Bot. Can generate text and images using gemma4 or imagen-4
+				<div class="chat-list">
+					<div class="chat-item selected">
+						<div class="avatar">🐧</div>
+						<div><b>Tux Robot</b><small>Here’s something interesting…</small></div>
+						<span class="time">21:43</span>
+					</div>
+					<div class="chat-item">
+						<div class="avatar blue">S</div>
+						<div><b>Saved Messages</b><small>Ship the Worker</small></div>
+						<span class="time">18:10</span>
+					</div>
+					<div class="chat-item">
+						<div class="avatar green">C</div>
+						<div><b>Cloudflare Builders</b><small>Durable Objects shipped</small></div>
+						<span class="time">16:32</span>
+					</div>
+					<div class="chat-item">
+						<div class="avatar orange">★</div>
+						<div><b>Release notes</b><small>grammY is live</small></div>
+						<span class="time">Tue</span>
+					</div>
+					<div class="chat-item">
+						<div class="avatar blue">R</div>
+						<div><b>Rust &amp; Wayland</b><small>Zero-copy shell frames</small></div>
+						<span class="time">Mon</span>
+					</div>
 				</div>
+			</aside>
 
-				<div class="day">Today</div>
+			<main class="main">
+				<header class="chat-head">
+					<div class="avatar">🐧</div>
+					<b>Tux Robot</b><small>online · answers in a Worker</small>
+					<div class="head-actions"><span>⌕</span><span>⋮</span></div>
+				</header>
 
-				<div class="bubble mine">
-					hey lets have a conversation! <span class="stamp">09:42 PM ✓</span>
-				</div>
+				<section class="messages">
+					<div class="day">Today</div>
+					<div class="message intro">
+						What can this bot do?<br />AI answers, web search and documents — from one Cloudflare
+						Worker.
+					</div>
 
-				<div class="bubble theirs">
-					<div class="from">Sean</div>
-					<blockquote>hey lets have a conversation!</blockquote>
-					Hello! It's great to meet you. :) I'm always happy to chat about whatever's on your mind.
-					What topic would you like to talk about? I can help with:
-					<ul>
-						<li>Answering questions</li>
-						<li>Writing or editing content</li>
-						<li>Or just having a casual conversation!</li>
-					</ul>
-					Feel free to ask me anything!
-					<span class="stamp">09:42 PM</span>
-				</div>
+					<div class="message mine">
+						hey lets have a conversation!<span class="stamp">21:42 ✓</span>
+					</div>
 
-				<div class="bubble mine">
-					lets learn new things. teach me something about telegram
-					<span class="stamp">09:43 PM ✓</span>
-				</div>
+					<div class="message">
+						<div class="from">Tux Robot</div>
+						<p>Hello! It’s great to meet you. :)</p>
+						<p>I can help with:</p>
+						<ul>
+							<li>Answering questions</li>
+							<li>Writing or editing content</li>
+							<li>Finding current information</li>
+						</ul>
+						<span class="stamp">21:42</span>
+					</div>
 
-				<div class="bubble theirs">
-					<div class="from">Sean</div>
-					<blockquote>lets learn new things. teach me something about telegram</blockquote>
-					<p>Here's something interesting about Telegram! :)</p>
-					<p>
-						Did you know that Telegram has **over 1 billion monthly active users**? It grew from 100
-						million in 2016 to a billion in 9 years.
-					</p>
-					<p>
-						And its supergroups hold up to **200,000 members** — with **unlimited subscribers** on
-						channels, too.
-					</p>
-					<span class="stamp">09:43 PM</span>
-				</div>
-			</div>
+					<div class="message mine">
+						teach me something about Telegram<span class="stamp">21:43 ✓</span>
+					</div>
+
+					<div class="message">
+						<div class="from">Tux Robot</div>
+						<p>
+							Telegram has <b>over 1 billion monthly active users</b> — and supergroups can hold up
+							to <b>200,000 members</b>.
+						</p>
+						<p>Want me to find the latest news about it?</p>
+						<span class="stamp">21:43</span>
+					</div>
+				</section>
+
+				<footer class="composer">
+					<span class="clip">⌁</span>
+					<div class="field">Message Tux Robot…</div>
+					<div class="send">➤</div>
+				</footer>
+			</main>
 		</div>
 	</body>
 </html>

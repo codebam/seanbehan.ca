@@ -2,9 +2,9 @@
 /**
  * SELECTED WORK
  *
- * The first project gets a wide feature card — plate and story side by side.
- * The rest run as a two-column card grid, each with its mockup, so the section
- * can be scanned by picture rather than read line by line.
+ * Each project gets a full-width plate-and-story card. The complete mockup is
+ * contained in its plate so a card never has to crop away the interface to
+ * fill the space, and the pictures carry distinct palettes and compositions.
  *
  * On the hiring variant every case study lives on codebam.ca. Both links in a
  * card — the image and the title — carry the sibling mark the header uses, so
@@ -48,11 +48,16 @@ const metaLine = (project: FeaturedProject) =>
 	</header>
 
 	{lead && (
-		<article class="project-feature card studio-project" data-reveal>
+		<article
+			class="project-feature card studio-project"
+			data-reveal
+			style={{ '--project-plate': lead.mockupBackground }}
+		>
 			<a class="project-media" href={projectHref(`/projects/${lead.slug}`)}>
 				<Image
 					src={lead.mockup}
 					alt={lead.mockupAlt}
+					fit="contain"
 					widths={[400, 640, 960, 1280]}
 					sizes="(min-width: 72rem) 560px, (min-width: 48rem) 52vw, calc(100vw - 2.5rem)"
 					loading="lazy"
@@ -104,11 +109,13 @@ const metaLine = (project: FeaturedProject) =>
 				class="project-card card studio-project"
 				data-reveal
 				data-reveal-delay={Math.min(i, 3) * 60}
+				style={{ '--project-plate': project.mockupBackground }}
 			>
 				<a class="project-media" href={projectHref(`/projects/${project.slug}`)}>
 					<Image
 						src={project.mockup}
 						alt={project.mockupAlt}
+						fit="contain"
 						widths={[400, 520, 760, 1040]}
 						sizes="(min-width: 72rem) 520px, (min-width: 48rem) 50vw, calc(100vw - 2.5rem)"
 						loading="lazy"
@@ -191,23 +198,21 @@ const metaLine = (project: FeaturedProject) =>
 	}
 
 	.project-media {
-		/* The overlay sibling mark anchors to the image. */
+		/* The overlay sibling mark anchors to the image. The plate colour belongs
+		   to the project and shows only where the complete image is letterboxed. */
 		position: relative;
-		display: block;
+		display: grid;
+		place-items: center;
 		height: 100%;
 		overflow: hidden;
-		background: var(--surface-alt);
+		background: var(--project-plate, var(--surface-alt));
 	}
 	.project-media img {
 		display: block;
 		width: 100%;
 		height: 100%;
-		aspect-ratio: 16 / 10;
-		object-fit: cover;
-		transition: transform 0.35s var(--ease-out-soft);
-	}
-	.card:hover .project-media img {
-		transform: scale(1.02);
+		object-fit: contain;
+		object-position: center;
 	}
 
 	.project-card {

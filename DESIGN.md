@@ -48,10 +48,11 @@ material-study grid and availability on the right — followed by the facts
 strip, selected work, latest writing, commercial offers, experience and the
 newsletter. `leadWith` still swaps facts and work for the handle-first variant.
 
-Projects return to stacked cards: the lead pairs its plate and story, and the
-remaining projects stack as full-width image-and-paper cards. Writing uses a
-lead card and a responsive grid. The archive keeps its server-rendered rows,
-styled with the same hairline and surface language.
+Projects return to stacked cards: every project pairs a full mockup plate with
+its story. The complete image is contained rather than cropped, and each mockup
+has its own palette and composition so the work is distinguishable at thumbnail
+size. Writing uses a lead card and a responsive grid. The archive keeps its
+server-rendered rows, styled with the same hairline and surface language.
 
 Every other page opens with `Masthead`: a small label/meta row above a display
 headline and a deck capped at 60 ch. About uses the portrait and working-notes
@@ -80,6 +81,7 @@ change. These hold copied values and must move with it:
   selected by the system preference
 - `resume/metadata.yaml` — the PDF palette
 - display ads in `public/img/` and `tools/ads/build-ads.mjs`
+- the fixed illustration palettes in `tools/mockups/*.html`
 - the light and dark brand figures in `public/img/brand/`
 - the `@media print` block in `src/styles/app.css`
 - the light/dark `theme-color` metas in `Base.astro`
@@ -146,10 +148,13 @@ right side is a 2×2 study grid:
 Availability follows the grid. The portrait leaves the home hero and remains on
 About and Contact, where a hiring reader wants a face beside the biography.
 
-**3. Work is a stack of tangible projects.** `Selected work` keeps the project
-plates. The lead pairs its image and story; the rest form a two-column card
-grid. This is intentionally not a terminal directory: the pictures are evidence
-of shipped work, and the warmer card surface keeps the page approachable.
+**3. Work is a stack of tangible projects.** `Selected work` pairs every project
+plate with its story. The mockups are complete interface captures and
+illustrations, not repeated framed thumbnails: Viewport is a real 1600×1000
+nested capture, while the federation report, package page, conversation and
+editor each carry a different illustrated visual language. This is intentionally
+not a terminal directory: the pictures are evidence of shipped work, and the
+warmer card surface keeps the page approachable.
 
 **4. Writing is a set of notes.** `Latest writing` uses a lead card and a
 responsive grid with the same surface, hairline and restrained lift. The archive

@@ -2,192 +2,414 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<title>Telegram Bot for Cloudflare Workers</title>
+		<title>Telegram Bot for Cloudflare Workers — npm package</title>
 		<link rel="stylesheet" href="frame.css" />
 		<style>
-			.pkg {
-				margin: 0;
-				font-size: 34px;
-				font-weight: 600;
-				color: #eef2f8;
+			:root {
+				--red: #cb3837;
+				--ink: #302823;
+				--muted: #85776c;
+				--line: #e4d6c7;
+				--cream: #fbf6ef;
+				--orange: #f59e0b;
+				--green: #2ea66f;
 			}
 
-			.pkg span {
+			body {
+				color: var(--ink);
+				background:
+					radial-gradient(circle at 0 0, rgba(203, 56, 55, 0.12), transparent 28%),
+					radial-gradient(circle at 100% 100%, rgba(245, 158, 11, 0.18), transparent 30%), #f3e7d8;
+			}
+
+			body::before {
+				content: '';
+				position: absolute;
+				top: -190px;
+				right: -130px;
+				width: 560px;
+				height: 560px;
+				border: 90px solid rgba(203, 56, 55, 0.055);
+				border-radius: 50%;
+			}
+
+			.app {
+				position: absolute;
+				inset: 52px 54px;
+				overflow: hidden;
+				background: var(--cream);
+				border: 1px solid rgba(99, 70, 43, 0.17);
+				border-radius: 22px;
+				box-shadow: 0 32px 90px rgba(91, 57, 28, 0.17);
+			}
+
+			.nav {
+				display: flex;
+				align-items: center;
+				height: 72px;
+				padding: 0 30px;
+				background: #fff;
+				border-bottom: 1px solid var(--line);
+			}
+
+			.npm {
+				display: grid;
+				place-items: center;
+				width: 54px;
+				height: 34px;
+				color: #fff;
+				background: var(--red);
+				border-radius: 5px;
+				font-size: 18px;
+				font-weight: 800;
+				letter-spacing: -0.04em;
+			}
+
+			.search {
+				width: 460px;
+				height: 38px;
+				margin-left: 26px;
+				padding: 0 15px;
+				color: #998a7e;
+				background: #f6f1eb;
+				border: 1px solid #e6dbd0;
+				border-radius: 6px;
+				font-size: 13px;
+			}
+
+			.nav-links {
+				display: flex;
+				gap: 24px;
+				margin-left: auto;
+				color: #75685e;
+				font-size: 13px;
+			}
+
+			.content {
+				display: grid;
+				grid-template-columns: minmax(0, 1.28fr) minmax(0, 0.72fr);
+				height: calc(100% - 72px);
+			}
+
+			.package {
+				padding: 38px 42px 32px;
+			}
+
+			.package h1 {
+				font-size: 39px;
+				line-height: 1.15;
+				letter-spacing: -0.045em;
+			}
+
+			.package h1 span {
+				color: var(--red);
+			}
+
+			.tagline {
+				margin-top: 10px;
 				color: var(--muted);
+				font-size: 17px;
 			}
 
 			.pills {
 				display: flex;
-				gap: 12px;
-				margin-top: 14px;
-				font-size: 16px;
+				flex-wrap: wrap;
+				gap: 9px;
+				margin-top: 19px;
 			}
 
-			.pill {
-				padding: 4px 12px;
-				color: #b9c5d8;
+			.pills span {
+				padding: 6px 11px;
+				color: #75685e;
+				background: #fff;
 				border: 1px solid var(--line);
-				border-radius: 3px;
+				border-radius: 5px;
+				font-family: 'Fira Code', monospace;
+				font-size: 11px;
 			}
 
-			.pill--star {
-				color: var(--orange);
-				border-color: rgba(224, 145, 63, 0.45);
-			}
-
-			.cols {
-				display: grid;
-				grid-template-columns: 1fr 372px;
-				gap: 28px;
-				margin-top: 18px;
-			}
-
-			.box {
-				border: 1px solid var(--line);
-				border-radius: 4px;
-				background: rgba(13, 20, 34, 0.75);
-			}
-
-			.box header {
-				padding: 10px 18px;
-				font-size: 15px;
-				letter-spacing: 0.14em;
-				text-transform: uppercase;
-				color: var(--muted);
-				border-bottom: 1px solid rgba(140, 170, 220, 0.14);
+			.pills .stars {
+				color: #9a6200;
+				background: #fff5d9;
+				border-color: #f1d28d;
 			}
 
 			.install {
 				display: flex;
-				gap: 14px;
-				padding: 14px 22px;
-				margin-bottom: 18px;
-				font-size: 19px;
+				align-items: center;
+				justify-content: space-between;
+				margin-top: 22px;
+				padding: 15px 18px;
+				color: #f6ede4;
+				background: #302823;
+				border-radius: 8px;
+				font-family: 'Fira Code', monospace;
+				font-size: 14px;
 			}
 
-			pre {
-				margin: 0;
-				padding: 16px 22px;
+			.install span {
+				color: var(--orange);
+			}
+
+			.copy {
+				padding: 5px 9px;
+				color: #cdbdb0;
+				background: rgba(255, 255, 255, 0.08);
+				border-radius: 4px;
+				font-family: 'DejaVu Sans', sans-serif;
+				font-size: 10px;
+			}
+
+			.editor {
+				margin-top: 20px;
 				overflow: hidden;
-				font-family: var(--mono);
-				font-size: 15px;
-				line-height: 1.5;
-				color: #cdd7e6;
+				background: #211c19;
+				border: 1px solid #3c322b;
+				border-radius: 11px;
 			}
 
-			.k {
-				color: #c792ea;
+			.editor-head {
+				display: flex;
+				align-items: center;
+				height: 42px;
+				padding: 0 17px;
+				color: #b9a99c;
+				background: #2b2420;
+				border-bottom: 1px solid #3c322b;
+				font-family: 'Fira Code', monospace;
+				font-size: 11px;
 			}
 
-			.s {
-				color: var(--green);
+			.editor-head span {
+				margin-left: auto;
+				color: #7f7065;
 			}
 
-			.c {
-				color: #55637c;
+			.code {
+				display: grid;
+				grid-template-columns: 38px 1fr;
+				padding: 17px 0 19px;
+				font-family: 'Fira Code', monospace;
+				font-size: 12px;
+				line-height: 1.65;
 			}
 
-			.notes {
+			.line-no {
+				padding-right: 12px;
+				color: #62564e;
+				text-align: right;
+				user-select: none;
+			}
+
+			.code pre {
+				margin: 0;
+				color: #ded0c5;
+				white-space: pre-wrap;
+			}
+
+			.kw {
+				color: #e6a1ff;
+			}
+
+			.str {
+				color: #a7df8b;
+			}
+
+			.fn {
+				color: #ffc777;
+			}
+
+			.type {
+				color: #82c7ff;
+			}
+
+			.pitch {
 				display: flex;
 				flex-direction: column;
-				gap: 22px;
+				padding: 42px 36px 32px;
+				color: #f8eee4;
+				background:
+					radial-gradient(circle at 100% 0, rgba(245, 158, 11, 0.18), transparent 33%), #2b221e;
 			}
 
-			.notes ul {
-				margin: 0;
-				padding: 20px 22px 20px 40px;
-				font-size: 17px;
-				color: #b9c5d8;
+			.pitch .eyebrow {
+				color: var(--orange);
+				font-size: 11px;
+				font-weight: 800;
+				letter-spacing: 0.16em;
+				text-transform: uppercase;
 			}
 
-			.notes li {
-				margin: 6px 0;
+			.pitch h2 {
+				margin-top: 14px;
+				font-size: 42px;
+				line-height: 1.05;
+				letter-spacing: -0.05em;
 			}
 
-			.notes p {
-				margin: 0;
-				padding: 20px 22px;
-				font-size: 17px;
-				color: #b9c5d8;
+			.pitch > p {
+				margin-top: 16px;
+				color: #bdaca0;
+				font-size: 15px;
+				line-height: 1.65;
 			}
 
-			.notes code {
-				color: var(--green);
+			.features {
+				display: grid;
+				gap: 17px;
+				margin-top: 30px;
+			}
+
+			.feature {
+				display: grid;
+				grid-template-columns: 30px 1fr;
+				gap: 12px;
+				align-items: start;
+			}
+
+			.feature i {
+				display: grid;
+				place-items: center;
+				width: 28px;
+				height: 28px;
+				color: #2b221e;
+				background: var(--orange);
+				border-radius: 8px;
+				font-size: 14px;
+				f-style: normal;
+				font-weight: 800;
+			}
+
+			.feature b {
+				display: block;
+				font-size: 14px;
+			}
+
+			.feature small {
+				display: block;
+				margin-top: 3px;
+				color: #a7968a;
+				font-size: 11px;
+			}
+
+			.flow {
+				display: grid;
+				grid-template-columns: 1fr 28px 1fr 28px 1fr;
+				align-items: center;
+				gap: 3px;
+				margin-top: auto;
+				padding: 20px 14px;
+				background: rgba(255, 255, 255, 0.045);
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				border-radius: 12px;
+			}
+
+			.flow div {
+				text-align: center;
+			}
+
+			.flow b {
+				display: block;
+				color: #f8eee4;
+				font-family: 'Fira Code', monospace;
+				font-size: 11px;
+			}
+
+			.flow small {
+				display: block;
+				margin-top: 5px;
+				color: #948579;
+				font-size: 9px;
+			}
+
+			.flow span {
+				color: var(--orange);
+				font-size: 18px;
+				text-align: center;
 			}
 		</style>
 	</head>
 	<body>
-		<div class="label">03 / cf-workers-telegram-bot</div>
-		<div class="stack">TypeScript · Telegram · npm</div>
+		<div class="app">
+			<nav class="nav">
+				<div class="npm">npm</div>
+				<div class="search">Search packages</div>
+				<div class="nav-links"><span>Docs</span><span>Playground</span><span>Log in</span></div>
+			</nav>
 
-		<div class="card">
-			<div class="chrome">
-				<i class="dot"></i><i class="dot"></i><i class="dot"></i>
-				<span>www.npmjs.com/package/@codebam/cf-workers-telegram-bot</span>
-			</div>
+			<main class="content">
+				<section class="package">
+					<h1>@codebam<span>/</span>cf-workers-telegram-bot</h1>
+					<p class="tagline">A type-safe Telegram bot framework for Cloudflare Workers.</p>
+					<div class="pills">
+						<span>v12.6.20</span><span>Apache-2.0</span><span>122.7 kB</span
+						><span class="stars">★ 324 · 214 forks</span>
+					</div>
+					<div class="install">
+						<div><span>$</span> npm i @codebam/cf-workers-telegram-bot</div>
+						<span class="copy">COPY</span>
+					</div>
 
-			<div class="view">
-				<h1 class="pkg">@codebam<span>/</span>cf-workers-telegram-bot</h1>
-				<p class="muted" style="margin: 8px 0 0">serverless telegram bot on cf workers</p>
+					<div class="editor">
+						<div class="editor-head">worker.ts <span>TypeScript</span></div>
+						<div class="code">
+							<div class="line-no">
+								1<br />2<br />3<br />4<br />5<br />6<br />7<br />8<br />9<br />10<br />11<br />12
+							</div>
+							<pre><span class="kw">import</span> TelegramBot <span class="kw">from</span> <span class="str">'@codebam/cf-workers-telegram-bot'</span>;
 
-				<div class="pills">
-					<span class="pill">v12.6.20</span>
-					<span class="pill">Apache-2.0</span>
-					<span class="pill">122.7 kB</span>
-					<span class="pill pill--star">★ 325 · 214 forks · 120 releases</span>
-				</div>
+<span class="kw">export default</span> {
+  <span class="kw">async</span> <span class="fn">fetch</span>(request: <span class="type">Request</span>, env: <span class="type">Env</span>) {
+    <span class="kw">const</span> bot = <span class="kw">new</span> TelegramBot(env.TELEGRAM_TOKEN);
 
-				<div class="cols">
-					<div>
-						<div class="box install">
-							<span class="accent">$</span> npm i @codebam/cf-workers-telegram-bot
-						</div>
+    <span class="kw">await</span> bot
+      .<span class="fn">command</span>(<span class="str">'start'</span>, <span class="kw">async</span> (ctx) =&gt;
+        ctx.<span class="fn">reply</span>(<span class="str">'Running on Workers'</span>))
+      .<span class="fn">onMessage</span>(<span class="kw">async</span> (ctx) =&gt;
+        ctx.<span class="fn">reply</span>(<span class="str">`You said: ${ctx.text}`</span>))
+      .<span class="fn">handle</span>(request);
 
-						<div class="box">
-							<header>worker.ts</header>
-							<!-- The snippet is the package's own quick start, and it is flush left on
-     purpose: every space the source indents it with is a space the picture
-     draws. -->
-							<pre>
-<span class="k">import</span> TelegramBot <span class="k">from</span> <span class="s">'@codebam/cf-workers-telegram-bot'</span>;
-
-<span class="k">export default</span> {
-  <span class="k">async</span> fetch(request: Request, env: Env): Promise&lt;Response&gt; {
-    <span class="k">const</span> bot = <span class="k">new</span> TelegramBot(env.SECRET_TELEGRAM_API_TOKEN);
-
-    <span class="k">await</span> bot
-      .command(<span class="s">'start'</span>, <span class="k">async</span> (ctx) =&gt;
-        ctx.reply(<span class="s">'Hello! I am running on Cloudflare Workers.'</span>))
-      .onMessage(<span class="k">async</span> (ctx) =&gt; ctx.reply(<span class="s">`You said: ${ctx.text}`</span>))
-      .handle(request);
-
-    <span class="k">return new</span> Response(<span class="s">'ok'</span>);
+    <span class="kw">return new</span> Response(<span class="str">'ok'</span>);
   },
 };</pre>
 						</div>
 					</div>
+				</section>
 
-					<div class="notes">
-						<div class="box">
-							<header>what it gives you</header>
-							<ul>
-								<li>Typed handlers chained off the Request</li>
-								<li>Middleware ahead of every handler</li>
-								<li>Webhook management built in</li>
-								<li>No runtime dependencies to bundle</li>
-							</ul>
+				<aside class="pitch">
+					<p class="eyebrow">One URL to go live</p>
+					<h2>One worker.<br />Zero servers.</h2>
+					<p>
+						Handlers chain straight off the incoming Request. Middleware runs first; Telegram calls
+						your webhook.
+					</p>
+
+					<div class="features">
+						<div class="feature">
+							<i>1</i>
+							<div><b>Typed handlers</b><small>Commands and messages share one API.</small></div>
 						</div>
-						<div class="box">
-							<header>go live</header>
-							<p>
-								Open
-								<code>/&lt;token&gt;/setWebhook</code>
-								on the Worker and Telegram starts sending updates to it.
-							</p>
+						<div class="feature">
+							<i>2</i>
+							<div>
+								<b>Middleware built in</b><small>Auth, logging and context before dispatch.</small>
+							</div>
+						</div>
+						<div class="feature">
+							<i>3</i>
+							<div><b>No runtime dependencies</b><small>Only types ship in the bundle.</small></div>
 						</div>
 					</div>
-				</div>
-			</div>
+
+					<div class="flow">
+						<div><b>Telegram</b><small>webhook</small></div>
+						<span>→</span>
+						<div><b>Worker</b><small>fetch()</small></div>
+						<span>→</span>
+						<div><b>Handlers</b><small>typed ctx</small></div>
+					</div>
+				</aside>
+			</main>
 		</div>
 	</body>
 </html>

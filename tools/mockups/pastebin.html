@@ -2,168 +2,436 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<title>Pastebin R2</title>
+		<title>Pastebin R2 — editor and API</title>
 		<link rel="stylesheet" href="frame.css" />
 		<style>
-			.head {
+			:root {
+				--ink: #24352b;
+				--muted: #718075;
+				--line: #d5dfd4;
+				--green: #2f7d4f;
+				--lime: #b9e26b;
+				--paper: #fbfdf9;
+				--orange: #d98245;
+			}
+
+			body {
+				color: var(--ink);
+				background:
+					radial-gradient(circle at 8% 90%, rgba(47, 125, 79, 0.15), transparent 27%),
+					radial-gradient(circle at 92% 4%, rgba(217, 130, 69, 0.16), transparent 27%), #e5ede2;
+			}
+
+			body::before {
+				content: '';
+				position: absolute;
+				inset: 0;
+				opacity: 0.5;
+				background-image:
+					linear-gradient(
+						30deg,
+						rgba(47, 125, 79, 0.06) 12%,
+						transparent 12.5%,
+						transparent 87%,
+						rgba(47, 125, 79, 0.06) 87.5%
+					),
+					linear-gradient(
+						150deg,
+						rgba(47, 125, 79, 0.06) 12%,
+						transparent 12.5%,
+						transparent 87%,
+						rgba(47, 125, 79, 0.06) 87.5%
+					);
+				background-size: 54px 94px;
+			}
+
+			.app {
+				position: absolute;
+				inset: 54px;
 				display: flex;
-				align-items: baseline;
-				justify-content: space-between;
-			}
-
-			.head h1 {
-				margin: 0;
-				font-size: 36px;
-				font-weight: 600;
-				color: #eef2f8;
-			}
-
-			.head .cursor {
-				display: inline-block;
-				width: 14px;
-				height: 30px;
-				margin-left: 8px;
-				background: var(--green);
-				vertical-align: -3px;
-			}
-
-			.editor-panel {
-				border: 1px solid var(--line);
-				border-radius: 4px;
-				background: rgba(13, 20, 34, 0.75);
-			}
-
-			.editor-panel > header {
-				display: flex;
-				align-items: center;
-				gap: 10px;
-				padding: 12px 18px;
-				border-bottom: 1px solid rgba(140, 170, 220, 0.14);
-				color: #cdd7e6;
-			}
-
-			.pulse {
-				width: 10px;
-				height: 10px;
-				border-radius: 50%;
-				background: var(--green);
-			}
-
-			.right {
-				margin-left: auto;
-				color: var(--muted);
-			}
-
-			.buffer {
-				display: flex;
-				gap: 22px;
-			}
-
-			.gutter {
-				padding: 18px 0 60px 20px;
-				color: #4d5b73;
-			}
-
-			.placeholder {
-				padding-top: 18px;
-				color: #55637c;
+				flex-direction: column;
+				overflow: hidden;
+				background: var(--paper);
+				border: 1px solid rgba(36, 53, 43, 0.2);
+				border-radius: 18px;
+				box-shadow: 0 32px 90px rgba(36, 68, 45, 0.18);
 			}
 
 			.toolbar {
 				display: flex;
 				align-items: center;
+				height: 70px;
+				padding: 0 26px;
+				color: #eaf2e9;
+				background: #24372b;
+				border-bottom: 1px solid #3b5141;
+			}
+
+			.brand {
+				display: flex;
+				align-items: center;
 				gap: 12px;
-				padding: 16px 18px;
-			}
-
-			.key {
-				padding: 6px 14px;
-				color: #b9c5d8;
-				background: #1b2434;
-				border: 1px solid rgba(140, 170, 220, 0.16);
-				border-radius: 3px;
-			}
-
-			.key--go {
-				color: var(--green);
-				border-color: rgba(74, 222, 128, 0.45);
-			}
-
-			.cli {
-				padding: 18px;
-				border-top: 1px solid rgba(140, 170, 220, 0.14);
-			}
-
-			.cli h2 {
-				margin: 0 0 14px;
 				font-size: 19px;
+				font-weight: 700;
+				letter-spacing: -0.035em;
+			}
+
+			.brand-mark {
+				display: grid;
+				place-items: center;
+				width: 34px;
+				height: 34px;
+				color: #24372b;
+				background: var(--lime);
+				border-radius: 9px;
+				font-family: 'Fira Code', monospace;
+				font-size: 17px;
+			}
+
+			.address {
+				width: 460px;
+				height: 38px;
+				margin-left: 40px;
+				padding: 0 15px;
+				color: #b8c9ba;
+				background: #1b2b21;
+				border: 1px solid #405645;
+				border-radius: 8px;
+				font-family: 'Fira Code', monospace;
+				font-size: 12px;
+				line-height: 38px;
+			}
+
+			.address b {
+				color: #dbe8d9;
 				font-weight: 400;
-				color: #93a1b8;
 			}
 
-			.cli p {
-				margin: 6px 0;
-				font-size: 18px;
-				color: #cdd7e6;
+			.toolbar-status {
+				display: flex;
+				align-items: center;
+				gap: 8px;
+				margin-left: auto;
+				color: #b8c9ba;
+				font-size: 12px;
 			}
 
-			.foot {
-				margin: 30px 0 0;
-				font-size: 18px;
+			.toolbar-status i {
+				width: 8px;
+				height: 8px;
+				background: var(--lime);
+				border-radius: 50%;
 			}
 
-			.foot u {
-				color: #a8b6cc;
+			.content {
+				display: grid;
+				grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
+				min-height: 0;
+				flex: 1;
+			}
+
+			.editor {
+				display: flex;
+				flex-direction: column;
+				min-width: 0;
+			}
+
+			.tabs {
+				display: flex;
+				align-items: center;
+				height: 50px;
+				background: #f0f4ed;
+				border-bottom: 1px solid var(--line);
+			}
+
+			.tab {
+				display: flex;
+				align-items: center;
+				gap: 9px;
+				height: 100%;
+				padding: 0 22px;
+				color: #526257;
+				background: var(--paper);
+				border-right: 1px solid var(--line);
+				font-family: 'Fira Code', monospace;
+				font-size: 12px;
+			}
+
+			.tab i {
+				width: 8px;
+				height: 8px;
+				background: var(--orange);
+				border-radius: 2px;
+			}
+
+			.new-tab {
+				padding: 0 20px;
+				color: #89958b;
+				font-size: 20px;
+			}
+
+			.code-wrap {
+				display: grid;
+				grid-template-columns: 58px 1fr;
+				flex: 1;
+				min-height: 0;
+				padding: 30px 0;
+				overflow: hidden;
+				font-family: 'Fira Code', monospace;
+				font-size: 15px;
+				line-height: 1.72;
+			}
+
+			.line-numbers {
+				padding-right: 18px;
+				color: #b2bdb1;
+				text-align: right;
+				user-select: none;
+			}
+
+			.code {
+				padding-right: 34px;
+				color: #405044;
+				white-space: pre-wrap;
+			}
+
+			.kw {
+				color: #9b4f86;
+			}
+
+			.str {
+				color: #ae5d32;
+			}
+
+			.fn {
+				color: #286d8d;
+			}
+
+			.comment {
+				color: #91a08f;
+			}
+
+			.statusbar {
+				display: flex;
+				align-items: center;
+				gap: 22px;
+				height: 38px;
+				padding: 0 18px;
+				color: #dce8d9;
+				background: #375840;
+				font-family: 'Fira Code', monospace;
+				font-size: 10px;
+			}
+
+			.statusbar .right {
+				margin-left: auto;
+			}
+
+			.api {
+				display: flex;
+				flex-direction: column;
+				padding: 34px 30px 28px;
+				color: #e9f1e7;
+				background:
+					radial-gradient(circle at 100% 0, rgba(185, 226, 107, 0.11), transparent 36%), #1f3025;
+			}
+
+			.api .eyebrow {
+				color: var(--lime);
+				font-size: 11px;
+				font-weight: 800;
+				letter-spacing: 0.15em;
+				text-transform: uppercase;
+			}
+
+			.api h1 {
+				margin-top: 12px;
+				font-size: 36px;
+				line-height: 1.08;
+				letter-spacing: -0.045em;
+			}
+
+			.api > p {
+				margin-top: 13px;
+				color: #a7b8a5;
+				font-size: 13px;
+				line-height: 1.6;
+			}
+
+			.request {
+				margin-top: 25px;
+				padding: 17px;
+				background: rgba(255, 255, 255, 0.045);
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				border-radius: 10px;
+			}
+
+			.request label {
+				display: block;
+				margin-bottom: 11px;
+				color: #8da18b;
+				font-family: 'Fira Code', monospace;
+				font-size: 10px;
+				letter-spacing: 0.12em;
+				text-transform: uppercase;
+			}
+
+			.request pre {
+				margin: 0;
+				color: #d6e4d2;
+				font-family: 'Fira Code', monospace;
+				font-size: 11px;
+				line-height: 1.7;
+				white-space: pre-wrap;
+			}
+
+			.method {
+				color: var(--lime);
+			}
+
+			.response {
+				margin-top: 17px;
+				padding: 18px;
+				background: rgba(185, 226, 107, 0.08);
+				border: 1px solid rgba(185, 226, 107, 0.23);
+				border-radius: 10px;
+			}
+
+			.response-head {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				color: var(--lime);
+				font-family: 'Fira Code', monospace;
+				font-size: 11px;
+			}
+
+			.response pre {
+				margin: 14px 0 0;
+				color: #c8d9c3;
+				font-family: 'Fira Code', monospace;
+				font-size: 11px;
+				line-height: 1.7;
+			}
+
+			.bucket {
+				display: flex;
+				align-items: center;
+				gap: 13px;
+				margin-top: auto;
+				padding-top: 22px;
+			}
+
+			.bucket-icon {
+				display: grid;
+				place-items: center;
+				width: 42px;
+				height: 42px;
+				color: #203124;
+				background: var(--lime);
+				border-radius: 12px;
+				font-size: 20px;
+				font-weight: 800;
+			}
+
+			.bucket b {
+				display: block;
+				font-size: 13px;
+			}
+
+			.bucket small {
+				display: block;
+				margin-top: 4px;
+				color: #8da18b;
+				font-size: 11px;
 			}
 		</style>
 	</head>
 	<body>
-		<div class="label">05 / Pastebin R2</div>
-		<div class="stack">TypeScript · Hono · Cloudflare R2</div>
-
-		<div class="card">
-			<div class="chrome">
-				<i class="dot"></i><i class="dot"></i><i class="dot"></i>
-				<span>paste.codebam.ca</span>
-			</div>
-
-			<div class="view">
-				<div class="head">
-					<h1><span class="accent">~$</span> pastebin<span class="cursor"></span></h1>
-					<span class="muted">r2 · edge</span>
+		<div class="app">
+			<header class="toolbar">
+				<div class="brand">
+					<span class="brand-mark">❯_</span>pastebin<span style="color: #8fa78e">/r2</span>
 				</div>
-				<div class="rule"></div>
+				<div class="address">🔒 <b>paste.codebam.ca</b> / new</div>
+				<div class="toolbar-status"><i></i>edge · ready</div>
+			</header>
 
-				<section class="editor-panel">
-					<header>
-						<i class="pulse"></i>
-						buffer
-						<span class="right">0 B · 1 line</span>
-					</header>
-					<div class="buffer">
-						<div class="gutter">1</div>
-						<div class="placeholder">type here, or drop a file on this box…</div>
+			<main class="content">
+				<section class="editor">
+					<div class="tabs">
+						<div class="tab"><i></i>hello-worker.ts</div>
+						<div class="new-tab">+</div>
 					</div>
-					<div class="toolbar">
-						<span class="key">attach</span>
-						<span class="key">from clipboard</span>
-						<span class="right muted">expires</span>
-						<span class="key">48 hours ▾</span>
-						<span class="muted">⎘</span>
-						<span class="key">clear</span>
-						<span class="key key--go">create paste</span>
+					<div class="code-wrap">
+						<div class="line-numbers">
+							1<br />2<br />3<br />4<br />5<br />6<br />7<br />8<br />9<br />10<br />11<br />12<br />13<br />14<br />15<br />16<br />17<br />18
+						</div>
+						<div class="code">
+							<span class="comment">// A paste lives in R2. The Worker is the API.</span>
+							<span class="kw">import</span> { Hono } <span class="kw">from</span>
+							<span class="str">'hono'</span>;
+
+							<span class="kw">const</span> app = <span class="kw">new</span> Hono(); app.<span
+								class="fn"
+								>post</span
+							>(<span class="str">'/'</span>, <span class="kw">async</span> (c) =&gt; {
+							<span class="kw">const</span> body = <span class="kw">await</span> c.req.<span
+								class="fn"
+								>text</span
+							>(); <span class="kw">const</span> id = crypto.<span class="fn">randomUUID</span>();
+
+							<span class="kw">await</span> c.env.R2.<span class="fn">put</span>(id, body, {
+							customMetadata: { expires: <span class="str">'48h'</span> } });
+
+							<span class="kw">return</span> c.<span class="fn">json</span>({ id, url:
+							<span class="str">`/${id}`</span> }); });
+
+							<span class="kw">export default</span> app;
+						</div>
 					</div>
-					<div class="cli">
-						<h2>cli</h2>
-						<p><span class="accent">$</span> curl -T file.txt https://paste.codebam.ca</p>
-						<p>
-							<span class="accent">$</span> pbpaste | curl --data-binary @- https://paste.codebam.ca
-						</p>
+					<div class="statusbar">
+						<span>Ln 12, Col 18</span><span>UTF-8</span><span>TypeScript</span
+						><span class="right">48h expiry · R2</span>
 					</div>
 				</section>
 
-				<p class="foot muted">hono · cloudflare workers · <u>github.com/codebam/pastebin-r2</u></p>
-			</div>
+				<aside class="api">
+					<p class="eyebrow">Small REST API</p>
+					<h1>Paste it.<br />Ship it.</h1>
+					<p>
+						Create, update, list, read and delete pastes without a database or a server to keep
+						warm.
+					</p>
+
+					<div class="request">
+						<label>Create from the CLI</label>
+						<pre><span class="method">$</span> curl -T file.txt \
+  https://paste.codebam.ca
+
+<span class="method">$</span> pbpaste | curl --data-binary @- \
+  https://paste.codebam.ca</pre>
+					</div>
+
+					<div class="response">
+						<div class="response-head"><span>201 Created</span><span>28 ms</span></div>
+						<pre>
+{
+  "id": "9f3c…",
+  "url": "/9f3c…",
+  "expires": "48 hours"
+}</pre>
+					</div>
+
+					<div class="bucket">
+						<div class="bucket-icon">R2</div>
+						<div>
+							<b>Objects expire on their own.</b
+							><small>Reads enforce TTL. Cron sweeps the rest.</small>
+						</div>
+					</div>
+				</aside>
+			</main>
 		</div>
 	</body>
 </html>

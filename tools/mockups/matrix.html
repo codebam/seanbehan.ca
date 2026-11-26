@@ -2,182 +2,455 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<title>Matrix Workers</title>
+		<title>Matrix Workers — federation verified</title>
 		<link rel="stylesheet" href="frame.css" />
 		<style>
-			.head {
+			:root {
+				--purple: #6d4aff;
+				--purple-dark: #34216f;
+				--green: #087f5b;
+				--ink: #26213b;
+				--muted: #746e86;
+				--line: #ddd7eb;
+			}
+
+			body {
+				color: var(--ink);
+				background:
+					radial-gradient(circle at 8% 4%, rgba(109, 74, 255, 0.14), transparent 26%),
+					radial-gradient(circle at 96% 96%, rgba(0, 196, 154, 0.14), transparent 28%), #eeeaf7;
+			}
+
+			body::before {
+				content: '';
+				position: absolute;
+				inset: 0;
+				opacity: 0.35;
+				background-image: radial-gradient(#b9afd3 1px, transparent 1px);
+				background-size: 24px 24px;
+				mask-image: linear-gradient(to bottom, black, transparent 70%);
+			}
+
+			.app {
+				position: absolute;
+				inset: 52px 54px;
 				display: flex;
-				align-items: baseline;
-				justify-content: space-between;
+				flex-direction: column;
+				overflow: hidden;
+				background: #fff;
+				border: 1px solid rgba(75, 54, 128, 0.16);
+				border-radius: 22px;
+				box-shadow: 0 32px 90px rgba(54, 33, 111, 0.18);
 			}
 
-			.head h1 {
-				margin: 0;
-				font-size: 36px;
-				font-weight: 600;
-				color: #eef2f8;
-			}
-
-			.head .cursor {
-				display: inline-block;
-				width: 14px;
-				height: 30px;
-				margin-left: 8px;
-				background: var(--green);
-				vertical-align: -3px;
-			}
-
-			.report-panel {
-				border: 1px solid var(--line);
-				border-radius: 4px;
-				background: rgba(13, 20, 34, 0.75);
-			}
-
-			.report-panel > header {
+			.nav {
 				display: flex;
 				align-items: center;
-				gap: 10px;
-				padding: 12px 18px;
-				border-bottom: 1px solid rgba(140, 170, 220, 0.14);
-				color: #cdd7e6;
+				height: 76px;
+				padding: 0 32px;
+				border-bottom: 1px solid var(--line);
 			}
 
-			.pulse {
-				width: 10px;
-				height: 10px;
-				border-radius: 50%;
-				background: var(--green);
+			.logo {
+				display: flex;
+				align-items: center;
+				gap: 13px;
+				font-size: 20px;
+				font-weight: 700;
+				letter-spacing: -0.035em;
 			}
 
-			.right {
-				margin-left: auto;
+			.logo-mark {
+				position: relative;
+				width: 34px;
+				height: 34px;
+				background: var(--purple);
+				border-radius: 10px;
+				transform: rotate(45deg);
+			}
+
+			.logo-mark::after {
+				content: '';
+				position: absolute;
+				inset: 9px;
+				background: #fff;
+				border-radius: 3px;
+			}
+
+			.nav-links {
+				display: flex;
+				gap: 28px;
+				margin-left: 56px;
 				color: var(--muted);
+				font-size: 14px;
+			}
+
+			.nav-links .active {
+				color: var(--purple-dark);
+				font-weight: 700;
+			}
+
+			.live {
+				display: flex;
+				align-items: center;
+				gap: 8px;
+				margin-left: auto;
+				padding: 8px 13px;
+				color: var(--green);
+				background: #e6f6f0;
+				border-radius: 999px;
+				font-size: 13px;
+				font-weight: 700;
+			}
+
+			.live i {
+				width: 8px;
+				height: 8px;
+				background: #10a77b;
+				border-radius: 50%;
+			}
+
+			.content {
+				display: grid;
+				grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+				min-height: 0;
+				flex: 1;
 			}
 
 			.report {
-				padding: 6px 18px;
+				display: flex;
+				flex-direction: column;
+				padding: 46px 48px 34px;
+			}
+
+			.kicker {
+				color: var(--purple);
+				font-size: 12px;
+				font-weight: 800;
+				letter-spacing: 0.16em;
+				text-transform: uppercase;
+			}
+
+			.report h1 {
+				max-width: 11ch;
+				margin-top: 14px;
+				font-size: 54px;
+				line-height: 1.02;
+				letter-spacing: -0.055em;
+			}
+
+			.report .lede {
+				max-width: 51ch;
+				margin-top: 18px;
+				color: var(--muted);
+				font-size: 17px;
+				line-height: 1.65;
+			}
+
+			.network {
+				position: relative;
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				align-items: center;
+				gap: 116px;
+				margin-top: 34px;
+				padding: 34px 30px;
+				background: #f8f6fc;
+				border: 1px solid var(--line);
+				border-radius: 18px;
+			}
+
+			.network::before {
+				content: '';
+				position: absolute;
+				top: 50%;
+				left: 26%;
+				right: 26%;
+				height: 2px;
+				background: repeating-linear-gradient(90deg, var(--purple) 0 8px, transparent 8px 15px);
+			}
+
+			.peer {
+				position: relative;
+				z-index: 1;
+				text-align: center;
+			}
+
+			.peer-icon {
+				display: grid;
+				place-items: center;
+				width: 74px;
+				height: 74px;
+				margin: 0 auto 13px;
+				color: #fff;
+				background: var(--purple);
+				border: 7px solid #f8f6fc;
+				border-radius: 24px;
+				font-size: 26px;
+				font-weight: 800;
+				box-shadow: 0 0 0 1px #d9d0f1;
+			}
+
+			.peer.remote .peer-icon {
+				background: #0b9f76;
+				box-shadow: 0 0 0 1px #c6eadf;
+			}
+
+			.peer b {
+				display: block;
+				font-size: 16px;
+			}
+
+			.peer small {
+				display: block;
+				margin-top: 5px;
+				color: var(--muted);
+				font-size: 12px;
+			}
+
+			.protocols {
+				position: absolute;
+				top: calc(50% - 17px);
+				left: 50%;
+				z-index: 2;
+				padding: 9px 14px;
+				color: var(--purple-dark);
+				background: #fff;
+				border: 1px solid #d9d0f1;
+				border-radius: 999px;
+				font-family: 'Fira Code', monospace;
+				font-size: 11px;
+				transform: translateX(-50%);
+			}
+
+			.stats {
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				gap: 14px;
+				margin-top: 22px;
+			}
+
+			.stat {
+				padding: 18px;
+				background: #fff;
+				border: 1px solid var(--line);
+				border-radius: 14px;
+			}
+
+			.stat b {
+				display: block;
+				font-size: 27px;
+				letter-spacing: -0.04em;
+			}
+
+			.stat span {
+				display: block;
+				margin-top: 4px;
+				color: var(--muted);
+				font-size: 12px;
+			}
+
+			.verified {
+				display: flex;
+				align-items: center;
+				gap: 11px;
+				margin-top: auto;
+				padding-top: 24px;
+				color: var(--green);
+				font-size: 14px;
+				font-weight: 700;
 			}
 
 			.check {
 				display: grid;
-				grid-template-columns: 220px 1fr;
-				gap: 0 22px;
-				padding: 9px 0;
-				border-bottom: 1px dashed rgba(140, 170, 220, 0.12);
+				place-items: center;
+				width: 24px;
+				height: 24px;
+				color: #fff;
+				background: var(--green);
+				border-radius: 50%;
+				font-size: 14px;
 			}
 
-			.check:last-child {
-				border-bottom: 0;
+			.terminal {
+				display: flex;
+				flex-direction: column;
+				padding: 38px 34px;
+				color: #e9e4ff;
+				background:
+					radial-gradient(circle at 100% 0, rgba(109, 74, 255, 0.28), transparent 38%), #241b3e;
 			}
 
-			.check .ok {
-				color: var(--green);
+			.terminal-head {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				padding-bottom: 22px;
+				border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 			}
 
-			.check .detail {
-				color: #cdd7e6;
+			.terminal-head span {
+				color: #b9acd8;
+				font-family: 'Fira Code', monospace;
+				font-size: 12px;
 			}
 
-			.cli {
-				padding: 18px;
-				border-top: 1px solid rgba(140, 170, 220, 0.14);
+			.terminal-head b {
+				padding: 6px 10px;
+				color: #9ff0ce;
+				background: rgba(16, 167, 123, 0.12);
+				border-radius: 6px;
+				font-family: 'Fira Code', monospace;
+				font-size: 11px;
 			}
 
-			.cli h2 {
-				margin: 0 0 14px;
-				font-size: 19px;
-				font-weight: 400;
-				color: #93a1b8;
+			.terminal pre {
+				margin: 26px 0 0;
+				color: #ddd5f6;
+				font-family: 'Fira Code', monospace;
+				font-size: 14px;
+				line-height: 1.75;
+				white-space: pre-wrap;
 			}
 
-			.cli p {
-				margin: 6px 0;
-				font-size: 18px;
-				color: #cdd7e6;
+			.prompt {
+				color: #a992ff;
 			}
 
-			.cli .ok {
-				color: var(--green);
+			.string {
+				color: #9ff0ce;
 			}
 
-			.foot {
-				margin: 30px 0 0;
-				font-size: 18px;
+			.key {
+				color: #c7b7ff;
 			}
 
-			.foot u {
-				color: #a8b6cc;
+			.checks {
+				display: grid;
+				gap: 12px;
+				margin-top: 28px;
+			}
+
+			.check-row {
+				display: flex;
+				align-items: center;
+				gap: 12px;
+				padding: 13px 15px;
+				background: rgba(255, 255, 255, 0.055);
+				border: 1px solid rgba(255, 255, 255, 0.09);
+				border-radius: 10px;
+				font-size: 13px;
+			}
+
+			.check-row i {
+				display: grid;
+				place-items: center;
+				width: 21px;
+				height: 21px;
+				color: #0c3e2e;
+				background: #76e2b8;
+				border-radius: 50%;
+				font-style: normal;
+				font-size: 12px;
+				font-weight: 800;
+			}
+
+			.check-row small {
+				margin-left: auto;
+				color: #a99bc8;
+				font-family: 'Fira Code', monospace;
+				font-size: 10px;
+			}
+
+			.verdict {
+				margin-top: auto;
+				padding: 20px;
+				background: rgba(16, 167, 123, 0.12);
+				border: 1px solid rgba(118, 226, 184, 0.28);
+				border-radius: 12px;
+			}
+
+			.verdict span {
+				color: #9ff0ce;
+				font-family: 'Fira Code', monospace;
+				font-size: 11px;
+				letter-spacing: 0.12em;
+				text-transform: uppercase;
+			}
+
+			.verdict p {
+				margin-top: 8px;
+				color: #e9fff6;
+				font-family: 'Fira Code', monospace;
+				font-size: 14px;
 			}
 		</style>
 	</head>
 	<body>
-		<div class="label">02 / Matrix Workers</div>
-		<div class="stack">TypeScript · Hono · Cloudflare Workers</div>
-
-		<div class="card">
-			<div class="chrome">
-				<i class="dot"></i><i class="dot"></i><i class="dot"></i>
-				<span>federationtester.matrix.org</span>
-			</div>
-
-			<div class="view">
-				<div class="head">
-					<h1><span class="accent">$</span> fed check codebam.ca<span class="cursor"></span></h1>
-					<span class="muted">s2s · edge</span>
+		<div class="app">
+			<nav class="nav">
+				<div class="logo"><span class="logo-mark"></span>Matrix Workers</div>
+				<div class="nav-links">
+					<span class="active">Federation</span><span>Rooms</span><span>Media</span
+					><span>Keys</span>
 				</div>
-				<div class="rule"></div>
+				<div class="live"><i></i>Live on Workers</div>
+			</nav>
 
-				<section class="report-panel">
-					<header>
-						<i class="pulse"></i>
-						codebam.ca — federation report
-						<span class="right">matrix-worker 0.1.0</span>
-					</header>
-					<div class="report">
-						<div class="check">
-							<span class="ok">✓ well-known</span>
-							<span class="detail">{"m.server":"codebam.ca:443"}</span>
+			<main class="content">
+				<section class="report">
+					<p class="kicker">Server-to-server · verified</p>
+					<h1>Federation, without a server.</h1>
+					<p class="lede">
+						Signed events, end-to-end encryption and media exchanged with matrix.org — all from one
+						Cloudflare Worker.
+					</p>
+
+					<div class="network">
+						<div class="peer">
+							<div class="peer-icon">M</div>
+							<b>codebam.ca</b>
+							<small>Workers · D1 · R2</small>
 						</div>
-						<div class="check">
-							<span class="ok">✓ server key</span>
-							<span class="detail">ed25519:89b0c6da · valid signature</span>
-						</div>
-						<div class="check">
-							<span class="ok">✓ matrix.org</span>
-							<span class="detail">invites · joins · messages · media, both ways</span>
-						</div>
-						<div class="check">
-							<span class="ok">✓ e2ee</span>
-							<span class="detail">device keys + megolm, exchanged over federation</span>
-						</div>
-						<div class="check">
-							<span class="ok">✓ room versions</span>
-							<span class="detail">1–12, each event signed under its own redaction rules</span>
-						</div>
-						<div class="check">
-							<span class="ok">✓ peers on :8448</span>
-							<span class="detail">tcp sockets · hand-rolled http/1.1</span>
-						</div>
-						<div class="check">
-							<span class="ok">✓ suite</span>
-							<span class="detail">45,000 vitest tests, green through every change</span>
+						<div class="protocols">signed + encrypted</div>
+						<div class="peer remote">
+							<div class="peer-icon">∞</div>
+							<b>matrix.org</b>
+							<small>two-way federation</small>
 						</div>
 					</div>
-					<div class="cli">
-						<h2>verdict</h2>
-						<p>
-							<span class="accent">$</span> curl -s
-							"federationtester.matrix.org/api/report?server_name=codebam.ca"
-						</p>
-						<p class="ok">{"FederationOK": true, "ConnectionErrors": {}}</p>
+
+					<div class="stats">
+						<div class="stat"><b>12</b><span>room versions</span></div>
+						<div class="stat"><b>45k</b><span>tests green</span></div>
+						<div class="stat"><b>0</b><span>connection errors</span></div>
 					</div>
+
+					<div class="verified"><span class="check">✓</span>Matrix Federation Tester passed</div>
 				</section>
 
-				<p class="foot muted">
-					hono · cloudflare workers · d1 · durable objects ·
-					<u>github.com/codebam/matrix-workers</u>
-				</p>
-			</div>
+				<section class="terminal">
+					<div class="terminal-head"><span>federation report</span><b>PASS</b></div>
+					<pre><span class="prompt">$</span> fed check codebam.ca
+
+{
+  <span class="key">"server"</span>: <span class="string">"codebam.ca:443"</span>,
+  <span class="key">"signature"</span>: <span class="string">"ed25519 · valid"</span>,
+  <span class="key">"rooms"</span>: <span class="string">"v1–v12"</span>,
+  <span class="key">"e2ee"</span>: <span class="string">"keys exchanged"</span>,
+  <span class="key">"media"</span>: <span class="string">"both directions"</span>
+}</pre>
+					<div class="checks">
+						<div class="check-row"><i>✓</i>Signed event IDs<small>room-version aware</small></div>
+						<div class="check-row"><i>✓</i>E2EE device keys<small>OIDC discovery</small></div>
+						<div class="check-row"><i>✓</i>Peers on :8448<small>TCP over Workers</small></div>
+					</div>
+					<div class="verdict">
+						<span>Verdict</span>
+						<p>{"FederationOK": true, "ConnectionErrors": {}}</p>
+					</div>
+				</section>
+			</main>
 		</div>
 	</body>
 </html>
