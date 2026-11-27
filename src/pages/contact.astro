@@ -107,9 +107,11 @@ const askingFor = site.showResume
 					: 'Email is the surest way to reach me. Issues and pull requests go to GitHub; everything else can come here.'}
 			</p>
 		</div>
-		<div class="masthead-availability">
-			<Availability availability={site.availability} />
-		</div>
+		{site.availability && (
+			<div class="masthead-availability">
+				<Availability availability={site.availability} />
+			</div>
+		)}
 		<p class="masthead-actions">
 			<a class="link-accent" href={`mailto:${site.email}`}>
 				{site.email}

@@ -1,7 +1,9 @@
 ---
 import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
+import SiblingMark from '../../components/SiblingMark.astro';
 import { featuredProjects } from '../../lib/projects';
+import { commerceHref } from '../../lib/site';
 import { SITES } from '../../lib/site.data.js';
 
 // The case study moved from the old product name to its descriptive title,
@@ -116,8 +118,11 @@ const schema = JSON.stringify({
 			</div>
 
 			<p class="mt-14 border-t border-[var(--line-strong)] pt-7">
-				<a class="link-accent" href="/projects">
-					<span class="arrow">&larr;</span> All selected work
+				<a class="link-accent back-link" href="/projects">
+					<span class="arrow" aria-hidden="true">
+						&larr;
+					</span>{' '}
+					All selected work
 				</a>
 			</p>
 
@@ -130,8 +135,9 @@ const schema = JSON.stringify({
 					Custom websites and Telegram bots, scoped per project and quoted by email.
 				</p>
 				<p class="case-cta-actions">
-					<a class="btn" href="/services">
+					<a class="btn" href={commerceHref('/services')}>
 						See services
+						<SiblingMark href={commerceHref('/services')} />
 					</a>
 					<a class="link-quiet" href="/contact">
 						Get in touch
@@ -187,6 +193,10 @@ const schema = JSON.stringify({
 		font-size: 1rem;
 		line-height: 1.65;
 		color: var(--body);
+	}
+	.back-link:hover :global(.arrow),
+	.back-link:focus-visible :global(.arrow) {
+		transform: translateX(-3px);
 	}
 	.case-cta-actions {
 		display: flex;

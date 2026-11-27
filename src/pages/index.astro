@@ -80,8 +80,8 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 							className="flat-control site-cta"
 						>
 							{primary.label}
+							<SiblingMark href={linkHref(primary)} />
 						</LinkButton>
-						<SiblingMark href={linkHref(primary)} />
 						{quietLinks.map((link) => (
 							<a
 								href={link.href}

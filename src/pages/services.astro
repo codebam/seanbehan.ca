@@ -2,7 +2,8 @@
 import Base from '../layouts/Base.astro';
 import Masthead from '../components/Masthead.astro';
 import { LinkButton } from '@cloudflare/kumo/components/button';
-import { LINKEDIN_URL } from '../lib/site';
+import SiblingMark from '../components/SiblingMark.astro';
+import { LINKEDIN_URL, projectHref } from '../lib/site';
 import { COMMERCE, SITES } from '../lib/site.data.js';
 
 const serviceSite = SITES.seanbehan;
@@ -211,11 +212,12 @@ const schema = JSON.stringify({
 					Email {serviceSite.email}
 				</LinkButton>
 				<p class="brief-links">
-					<a class="link-accent" href="/projects">
+					<a class="link-accent" href={projectHref('/projects')}>
 						Read a case study{' '}
 						<span class="arrow" aria-hidden="true">
 							&rarr;
 						</span>
+						<SiblingMark href={projectHref('/projects')} />
 					</a>
 					<a class="link-quiet" href="/about">
 						About Sean

@@ -92,11 +92,13 @@ const ABOUT_DESCRIPTION = `About ${LEGAL_NAME} (@${HANDLE}) — senior full-stac
 							target={destination.external ? '_blank' : undefined}
 							rel={destination.external ? 'noopener noreferrer' : undefined}
 						>
-							<strong>{destination.label}</strong>
+							<strong>
+								{destination.label}
+								<SiblingMark href={destination.href} newTab={destination.external} />
+							</strong>
 							<span class="destination-arrow" aria-hidden="true">
 								&rarr;
 							</span>
-							{destination.external && <SiblingMark href={destination.href} newTab />}
 						</a>
 					</li>
 				))}

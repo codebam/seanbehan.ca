@@ -49,6 +49,10 @@ const sibling = isSiblingHref(href);
 		font-size: 0.85em;
 		color: var(--muted);
 	}
+	:global(.btn) .sibling-mark,
+	:global(.site-cta) .sibling-mark {
+		color: inherit;
+	}
 	/* The media-link variant: a small quiet badge the anchor can position. */
 	.sibling-mark-overlay {
 		position: absolute;

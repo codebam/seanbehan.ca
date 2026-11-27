@@ -6,6 +6,7 @@
  * The archive still uses PostList; this is the front page's own arrangement.
  */
 import { writingHref } from '../../lib/site';
+import SiblingMark from '../SiblingMark.astro';
 import type { PostSummary } from '../../lib/types';
 
 interface Props {
@@ -29,7 +30,11 @@ const monthYear = (date: string) =>
 			<p class="section-sub">Notes from whatever I am taking apart.</p>
 		</div>
 		<a href={writingHref('/posts')} class="link-accent">
-			All {total} posts <span class="arrow">&rarr;</span>
+			All {total} posts{' '}
+			<span class="arrow" aria-hidden="true">
+				&rarr;
+			</span>
+			<SiblingMark href={writingHref('/posts')} />
 		</a>
 	</header>
 
