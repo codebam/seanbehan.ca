@@ -12,6 +12,7 @@ import { PortableText } from 'emdash/ui';
 import Base from '../../layouts/Base.astro';
 import Block from '../../components/portable-text/Block.astro';
 import Code from '../../components/portable-text/Code.astro';
+import Image from '../../components/portable-text/Image.astro';
 import { prepareBody } from '../../lib/posts';
 import { site } from '../../lib/site';
 
@@ -58,7 +59,10 @@ const seo = getSeoMeta(page, {
 				style="--enter-delay:60ms"
 				data-prose
 			>
-				<PortableText value={blocks} components={{ block: Block, type: { code: Code } }} />
+				<PortableText
+					value={blocks}
+					components={{ block: Block, type: { code: Code, image: Image } }}
+				/>
 			</div>
 		</div>
 	</article>

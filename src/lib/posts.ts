@@ -133,7 +133,7 @@ export function prepareBody(value: unknown) {
 	const headings: Heading[] = collected.map((h) => ({
 		id: h.id,
 		text: h.text,
-		level: h.level - shift
+		level: Math.min(6, h.level - shift)
 	}));
 	const relocated = new Map(collected.map((h) => [h.index, h]));
 
@@ -141,7 +141,7 @@ export function prepareBody(value: unknown) {
 		blocks: blocks.map((block, index) => {
 			const heading = relocated.get(index);
 			return heading
-				? { ...block, style: `h${heading.level - shift}`, headingId: heading.id }
+				? { ...block, style: `h${Math.min(6, heading.level - shift)}`, headingId: heading.id }
 				: block;
 		}),
 		headings
@@ -261,8 +261,7 @@ export async function getPosts(opts?: { includeBodies?: boolean; includeContent?
 	const noIndex = new Set<string>();
 	const posts = list
 		.map((entry) => {
-			const body = plainText(entry.data.content);
-			if (includeBodies) bodies.set(entry.id, body);
+			if (includeBodies) bodies.set(entry.id, plainText(entry.data.content));
 			if (includeContent) content.set(entry.id, entry.data.content);
 			if (entry.data.seo?.noIndex) noIndex.add(entry.id);
 			return toSummary(

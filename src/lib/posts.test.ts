@@ -124,6 +124,12 @@ describe('prepareBody', () => {
 		expect(headings.map((heading) => heading.level)).toEqual([2, 3]);
 	});
 
+	it('clamps re-based headings to h6 when an h1 pushes an h6 down', () => {
+		const { blocks, headings } = prepareBody([block('h1', 'Title'), block('h6', 'Deepest')]);
+		expect(headings.map((heading) => heading.level)).toEqual([2, 6]);
+		expect(blocks.map((b) => (b as { style?: string }).style)).toEqual(['h2', 'h6']);
+	});
+
 	/**
 	 * Every section in the archive is stored as `###`, which rendered as an `h1`
 	 * title followed by `h3` sections — a skipped level on every post.
