@@ -31,7 +31,7 @@ const RECENT_LIMIT = 10;
 /** CMS pages are added one at a time and are rare; the brief names them all. */
 const PAGE_LIMIT = 50;
 
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async ({ cache }) => {
 	const { posts, cacheHint } = await getPosts({ includeBodies: false });
 	// CMS pages are the other collection whose entries answer in three forms;
 	// see the Pages section below for why they are fetched but not always named.
@@ -40,11 +40,9 @@ export const GET: APIRoute = async () => {
 		orderBy: { updated_at: 'desc' },
 		limit: PAGE_LIMIT
 	});
-	// The Astro global is absent where the sandbox runs the endpoint, so the
-	// guard is a typeof rather than a direct read.
-	if (typeof Astro !== 'undefined' && Astro.cache?.enabled) {
-		Astro.cache.set(cacheHint);
-		Astro.cache.set(pagesHint);
+	if (cache?.enabled) {
+		cache.set(cacheHint);
+		cache.set(pagesHint);
 	}
 	if (cmsEntries.length === PAGE_LIMIT) {
 		console.warn(

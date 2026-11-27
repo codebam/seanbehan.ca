@@ -11,7 +11,7 @@ import { generateRSSFeed } from '../lib/rssFeed';
 import { renderBodyHtml } from '../lib/renderBody';
 import { getPosts } from '../lib/posts';
 
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async ({ cache }) => {
 	// One query, not two: the archive fetch already carried each entry's
 	// Portable Text, so `includeContent` keeps it instead of throwing it away
 	// and asking D1 for the same rows again.
@@ -19,9 +19,7 @@ export const GET: APIRoute = async () => {
 		includeBodies: false,
 		includeContent: true
 	});
-	// The Astro global is absent where the sandbox runs the endpoint, so the
-	// guard is a typeof rather than a direct read.
-	if (typeof Astro !== 'undefined' && Astro.cache?.enabled) Astro.cache.set(cacheHint);
+	if (cache?.enabled) cache.set(cacheHint);
 
 	const postHtml = new Map<string, string>();
 	await Promise.all(

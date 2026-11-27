@@ -206,7 +206,7 @@ async function fonts(origin: string) {
 	];
 }
 
-export const GET: APIRoute = async ({ params, url }) => {
+export const GET: APIRoute = async ({ params, url, cache }) => {
 	const slug = params.slug!;
 	const host = site.url.replace(/^https?:\/\//, '');
 
@@ -227,7 +227,7 @@ export const GET: APIRoute = async ({ params, url }) => {
 		const { entry, cacheHint } = await getEmDashEntry('posts', slug);
 		// The card is a rendering of the entry, so it belongs to the entry's
 		// tags: a purge for that post should take its card with it.
-		if (typeof Astro !== 'undefined' && Astro.cache?.enabled) Astro.cache.set(cacheHint);
+		if (cache?.enabled) cache.set(cacheHint);
 		if (!entry?.data.title) return new Response('Not found', { status: 404 });
 
 		const tags = ((entry.data.terms?.tag ?? []) as { slug: string }[])

@@ -10,15 +10,13 @@ import type { APIRoute } from 'astro';
 import { decodeSlug, getEmDashEntry, getEntryTerms } from 'emdash';
 import { markdownDocument, markdownResponse, notFoundResponse } from '../../lib/markdown';
 
-export const GET: APIRoute = async ({ params }) => {
+export const GET: APIRoute = async ({ params, cache }) => {
 	const slug = decodeSlug(params.slug);
 	if (!slug) return notFoundResponse();
 
 	const { entry, cacheHint } = await getEmDashEntry('posts', slug);
+	if (cache?.enabled) cache.set(cacheHint);
 	if (!entry) return notFoundResponse();
-	// The Astro global is absent where the sandbox runs the endpoint, so the
-	// guard is a typeof rather than a direct read.
-	if (typeof Astro !== 'undefined' && Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
 	const tags = (await getEntryTerms('posts', entry.data.id, 'tag')).map(
 		(term) => term.label || term.slug

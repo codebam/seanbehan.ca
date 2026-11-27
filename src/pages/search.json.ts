@@ -30,16 +30,14 @@ async function getSearchIndex() {
 	return index;
 }
 
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = async ({ url, cache }) => {
 	const query = (url.searchParams.get('q') ?? '').trim();
 	// The same floor the archive uses; a one-character query is answered, not
 	// emptied, so the JS path cannot disagree with the no-JS one.
 	if (!isSearchableQuery(query)) return json({ slugs: [] });
 
 	const { posts, cacheHint, bodies } = await getSearchIndex();
-	// The Astro global is absent where the sandbox runs the endpoint, so the
-	// guard is a typeof rather than a direct read.
-	if (typeof Astro !== 'undefined' && Astro.cache?.enabled) Astro.cache.set(cacheHint);
+	if (cache?.enabled) cache.set(cacheHint);
 
 	return json({ slugs: searchPosts(query, posts, bodies) });
 };

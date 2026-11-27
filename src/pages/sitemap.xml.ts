@@ -49,11 +49,9 @@ const newestStamp = (list: PostSummary[]) =>
 		return stamp > latest ? stamp : latest;
 	}, '');
 
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async ({ cache }) => {
 	const { posts, cacheHint, noIndex } = await getPosts({ includeBodies: false });
-	// The Astro global is absent where the sandbox runs the endpoint, so the
-	// guard is a typeof rather than a direct read.
-	if (typeof Astro !== 'undefined' && Astro.cache?.enabled) Astro.cache.set(cacheHint);
+	if (cache?.enabled) cache.set(cacheHint);
 	const newest = newestStamp(posts) || undefined;
 	const urls = staticPaths().map((path) =>
 		entry(path, path === '/' || path === '/posts' || path === '/posts/tags' ? newest : undefined)
@@ -80,7 +78,7 @@ export const GET: APIRoute = async () => {
 			orderBy: { updated_at: 'desc' },
 			limit: 200
 		});
-		if (typeof Astro !== 'undefined' && Astro.cache?.enabled) Astro.cache.set(pagesHint);
+		if (cache?.enabled) cache.set(pagesHint);
 		if (pages.length === 200) {
 			console.warn(
 				'[sitemap] pages query hit its 200-row limit; older pages are missing from the sitemap'

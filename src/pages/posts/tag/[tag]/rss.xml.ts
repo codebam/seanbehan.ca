@@ -10,7 +10,7 @@ import { getPosts } from '../../../../lib/posts';
 import { displayTag, slugifyTag } from '../../../../lib/tags';
 import { site } from '../../../../lib/site';
 
-export const GET: APIRoute = async ({ params }) => {
+export const GET: APIRoute = async ({ params, cache }) => {
 	const target = slugifyTag(params.tag!);
 	// One query, not two: `getPosts` already carried each entry's Portable Text,
 	// so `includeContent` keeps it instead of asking D1 for the same rows again
@@ -23,9 +23,7 @@ export const GET: APIRoute = async ({ params }) => {
 		includeBodies: false,
 		includeContent: true
 	});
-	// The Astro global is absent where the sandbox runs the endpoint, so the
-	// guard is a typeof rather than a direct read.
-	if (typeof Astro !== 'undefined' && Astro.cache?.enabled) Astro.cache.set(cacheHint);
+	if (cache?.enabled) cache.set(cacheHint);
 	const posts = all.filter((post) => post.meta.tags.some((tag) => slugifyTag(tag) === target));
 
 	if (posts.length === 0) {

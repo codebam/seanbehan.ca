@@ -10,13 +10,13 @@ import type { APIRoute } from 'astro';
 import { decodeSlug, getEmDashEntry } from 'emdash';
 import { markdownDocument, markdownResponse, notFoundResponse } from '../../lib/markdown';
 
-export const GET: APIRoute = async ({ params }) => {
+export const GET: APIRoute = async ({ params, cache }) => {
 	const slug = decodeSlug(params.slug);
 	if (!slug) return notFoundResponse();
 
 	const { entry, cacheHint } = await getEmDashEntry('pages', slug);
+	if (cache?.enabled) cache.set(cacheHint);
 	if (!entry) return notFoundResponse();
-	if (typeof Astro !== 'undefined' && Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
 	return markdownResponse(markdownDocument(entry as never, { path: `/pages/${slug}` }));
 };
