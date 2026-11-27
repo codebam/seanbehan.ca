@@ -1149,12 +1149,16 @@ html body .hero-lead {
 }
 .material-grid > * {
 	position: relative;
-	min-height: 8.5rem;
-	padding: 1.15rem;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	min-height: 7.75rem;
+	padding: 1rem 1.1rem;
 	overflow: hidden;
 	border: 1px solid var(--line-strong);
 	border-radius: var(--radius);
 	background: var(--panel);
+	box-shadow: var(--shadow-sm);
 }
 .material-grid > *::after {
 	position: absolute;
