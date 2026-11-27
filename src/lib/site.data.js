@@ -89,7 +89,13 @@ const seanbehan = {
 			role: 'Independent Developer',
 			org: 'Open Source',
 			period: '2021 – Present',
-			note: 'Wrote the Telegram bot framework with 215 forks and 120 npm releases; ships Rust, NixOS and Cloudflare Workers tooling in the open.'
+			note: 'Created @codebam/cf-workers-telegram-bot (214 forks, ~1,500 monthly npm downloads); ships Rust, NixOS and Cloudflare Workers tooling in the open.'
+		},
+		{
+			role: 'Sysadmin and Moderator',
+			org: 'mstdn.ca',
+			period: 'Jan. 2024 – Present',
+			note: 'Runs a Mastodon instance serving 36,000+ users: upgrades, federation troubleshooting and moderation across the Fediverse.'
 		},
 		{
 			role: 'Frontend Web Developer',
@@ -98,16 +104,16 @@ const seanbehan = {
 			note: 'Rebuilt the company site on Next.js, TypeScript and React with a Firebase backend; bounce rate down 15%, user engagement up 20%.'
 		},
 		{
+			role: 'Development Intern',
+			org: 'AVROD',
+			period: 'Sep. 2019 – Apr. 2020',
+			note: 'Built a web store with Django and MySQL as a course placement at the company.'
+		},
+		{
 			role: 'Assistant Automation Coordinator',
 			org: 'Elections Canada',
 			period: 'Oct. 2019',
 			note: 'Kept polling-station computer systems online through the 2019 federal election alongside a team of 10+.'
-		},
-		{
-			role: 'Development Intern',
-			org: 'AVROD',
-			period: 'Sept. 2019 – Apr. 2020',
-			note: 'Built a web store with Django and MySQL as a course placement at the company.'
 		},
 		{
 			role: 'IT Student Advisor',

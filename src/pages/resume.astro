@@ -48,15 +48,6 @@ if (resume && Astro.cache?.enabled) {
 }
 
 /**
- * The table's intro counts from January 2014, four years before the first
- * dated entry in resume/resume.md (May 2018). B owns that copy and is asked to
- * reword it (fix-plan H3); until then the résumé's masthead states what its
- * own document supports. A reworded intro that no longer carries the phrase
- * passes through unchanged.
- */
-const intro = site.intro.replace('{years} years of web applications', 'I build web applications');
-
-/**
  * The three things a hiring reader is actually trying to settle before they
  * read a single dated entry: what the stack is, whether any of it has met
  * production, and what working with this person is like. The section used to
@@ -111,7 +102,7 @@ const updated = resume
 		<Fragment slot="title">
 			Senior full-stack developer, <em>open to work.</em>
 		</Fragment>
-		<p class="masthead-blurb">{intro}</p>
+		<p class="masthead-blurb">{site.intro}</p>
 		<div class="masthead-availability">
 			<Availability availability={site.availability} />
 		</div>

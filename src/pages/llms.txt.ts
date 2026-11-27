@@ -144,7 +144,7 @@ curl -s ${WRITING}/mcp -H 'Content-Type: application/json' -H 'Accept: applicati
 
 ## Writing
 
-- [All posts](${WRITING}/posts): the archive, newest first, with the title search over it.
+- [All posts](${WRITING}/posts): the archive, newest first, with full-text search over it.
 - [Post feed](${WRITING}/rss.xml): recent posts with full text, HTML.
 - [Tags](${WRITING}/posts/tags): the topic index with counts; each tag has its own feed under ${WRITING}/posts/tag/.
 - [Search](${WRITING}/search.json): ranked slugs for a query in \`?q=\`; words are matched over titles, descriptions, tags and bodies.
@@ -156,7 +156,7 @@ ${pagesSection}## Work
 - [Products](${WRITING}/products): paid work, with prices.
 - [Services](${WRITING}/services): what kind of engagements are taken on.
 - [Legal](${WRITING}/legal): the terms, refund, license and privacy policies in one index.
-- [Contact](${site.url}/contact): the forms and the address.
+- [Contact](${site.url}/contact): the email address and public channels.
 
 ## Recent writing
 

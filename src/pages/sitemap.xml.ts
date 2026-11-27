@@ -18,6 +18,7 @@ const staticPaths = () => [
 				'/links',
 				'/services',
 				'/products/cloudflare-workers-production-kit',
+				'/legal',
 				'/legal/privacy',
 				'/legal/terms-of-sale',
 				'/legal/refund-policy',
