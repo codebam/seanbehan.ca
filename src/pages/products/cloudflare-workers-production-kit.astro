@@ -183,7 +183,7 @@ const schema = JSON.stringify({
 	<!-- Not `contents`: that is a Tailwind utility (display:contents), emitted
 	     because Kumo markup uses the class too, and it would dissolve the
 	     section's box — padding, background and border all lost. -->
-	<section class="panel modules">
+	<section class="section panel-alt modules">
 		<div class="shell">
 			<div class="section-heading" data-reveal>
 				<h2 class="display display-lg">What ships</h2>
@@ -221,9 +221,8 @@ const schema = JSON.stringify({
 						Scrolls sideways <span aria-hidden="true">&rarr;</span>
 					</p>
 					<div class="file-tree-frame">
-						<pre class="file-tree" tabindex="0" role="region" aria-label="Product file tree">
-							<code>{fileTree}</code>
-						</pre>
+						<!-- prettier-ignore -->
+						<pre class="file-tree" tabindex="0" role="region" aria-label="Product file tree"><code>{fileTree}</code></pre>
 					</div>
 					<p class="inside-note">
 						44 files in 16 directories; {archiveSize} archive. Lockfiles elided above. SHA-256
@@ -393,7 +392,12 @@ const schema = JSON.stringify({
 	.price-card form :global(button) {
 		width: 100%;
 	}
-	.modules,
+	.price-card form + .purchase-terms {
+		margin-top: 1rem;
+	}
+	.offer {
+		border-top: 1px solid var(--line);
+	}
 	.module-grid {
 		display: grid;
 		gap: 1.25rem;
