@@ -269,12 +269,10 @@ const updated = resume
 	}
 	/* Paper. The fragment carries its own identity block, contacts included, so a
 	   print of this page should hand back the résumé rather than the pitch around
-	   it. */
+	   it. `:global(.page-hero)` reaches Masthead's scoped section element. */
 	@media print {
+		:global(.page-hero),
 		.profile,
-		.masthead-blurb,
-		.masthead-availability,
-		.masthead-actions,
 		.document .section-heading,
 		.document-note,
 		.document-missing {

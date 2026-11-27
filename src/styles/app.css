@@ -898,7 +898,9 @@
 	font-size: 0.82rem;
 	font-weight: 400;
 	color: var(--muted);
-	white-space: pre-wrap;
+	/* Pandoc wraps its HTML output at ~72 columns; nowrap keeps date ranges on
+	   one line instead of turning source line-breaks into two-line dates. */
+	white-space: nowrap;
 }
 
 .resume-doc .resume-key {
@@ -920,6 +922,10 @@
 .resume-doc ul {
 	margin-top: 0.35rem;
 	padding-left: 1.15rem;
+	/* Tailwind Preflight strips list-style from ul; restore bullets so the
+	   document's li::marker colour actually renders. .resume-contacts wins on
+	   specificity and stays unbulleted. */
+	list-style-type: disc;
 }
 .resume-doc li {
 	margin-top: 0.16rem;
@@ -949,6 +955,10 @@
 @media (width < 40rem) {
 	.resume-doc .resume-contacts {
 		text-align: left;
+	}
+	.resume-doc .resume-meta {
+		padding-left: 0;
+		white-space: normal;
 	}
 }
 
@@ -1537,8 +1547,11 @@ html body .studio-writing .writing-lead-more {
 	/* The whole search form, not the field's div: hiding only the div left
 	   the "Search posts" label printing above nothing. The newsletter band is
 	   an ask, not content — its footer copy already goes with the footer. */
-	header,
-	footer,
+	/* Scope to site chrome rather than bare header/footer: a bare `header`
+	   selector wiped out .resume-head (name and contacts) on /resume and
+	   .post-masthead (title, date and author) on every article when printed. */
+	.site-header,
+	.site-footer,
 	.read-progress,
 	nav[aria-label='Primary'],
 	.code-copy,
