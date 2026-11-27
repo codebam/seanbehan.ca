@@ -105,6 +105,7 @@
 @layer base {
 	:root {
 		color-scheme: light;
+		--color-kumo-brand: var(--accent);
 		--kumo-button-emphasis-bg: var(--accent);
 		--kumo-button-emphasis-ring: var(--accent-hover);
 
@@ -271,6 +272,22 @@
 		outline: 2px solid var(--accent);
 		outline-offset: 2px;
 		border-radius: 3px;
+	}
+
+	/* Kumo's button variants emit `!text-white` and `!text-kumo-default` in
+	   @layer utilities. Under CSS cascade layers, `!important` reverses layer
+	   order (earlier layers win), so an `!important` colour override in
+	   @layer components loses to utilities and leaves dark-mode primary CTAs
+	   at white-on-#9cbcff (1.92:1). Declaring the colour overrides here in
+	   @layer base outranks utilities in both schemes. */
+	.site-cta {
+		color: var(--accent-on) !important;
+	}
+	.site-secondary {
+		color: var(--text) !important;
+	}
+	.site-secondary:hover {
+		color: var(--accent) !important;
 	}
 }
 
@@ -462,21 +479,34 @@
 	}
 
 	/* Kumo's emphasis button, re-inked to the house pair.
-	   Its variant sets --kumo-button-emphasis-bg, the gradient stops and
-	   `!text-white` as an inline style on the element, so no stylesheet
-	   declaration of those custom properties can win — only the used
-	   properties will, and only with !important, because the utilities that
-	   paint the button live in the layer after this one. That is the deal
-	   .flat-control already makes for the geometry. Without it the label sits
-	   on a gradient mixed 30% toward white: 3.47:1 at the top, 2.68:1 where
-	   the hover layer shows, and white needs the full-strength studio blue. */
+	   Its primary variant paints an inner gradient overlay span over the button
+	   using --color-kumo-brand and emits `!text-white` in @layer utilities.
+	   Hiding that overlay span and setting the flat house surface here keeps
+	   Kumo buttons visually identical to `.btn` in both light and dark modes;
+	   the text colour override lives in @layer base above so its `!important`
+	   outranks @layer utilities. */
 	.site-cta {
 		background-color: var(--accent) !important;
 		background-image: none !important;
-		color: var(--accent-on) !important;
+		--tw-ring-color: transparent;
+	}
+	.site-cta > span[aria-hidden='true'] {
+		display: none;
 	}
 	.site-cta:hover {
 		background-color: var(--accent-hover) !important;
+	}
+
+	/* Kumo's secondary button, re-inked to the studio paper/charcoal surface so
+	   it carries a visible border in dark mode instead of Kumo's un-themed base. */
+	.site-secondary {
+		background-color: var(--panel) !important;
+		border: 1px solid var(--line-strong) !important;
+		--tw-ring-color: transparent;
+	}
+	.site-secondary:hover {
+		background-color: var(--surface-alt) !important;
+		border-color: var(--accent) !important;
 	}
 
 	/* Kumo ships rounder, softer controls than the house style; every Kumo
@@ -544,6 +574,8 @@
 	   takes --muted, which is body-copy weight rather than decoration. */
 	.site-field {
 		--text-color-kumo-placeholder: var(--muted);
+		background-color: var(--panel);
+		color: var(--text);
 		border: 1px solid var(--dim) !important;
 	}
 
