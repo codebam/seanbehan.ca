@@ -250,7 +250,10 @@ const updated = post.meta.updated
 					{older && (
 						<a href={older.path} class="sibling older">
 							<span class="eyebrow">
-								<span class="arrow">&larr;</span> Older
+								<span class="arrow" aria-hidden="true">
+									&larr;
+								</span>{' '}
+								Older
 							</span>
 							<span class="title">{older.meta.title}</span>
 						</a>
@@ -258,7 +261,10 @@ const updated = post.meta.updated
 					{newer && (
 						<a href={newer.path} class="sibling newer">
 							<span class="eyebrow">
-								Newer <span class="arrow">&rarr;</span>
+								Newer{' '}
+								<span class="arrow" aria-hidden="true">
+									&rarr;
+								</span>
 							</span>
 							<span class="title">{newer.meta.title}</span>
 						</a>
@@ -267,7 +273,10 @@ const updated = post.meta.updated
 
 				<p class="mt-10">
 					<a href="/posts" class="link-accent back">
-						<span class="arrow">&larr;</span> All posts
+						<span class="arrow" aria-hidden="true">
+							&larr;
+						</span>{' '}
+						All posts
 					</a>
 				</p>
 			</footer>
@@ -384,6 +393,21 @@ const updated = post.meta.updated
 	   open as the server rendered it. Tapping the summary toggles .expanded
 	   (see scripts/toc.ts), which shows the list again. */
 	@media (max-width: 47.99rem) {
+		html.js details[data-toc] > summary {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			min-height: 2.75rem;
+		}
+		html.js details[data-toc] > summary::after {
+			content: '+';
+			color: var(--accent);
+			font-size: 1rem;
+			line-height: 1;
+		}
+		html.js details[data-toc].expanded > summary::after {
+			content: '−';
+		}
 		html.js details[data-toc] > ol {
 			display: none;
 		}

@@ -46,7 +46,10 @@ const tags = tagCounts(posts);
 			edge.{' '}
 			{tags.length > 0 && (
 				<a class="link-accent" href="/posts/tags">
-					Browse by tag <span class="arrow">&rarr;</span>
+					Browse by tag{' '}
+					<span class="arrow" aria-hidden="true">
+						&rarr;
+					</span>
 				</a>
 			)}
 		</p>

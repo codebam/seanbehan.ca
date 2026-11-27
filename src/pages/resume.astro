@@ -176,7 +176,10 @@ const updated = resume
 			<div class="section-heading" data-reveal>
 				<h2 class="display display-lg">The document</h2>
 				<a class="link-accent" href={RESUME_PDF} download={resumePdfFilename()}>
-					Download the PDF <span class="arrow">&rarr;</span>
+					Download the PDF{' '}
+					<span class="arrow" aria-hidden="true">
+						&rarr;
+					</span>
 				</a>
 			</div>
 			{updated && (
@@ -199,7 +202,10 @@ const updated = resume
 					</p>
 					<p>
 						<a class="link-accent" href={RESUME_PDF} download={resumePdfFilename()}>
-							Download the PDF &rarr;
+							Download the PDF{' '}
+							<span class="arrow" aria-hidden="true">
+								&rarr;
+							</span>
 						</a>
 					</p>
 				</div>

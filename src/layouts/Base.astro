@@ -195,9 +195,11 @@ const navItems = nav.map((item) => ({
 		<header class="site-header">
 			<div class="shell header-inner">
 				<a href="/" class="brand" aria-current={isHome ? 'page' : undefined}>
-					{site.name}
-					<span class="brand-dot" aria-hidden="true">
-						.
+					<span>
+						{site.name}
+						<span class="brand-dot" aria-hidden="true">
+							.
+						</span>
 					</span>
 				</a>
 
@@ -455,7 +457,8 @@ const navItems = nav.map((item) => ({
 	}
 	.brand {
 		display: inline-flex;
-		align-items: baseline;
+		align-items: center;
+		min-height: 2.75rem;
 		margin-right: auto;
 		font-family: var(--font-display);
 		font-size: 1.15rem;
@@ -480,6 +483,7 @@ const navItems = nav.map((item) => ({
 		display: inline-flex;
 		align-items: center;
 		gap: 0.2rem;
+		min-height: 2.75rem;
 		padding: 0.5rem 0.75rem;
 		border-radius: var(--radius-sm);
 		font-size: 0.9rem;
@@ -500,6 +504,7 @@ const navItems = nav.map((item) => ({
 	}
 	.header-cta {
 		display: none;
+		min-height: 2.75rem;
 	}
 
 	.nav-menu {
@@ -509,8 +514,8 @@ const navItems = nav.map((item) => ({
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		width: 2.5rem;
-		height: 2.5rem;
+		width: 2.75rem;
+		height: 2.75rem;
 		border: 1px solid var(--line-strong);
 		border-radius: var(--radius-sm);
 		color: var(--text);
@@ -553,6 +558,7 @@ const navItems = nav.map((item) => ({
 	}
 	.nav-menu-cta {
 		width: 100%;
+		min-height: 2.75rem;
 		margin-top: 0.25rem;
 	}
 

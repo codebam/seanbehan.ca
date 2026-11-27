@@ -46,7 +46,10 @@ const robots = posts.length < 2 ? 'noindex, follow' : undefined;
 		<p>Everything filed under this subject, newest first.</p>
 		<p class="masthead-actions">
 			<a class="link-accent" href="/posts/tags">
-				All tags <span class="arrow">&rarr;</span>
+				All tags{' '}
+				<span class="arrow" aria-hidden="true">
+					&rarr;
+				</span>
 			</a>
 			<a class="link-quiet" href={`/posts/tag/${target}/rss.xml`}>
 				Subscribe via RSS

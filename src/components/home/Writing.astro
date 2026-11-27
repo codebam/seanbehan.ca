@@ -50,7 +50,10 @@ const monthYear = (date: string) =>
 			{lead.meta.description && <p class="writing-lead-desc">{lead.meta.description}</p>}
 			<p class="writing-lead-more">
 				<a href={writingHref(lead.path)} class="link-accent">
-					Read the post <span class="arrow">&rarr;</span>
+					Read the post{' '}
+					<span class="arrow" aria-hidden="true">
+						&rarr;
+					</span>
 				</a>
 			</p>
 		</article>

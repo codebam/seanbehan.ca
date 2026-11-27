@@ -42,7 +42,10 @@ const metaLine = (project: FeaturedProject) =>
 			rel="noopener noreferrer"
 			class="link-accent"
 		>
-			All repositories <span class="arrow">&rarr;</span>
+			All repositories{' '}
+			<span class="arrow" aria-hidden="true">
+				&rarr;
+			</span>
 			<SiblingMark href="https://github.com/codebam?tab=repositories" newTab />
 		</a>
 	</header>
@@ -83,7 +86,10 @@ const metaLine = (project: FeaturedProject) =>
 				<p class="project-links">
 					{lead.homepage && (
 						<a class="link-accent" href={lead.homepage} target="_blank" rel="noopener noreferrer">
-							{lead.homepageLabel} <span class="arrow">&rarr;</span>
+							{lead.homepageLabel}{' '}
+							<span class="arrow" aria-hidden="true">
+								&rarr;
+							</span>
 							<SiblingMark href={lead.homepage} newTab />
 						</a>
 					)}
@@ -146,7 +152,10 @@ const metaLine = (project: FeaturedProject) =>
 								target="_blank"
 								rel="noopener noreferrer"
 							>
-								{project.homepageLabel} <span class="arrow">&rarr;</span>
+								{project.homepageLabel}{' '}
+								<span class="arrow" aria-hidden="true">
+									&rarr;
+								</span>
 								<SiblingMark href={project.homepage} newTab />
 							</a>
 						)}
