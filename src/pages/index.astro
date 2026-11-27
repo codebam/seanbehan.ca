@@ -282,6 +282,9 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 		margin-top: 1.5rem;
 	}
 	.offer-card {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
 		padding: 1.75rem;
 	}
 	.offer-title {
@@ -306,8 +309,8 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 		color: var(--body);
 	}
 	.offer-card .link-accent {
-		display: inline-block;
-		margin-top: 1rem;
+		margin-top: auto;
+		padding-top: 1rem;
 	}
 	@media (width >= 48rem) {
 		.offer-grid {
