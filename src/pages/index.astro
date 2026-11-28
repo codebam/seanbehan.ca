@@ -3,9 +3,10 @@
  * Home: a clear front door.
  *
  * A two-column hero states who this is, what they build and how to reach them,
- * with a material-study grid and availability beside it. The numbers, project
- * cards and writing follow — or the work before the numbers on the handle-first
- * variant — before the commercial and career detail.
+ * with a material-study grid and availability beside it. On the hiring front
+ * door (seanbehan.ca), facts, selected work and work history lead ahead of
+ * writing and secondary contract/product offers; on the handle-first variant
+ * (codebam.ca), selected work leads directly into facts and writing.
  */
 import Base from '../layouts/Base.astro';
 import Facts from '../components/home/Facts.astro';
@@ -18,7 +19,7 @@ import { LinkButton } from '@cloudflare/kumo/components/button';
 import { getPosts } from '../lib/posts';
 import { withLiveStats } from '../lib/github';
 import { featuredProjects } from '../lib/projects';
-import { site, linkHref, writingHref, yearsBuilding } from '../lib/site';
+import { site, linkHref, writingHref, LINKEDIN_URL } from '../lib/site';
 import { PRODUCT } from '../lib/product';
 import SiblingMark from '../components/SiblingMark.astro';
 
@@ -54,6 +55,7 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 		? []
 		: [{ label: site.writingLinkLabel, href: writingHref('/posts'), newTab: false }]),
 	{ label: 'GitHub', href: 'https://github.com/codebam', newTab: true },
+	...(site.showResume ? [{ label: 'LinkedIn', href: LINKEDIN_URL, newTab: true }] : []),
 	{ label: site.email, href: `mailto:${site.email}`, newTab: false }
 ];
 ---
@@ -128,19 +130,21 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 
 		{/* The lead block — numbers or work, per the variant — follows the hero
 		    outright, as DESIGN.md §3.3 describes: proof on the first screen, not
-		    a screen of padding. The commercial offers follow it on the hiring
-		    variant; the work history sits between the pair. */}
+		    a screen of padding. On the hiring variant, work history sits directly
+		    below Selected work, ahead of writing and the secondary commercial offers. */}
 		{site.leadWith === 'work' ? (
 			<Work projects={projects} />
 		) : (
-			<Facts postCount={posts.length} projects={projects} yearsBuilding={yearsBuilding()} />
+			<Facts postCount={posts.length} projects={projects} />
 		)}
 
 		{site.leadWith === 'work' ? (
-			<Facts postCount={posts.length} projects={projects} yearsBuilding={yearsBuilding()} />
+			<Facts postCount={posts.length} projects={projects} />
 		) : (
 			<Work projects={projects} />
 		)}
+
+		{site.experience && <Experience experience={site.experience} />}
 
 		<Writing posts={latest} total={posts.length} />
 
@@ -149,9 +153,12 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 				<div class="section-head" data-reveal>
 					<div>
 						<h2 class="display display-lg" id="offers-heading">
-							Work with me
+							Contract &amp; independent work
 						</h2>
-						<p class="section-sub">Custom work, or the kit to build it yourself.</p>
+						<p class="section-sub">
+							Primarily open to full-time engineering roles — also taking scoped builds and shipping
+							starter kits.
+						</p>
 					</div>
 				</div>
 				<div class="offer-grid">
@@ -192,8 +199,6 @@ const quietLinks: { label: string; href: string; newTab: boolean }[] = [
 				</div>
 			</section>
 		)}
-
-		{site.experience && <Experience experience={site.experience} />}
 
 		{/* The home page's one ask, after the writing has shown what arriving in
 		    the inbox would look like. The footer form is for every other page. */}

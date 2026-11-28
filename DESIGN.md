@@ -45,7 +45,7 @@ white in light and near-black in dark. There is no manual toggle: the no-JS
 70rem for the studio layout while long-form keeps a 48rem reading measure. The
 home page is a two-column hero — statement and action on the left, a 2×2
 material-study grid and availability on the right — followed by the facts
-strip, selected work, latest writing, commercial offers, experience and the
+strip, selected work, experience, latest writing, commercial offers and the
 newsletter. `leadWith` still swaps facts and work for the handle-first variant.
 
 Projects return to stacked cards: every project pairs a full mockup plate with

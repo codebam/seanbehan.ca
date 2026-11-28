@@ -11,14 +11,6 @@ import type { FeaturedProject } from '../../lib/types';
 interface Props {
 	postCount: number;
 	projects: FeaturedProject[];
-	/**
-	 * The B-owned home page still passes the table's years-since-2014 number.
-	 * This strip cannot print it: resume/resume.md's first dated entry is May
-	 * 2018, so four of those years have no evidence behind them (fix-plan H3).
-	 * Kept optional until B removes the call; the strip reports the start year
-	 * the document can prove instead.
-	 */
-	yearsBuilding?: number;
 }
 
 const { postCount, projects } = Astro.props;

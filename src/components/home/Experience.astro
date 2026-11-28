@@ -3,10 +3,10 @@
  * WHERE I'VE WORKED
  *
  * The résumé's EXPERIENCE section, condensed to one line per role and set on
- * the page's own ground rather than in cards: the section that follows is the
- * projects, and a second card grid would read as more of the same. Dated rows
- * separated by hairlines, the employer in the warm accent the résumé already
- * sets company names in.
+ * the page's own ground rather than in cards: it follows Selected work directly
+ * on the hiring front door, and a second card grid would read as more of the
+ * same. Dated rows separated by hairlines, the employer in the warm accent the
+ * résumé already sets company names in.
  *
  * Hiring variant only. `site.experience` is null where there is no résumé to
  * shorten, so those builds render no section rather than an empty heading.
@@ -20,10 +20,12 @@ interface Props {
 const { experience } = Astro.props;
 ---
 
-<section id="experience" class="section experience shell">
+<section id="experience" class="section experience shell" aria-labelledby="experience-heading">
 	<header class="section-head" data-reveal>
 		<div>
-			<h2 class="display display-lg">Where I've worked</h2>
+			<h2 class="display display-lg" id="experience-heading">
+				Where I've worked
+			</h2>
 			<p class="section-sub">Newest first — the résumé has the detail.</p>
 		</div>
 		<a href="/resume" class="link-accent">
