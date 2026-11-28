@@ -140,21 +140,29 @@ without a prior initialize:
 curl -s ${WRITING}/mcp -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"ask","arguments":{"question":"What has Sean written about NixOS?"}}}'
 \`\`\`
 
+## Hiring & Résumé
+
+${LEGAL_NAME} (@codebam) is open to full-time Senior Full-Stack or Systems Engineer roles — remote, or hybrid in the Greater Toronto Area (Ontario, Canada). Core stack: TypeScript, Rust, Cloudflare Workers (Durable Objects, Workflows, D1, R2), Linux/Wayland/Vulkan, and NixOS.
+
+- [Résumé (HTML)](${WRITING}/resume): inline résumé, stack summary, and download links.
+- [Résumé (Markdown)](${WRITING}/resume.md): source document the HTML page, PDF, and plain text are generated from.
+- [Résumé (PDF)](${WRITING}/resume.pdf): print-ready résumé.
+- [Résumé (Plain text)](${WRITING}/resume.txt): ATS-friendly plain-text résumé.
+- [Contact](${site.url}/contact): email (${SITES.seanbehan.email}), LinkedIn, GitHub, and public channels.
+
 ## Writing
 
 - [All posts](${WRITING}/posts): the archive, newest first, with full-text search over it.
 - [Post feed](${WRITING}/rss.xml): recent posts with full text, HTML.
 - [Tags](${WRITING}/posts/tags): the topic index with counts; each tag has its own feed under ${WRITING}/posts/tag/.
 - [Search](${WRITING}/search.json): ranked slugs for a query in \`?q=\`; words are matched over titles, descriptions, tags and bodies.
-- [Résumé](${WRITING}/resume.md): the CV in its source markdown — the same file the HTML page, the PDF and the plain text are generated from. The PDF is ${WRITING}/resume.pdf; the plain text is ${WRITING}/resume.txt.
 
 ${pagesSection}## Work
 
-- [Projects](${CODE}/projects): case studies of the software that runs, with what each one had to survive.
-- [Products](${WRITING}/products): paid work, with prices.
-- [Services](${WRITING}/services): what kind of engagements are taken on.
+- [Projects](${CODE}/projects): case studies of shipped open-source systems — including Viewport (Rust Wayland compositor across 6 browser-engine backends with a custom Vulkan renderer, HDR, real-time blur, cross-GPU shadow buffers, and desktop portals), Matrix Workers (Cloudflare Workers homeserver with v1.20 protocol work, Sliding Sync, Durable Objects, Workflows, verified two-way matrix.org federation across room versions 1–12, and a 45,000-test suite), and @codebam/cf-workers-telegram-bot (330 GitHub stars, 214 forks, 120 npm releases, ~1,500 monthly downloads).
+- [Products](${WRITING}/products): paid starter kit, with prices.
+- [Services](${WRITING}/services): scoped contract work (websites and Telegram bots).
 - [Legal](${WRITING}/legal): the terms, refund, license and privacy policies in one index.
-- [Contact](${site.url}/contact): the email address and public channels.
 
 ## Recent writing
 

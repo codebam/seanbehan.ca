@@ -65,15 +65,15 @@ const botStars = liveProjects.find((p) => p.slug === 'cloudflare-telegram-bot')?
 const profile = [
 	{
 		label: 'What I build',
-		copy: 'Web applications from database to frontend in TypeScript and Rust, and services on Cloudflare Workers, Durable Objects, D1 and R2. NixOS on every machine I own, so an environment is a file rather than a memory.'
+		copy: 'Full-stack applications and distributed services in TypeScript and Rust on Cloudflare Workers, Durable Objects, Workflows, D1, and R2 — alongside Linux userspace systems on Wayland, Vulkan, and NixOS.'
 	},
 	{
 		label: 'What has shipped',
-		copy: `A Telegram bot framework with ${botStars} stars and 120 npm releases. A Wayland compositor that composites a web page zero-copy beside native clients. A Matrix homeserver on Cloudflare Workers that federates both ways with matrix.org. A pastebin on R2 with syntax-highlighted and plain-text views.`
+		copy: `A Telegram bot framework (${botStars} stars, 214 forks, 120 npm releases, ~1,500 monthly downloads). Viewport, a Wayland compositor across six browser engines with a custom Vulkan renderer (viewport-vulkan, HDR, real-time blur, portals). Matrix Workers, a Cloudflare Workers homeserver with v1.20 work, Sliding Sync, verified two-way matrix.org federation, and a 45,000-test suite.`
 	},
 	{
 		label: 'How I work',
-		copy: 'Small systems with explicit failure modes, and write-ups of what broke. The published posts are the clearest evidence I have that I can explain a decision to someone who has to live with it.'
+		copy: 'Small systems with explicit failure modes, reproducible Nix builds, and thorough tests. The published posts are the clearest evidence I have that I can explain a decision to someone who has to live with it.'
 	}
 ];
 
@@ -98,9 +98,9 @@ const updated = resume
 	<!-- The plain-text rendering, advertised the same way: it is a format
 	     /resume serves, not a page of its own. -->
 	<link slot="head" rel="alternate" type="text/plain" href="/resume.txt" />
-	<Masthead label="Résumé · Sean Behan" meta="Remote / Greater Toronto Area">
+	<Masthead label="Résumé · Sean Behan" meta="Remote · Greater Toronto Area (Canada)">
 		<Fragment slot="title">
-			Senior full-stack developer, <em>open to work.</em>
+			Senior full-stack &amp; systems engineer, <em>open to work.</em>
 		</Fragment>
 		<p class="masthead-blurb">{site.intro}</p>
 		<div class="masthead-availability">

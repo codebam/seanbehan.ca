@@ -79,10 +79,10 @@ const replyWindow = COMMERCE.seanbehan.replyWindow;
  */
 const askingFor = site.showResume
 	? [
-			'The role, and whether it is full-time or contract',
-			'Remote, hybrid, or on-site — and where',
-			'The stack, or the problem if the stack is not settled',
-			'A link to the posting, if there is one'
+			'The role and level (full-time Senior Full-Stack / Systems, or scoped contract)',
+			'Remote, or hybrid in the Greater Toronto Area',
+			'The team, stack, or technical problem you are hiring for',
+			'A link to the posting or compensation band, if available'
 		]
 	: null;
 ---
@@ -92,7 +92,10 @@ const askingFor = site.showResume
 	description={`Get in touch with ${site.name} — email${site.showResume ? ', LinkedIn' : ''}, GitHub.`}
 	ogTitle={`Contact — ${site.name}`}
 >
-	<Masthead label="Ontario / Canada" meta={replyWindow ?? 'Replies by email'}>
+	<Masthead
+		label={site.showResume ? 'Ontario, Canada · Remote / GTA hybrid' : 'Ontario / Canada'}
+		meta={replyWindow ?? 'Replies by email'}
+	>
 		<Fragment slot="title">
 			Say <em>hello.</em>
 		</Fragment>
@@ -103,7 +106,7 @@ const askingFor = site.showResume
 			</picture>
 			<p>
 				{site.showResume
-					? 'Email is the surest way to reach me. If you are hiring, contracting, or want to talk about something I built, say what you need and I will get back to you.'
+					? 'Email is the surest way to reach me. If you are hiring for a full-time engineering role, scoping contract work, or want to talk about something I built, send a short note and I will get back to you.'
 					: 'Email is the surest way to reach me. Issues and pull requests go to GitHub; everything else can come here.'}
 			</p>
 		</div>
@@ -120,6 +123,17 @@ const askingFor = site.showResume
 			     button, so a reader without JS gets no control that cannot work
 			     and the mailto link beside it is still the whole story. -->
 			<span data-copy-text={site.email}></span>
+			{site.showResume && (
+				<>
+					<a class="link-quiet" href="/resume">
+						View the résumé
+					</a>
+					<a class="link-quiet" href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer">
+						LinkedIn
+						<SiblingMark href={LINKEDIN_URL} newTab />
+					</a>
+				</>
+			)}
 		</p>
 	</Masthead>
 

@@ -2,13 +2,14 @@
 import Base from '../layouts/Base.astro';
 import Masthead from '../components/Masthead.astro';
 import Availability from '../components/Availability.astro';
+import { LinkButton } from '@cloudflare/kumo/components/button';
 import { site, LEGAL_NAME, HANDLE, LINKEDIN_URL, writingHref } from '../lib/site';
 import SiblingMark from '../components/SiblingMark.astro';
 
 const notes = [
 	{
 		title: 'What I work on',
-		copy: 'My public work sits where application code meets infrastructure: Linux graphics, serverless systems, storage, deployment and the tools around them. I prefer small systems with explicit failure modes, reproducible environments and source a reader can inspect.'
+		copy: 'My public work sits where application code meets infrastructure: Linux graphics (Wayland, Smithay, Vulkan), distributed edge systems (Cloudflare Workers, Durable Objects, Workflows, D1, R2), and declarative NixOS environments. I prefer small systems with explicit failure modes and source a reader can inspect.'
 	},
 	{
 		title: 'Writing',
@@ -56,6 +57,34 @@ const ABOUT_DESCRIPTION = `About ${LEGAL_NAME} (@${HANDLE}) — senior full-stac
 			<div class="masthead-availability">
 				<Availability availability={site.availability} />
 			</div>
+		)}
+		{site.showResume && (
+			<p class="masthead-actions">
+				<LinkButton href="/resume" variant="primary" size="lg" className="flat-control site-cta">
+					View the résumé
+				</LinkButton>
+				<LinkButton
+					href={`mailto:${site.email}?subject=${encodeURIComponent('A role for Sean')}`}
+					variant="secondary"
+					size="lg"
+					className="flat-control site-secondary"
+				>
+					Email {site.email}
+				</LinkButton>
+				<a class="link-quiet" href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer">
+					LinkedIn
+					<SiblingMark href={LINKEDIN_URL} newTab />
+				</a>
+				<a
+					class="link-quiet"
+					href="https://github.com/codebam"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					GitHub
+					<SiblingMark href="https://github.com/codebam" newTab />
+				</a>
+			</p>
 		)}
 	</Masthead>
 
