@@ -97,7 +97,9 @@ export default defineConfig({
 						'NixOS',
 						'Cloudflare Workers',
 						'Durable Objects',
+						'Cloudflare Workflows',
 						'Wayland',
+						'Vulkan',
 						'Linux',
 						'Serverless architecture'
 					]

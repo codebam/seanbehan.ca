@@ -36,26 +36,27 @@ export const featuredProjects: Array<FeaturedProject & { seoDescription: string 
 		since: '2026',
 		title: 'Viewport',
 		description:
-			'A Wayland compositor in Rust on Smithay whose entire shell — wallpaper, dock, window frames and titlebars — is a web page, composited zero-copy alongside native clients. Five interchangeable engine backends render that same page: WPE, WebKitGTK, Chromium, CEF and Servo.',
+			'A Wayland compositor in Rust on Smithay whose entire shell — wallpaper, dock, window frames and titlebars — is a web page, composited zero-copy alongside native clients across six interchangeable engine backends (chromium, webkitgtk, wpe, servoshell, cef, and servo), backed by a standalone custom Vulkan renderer (viewport-vulkan) with HDR, real-time blur, cross-GPU shadow buffers, and desktop portals.',
 		seoDescription:
-			'A Wayland compositor in Rust whose whole desktop shell is a web page, composited zero-copy across five engines.',
+			'A Rust Wayland compositor with a web shell across six browser engines and a custom Vulkan renderer with HDR and blur.',
 		language: 'Rust',
 		stars: 4,
 		mockup: viewportMockup,
 		mockupBackground: '#0b0e14',
 		mockupAlt: 'Viewport running nested at 1600×1000 with btop and its web shell',
-		tags: ['wayland', 'smithay', 'wpe-webkit'],
+		tags: ['wayland', 'smithay', 'vulkan'],
 		challenge:
-			'Build a native Wayland compositor while letting ordinary web technology own the desktop shell and window layout, without copying rendered frames through the CPU.',
+			'Build a full-featured native Wayland compositor with HDR, real-time blur, and desktop portals while letting ordinary web technology own the desktop shell and window layout — without copying rendered frames through the CPU.',
 		architecture: [
-			'Smithay handles DRM/KMS, input and the xdg-shell protocol.',
-			'An engine backend renders the HTML shell to DMA-BUFs that become compositor render elements.',
-			'Tiling is a tree of CSS flexboxes, so the browser computes every window rectangle and the shell only measures the result.'
+			'Smithay handles DRM/KMS, input and xdg-shell; the standalone viewport-vulkan crate implements a custom Vulkan renderer with dynamic rendering, zero-copy DMA-BUF import, drm_syncobj explicit sync, real vblank pacing, and ICC display color cubes.',
+			'Six interchangeable engine backends — chromium, webkitgtk, wpe, servoshell, cef, and servo — render the same HTML shell page to DMA-BUFs that composite below native windows.',
+			'Tiling is a tree of CSS flexboxes so the browser computes every window rectangle; foreign-card buffers copy into per-buffer cached cross-GPU shadow buffers on the scanout card instead of being dropped.'
 		],
 		highlights: [
-			'Five interchangeable engine backends behind one shell page — WPE, WebKitGTK, Chromium, CEF and Servo',
-			'Zero-copy from engine to screen: DMA-BUF frames, drm_syncobj fences and real vblank pacing',
-			'A Nix flake that builds WPE WebKit from source'
+			'Six interchangeable engine backends behind one shell page: chromium, webkitgtk, wpe, servoshell, cef, and servo',
+			'Standalone Vulkan renderer (viewport-vulkan) with HDR/color management (wp-color-management-v1, wp-color-representation-v1), nine-tap real-time background blur, and cross-GPU shadow buffers',
+			'In-tree RemoteDesktop, InputCapture, and Clipboard portals (libei with per-session consent), plus a built-in lock screen, live settings panel, and screen magnifier',
+			'Nix flake with NixOS modules that also builds WPE WebKit from source'
 		]
 	},
 	{
@@ -64,9 +65,9 @@ export const featuredProjects: Array<FeaturedProject & { seoDescription: string 
 		since: '2026',
 		title: 'Matrix Workers',
 		description:
-			'A Matrix homeserver running entirely on Cloudflare Workers — Hono, D1, R2 and Durable Objects — taken from a proof of concept that failed the Matrix Federation Tester to verified two-way federation with matrix.org: invites, joins, messages, E2EE key exchange and media, across room versions 1–12. Live at codebam.ca.',
+			'A Matrix homeserver running entirely on Cloudflare Workers — Hono, D1, R2, Durable Objects, and Cloudflare Workflows — taken from a failing proof of concept to verified two-way federation with matrix.org across room versions 1–12, with Matrix v1.19 + v1.20 protocol work, Sliding Sync, E2EE, security hardening, and a 45,000-test suite. Live at codebam.ca.',
 		seoDescription:
-			'A Matrix homeserver on Cloudflare Workers with verified two-way federation with matrix.org, E2EE and a 45,000-test suite.',
+			'A Matrix homeserver on Cloudflare Workers with v1.20 work, Sliding Sync, matrix.org federation, E2EE, and 45,000 tests.',
 		language: 'TypeScript',
 		stars: 0,
 		homepage: 'https://matrix.to/#/@codebam:codebam.ca',
@@ -77,17 +78,17 @@ export const featuredProjects: Array<FeaturedProject & { seoDescription: string 
 			'A federation report for codebam.ca — signed server key, room versions 1–12, E2EE exchanged over federation',
 		tags: ['cloudflare', 'matrix', 'federation'],
 		challenge:
-			'Meet the Matrix server-to-server specification well enough that the network’s largest homeserver accepts this one as a peer — signed events, room-version-specific redaction rules, E2EE key exchange — on a runtime with no TCP sockets and no persistent process.',
+			'Meet the Matrix client-server and server-to-server specifications well enough that matrix.org accepts this homeserver as a peer — signed events, room-version-specific redaction rules, E2EE key exchange, and Sliding Sync — on an edge runtime with no persistent process.',
 		architecture: [
-			'Hono routes the client and federation APIs inside one Cloudflare Worker; D1 is the event store, R2 holds media, and Durable Objects own per-room ordering and long-poll /sync.',
-			'Every event is signed and reference-hashed under its own room version’s redaction rules, then sent in the federation v4 wire format — no event ID on the wire, the receiver derives it.',
-			'Peers that only listen on port 8448 — the runtime’s fetch() ignores non-standard ports — are reached by an HTTP/1.1 client hand-rolled over cloudflare:sockets with TLS.'
+			'Hono routes the client and federation APIs inside one Cloudflare Worker; D1 stores events, R2 holds media, Durable Objects coordinate rooms, sync, keys, rate limits and delayed events, and Cloudflare Workflows handle async room joins and push delivery.',
+			'Every event is signed and reference-hashed under its room version’s redaction rules (v1–12, including MSC4291/MSC4289 v12 room IDs), with Matrix v1.19 compliance plus v1.20 work (delayed events, sticky events, header-only Bearer auth) and Sliding Sync (MSC3575/MSC4186).',
+			'Peers listening only on port 8448 — unreachable by the runtime’s fetch() — are reached by an HTTP/1.1 client hand-rolled over cloudflare:sockets with TLS.'
 		],
 		highlights: [
-			'Verified two-way federation with matrix.org: invites, joins, messages, E2EE key exchange and media, across room versions 1–12',
-			'Passes the Matrix Federation Tester, and the inherited 45,000-test vitest suite stayed green through every change',
-			'Security work: removed a login flow that issued access tokens without credentials, closed an unauthenticated federation v2 join path, and moved registration behind single-use hashed invite tokens',
-			'Stock Element clients get working E2EE against it — OIDC discovery metadata, recovery-key rotation and cross-server device keys included',
+			'Verified two-way federation with matrix.org: invites, joins with participating-server fallback, timeline backfill, messages, E2EE key exchange and remote media across room versions 1–12',
+			'Matrix v1.20 protocol work (MSC4140 delayed events, MSC4354 sticky events, header-only Bearer auth) and Sliding Sync (MSC3575/MSC4186) for Element X alongside Element Web and FluffyChat',
+			'Passes the Matrix Federation Tester (FederationOK: true), with a 45,000-test vitest suite kept green on every change',
+			'Security hardening: removed a credential-free login flow, closed an unauthenticated federation v2 join path, gated registration behind single-use hashed invite tokens, and enforced server ACLs',
 			'Live at codebam.ca, answering for @codebam:codebam.ca'
 		]
 	},
@@ -97,11 +98,11 @@ export const featuredProjects: Array<FeaturedProject & { seoDescription: string 
 		since: '2022',
 		title: 'Telegram Bot for Cloudflare Workers',
 		description:
-			'A lightweight, type-safe Telegram bot framework for Cloudflare Workers: handlers chain off the incoming Request, middleware runs before them, and one URL registers the webhook. 214 forks and 120 releases on npm.',
+			'A lightweight, type-safe Telegram bot framework for Cloudflare Workers: handlers chain off the incoming Request, middleware runs before them, and one URL registers the webhook. 330 GitHub stars, 214 forks, 120 releases on npm, and ~1,500 monthly npm downloads.',
 		seoDescription:
 			'A type-safe Telegram bot framework for Cloudflare Workers with chained handlers and one-URL webhook setup.',
 		language: 'TypeScript',
-		stars: 324,
+		stars: 330,
 		homepage: 'https://cf-workers-telegram-bot.codebam.ca',
 		homepageLabel: 'Read the docs',
 		mockup: telegramMockup,
@@ -116,7 +117,7 @@ export const featuredProjects: Array<FeaturedProject & { seoDescription: string 
 			'A visit to /<token>/setWebhook registers the Worker with Telegram, so there is no deploy-time CLI step to go live.'
 		],
 		highlights: [
-			'214 forks and 120 releases on npm, under Apache-2.0',
+			'330 GitHub stars, 214 forks, 120 releases on npm, and ~1,500 monthly downloads under Apache-2.0',
 			'No runtime dependencies beyond the type definitions',
 			'Separate development and production Worker bindings, with a consumer template to start from'
 		]

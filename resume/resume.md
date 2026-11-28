@@ -1,12 +1,12 @@
 ---
 title: "SEAN BEHAN"
-subtitle: "Senior Full-Stack Developer · TypeScript & Rust"
+subtitle: "Senior Full-Stack & Systems Engineer · TypeScript & Rust"
 location: "Greater Toronto Area"
 email: "sean@seanbehan.ca"
 website: "https://seanbehan.ca"
 linkedin: "sean-behan"
 github: "codebam"
-abstract: "Full-stack and systems developer shipping production software on Cloudflare Workers and in Rust: a Telegram bot framework with 330 GitHub stars and ~1,500 monthly npm downloads, and a Wayland compositor whose desktop shell is a web page. Open to full-time work — remote, or hybrid in the Greater Toronto Area."
+abstract: "Senior full-stack and systems engineer shipping production software in TypeScript and Rust — from Cloudflare Workers edge services (a federated Matrix homeserver and a 330-star Telegram bot framework with ~1,500 monthly npm downloads) to a Rust Wayland compositor with a custom Vulkan renderer. Open to full-time Senior Full-Stack or Systems roles — remote, or GTA hybrid."
 ---
 
 # EXPERIENCE
@@ -14,18 +14,19 @@ abstract: "Full-stack and systems developer shipping production software on Clou
 ### Independent Developer · Open Source
 *2021 – Present*
 
-- Created @codebam/cf-workers-telegram-bot, a TypeScript bot framework for Cloudflare Workers — 330 GitHub stars, 214 forks, ~1,500 npm downloads per month
-- Write Rust for Linux userspace across eight public repositories, including Viewport, a Wayland compositor whose entire desktop shell is a web page
+- Architected @codebam/cf-workers-telegram-bot, a zero-dependency TypeScript Cloudflare Workers framework (330 stars, 214 forks, 120 npm releases, ~1,500 monthly downloads)
+- Ship distributed TypeScript services on Cloudflare Workers, Durable Objects, Workflows, D1, and R2 — including Matrix Workers (two-way matrix.org federation, 45,000-test suite)
+- Build Linux userspace systems in Rust on NixOS across 8+ public repos, including Viewport (Wayland compositor, 6 browser engines) and viewport-vulkan (standalone Vulkan renderer)
 
 ### Sysadmin and Moderator · mstdn.ca
 *Jan. 2024 – Present*
 
-- Run a Mastodon instance serving 36,000+ users: upgrades, federation troubleshooting and moderation across the Fediverse
+- Operate a Mastodon instance serving 36,000+ users: upgrades, federation troubleshooting, and moderation across the Fediverse
 
 ### Frontend Web Developer · AssetDash
 *Apr. 2021 – Oct. 2021*
 
-- Rebuilt the company site on Next.js, TypeScript and React with a Firebase backend, cutting bounce rate 15% and raising user engagement 20%
+- Rebuilt the company site on Next.js, TypeScript, and React with Firebase, cutting bounce rate 15% and raising engagement 20%
 
 ### Development Intern · AVROD
 *Sep. 2019 – Apr. 2020*
@@ -37,36 +38,41 @@ abstract: "Full-stack and systems developer shipping production software on Clou
 
 - Kept polling-station computer systems online through the 2019 federal election alongside a team of 10+
 
+### IT Student Advisor · Trent University IT
+*May 2018 – Apr. 2020*
+
+- Diagnosed and repaired student and faculty machines across Windows and macOS
+
 # SELECTED WORK
 
-### seanbehan.ca · Personal Site & Storefront
-*[seanbehan.ca](https://seanbehan.ca)*
-
-- Astro and EmDash CMS on a Cloudflare Worker with D1 and R2: server-rendered writing, a Stripe-backed storefront, and two site identities built from one codebase with CI-applied migrations
-
-### Tux Robot · Telegram Bot on Cloudflare Workers
-*[github.com/codebam/tux-robot](https://github.com/codebam/tux-robot)*
-
-- AI chat bot on a single Cloudflare Worker: grammY in TypeScript, a Svelte 5 web app, Cloudflare AI with Tavily search and document retrieval; live at t.me/TuxRobot
-
-### Viewport · Wayland Compositor
+### Viewport & viewport-vulkan · Wayland Compositor & Vulkan Renderer
 *[github.com/codebam/viewport](https://github.com/codebam/viewport)*
 
-- Compositor in Rust on Smithay where the whole shell — wallpaper, dock, window frames and titlebars — is a web page, behind five interchangeable engine backends: WPE, WebKitGTK, Chromium, CEF and Servo, with the same shell page under each
-- Zero-copy path from engine to screen: DMA-BUF frames, drm_syncobj fences and real vblank pacing, so no pixel is copied through the CPU
-- Tiling is a tree of CSS flexboxes, so the browser computes every window rectangle and the shell only measures the result; packaged in a Nix flake that builds WPE WebKit from source
+- Rust/Smithay Wayland compositor whose desktop shell is a web page across six interchangeable backends (chromium, webkitgtk, wpe, servoshell, cef, servo), with CSS flexbox tiling and a Nix flake building WPE WebKit from source
+- Authored [viewport-vulkan](https://github.com/codebam/viewport-vulkan), a standalone Vulkan renderer for Smithay: zero-copy DMA-BUF, drm_syncobj fences, vblank pacing, HDR/color management (wp-color-management-v1, wp-color-representation-v1, ICC LUTs), real-time background blur, and cross-GPU shadow buffers
+- Built RemoteDesktop, InputCapture, and Clipboard portals (libei with per-session consent), plus an in-tree lock screen, live settings panel, and screen magnifier
 
 ### Matrix Workers · Federated Matrix Homeserver
 *[github.com/codebam/matrix-workers](https://github.com/codebam/matrix-workers)*
 
-- A Matrix homeserver running entirely on Cloudflare Workers — Hono, D1, R2 and Durable Objects — taken from a proof of concept that failed the Matrix Federation Tester to verified two-way federation with matrix.org: invites, joins, messages, E2EE key exchange and media, across room versions 1–12
-- Made federation itself correct: events signed and reference-hashed under each room version's redaction rules, the federation v4 wire format, room v12 ID derivation (MSC4291, MSC4289), and an HTTP/1.1 client over TCP sockets for peers on port 8448, which the runtime's fetch() cannot reach
-- Fixed security gaps along the way — a login flow that issued access tokens without credentials, an unauthenticated federation v2 join path, registration moved behind single-use hashed invite tokens — and kept the inherited 45,000-test suite green; live at codebam.ca
+- Matrix homeserver on Cloudflare Workers (Hono, D1, R2, Durable Objects, Workflows) taken from a failing PoC to verified two-way matrix.org federation (invites, joins, backfill, E2EE, media) across room versions 1–12; live at codebam.ca
+- Implemented Matrix v1.19 + v1.20 work (delayed/sticky events, header-only Bearer auth), Sliding Sync (MSC3575/MSC4186), room v12 IDs (MSC4291/MSC4289), per-version redaction/signing, and an HTTP/1.1 TLS client over cloudflare:sockets for port-8448 peers
+- Hardened auth and federation (removed credential-free login, closed unauthenticated v2 join, gated registration behind single-use hashed tokens) while keeping the 45,000-test suite green
+
+### seanbehan.ca · Personal Site & Storefront
+*[seanbehan.ca](https://seanbehan.ca)*
+
+- Astro and EmDash CMS on Cloudflare Workers with D1 and R2: server-rendered writing, Stripe storefront, and two site identities from one codebase with CI migrations
+
+### Tux Robot · Telegram Bot on Cloudflare Workers
+*[github.com/codebam/tux-robot](https://github.com/codebam/tux-robot)*
+
+- AI Telegram bot on one Cloudflare Worker (grammY, TypeScript, Svelte 5, Cloudflare AI, Tavily search and document retrieval); live at t.me/TuxRobot
 
 ### Pastebin-R2 · Serverless Snippet Service
 *[github.com/codebam/pastebin-r2](https://github.com/codebam/pastebin-r2)*
 
-- Snippet service on Cloudflare Workers with Hono and R2: REST API, TTL expiry enforced on read and swept by an hourly cron, syntax-highlighted views; live at paste.codebam.ca
+- Hono + R2 snippet service with REST API, read-enforced + hourly-cron TTL expiry, and syntax-highlighted views; live at paste.codebam.ca
 
 # SKILLS
 
@@ -95,14 +101,14 @@ abstract: "Full-stack and systems developer shipping production software on Clou
 - Web Extension API
 
 **Systems:**
-- Wayland & Smithay
+- Wayland, Smithay & Vulkan
 - Linux
 - Nix & NixOS
 - Docker & Podman
 
 **Cloud:**
 - Cloudflare Workers & Pages
-- Durable Objects & D1
+- Durable Objects, Workflows & D1
 - R2 & KV storage
 - Stripe billing
 

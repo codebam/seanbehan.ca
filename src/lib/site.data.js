@@ -32,7 +32,7 @@ const seanbehan = {
 	url: 'https://seanbehan.ca',
 	name: 'Sean Behan',
 	title: 'Sean Behan — Senior full-stack developer',
-	eyebrow: 'Senior full-stack developer · Linux',
+	eyebrow: 'Senior full-stack & systems engineer · Linux',
 	byline: 'Sean Behan · Ontario, Canada',
 	headline: {
 		before: 'I build software that lives ',
@@ -40,7 +40,7 @@ const seanbehan = {
 		after: ' and ships to the edge.'
 	},
 	intro:
-		'Professional web experience since 2018, from database to frontend. I daily-drive NixOS, write Rust and TypeScript, and ship most of what I build in the open — a Wayland compositor, bots on Cloudflare Workers, and a pastebin on R2.',
+		'Full-stack and systems engineer with professional experience since 2018. I daily-drive NixOS, write TypeScript and Rust, and ship production software in the open — a Wayland compositor with a custom Vulkan renderer, a federated Matrix homeserver on Cloudflare Workers, and a Telegram bot framework with 330 GitHub stars.',
 	writingLinkLabel: 'Read the writing',
 	email: 'sean@seanbehan.ca',
 	newsletter: {
@@ -58,7 +58,7 @@ const seanbehan = {
 	// read — and the stack keywords live in the description rather than the
 	// card, where there is room for them.
 	description:
-		'Sean Behan — senior full-stack developer in Ontario, Canada. Rust, TypeScript, NixOS and Cloudflare Workers; open to full-time work, remote or GTA hybrid.',
+		'Sean Behan — senior full-stack and systems engineer in Ontario, Canada. TypeScript, Rust, Cloudflare Workers, Linux/Wayland/Vulkan, and NixOS; open to full-time roles, remote or GTA hybrid.',
 	ogTitle: 'Sean Behan',
 	// Kept near the length of the line it replaces: this string is the
 	// social card's tagline, set at 26px beside the host on a 1200px card.
@@ -67,7 +67,7 @@ const seanbehan = {
 	showResume: true,
 	availability: {
 		label: 'Open to work',
-		detail: 'Full-time · remote, or hybrid in the Greater Toronto Area'
+		detail: 'Full-time Senior Full-Stack or Systems Engineer · remote, or GTA hybrid'
 	},
 	// This origin is the one an employer reads, so its first ask is the résumé
 	// and its header leads with it. "Read the writing" moves to the quiet row
@@ -89,25 +89,25 @@ const seanbehan = {
 			role: 'Independent Developer',
 			org: 'Open Source',
 			period: '2021 – Present',
-			note: 'Created @codebam/cf-workers-telegram-bot (214 forks, ~1,500 monthly npm downloads); ships Rust, NixOS and Cloudflare Workers tooling in the open.'
+			note: 'Architected @codebam/cf-workers-telegram-bot (330 stars, 214 forks, 120 npm releases, ~1,500 monthly downloads); ships Rust Linux systems (Viewport compositor, viewport-vulkan) and Cloudflare Workers services (Matrix Workers, 45,000-test suite) on NixOS.'
 		},
 		{
 			role: 'Sysadmin and Moderator',
 			org: 'mstdn.ca',
 			period: 'Jan. 2024 – Present',
-			note: 'Runs a Mastodon instance serving 36,000+ users: upgrades, federation troubleshooting and moderation across the Fediverse.'
+			note: 'Operates a production Mastodon instance serving 36,000+ users: upgrades, federation troubleshooting, and moderation across the Fediverse.'
 		},
 		{
 			role: 'Frontend Web Developer',
 			org: 'AssetDash',
 			period: 'Apr. 2021 – Oct. 2021',
-			note: 'Rebuilt the company site on Next.js, TypeScript and React with a Firebase backend; bounce rate down 15%, user engagement up 20%.'
+			note: 'Rebuilt the company site on Next.js, TypeScript, and React with a Firebase backend; bounce rate down 15%, user engagement up 20%.'
 		},
 		{
 			role: 'Development Intern',
 			org: 'AVROD',
 			period: 'Sep. 2019 – Apr. 2020',
-			note: 'Built a web store with Django and MySQL as a course placement at the company.'
+			note: 'Built a web store with Django and MySQL.'
 		},
 		{
 			role: 'Assistant Automation Coordinator',
@@ -126,7 +126,7 @@ const seanbehan = {
 		eyebrow: 'Sean Behan · codebam',
 		headline: 'I build systems from the database to the display server.',
 		intro:
-			'I am a senior full-stack developer in Ontario, Canada. I have worked across web applications, Linux infrastructure and open source since my first dated professional role in 2018, with a current focus on Rust, TypeScript, NixOS and Cloudflare Workers.'
+			'I am a senior full-stack and systems engineer in Ontario, Canada. I have worked across web applications, Linux infrastructure, and open source since my first dated professional role in 2018, focusing on TypeScript, Rust, Cloudflare Workers, Wayland/Vulkan, and NixOS.'
 	}
 };
 
@@ -149,7 +149,7 @@ const codebam = {
 		after: ' — compositors, workers, and the odd bot.'
 	},
 	intro:
-		'Building software since 2018, most of it in public. I daily-drive NixOS, write Rust and TypeScript, and put the results on GitHub — a Wayland compositor, bots on Cloudflare Workers, and a pastebin on R2.',
+		'Building software since 2018, most of it in public. I daily-drive NixOS, write Rust and TypeScript, and put the results on GitHub — a Wayland compositor with a custom Vulkan renderer, a federated Matrix homeserver on Cloudflare Workers, and open-source bots and tooling.',
 	writingLinkLabel: 'Writing',
 	email: 'codebam@codebam.ca',
 	newsletter: {
